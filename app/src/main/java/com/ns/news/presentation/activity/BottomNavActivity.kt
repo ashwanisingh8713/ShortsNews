@@ -1,9 +1,12 @@
 package com.ns.news.presentation.activity
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.util.Log
+import android.view.View
+import android.view.View.OnClickListener
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ns.news.R
 import com.ns.news.databinding.ActivityBottomNavBinding
 
@@ -16,24 +19,48 @@ class BottomNavActivity : AppCompatActivity() {
         binding = ActivityBottomNavBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val viewPager: ViewPager2 = binding.viewPager
-        viewPager.adapter = BottomNavPagerAdapter(this)
+        binding.viewPager.adapter = BottomNavPagerAdapter(this)
+
+        // To Enable or Disable swipe of Pager
+        binding.viewPager.isUserInputEnabled = false;
 
         val navView: BottomNavigationView = binding.bottomNavView
         navView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home->{
-                    viewPager.currentItem = 0
+                    binding.viewPager.currentItem = 0
                 }
-                R.id.navigation_dashboard->{viewPager.currentItem = 1 }
-                R.id.navigation_notifications->{viewPager.currentItem = 2 }
-                R.id.navigation_more->{viewPager.currentItem = 3 }
+                R.id.navigation_dashboard->{binding.viewPager.currentItem = 1 }
+                R.id.navigation_notifications->{binding.viewPager.currentItem = 2 }
+                R.id.navigation_more->{binding.viewPager.currentItem = 3 }
 
             }
             true
         }
 
+        // NavigationDrawer Toggle Action Setup
+        val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(
+            this,
+            binding.drawerLayout,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        ) {
+            override fun onDrawerOpened(drawerView: View) {
+                super.onDrawerOpened(drawerView)
 
+            }
+        }
+        binding.drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+
+        // Toolbar Navigation Button Click
+        binding.toolbar.setNavigationOnClickListener(object : OnClickListener {
+            override fun onClick(v: View?) {
+                binding.drawerLayout.open()
+            }
+
+        })
 
     }
 }

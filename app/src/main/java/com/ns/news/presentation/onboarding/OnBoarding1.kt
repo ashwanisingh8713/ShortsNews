@@ -36,7 +36,6 @@ class OnBoarding1 : Fragment() {
 
         observeViewStateUpdates();
         requestCoinList();
-
     }
 
     /**
