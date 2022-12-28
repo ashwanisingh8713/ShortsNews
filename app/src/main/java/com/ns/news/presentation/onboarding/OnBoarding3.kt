@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ns.news.presentation.viewmodel.LanguageViewModel
-import com.news.presentation.viewmodel.LanguageViewModelFactory
+import com.ns.news.NewsApplication
 import com.ns.news.R
 
 class OnBoarding3 : Fragment() {
@@ -22,11 +21,16 @@ class OnBoarding3 : Fragment() {
         }
     }
 
+    private val viewModel: TopicViewModel by viewModels { TopicViewModelFactory(
+        NewsApplication.newsRepository!!) }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        requestCoinList()
+        observeViewStateUpdates()
         return inflater.inflate(R.layout.fragment_onboarding_3, container, false)
     }
 
@@ -37,7 +41,24 @@ class OnBoarding3 : Fragment() {
     }
 
 
+    /**
+     * Observing Language & State Data
+     */
+    private fun observeViewStateUpdates() {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.viewState.collect{
+                Log.i("Ashwani", "${it.categories}")
 
+            }
+        }
+    }
+
+    /**
+     * Making API Request to Get Language and State Data
+     */
+    private fun requestCoinList() {
+        viewModel.requestTopicData()
+    }
 
 
 

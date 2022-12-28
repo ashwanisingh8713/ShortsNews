@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.ns.news.presentation.viewmodel.LanguageViewModel
-import com.news.presentation.viewmodel.LanguageViewModelFactory
+import com.ns.news.NewsApplication
 import com.ns.news.R
 
 class OnBoarding1 : Fragment() {
@@ -22,7 +21,7 @@ class OnBoarding1 : Fragment() {
         }
     }
 
-    private val viewModel: LanguageViewModel by viewModels { LanguageViewModelFactory }
+    private val viewModel: LanguageViewModel by viewModels { LanguageViewModelFactory(NewsApplication.newsRepository!!) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +45,8 @@ class OnBoarding1 : Fragment() {
     private fun observeViewStateUpdates() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.viewState.collect{
-               Log.i("", "$it")
+               Log.i("Ashwani", "${it.languagePageSubTitle}")
+
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.ns.news.presentation.viewmodel
+package com.ns.news.presentation.onboarding
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -21,7 +21,7 @@ class LanguageViewModel(private val repository: ApiRepository): ViewModel() {
     fun requestLanguageList() {
         viewModelScope.launch {
             when (val result = repository.getLanguage()) {
-                is Result.Success -> handleCoinList(result.value)
+                is Result.Success -> handlePageData(result.value)
                 is Result.Failure -> handleFailure(result.cause)
             }
         }
@@ -30,8 +30,8 @@ class LanguageViewModel(private val repository: ApiRepository): ViewModel() {
 
 
 
-    private fun handleCoinList(coins: LanguagePageData) {
-        _viewState.value = coins
+    private fun handlePageData(languagePageData: LanguagePageData) {
+        _viewState.value = languagePageData
     }
 
     private fun handleFailure(cause: Throwable) {
