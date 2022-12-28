@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    app:layoutType="Black_Dark">
+
+    <LinearLayout
+        android:id="@+id/selectTopicFrame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <ImageView
+            android:id="@+id/image_language"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+             />
+
+        <TextView
+            android:id="@+id/selectTopic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:maxLines="1"
+            android:textAllCaps="false"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:text="Fragment 1"
+            android:textColor="@color/teal_200"
+             />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/selectTopicFrame"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:scrollbars="none">
+
+        <com.ns.view.flowlayout.TagFlowLayout
+            android:id="@+id/id_flowlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            app:gravity="left"
+            app:max_select="-1"
+            app:paddingEnd="10dp"
+            app:paddingStart="10dp" />
+    </ScrollView>
+</RelativeLayout>
