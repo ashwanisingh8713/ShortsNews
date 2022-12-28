@@ -13,9 +13,9 @@
     <string name="menu_slideshow">Slideshow</string>
     <string name="title_activity_btm_nav">BtmNavActivity</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="title_more">More</string>
+    <string name="title_dashboard">Photos</string>
+    <string name="title_notifications">Videos</string>
+    <string name="title_more">Podcast</string>
     <string name="title_activity_bottom_nav">BottomNavActivity</string>
     <string name="title_activity_tabbed">TabbedActivity</string>
     <string name="tab_text_1">Tab 1</string>
