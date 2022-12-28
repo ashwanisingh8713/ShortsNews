@@ -1,4 +1,4 @@
-package com.news.data.api
+package com.ns.news.data.api
 
 import android.content.Context
 import android.util.Log
@@ -6,6 +6,7 @@ import com.news.data.api.ApiConstants.BASE_ENDPOINT
 import com.news.data.api.ApiConstants.CATEGORY
 import com.news.data.api.ApiConstants.LANGUAGE
 import com.news.data.api.ApiConstants.SECTION
+import com.news.data.api.ConnectionManager
 import com.news.data.api.interceptors.NetworkStatusInterceptor
 import com.news.data.api.model.CategoryResponse
 import com.news.data.api.model.LanguageResponse

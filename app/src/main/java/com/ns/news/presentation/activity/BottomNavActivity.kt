@@ -24,8 +24,7 @@ class BottomNavActivity : AppCompatActivity() {
         // To Enable or Disable swipe of Pager
         binding.viewPager.isUserInputEnabled = false;
 
-        val navView: BottomNavigationView = binding.bottomNavView
-        navView.setOnItemSelectedListener { item ->
+        binding.bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home->{
                     binding.viewPager.currentItem = 0
@@ -39,7 +38,7 @@ class BottomNavActivity : AppCompatActivity() {
         }
 
         // NavigationDrawer Toggle Action Setup
-        val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(
+        val toggle = object : ActionBarDrawerToggle(
             this,
             binding.drawerLayout,
             R.string.navigation_drawer_open,
@@ -52,7 +51,6 @@ class BottomNavActivity : AppCompatActivity() {
         }
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-
 
         // Toolbar Navigation Button Click
         binding.toolbar.setNavigationOnClickListener(object : OnClickListener {

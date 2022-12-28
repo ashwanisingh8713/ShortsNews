@@ -1,7 +1,7 @@
 package com.news.data.api.model
 
 
-import com.news.domain.Result
+import com.ns.news.domain.Result
 import com.ns.news.data.api.model.Logo
 import com.squareup.moshi.Json
 

@@ -8,7 +8,7 @@ import com.ns.news.domain.repositories.ApiRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import com.news.domain.Result
+import com.ns.news.domain.Result
 
 class TopicViewModel(private val repository: ApiRepository): ViewModel() {
 

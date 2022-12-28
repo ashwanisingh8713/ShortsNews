@@ -25,7 +25,8 @@
             app:contentInsetEnd="0dp"
             app:contentInsetLeft="0dp"
             app:contentInsetRight="0dp"
-            app:contentInsetStart="0dp">
+            app:contentInsetStart="0dp"
+            app:navigationIcon="@android:drawable/btn_plus">
 
 
 
@@ -76,6 +77,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         >
+        <!-- Add Expandable or Recycler View -->
 
     </com.google.android.material.navigation.NavigationView>
 

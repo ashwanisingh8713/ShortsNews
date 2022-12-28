@@ -1,9 +1,9 @@
 @file:Suppress("FunctionName")
 
-package com.news.domain
+package com.ns.news.domain
 
-import com.news.domain.Result.Failure
-import com.news.domain.Result.Success
+import com.ns.news.domain.Result.Failure
+import com.ns.news.domain.Result.Success
 
 
 sealed class Result<out T> {

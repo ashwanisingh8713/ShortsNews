@@ -3,12 +3,11 @@
 package com.ns.news
 
 import android.app.Application
-import com.news.data.api.NewsApi
+import com.ns.news.data.api.NewsApi
 import com.news.data.api.mappers.SectionMapper
 import com.ns.news.data.repositories.NewsRepository
-import com.ns.news.presentation.onboarding.LanguageViewModelFactory
 import com.news.utils.DefaultDispatchersProvider
-import com.ns.news.presentation.onboarding.TopicViewModelFactory
+import com.ns.news.presentation.activity.SectionViewModelFactory
 
 class NewsApplication : Application() {
 
@@ -19,6 +18,7 @@ class NewsApplication : Application() {
     super.onCreate()
 
       newsRepository = createRepository()
+      SectionViewModelFactory.inject(newsRepository!!)
 
   }
 

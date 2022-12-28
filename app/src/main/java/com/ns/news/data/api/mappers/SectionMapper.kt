@@ -1,7 +1,7 @@
 package com.news.data.api.mappers
 
 import com.news.data.api.model.SectionItem
-import com.news.domain.Result
+import com.ns.news.domain.Result
 
 class SectionMapper {
     fun toDomain(categoryItem: SectionItem): Result<SectionItem> {

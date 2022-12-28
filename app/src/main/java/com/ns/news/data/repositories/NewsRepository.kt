@@ -1,10 +1,10 @@
 package com.ns.news.data.repositories
 
-import com.news.data.api.NewsApi
+import com.ns.news.data.api.NewsApi
 import com.news.data.api.mappers.SectionMapper
-import com.news.domain.Result
+import com.ns.news.domain.Result
 import com.ns.news.domain.repositories.ApiRepository
-import com.news.domain.requireValue
+import com.ns.news.domain.requireValue
 import com.news.utils.DispatchersProvider
 import kotlinx.coroutines.withContext
 
@@ -13,7 +13,6 @@ class NewsRepository(
     private val sectionMapper: SectionMapper,
     private val apis: NewsApi
 ) : ApiRepository {
-
 
     override suspend fun getCategoryPageData() = withContext(dispatchersProvider.io()) {
         Result {
@@ -26,16 +25,6 @@ class NewsRepository(
             apis.getLanguage().data
         }
     }
-
-    override suspend fun getLanguag(): Result<String> {
-        TODO("Not yet implemented")
-    }
-
-    /*override suspend fun getLanguag() = withContext(dispatchersProvider.io()) {
-        Result {
-            apis.getLanguag()
-        }
-    }*/
 
     override suspend fun getSections() = withContext(dispatchersProvider.io()) {
         Result {
