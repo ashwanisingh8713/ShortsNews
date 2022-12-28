@@ -44,7 +44,7 @@ class OnBoarding1 : Fragment() {
     private fun observeViewStateUpdates() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.viewState.collect{
-               Log.i("Ashwani", "${it.languagePageSubTitle}")
+               Log.i("Ashwani", "Language :: ${it.languagePageSubTitle}")
 
             }
         }

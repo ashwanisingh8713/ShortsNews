@@ -31,7 +31,7 @@ class LanguageViewModel(private val repository: ApiRepository): ViewModel() {
     }
 
     private fun handleFailure(cause: Throwable) {
-        Log.i("Ashwani", "Language API :: ${cause.message}")
+        Log.e("Ashwani", "Language API :: ${cause.message}")
     }
 
 }

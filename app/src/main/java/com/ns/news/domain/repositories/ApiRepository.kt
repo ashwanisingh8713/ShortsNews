@@ -2,7 +2,7 @@ package com.ns.news.domain.repositories
 
 import com.news.data.api.model.CategoryPageData
 import com.news.data.api.model.LanguagePageData
-import com.news.data.api.model.SectionItem
+import com.ns.news.data.api.model.SectionItem
 import com.ns.news.domain.Result
 
 

@@ -1,10 +1,11 @@
-package com.news.data.api.model
+package com.ns.news.data.api.model
 
 
 import com.ns.news.domain.Result
-import com.ns.news.data.api.model.Logo
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class SectionItem(@Json(name = "section_id")
                         val id: Int = 0,
                        @Json(name = "api")
@@ -47,16 +48,16 @@ data class SectionItem(@Json(name = "section_id")
 
 }
 
-
+@JsonClass(generateAdapter = true)
 data class Data(@Json(name = "sections")
                 val sections: List<SectionItem>?)
 
-
+@JsonClass(generateAdapter = true)
 data class SectionResponse(@Json(name = "msg")
                    val msg: String = "",
-                   @Json(name = "data")
+                           @Json(name = "data")
                    val data: Data,
-                   @Json(name = "status")
+                           @Json(name = "status")
                    val status: Boolean = false)
 
 

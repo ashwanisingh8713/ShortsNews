@@ -10,7 +10,7 @@ import com.news.data.api.ConnectionManager
 import com.news.data.api.interceptors.NetworkStatusInterceptor
 import com.news.data.api.model.CategoryResponse
 import com.news.data.api.model.LanguageResponse
-import com.news.data.api.model.SectionResponse
+import com.ns.news.data.api.model.SectionResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
