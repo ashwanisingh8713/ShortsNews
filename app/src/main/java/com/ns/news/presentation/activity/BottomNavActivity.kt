@@ -7,15 +7,22 @@ import android.view.View.OnClickListener
 import android.view.animation.Animation
 import android.view.animation.OvershootInterpolator
 import android.view.animation.TranslateAnimation
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.lifecycle.lifecycleScope
 import com.ns.news.R
 import com.ns.news.databinding.ActivityBottomNavBinding
+import com.ns.news.presentation.shared.SectionTypeSharedViewModel
+import com.ns.news.presentation.shared.SectionTypeSharedViewModelFactory
 
 class BottomNavActivity : AppCompatActivity() {
+
+    private val viewModel: SectionViewModel by viewModels { SectionViewModelFactory }
+    private val sharedSectionViewModel: SectionTypeSharedViewModel by viewModels { SectionTypeSharedViewModelFactory() }
+
     private lateinit var binding: ActivityBottomNavBinding
     private var flag = true
 
@@ -70,20 +77,37 @@ class BottomNavActivity : AppCompatActivity() {
         })
 
 
-
-
         // Toolbar Navigation Button Click
-        binding.toolbar.setNavigationOnClickListener(object : OnClickListener {
-            override fun onClick(v: View?) {
-                binding.drawerLayout.open()
-            }
-
-        })
+        binding.toolbar.setNavigationOnClickListener { binding.drawerLayout.open() }
 
 
+        observeViewStateUpdates()
+        requestLanguageList()
 
 
     }
+
+    /**
+     * Observing Language & State Data
+     */
+    private fun observeViewStateUpdates() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.viewState.collect{
+                sharedSectionViewModel.setDrawerSections(it.first)
+                sharedSectionViewModel.setBreadcrumbSections(it.second)
+            }
+        }
+    }
+
+    /**
+     * Making API Request to Get Language and State Data
+     */
+    private fun requestLanguageList() {
+        viewModel.requestSections()
+    }
+
+
+
     fun animateFab(flags: Boolean) {
         val interpolator = OvershootInterpolator()
         ViewCompat.animate(binding.fab).setInterpolator(interpolator).setListener(null)
