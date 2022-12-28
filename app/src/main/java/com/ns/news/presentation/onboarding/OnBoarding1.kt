@@ -35,7 +35,7 @@ class OnBoarding1 : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         observeViewStateUpdates();
-        requestCoinList();
+        requestLanguageList();
     }
 
     /**
@@ -53,7 +53,7 @@ class OnBoarding1 : Fragment() {
     /**
      * Making API Request to Get Language and State Data
      */
-    private fun requestCoinList() {
+    private fun requestLanguageList() {
         viewModel.requestLanguageList()
     }
 

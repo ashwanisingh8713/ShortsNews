@@ -33,7 +33,7 @@ class TopicViewModel(private val repository: ApiRepository): ViewModel() {
     }
 
     private fun handleFailure(cause: Throwable) {
-        Log.i("Ashwani", "Language API :: ${cause.message}")
+        Log.i("Ashwani", "Category / Topic API :: ${cause.message}")
     }
 
 }

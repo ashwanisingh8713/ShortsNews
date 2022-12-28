@@ -19,20 +19,16 @@ import retrofit2.http.Path
 
 interface NewsApi {
 
-  @GET("$BASE_ENDPOINT$CATEGORY/{language}")
+  @GET("$CATEGORY/{language}")
   suspend fun getCategory(@Path("language") languageId: String = "1"): CategoryResponse
 
   @GET("$LANGUAGE")
   suspend fun getLanguage(): LanguageResponse
 
-    /*@GET("$LANGUAGE}")
-    suspend fun getLanguag(): String*/
-
   @GET("$SECTION/{language}")
   suspend fun getSection(@Path("language") languageId: String = "1"): SectionResponse
 
   companion object {
-
     fun create(context: Context): NewsApi {
       return Retrofit.Builder()
           .baseUrl(BASE_ENDPOINT)
