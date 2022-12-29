@@ -1,5 +1,6 @@
 package com.ns.news.presentation.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.videopager.ui.MainActivity
 import com.ns.news.R
 import com.ns.news.databinding.ActivityBottomNavBinding
 import com.ns.news.presentation.shared.SectionTypeSharedViewModel
@@ -45,7 +47,9 @@ class BottomNavActivity : AppCompatActivity() {
             IntentUtils.openArticleShorts(this, Constants.shortsArticleIntentTag)
         }
         binding.videoShortOption.setOnClickListener {
-            IntentUtils.openArticleShorts(this, Constants.shortsVideoIntentTag)
+//            IntentUtils.openArticleShorts(this, Constants.shortsVideoIntentTag)
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
         binding.podcastShortOption.setOnClickListener {
             IntentUtils.openArticleShorts(this, Constants.podcastIntentTag)

@@ -39,6 +39,9 @@ android {
 }
 
 dependencies {
+    implementation project(":player")
+    implementation project(":videopager")
+    implementation project(":exo")
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.21"
@@ -66,5 +69,16 @@ dependencies {
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
     // Image loading
     implementation("io.coil-kt:coil:2.2.2")
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC3"
+    implementation "androidx.activity:activity-ktx:1.6.1"
+    implementation "androidx.fragment:fragment-ktx:1.5.5"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:2.7"
+
+    // Only needed for RedditVideoDataRepository
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+
+
 
 }
