@@ -24,4 +24,16 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="read_more">Read More</string>
+
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+
+    <string name="onboard_title1">Choose Language</string>
+    <string name="onboard_desc1">You can modify your selection anytime later</string>
+
+    <string name="onboard_title2">Choose States</string>
+    <string name="onboard_desc2">Get latest news and videos of your selected states</string>
+
+    <string name="onboard_title3">Choose Category</string>
+    <string name="onboard_desc3">Choose at least 5 topics</string>
 </resources>

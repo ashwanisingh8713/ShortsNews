@@ -10,18 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        >
-
-        <ImageView
-            android:id="@+id/image_language"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_width="90dp"
-            android:layout_height="40dp"
-             />
+        app:layoutType="Black_Dark">
 
         <TextView
-            android:id="@+id/selectTopic"
+            android:id="@+id/onboarding_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -30,17 +22,16 @@
             android:textAllCaps="false"
             android:textSize="26sp"
             android:textStyle="bold"
-            android:text="Fragment 2"
-            android:textColor="@color/teal_200"
-             />
+            app:textColor="@color/black" />
 
         <TextView
+            android:id="@+id/onboarding_subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textAllCaps="false"
-            android:textSize="16sp"
-            />
+            android:textSize="16sp" />
+
     </LinearLayout>
 
     <ScrollView
@@ -59,8 +50,7 @@
             android:layout_gravity="top"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            app:gravity="left"
-            app:max_select="-1"
+            app:gravity="center"
             app:paddingEnd="10dp"
             app:paddingStart="10dp" />
     </ScrollView>

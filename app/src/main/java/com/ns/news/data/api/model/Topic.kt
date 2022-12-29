@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class Category(@Json(name = "default_selection")
-                          val defaultSelection: Boolean = false,
+                          var defaultSelection: Boolean = false,
                     @Json(name = "name")
                           val name: String = "",
                     @Json(name = "logo")
@@ -15,7 +15,8 @@ data class Category(@Json(name = "default_selection")
                     @Json(name = "categoryId")
                           val categoryId: Int = 0,
                     @Json(name = "slug")
-                          val slug: String = "")
+                          val slug: String = "",
+                    var is_selected : Boolean = false)
 
 @JsonClass(generateAdapter = true)
 data class CategoryPageData(@Json(name = "minimum_selection")

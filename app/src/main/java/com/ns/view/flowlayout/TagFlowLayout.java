@@ -84,7 +84,7 @@ public class TagFlowLayout extends FlowLayout implements TagAdapter.OnDataChange
     }
 
 
-    public void setAdapter(TagAdapter adapter) {
+    public void setTagAdapter(TagAdapter adapter) {
         mTagAdapter = adapter;
         mTagAdapter.setOnDataChangedListener(this);
         changeAdapter();
