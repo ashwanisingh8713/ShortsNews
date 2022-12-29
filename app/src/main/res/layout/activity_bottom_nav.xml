@@ -233,12 +233,14 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/drawer_nav_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/dp_example">
-        <!-- Add Expandable or Recycler View -->
+        android:layout_marginRight="-64dp"
+        android:layout_gravity="start">
+
+        <include
+            android:id="@+id/navigation_view_content"
+            layout="@layout/content_navigation_header"/>
 
     </com.google.android.material.navigation.NavigationView>
 
