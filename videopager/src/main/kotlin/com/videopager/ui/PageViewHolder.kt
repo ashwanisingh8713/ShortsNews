@@ -25,10 +25,7 @@ internal class PageViewHolder(
     }
 
     fun bind(videoData: VideoData) {
-//        binding.previewImage.load(
-//            uri = videoData.previewImageUri,
-//            imageLoader = imageLoader
-//        )
+        binding.previewImage.load(videoData.previewImageUri,imageLoader)
 
         ConstraintSet().apply {
             clone(binding.root)
