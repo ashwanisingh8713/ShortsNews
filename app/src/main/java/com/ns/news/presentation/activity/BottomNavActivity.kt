@@ -17,6 +17,8 @@ import com.ns.news.R
 import com.ns.news.databinding.ActivityBottomNavBinding
 import com.ns.news.presentation.shared.SectionTypeSharedViewModel
 import com.ns.news.presentation.shared.SectionTypeSharedViewModelFactory
+import com.ns.news.utils.Constants
+import com.ns.news.utils.IntentUtils
 
 class BottomNavActivity : AppCompatActivity() {
 
@@ -38,6 +40,15 @@ class BottomNavActivity : AppCompatActivity() {
         binding.viewPager.isUserInputEnabled = false;
         binding.fab.setOnClickListener {
             animateFab(flag)
+        }
+        binding.articleShortOption.setOnClickListener {
+            IntentUtils.openArticleShorts(this, Constants.shortsArticleIntentTag)
+        }
+        binding.videoShortOption.setOnClickListener {
+            IntentUtils.openArticleShorts(this, Constants.shortsVideoIntentTag)
+        }
+        binding.podcastShortOption.setOnClickListener {
+            IntentUtils.openArticleShorts(this, Constants.podcastIntentTag)
         }
 
         binding.bottomNavView.setOnItemSelectedListener { item ->
