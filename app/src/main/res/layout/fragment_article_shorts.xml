@@ -5,10 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".presentation.activity.ui.fragments.ArticleShortsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Articles" />
+   <androidx.viewpager2.widget.ViewPager2
+       android:id="@+id/article_shorts_viewpager"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"/>
 
 </FrameLayout>
