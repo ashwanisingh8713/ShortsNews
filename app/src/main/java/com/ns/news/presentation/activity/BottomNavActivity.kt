@@ -100,7 +100,7 @@ class BottomNavActivity : AppCompatActivity() {
     }
 
     /**
-     * Making API Request to Get Language and State Data
+     * Making API Request to Get Sections Data (Breadcrumb and Drawer Data)
      */
     private fun requestLanguageList() {
         viewModel.requestSections()

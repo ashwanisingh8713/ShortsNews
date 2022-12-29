@@ -9,10 +9,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.ns.news.domain.Result
+import com.ns.news.domain.model.Section
 
 class SectionViewModel(private val repository: ApiRepository): ViewModel() {
-    val viewState: StateFlow<Pair<List<SectionItem>, List<SectionItem>>> get() = _viewState
-    private val _viewState = MutableStateFlow(Pair<List<SectionItem>, List<SectionItem>>(emptyList(), emptyList()))
+    val viewState: StateFlow<Pair<List<SectionItem>, List<Section>>> get() = _viewState
+    private val _viewState = MutableStateFlow(Pair<List<SectionItem>, List<Section>>(emptyList(), emptyList()))
 
     fun requestSections() {
         viewModelScope.launch {
@@ -25,12 +26,12 @@ class SectionViewModel(private val repository: ApiRepository): ViewModel() {
     }
 
     private fun handlePageData(sections: List<SectionItem>) {
-        var breadcrums: MutableList<SectionItem> = mutableListOf()
+        var breadcrums: MutableList<Section> = mutableListOf()
         var drawer: MutableList<SectionItem> = mutableListOf()
 
         for(section in sections)
             if(section.inBreadcrumb) {
-                breadcrums.add(section)
+                breadcrums.add(Section(section.id, section.name, section.api, section.subSections!!.isEmpty()))
             } else {
                 drawer.add(section)
             }

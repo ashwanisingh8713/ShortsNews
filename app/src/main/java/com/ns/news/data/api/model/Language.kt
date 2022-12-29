@@ -1,7 +1,6 @@
-package com.news.data.api.model
+package com.ns.news.data.api.model
 
 
-import com.ns.news.data.api.model.Logo
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

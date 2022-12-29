@@ -6,6 +6,7 @@ import com.ns.news.domain.Result
 import com.ns.news.domain.repositories.ApiRepository
 import com.ns.news.domain.requireValue
 import com.news.utils.DispatchersProvider
+import com.ns.news.data.api.model.ArticleNdWidgetResponse
 import kotlinx.coroutines.withContext
 
 class NewsRepository(
@@ -35,6 +36,11 @@ class NewsRepository(
         }
     }
 
+    override suspend fun getArticleNdWidget(url: String) = withContext(dispatchersProvider.io()) {
+        Result {
+            apis.getArticleNdWidget(url)
+        }
+    }
 
 
 }

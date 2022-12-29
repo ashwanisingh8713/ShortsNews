@@ -9,7 +9,8 @@ import com.news.data.api.ApiConstants.SECTION
 import com.news.data.api.ConnectionManager
 import com.news.data.api.interceptors.NetworkStatusInterceptor
 import com.news.data.api.model.CategoryResponse
-import com.news.data.api.model.LanguageResponse
+import com.ns.news.data.api.model.ArticleNdWidgetResponse
+import com.ns.news.data.api.model.LanguageResponse
 import com.ns.news.data.api.model.SectionResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -17,6 +18,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Url
 
 interface NewsApi {
 
@@ -28,6 +30,9 @@ interface NewsApi {
 
   @GET("$SECTION/{language}")
   suspend fun getSection(@Path("language") languageId: String = "1"): SectionResponse
+
+  @GET("")
+  suspend fun getArticleNdWidget(@Url url: String): ArticleNdWidgetResponse
 
   companion object {
     fun create(context: Context): NewsApi {

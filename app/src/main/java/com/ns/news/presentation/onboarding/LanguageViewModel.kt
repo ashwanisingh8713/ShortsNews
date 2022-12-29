@@ -3,7 +3,7 @@ package com.ns.news.presentation.onboarding
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.news.data.api.model.LanguagePageData
+import com.ns.news.data.api.model.LanguagePageData
 import com.ns.news.domain.repositories.ApiRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
