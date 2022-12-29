@@ -24,7 +24,7 @@ data class LanguageResponse(@Json(name = "msg")
 
 @JsonClass(generateAdapter = true)
 data class DataItem(@Json(name = "default_selection")
-                    val defaultSelection: Boolean = false,
+                    var defaultSelection: Boolean = false,
                     @Json(name = "name")
                     val name: String = "",
                     @Json(name = "logo")
@@ -32,7 +32,8 @@ data class DataItem(@Json(name = "default_selection")
                     @Json(name = "state_id")
                     val stateId: Int = 0,
                     @Json(name = "slug")
-                    val slug: String = "")
+                    val slug: String = "",
+                    var is_selected : Boolean = false)
 
 
 
@@ -56,7 +57,8 @@ data class LanguagesItem(@Json(name = "name")
                          @Json(name = "slug")
                          val slug: String = "",
                          @Json(name = "states")
-                         val states: States = States()
+                         val states: States = States(),
+                         var is_selected: Boolean = false
 )
 
 
