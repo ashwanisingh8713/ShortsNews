@@ -69,7 +69,6 @@ class HomeFragment : Fragment() {
     private fun observeSectionUpdates() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             sharedSectionViewModel.breadcrumbSharedViewModel.collect {
-                Log.i("Ashwani", "Breadcrumb :: "+it.size)
                 setupUI(it)
             }
         }

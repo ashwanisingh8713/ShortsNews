@@ -1,12 +1,17 @@
 package com.ns.news.data.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.ns.news.data.api.NewsApi
 import com.news.data.api.mappers.SectionMapper
 import com.ns.news.domain.Result
 import com.ns.news.domain.repositories.ApiRepository
 import com.ns.news.domain.requireValue
 import com.news.utils.DispatchersProvider
-import com.ns.news.data.api.model.ArticleNdWidgetResponse
+import com.ns.news.data.api.ArticleNdWidgetPagingSource
+import com.ns.news.data.api.model.CellsItem
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class NewsRepository(
@@ -36,11 +41,31 @@ class NewsRepository(
         }
     }
 
-    override suspend fun getArticleNdWidget(url: String) = withContext(dispatchersProvider.io()) {
+    override suspend fun getArticleNdWidget(url: String): Flow<PagingData<CellsItem>> {
+        return Pager(
+            config = PagingConfig(enablePlaceholders = true, pageSize = NETWORK_PAGE_SIZE),
+            pagingSourceFactory = { ArticleNdWidgetPagingSource(apis, url) }
+        ).flow
+    }
+
+    companion object {
+        private const val NETWORK_PAGE_SIZE = 10
+    }
+
+
+    /*override suspend fun getArticleNdWidget(url: String) = withContext(dispatchersProvider.io()) {
         Result {
             apis.getArticleNdWidget(url)
         }
-    }
+    }*/
+
+
+    /*override fun suspend getArticleNdWidget(query: String): Flow<PagingData<UnsplashPhoto>> {
+        return Pager(
+            config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
+            pagingSourceFactory = { UnsplashPagingSource(service, query) }
+        ).flow
+    }*/
 
 
 }
