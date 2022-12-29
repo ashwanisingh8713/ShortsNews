@@ -15,8 +15,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import com.ns.news.R;
 import com.ns.news.data.api.model.SectionItem;
-import com.ns.pref.DefaultPref;
-import com.ns.pref.ResUtil;
+import com.ns.news.domain.model.Section;
 
 import java.util.List;
 
@@ -26,10 +25,10 @@ import java.util.List;
 
 public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapter {
     private Context mContext;
-    private List<SectionItem> mSectionList;
+    private List<Section> mSectionList;
 //    private OnExpandableListViewItemClickListener onExpandableListViewItemClickListener;
 
-    public NavigationExpandableListViewAdapter(Context mContext, List<SectionItem> mSectionList) {
+    public NavigationExpandableListViewAdapter(Context mContext, List<Section> mSectionList) {
         this.mContext = mContext;
         this.mSectionList = mSectionList;
     }
@@ -41,17 +40,17 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return mSectionList.get(groupPosition).getSubSections().size();
+        return 0;
     }
 
     @Override
-    public SectionItem getGroup(int groupPosition) {
+    public Section getGroup(int groupPosition) {
         return mSectionList.get(groupPosition);
     }
 
     @Override
     public SectionItem getChild(int groupPosition, int childPosition) {
-        return mSectionList.get(groupPosition).getSubSections().get(childPosition);
+        return null;
     }
 
     @Override
@@ -88,8 +87,8 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
 
         if(getGroup(groupPosition) != null) {
 
-            String mSectionName = getGroup(groupPosition).getName();
-            SectionItem sectionBean = getGroup(groupPosition);
+            String mSectionName = getGroup(groupPosition).getSectionName();
+            Section sectionBean = getGroup(groupPosition);
 //            boolean isNewSection = sectionBean != null && sectionBean.isNew();
 //            String customeScreen = getGroup(groupPosition).getCustomScreen();
             if(mSectionName == null) {
@@ -100,7 +99,8 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
 
 
 
-            List<SectionItem> mChildList = getGroup(groupPosition).getSubSections();
+            //List<SectionItem> mChildList = getGroup(groupPosition).getSubSections();
+            List<SectionItem> mChildList = null;
             if (mChildList != null && mChildList.size() > 0) {
                 mGroupViewHolder.mExpandButton.setVisibility(View.VISIBLE);
             } else {
@@ -178,9 +178,9 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
     }
 
 
-    public void addStaticItemGroup(List<SectionItem> staticItemList) {
+    /*public void addStaticItemGroup(List<SectionItem> staticItemList) {
         mSectionList.addAll(staticItemList);
         notifyDataSetChanged();
 
-    }
+    }*/
 }

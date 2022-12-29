@@ -126,7 +126,7 @@ class BottomNavActivity : AppCompatActivity() {
                 sharedSectionViewModel.setDrawerSections(it.first)
                 sharedSectionViewModel.setBreadcrumbSections(it.second)
 
-                expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it.first)
+                expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it.second)
                 navigationHeaderBinding.expandableListViewNavigation.setAdapter(expandableListViewAdapter)
             }
         }
