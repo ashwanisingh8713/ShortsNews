@@ -11,10 +11,14 @@ import android.view.animation.TranslateAnimation
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.videopager.ui.MainActivity
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.ns.news.R
 import com.ns.news.databinding.ActivityBottomNavBinding
 import com.ns.news.presentation.shared.SectionTypeSharedViewModel
@@ -77,7 +81,6 @@ class BottomNavActivity : AppCompatActivity() {
         ) {
             override fun onDrawerOpened(drawerView: View) {
                 super.onDrawerOpened(drawerView)
-
             }
         }
         binding.drawerLayout.addDrawerListener(toggle)
@@ -91,15 +94,40 @@ class BottomNavActivity : AppCompatActivity() {
 
         })
 
+        //setSupportActionBar(binding.toolbar)
 
-        // Toolbar Navigation Button Click
+        binding.buttonHamburger.loadSvg("file:///android_asset/ic_hamburger.svg")
+        binding.buttonHamburger.setOnClickListener {binding.drawerLayout.open()}
+
+        binding.logoHamburger.loadSvg("file:///android_asset/logo_hamburger.svg")
+
+        binding.buttonLivetv.loadSvg("file:///android_asset/live_tv_icon.svg")
+
+        binding.buttonNotification.loadSvg("file:///android_asset/notification_icon.svg")
+
+        binding.buttonSearch.loadSvg("file:///android_asset/search_icon.svg")
+
+
+        //Toolbar Navigation Button Click
         binding.toolbar.setNavigationOnClickListener { binding.drawerLayout.open() }
-
 
         observeViewStateUpdates()
         requestLanguageList()
+    }
 
+    private fun AppCompatImageView.loadSvg(url: String) {
+        val imageLoader = ImageLoader.Builder(context)
+            .components { add(SvgDecoder.Factory()) }
+            .build()
 
+        val request = ImageRequest.Builder(this.context)
+            .crossfade(true)
+            .crossfade(500)
+            .data(url)
+            .target(this)
+            .build()
+
+        imageLoader.enqueue(request)
     }
 
     /**

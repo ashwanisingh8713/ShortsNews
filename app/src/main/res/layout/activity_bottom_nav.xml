@@ -8,8 +8,6 @@
     tools:openDrawer="start">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,7 +15,7 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -25,11 +23,64 @@
             app:contentInsetEnd="0dp"
             app:contentInsetLeft="0dp"
             app:contentInsetRight="0dp"
-            app:contentInsetStart="0dp"
-            app:navigationIcon="@android:drawable/btn_plus">
+            app:contentInsetStart="0dp">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/button_hamburger"
+                    android:layout_width="@dimen/icon_width"
+                    android:layout_height="@dimen/icon_height"
+                    android:layout_marginLeft="@dimen/icon_margin"
+                    android:layout_marginRight="@dimen/icon_margin"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/logo_hamburger"
+                    android:layout_marginLeft="@dimen/hamburger_logo_margin"
+                    android:layout_marginRight="@dimen/hamburger_logo_margin"
+                    android:layout_width="@dimen/hamburger_logo_width"
+                    android:layout_height="@dimen/hamburger_logo_height"
+                    app:layout_constraintLeft_toRightOf="@id/button_hamburger"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/button_livetv"
+                    android:layout_width="@dimen/icon_width"
+                    android:layout_height="@dimen/icon_height"
+                    android:layout_marginLeft="@dimen/icon_margin"
+                    android:layout_marginRight="@dimen/icon_margin"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/button_search"
+                    android:layout_width="@dimen/icon_width"
+                    android:layout_height="@dimen/icon_height"
+                    android:layout_marginLeft="@dimen/icon_margin"
+                    android:layout_marginRight="@dimen/icon_margin"
+                    app:layout_constraintRight_toLeftOf="@id/button_notification"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/button_notification"
+                    android:layout_width="@dimen/icon_width"
+                    android:layout_height="@dimen/icon_height"
+                    android:layout_marginLeft="@dimen/icon_margin"
+                    android:layout_marginRight="@dimen/icon_margin"
+                    app:layout_constraintRight_toLeftOf="@id/button_livetv"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.viewpager2.widget.ViewPager2
@@ -185,7 +236,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        >
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/dp_example">
         <!-- Add Expandable or Recycler View -->
 
     </com.google.android.material.navigation.NavigationView>

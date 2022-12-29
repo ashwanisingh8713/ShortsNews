@@ -81,4 +81,7 @@ dependencies {
 
 
 
+    //Coil - to load SVG files
+    implementation("io.coil-kt:coil:2.2.2")
+    implementation("io.coil-kt:coil-svg:2.2.2")
 }
