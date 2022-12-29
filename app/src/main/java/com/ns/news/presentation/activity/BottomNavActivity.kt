@@ -2,18 +2,12 @@ package com.ns.news.presentation.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.OnClickListener
-import android.view.animation.Animation
-import android.view.animation.OvershootInterpolator
-import android.view.animation.TranslateAnimation
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.videopager.ui.MainActivity
 import coil.ImageLoader
@@ -24,6 +18,7 @@ import com.ns.news.databinding.ActivityBottomNavBinding
 import com.ns.news.presentation.shared.SectionTypeSharedViewModel
 import com.ns.news.presentation.shared.SectionTypeSharedViewModelFactory
 import com.ns.news.utils.Constants
+import com.ns.news.utils.CommonFunctions
 import com.ns.news.utils.IntentUtils
 
 class BottomNavActivity : AppCompatActivity() {
@@ -45,7 +40,8 @@ class BottomNavActivity : AppCompatActivity() {
         // To Enable or Disable swipe of Pager
         binding.viewPager.isUserInputEnabled = false;
         binding.fab.setOnClickListener {
-            animateFab(flag)
+            CommonFunctions.animateFab(flag, binding.fab, binding.sheetParent, this)
+            flag = !flag
         }
         binding.articleShortOption.setOnClickListener {
             IntentUtils.openArticleShorts(this, Constants.shortsArticleIntentTag)
@@ -67,7 +63,6 @@ class BottomNavActivity : AppCompatActivity() {
                 R.id.navigation_dashboard->{binding.viewPager.currentItem = 1 }
                 R.id.navigation_notifications->{binding.viewPager.currentItem = 2 }
                 R.id.navigation_more->{binding.viewPager.currentItem = 3 }
-
             }
             true
         }
@@ -91,7 +86,6 @@ class BottomNavActivity : AppCompatActivity() {
             override fun onClick(v: View?) {
                 binding.drawerLayout.open()
             }
-
         })
 
         //setSupportActionBar(binding.toolbar)
@@ -148,68 +142,4 @@ class BottomNavActivity : AppCompatActivity() {
     private fun requestLanguageList() {
         viewModel.requestSections()
     }
-
-
-
-    fun animateFab(flags: Boolean) {
-        val interpolator = OvershootInterpolator()
-        ViewCompat.animate(binding.fab).setInterpolator(interpolator).setListener(null)
-            .rotationBy(360f).withLayer().setDuration(900).start()
-        if (flags) {
-            binding.fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.fab_cross))
-            slideUp(binding.sheetParent)
-            flag = false
-        } else if (!flags) {
-            binding.fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.fab_image))
-            slideDown(binding.sheetParent)
-            flag = true
-        }
-
-    }
-
-    fun slideUp(view: View) {
-        val animate = TranslateAnimation(
-            0F,  // fromXDelta
-            0F,  // toXDelta
-            view.height.toFloat(),  // fromYDelta
-            0F
-        ) // toYDelta
-        animate.duration = 500
-        animate.fillBefore = false
-        animate.fillBefore = true
-        view.startAnimation(animate)
-        animate.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                binding.sheetParent.visibility = View.VISIBLE
-            }
-
-            override fun onAnimationEnd(animation: Animation) {}
-            override fun onAnimationRepeat(animation: Animation) {}
-        })
-    }
-
-    fun slideDown(view: View) {
-        var animate = TranslateAnimation(
-            0F,  // fromXDelta
-            0F,  // toXDelta
-            0F,  // fromYDelta
-            binding.sheetParent.height.toFloat()
-        ) // toYDelta
-        animate.duration = 500
-        animate.isFillEnabled = false
-        animate.repeatCount = 0
-        view.startAnimation(animate)
-        animate.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {}
-            override fun onAnimationEnd(animation: Animation) {
-                binding.sheetParent.clearAnimation()
-                binding.sheetParent.visibility = View.GONE
-            }
-
-            override fun onAnimationRepeat(animation: Animation) {
-                Log.i("","")
-            }
-        })
-    }
-
 }
