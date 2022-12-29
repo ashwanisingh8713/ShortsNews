@@ -45,12 +45,10 @@ class ArticleNdWidgetAdapter : PagingDataAdapter<CellsItem, ArticleNdWidgetAdapt
     companion object {
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<CellsItem>() {
             override fun areItemsTheSame(oldItem: CellsItem, newItem: CellsItem): Boolean =
-                false
-//                oldItem.title == newItem.title
+                oldItem.title == newItem.title
 
             override fun areContentsTheSame(oldItem: CellsItem, newItem: CellsItem): Boolean =
-                false
-//                oldItem == newItem
+                oldItem == newItem
         }
     }
 }

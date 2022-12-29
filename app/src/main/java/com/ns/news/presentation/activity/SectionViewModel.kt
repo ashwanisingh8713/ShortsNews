@@ -28,14 +28,12 @@ class SectionViewModel(private val repository: ApiRepository): ViewModel() {
     private fun handlePageData(sections: List<SectionItem>) {
         var breadcrums: MutableList<Section> = mutableListOf()
         var drawer: MutableList<SectionItem> = mutableListOf()
-
         for(section in sections)
             if(section.inBreadcrumb) {
                 breadcrums.add(Section(section.id, section.name, section.api, section.subSections!!.isEmpty()))
             } else {
                 drawer.add(section)
             }
-
         _viewState.value = Pair(drawer, breadcrums)
     }
 

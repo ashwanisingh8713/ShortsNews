@@ -1,7 +1,7 @@
 package com.ns.news.presentation.activity
 
 import androidx.lifecycle.ViewModel
-//import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.ns.news.data.api.model.CellsItem
@@ -16,7 +16,7 @@ class ArticleNdWidgetViewModel(private val repository: ApiRepository) : ViewMode
     suspend fun getArticleNdWidget(queryString: String): Flow<PagingData<CellsItem>> {
         currentQueryValue = queryString
         val newResult: Flow<PagingData<CellsItem>> =
-            repository.getArticleNdWidget(queryString)//.cachedIn(viewModelScope)
+            repository.getArticleNdWidget(queryString).cachedIn(viewModelScope)
         currentSearchResult = newResult
         return newResult
     }

@@ -94,25 +94,13 @@ class BottomNavActivity : AppCompatActivity() {
 
         })
 
-        //setSupportActionBar(binding.toolbar)
-
-        binding.buttonHamburger.loadSvg("file:///android_asset/ic_hamburger.svg")
-        binding.buttonHamburger.setOnClickListener {binding.drawerLayout.open()}
-
-        binding.logoHamburger.loadSvg("file:///android_asset/logo_hamburger.svg")
-
-        binding.buttonLivetv.loadSvg("file:///android_asset/live_tv_icon.svg")
-
-        binding.buttonNotification.loadSvg("file:///android_asset/notification_icon.svg")
-
-        binding.buttonSearch.loadSvg("file:///android_asset/search_icon.svg")
-
-
         //Toolbar Navigation Button Click
         binding.toolbar.setNavigationOnClickListener { binding.drawerLayout.open() }
 
         observeViewStateUpdates()
-        requestLanguageList()
+        requestSections()
+
+        showIcons();
     }
 
     private fun AppCompatImageView.loadSvg(url: String) {
@@ -145,11 +133,9 @@ class BottomNavActivity : AppCompatActivity() {
     /**
      * Making API Request to Get Sections Data (Breadcrumb and Drawer Data)
      */
-    private fun requestLanguageList() {
+    private fun requestSections() {
         viewModel.requestSections()
     }
-
-
 
     fun animateFab(flags: Boolean) {
         val interpolator = OvershootInterpolator()
@@ -210,6 +196,22 @@ class BottomNavActivity : AppCompatActivity() {
                 Log.i("","")
             }
         })
+    }
+
+    /**
+     * It shows Icons
+     */
+    fun showIcons() {
+        binding.buttonHamburger.loadSvg("file:///android_asset/ic_hamburger.svg")
+        binding.buttonHamburger.setOnClickListener {binding.drawerLayout.open()}
+
+        binding.logoHamburger.loadSvg("file:///android_asset/logo_hamburger.svg")
+
+        binding.buttonLivetv.loadSvg("file:///android_asset/live_tv_icon.svg")
+
+        binding.buttonNotification.loadSvg("file:///android_asset/notification_icon.svg")
+
+        binding.buttonSearch.loadSvg("file:///android_asset/search_icon.svg")
     }
 
 }
