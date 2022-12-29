@@ -53,19 +53,7 @@ class NewsRepository(
     }
 
 
-    /*override suspend fun getArticleNdWidget(url: String) = withContext(dispatchersProvider.io()) {
-        Result {
-            apis.getArticleNdWidget(url)
-        }
-    }*/
-
-
-    /*override fun suspend getArticleNdWidget(query: String): Flow<PagingData<UnsplashPhoto>> {
-        return Pager(
-            config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
-            pagingSourceFactory = { UnsplashPagingSource(service, query) }
-        ).flow
-    }*/
+    
 
 
 }
