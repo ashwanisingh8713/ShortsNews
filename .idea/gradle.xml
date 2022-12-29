@@ -11,6 +11,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/exo" />
+            <option value="$PROJECT_DIR$/player" />
+            <option value="$PROJECT_DIR$/videopager" />
           </set>
         </option>
       </GradleProjectSettings>
