@@ -44,10 +44,7 @@ class BottomNavActivity : AppCompatActivity() {
 
         // To Enable or Disable swipe of Pager
         binding.viewPager.isUserInputEnabled = false;
-        binding.fab.setOnClickListener {
-            CommonFunctions.animateFab(flag, binding.fab, binding.sheetParent, this)
-            flag = !flag
-        }
+        binding.fab.setupParentLayout(binding.sheetParent)
         binding.articleShortOption.setOnClickListener {
             IntentUtils.openArticleShorts(this, Constants.shortsArticleIntentTag)
         }

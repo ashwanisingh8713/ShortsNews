@@ -12,7 +12,7 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_240sdp"
+        android:layout_height="@dimen/_260sdp"
         android:scaleType="centerCrop"
         card_view:layout_constraintTop_toTopOf="parent" />
 
@@ -24,7 +24,7 @@
         android:layout_marginTop="@dimen/_10sdp"
         android:fontFamily="sans-serif"
         android:textColor="#DC0000"
-        android:textSize="12sp"
+        android:textSize="@dimen/_10ssp"
         android:textStyle="bold"
         card_view:layout_constraintStart_toStartOf="parent"
         card_view:layout_constraintTop_toBottomOf="@id/imageView"
@@ -60,8 +60,18 @@
 
     <ImageView
         android:id="@+id/dot"
-        android:layout_width="@dimen/_10sdp"
-        android:layout_height="@dimen/_10sdp"
+        android:layout_width="@dimen/_5sdp"
+        android:layout_height="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:src="@drawable/dot"
+        card_view:layout_constraintStart_toStartOf="@id/article_title"
+        card_view:layout_constraintTop_toBottomOf="@id/article_title"
+        card_view:layout_goneMarginTop="8dp" />
+
+    <ImageView
+        android:id="@+id/dotsec"
+        android:layout_width="@dimen/_5sdp"
+        android:layout_height="@dimen/_5sdp"
         android:layout_marginTop="@dimen/_16sdp"
         android:src="@drawable/dot"
         card_view:layout_constraintStart_toStartOf="@id/article_title"
@@ -98,18 +108,18 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/share_card_article_shorts"
         android:layout_width="@dimen/_30sdp"
-        android:layout_height="@dimen/_30sdp"
+        android:layout_height="@dimen/_26sdp"
         android:layout_marginEnd="@dimen/_16sdp"
         android:layout_marginBottom="@dimen/_20sdp"
-        android:elevation="0dp"
+        card_view:cardElevation="0dp"
         card_view:cardBackgroundColor="#EDEDED"
         card_view:cardCornerRadius="@dimen/_5sdp"
         card_view:layout_constraintBottom_toBottomOf="parent"
         card_view:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
-            android:layout_width="@dimen/_15sdp"
-            android:layout_height="@dimen/_15sdp"
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
             android:layout_gravity="center"
             android:src="@drawable/share_short_article" />
     </androidx.cardview.widget.CardView>

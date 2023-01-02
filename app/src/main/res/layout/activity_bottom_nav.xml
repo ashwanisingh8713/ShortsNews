@@ -105,7 +105,7 @@
             app:menu="@menu/bottom_nav_menu"
             />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.ns.news.utils.CustomFloatingActionButton
             android:id="@+id/fab"
             android:layout_width="50dp"
             android:layout_height="50dp"
