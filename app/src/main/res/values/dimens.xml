@@ -13,5 +13,7 @@
     <dimen name="icon_height">25dp</dimen>
     <dimen name="hamburger_logo_width">30dp</dimen>
     <dimen name="hamburger_logo_height">30dp</dimen>
+    <dimen name="close_icon_padding">7dp</dimen>
+    <dimen name="nav_sub_header_height">56dp</dimen>
 
 </resources>

@@ -37,8 +37,8 @@ class BottomNavActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityBottomNavBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         navigationHeaderBinding = binding.navigationViewContent
+        setContentView(binding.root)
 
         binding.viewPager.adapter = BottomNavPagerAdapter(this)
 
@@ -123,7 +123,7 @@ class BottomNavActivity : AppCompatActivity() {
                 sharedSectionViewModel.setDrawerSections(it.first)
                 sharedSectionViewModel.setBreadcrumbSections(it.second)
 
-                expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it.second)
+                expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it.first)
                 navigationHeaderBinding.expandableListViewNavigation.setAdapter(expandableListViewAdapter)
             }
         }
@@ -152,6 +152,9 @@ class BottomNavActivity : AppCompatActivity() {
         binding.buttonSearch.loadSvg("file:///android_asset/search_icon.svg")
 
         navigationHeaderBinding.logoNavigation.loadSvg("file:///android_asset/logo_hamburger.svg")
+
+        navigationHeaderBinding.buttonClose.loadSvg("file:///android_asset/close_icon_hamburger.svg")
+        navigationHeaderBinding.buttonClose.setOnClickListener {binding.drawerLayout.close()}
     }
 
 }

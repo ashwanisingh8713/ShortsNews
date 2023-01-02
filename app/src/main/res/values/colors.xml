@@ -13,6 +13,7 @@
     <color name="gray_back">#f6f6f6</color>
     <color name="color_191919_light">#191919</color>
     <color name="color_818181_light">#818181</color>
+    <color name="color_divider">#818181</color>
     <color name="color_006599">#006599</color>
 
 </resources>
