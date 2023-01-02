@@ -6,11 +6,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.viewpager2.widget.ViewPager2
+import com.news.data.api.ConnectionManager
+import com.news.data.api.interceptors.NetworkStatusInterceptor
 import com.ns.news.R
 import com.ns.news.databinding.FragmentArticleShortsBinding
 import com.ns.news.presentation.activity.ui.shorts.adapter.ArticleShortsPagerAdapter
 import com.ns.news.presentation.activity.ui.shorts.data.ArticleShortsData
+import com.ns.news.utils.CommonFunctions
 
 class ArticleShortsFragment : Fragment() {
      lateinit var binding: FragmentArticleShortsBinding
@@ -25,7 +29,11 @@ class ArticleShortsFragment : Fragment() {
 
         binding = FragmentArticleShortsBinding.inflate(inflater,container, false)
         val root = binding.root
-        setUpViewPager()
+        if (CommonFunctions.checkForInternet(requireActivity())) {
+            setUpViewPager()
+        } else{
+         Toast.makeText(activity,"Check Internet connection",Toast.LENGTH_LONG).show()
+        }
         return root
     }
 

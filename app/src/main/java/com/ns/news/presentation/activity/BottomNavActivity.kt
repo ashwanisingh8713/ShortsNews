@@ -15,6 +15,8 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.ns.news.R
 import com.ns.news.databinding.ActivityBottomNavBinding
+import com.ns.news.databinding.ContentNavigationHeaderBinding
+import com.ns.news.presentation.adapter.NavigationExpandableListViewAdapter
 import com.ns.news.presentation.shared.SectionTypeSharedViewModel
 import com.ns.news.presentation.shared.SectionTypeSharedViewModelFactory
 import com.ns.news.utils.Constants
@@ -25,8 +27,10 @@ class BottomNavActivity : AppCompatActivity() {
 
     private val viewModel: SectionViewModel by viewModels { SectionViewModelFactory }
     private val sharedSectionViewModel: SectionTypeSharedViewModel by viewModels { SectionTypeSharedViewModelFactory() }
+    private lateinit var expandableListViewAdapter: NavigationExpandableListViewAdapter
 
     private lateinit var binding: ActivityBottomNavBinding
+    private lateinit var navigationHeaderBinding: ContentNavigationHeaderBinding
     private var flag = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,15 +38,13 @@ class BottomNavActivity : AppCompatActivity() {
 
         binding = ActivityBottomNavBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        navigationHeaderBinding = binding.navigationViewContent
 
         binding.viewPager.adapter = BottomNavPagerAdapter(this)
 
         // To Enable or Disable swipe of Pager
         binding.viewPager.isUserInputEnabled = false;
-        binding.fab.setOnClickListener {
-            CommonFunctions.animateFab(flag, binding.fab, binding.sheetParent, this)
-            flag = !flag
-        }
+        binding.fab.setupParentLayout(binding.sheetParent)
         binding.articleShortOption.setOnClickListener {
             IntentUtils.openArticleShorts(this, Constants.shortsArticleIntentTag)
         }
@@ -120,6 +122,9 @@ class BottomNavActivity : AppCompatActivity() {
             viewModel.viewState.collect{
                 sharedSectionViewModel.setDrawerSections(it.first)
                 sharedSectionViewModel.setBreadcrumbSections(it.second)
+
+                expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it.second)
+                navigationHeaderBinding.expandableListViewNavigation.setAdapter(expandableListViewAdapter)
             }
         }
     }
@@ -145,6 +150,8 @@ class BottomNavActivity : AppCompatActivity() {
         binding.buttonNotification.loadSvg("file:///android_asset/notification_icon.svg")
 
         binding.buttonSearch.loadSvg("file:///android_asset/search_icon.svg")
+
+        navigationHeaderBinding.logoNavigation.loadSvg("file:///android_asset/logo_hamburger.svg")
     }
 
 }
