@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentTransaction
 import com.ns.news.databinding.ActivityShortsBinding
 import com.ns.news.presentation.activity.ui.fragments.ArticleShortsFragment
 import com.ns.news.presentation.activity.ui.fragments.PodcastFragment
-import com.ns.news.presentation.activity.ui.fragments.VideoShortsFragment
 import com.ns.news.utils.Constants
 
 class ShortsActivity : AppCompatActivity() {
@@ -20,10 +19,6 @@ class ShortsActivity : AppCompatActivity() {
             val articleShortsFragment = ArticleShortsFragment()
             val t: FragmentTransaction = supportFragmentManager.beginTransaction()
             t.replace(binding.fragmentContainerBottomOption.id, articleShortsFragment).commit()
-        } else if (shortOption.equals(Constants.shortsVideoIntentTag)){
-            val videoShortsFragment = VideoShortsFragment()
-            val t: FragmentTransaction = supportFragmentManager.beginTransaction()
-            t.replace(binding.fragmentContainerBottomOption.id, videoShortsFragment).commit()
         } else if (shortOption.equals(Constants.podcastIntentTag)){
             val podcastFragment = PodcastFragment()
             val t: FragmentTransaction = supportFragmentManager.beginTransaction()

@@ -1,14 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.activity.ui.fragments.ArticleShortsFragment">
 
-   <androidx.viewpager2.widget.ViewPager2
-       android:id="@+id/article_shorts_viewpager"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:orientation="vertical"/>
+       <androidx.viewpager2.widget.ViewPager2
+           android:id="@+id/article_shorts_viewpager"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:orientation="vertical"/>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/internet_connection_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please enable internet connectivity"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/retry_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:backgroundTint="@color/red"
+        android:text="Retry"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/internet_connection_tv"
+        app:layout_constraintStart_toStartOf="@id/internet_connection_tv"
+        app:layout_constraintTop_toBottomOf="@id/internet_connection_tv" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
