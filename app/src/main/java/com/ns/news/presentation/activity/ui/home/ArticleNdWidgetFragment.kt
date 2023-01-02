@@ -10,12 +10,16 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import com.ns.news.databinding.FragmentArticleNdWidgetBinding
+import com.ns.news.domain.asMergedLoadStates
 import com.ns.news.domain.model.Section
 import com.ns.news.presentation.activity.ArticleNdWidgetViewModel
 import com.ns.news.presentation.activity.ArticleNdWidgetViewModelFactory
 import com.ns.news.presentation.adapter.ArticleNdWidgetAdapter
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 
 
 class ArticleNdWidgetFragment : Fragment() {
@@ -50,11 +54,21 @@ class ArticleNdWidgetFragment : Fragment() {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initSwipeToRefresh()
+    }
+
+    private fun initSwipeToRefresh() {
+        binding.swipeRefresh.setOnRefreshListener { adapter.refresh() }
+    }
+
 
     /**
      * Making API Pagination API Request to get Section's Article & Widget
      */
     private fun requestPaginationApi() {
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getArticleNdWidget(section.sectionApi)
                 .collectLatest {
@@ -62,6 +76,27 @@ class ArticleNdWidgetFragment : Fragment() {
                     Log.i("Ashwani", "Response :: ArticleNdWidget")
                 }
         }
+
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collect { loadStates ->
+                binding.swipeRefresh.isRefreshing = loadStates.mediator?.refresh is LoadState.Loading
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow
+                // Use a state-machine to track LoadStates such that we only transition to
+                // NotLoading from a RemoteMediator load if it was also presented to UI.
+                .asMergedLoadStates()
+                // Only emit when REFRESH changes, as we only want to react on loads replacing the
+                // list.
+                .distinctUntilChangedBy { it.refresh }
+                // Only react to cases where REFRESH completes i.e., NotLoading.
+                .filter { it.refresh is LoadState.NotLoading }
+                // Scroll to top is synchronous with UI updates, even if remote load was triggered.
+                .collect { binding.recyclerView.scrollToPosition(0) }
+        }
+
     }
 
     companion object {

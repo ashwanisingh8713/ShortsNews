@@ -1,5 +1,3 @@
-
-
 package com.ns.news.presentation.adapter
 
 import android.view.LayoutInflater
