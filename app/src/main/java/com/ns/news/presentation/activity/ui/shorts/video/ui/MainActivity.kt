@@ -1,11 +1,13 @@
 package com.example.videopager.ui
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.example.videopager.di.MainModule
 import com.ns.news.databinding.MainActivityBinding
+import com.ns.news.utils.CommonFunctions
 import com.videopager.ui.VideoPagerFragment
 
 class MainActivity : AppCompatActivity() {
@@ -17,11 +19,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                replace<VideoPagerFragment>(binding.fragmentContainer.id)
-            }
+        setUpUi(binding)
+        binding.retryButton.setOnClickListener {
+            setUpUi(binding)
         }
     }
+
+    fun setUpUi(binding: MainActivityBinding){
+        if (CommonFunctions.checkForInternet(this)){
+                supportFragmentManager.commit {
+                    replace<VideoPagerFragment>(binding.fragmentContainer.id)
+                }
+        } else{
+            binding.internetConnectionTv.visibility  = View.VISIBLE
+            binding.retryButton.visibility = View.VISIBLE
+            binding.fragmentContainer.visibility = View.GONE
+        }
+    }
+
 }
