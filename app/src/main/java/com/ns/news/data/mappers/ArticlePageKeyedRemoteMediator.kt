@@ -1,4 +1,4 @@
-package com.ns.pagingwithnetwork.reddit.repository.articleDb
+package com.ns.news.data.mappers
 
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
@@ -12,7 +12,6 @@ import com.ns.news.data.db.CellItemsDao
 import com.ns.news.data.db.NewsDb
 import com.ns.news.data.db.SectionPageRemote
 import com.ns.news.data.db.SectionPageRemoteDao
-import com.ns.news.data.mappers.DataMapper
 import com.ns.news.domain.model.Cell
 import retrofit2.HttpException
 import java.io.IOException

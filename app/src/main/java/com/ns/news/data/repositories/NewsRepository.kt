@@ -10,7 +10,7 @@ import com.ns.news.domain.repositories.ApiRepository
 import com.ns.news.domain.requireValue
 import com.news.utils.DispatchersProvider
 import com.ns.news.data.db.NewsDb
-import com.ns.pagingwithnetwork.reddit.repository.articleDb.ArticlePageKeyedRemoteMediator
+import com.ns.news.data.mappers.ArticlePageKeyedRemoteMediator
 import kotlinx.coroutines.withContext
 
 class NewsRepository(
@@ -49,7 +49,7 @@ class NewsRepository(
     }*/
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getArticleNdWidget(sectionId: String, url: String) = Pager(
+    override suspend fun getArticleNdWidget(sectionId: String, url: String) = Pager(
         config = PagingConfig(5),
         remoteMediator = ArticlePageKeyedRemoteMediator(db, newsApi = apis, sectionId, url, mapper)
     ) {
