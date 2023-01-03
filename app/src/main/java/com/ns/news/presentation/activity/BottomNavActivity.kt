@@ -17,22 +17,18 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.google.android.material.snackbar.Snackbar
 import com.ns.news.R
-import com.ns.news.data.api.model.SectionItem
-import com.ns.news.data.db.Section
 import com.ns.news.databinding.ActivityBottomNavBinding
 import com.ns.news.databinding.ContentNavigationHeaderBinding
-import com.ns.news.domain.model.SectionDrawer
 import com.ns.news.presentation.adapter.NavigationExpandableListViewAdapter
 import com.ns.news.presentation.shared.SectionTypeSharedViewModel
 import com.ns.news.presentation.shared.SectionTypeSharedViewModelFactory
 import com.ns.news.utils.Constants
 import com.ns.news.utils.CommonFunctions
 import com.ns.news.utils.IntentUtils
-import kotlinx.coroutines.flow.collectLatest
 
 class BottomNavActivity : AppCompatActivity() {
 
-    private val viewModel: Section2ViewModel by viewModels { Section2ViewModelFactory }
+    private val viewModel: SectionViewModel by viewModels { SectionViewModelFactory }
     private val sharedSectionViewModel: SectionTypeSharedViewModel by viewModels { SectionTypeSharedViewModelFactory() }
     private lateinit var expandableListViewAdapter: NavigationExpandableListViewAdapter
     private lateinit var binding: ActivityBottomNavBinding
@@ -136,7 +132,7 @@ class BottomNavActivity : AppCompatActivity() {
      * Observing Language & State Data
      */
     private fun observeViewStateUpdates() {
-        /*lifecycleScope.launchWhenStarted {
+        lifecycleScope.launchWhenStarted {
             viewModel.viewState.collect{
                 sharedSectionViewModel.setDrawerSections(it.first)
                 sharedSectionViewModel.setBreadcrumbSections(it.second)
@@ -144,34 +140,15 @@ class BottomNavActivity : AppCompatActivity() {
                 expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it.first)
                 navigationHeaderBinding.expandableListViewNavigation.setAdapter(expandableListViewAdapter)
             }
-        }*/
-
-        lifecycleScope.launchWhenStarted {
-            viewModel.getSections("1")
-                .collectLatest {
-                    var breadcrums: MutableList<Section> = mutableListOf()
-                    var drawer: MutableList<Section> = mutableListOf()
-                    var section = it.map {
-                        if(it.inBreadcrumb) {
-                            breadcrums.add(it)
-                        } else {
-                            drawer.add(it)
-                        }
-                    }
-
-//                    sharedSectionViewModel.setDrawerSections(drawer)
-//                    sharedSectionViewModel.setBreadcrumbSections(breadcrums)
-
-                    Log.i("Ashwani", "Response :: ArticleNdWidget $section")
-                }
         }
+
     }
 
     /**
      * Making API Request to Get Sections Data (Breadcrumb and Drawer Data)
      */
     private fun requestSections() {
-//        viewModel.requestSections("1")
+        viewModel.requestSections("1")
     }
 
     /**

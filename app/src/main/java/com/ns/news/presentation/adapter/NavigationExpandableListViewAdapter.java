@@ -15,15 +15,16 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import com.ns.news.R;
 import com.ns.news.data.api.model.SectionItem;
+import com.ns.news.data.db.Section;
 
 import java.util.List;
 
 public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapter {
     private final Context mContext;
-    private final List<SectionItem> mSectionList;
+    private final List<Section> mSectionList;
 //    private OnExpandableListViewItemClickListener onExpandableListViewItemClickListener;
 
-    public NavigationExpandableListViewAdapter(Context mContext, List<SectionItem> mSectionList) {
+    public NavigationExpandableListViewAdapter(Context mContext, List<Section> mSectionList) {
         this.mContext = mContext;
         this.mSectionList = mSectionList;
     }
@@ -39,7 +40,7 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
     }
 
     @Override
-    public SectionItem getGroup(int groupPosition) {
+    public Section getGroup(int groupPosition) {
         return mSectionList.get(groupPosition);
     }
 
@@ -83,7 +84,7 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
         if(getGroup(groupPosition) != null) {
 
             String mSectionName = getGroup(groupPosition).getName();
-            SectionItem sectionBean = getGroup(groupPosition);
+            Section sectionBean = getGroup(groupPosition);
 //            boolean isNewSection = sectionBean != null && sectionBean.isNew();
 //            String customeScreen = getGroup(groupPosition).getCustomScreen();
             if(mSectionName == null) {

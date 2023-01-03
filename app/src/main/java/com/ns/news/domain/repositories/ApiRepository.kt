@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 interface ApiRepository {
   suspend fun getCategoryPageData(): Result<CategoryPageData>
   suspend fun getLanguage(): Result<LanguagePageData>
-  suspend fun getSectionsDirect(languageId: String): Result<List<SectionItem>>
+  suspend fun getSectionsDirect(languageId: String): Result<List<Section>>
   suspend fun getSectionsDB(languageId: String): Flow<PagingData<Section>>
   suspend fun getArticleNdWidget(sectionId: String, url: String): Flow<PagingData<Cell>>
 }

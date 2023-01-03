@@ -48,8 +48,7 @@ class NewsRepository(
         Result {
             apis.getSection(languageId).data.sections
                 .orEmpty()
-                .map { mapper.toDomain(it) }
-                .map { it.requireValue() }
+                .map { mapper.toDomain(it, "") }
         }
     }
 

@@ -4,16 +4,16 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ns.news.data.api.model.SectionItem
+import com.ns.news.data.db.Section
 import com.ns.news.domain.repositories.ApiRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.ns.news.domain.Result
-import com.ns.news.domain.model.SectionDrawer
 
 class SectionViewModel(private val repository: ApiRepository): ViewModel() {
-    val viewState: StateFlow<Pair<List<SectionItem>, List<SectionDrawer>>> get() = _viewState
-    private val _viewState = MutableStateFlow(Pair<List<SectionItem>, List<SectionDrawer>>(emptyList(), emptyList()))
+    val viewState: StateFlow<Pair<List<Section>, List<Section>>> get() = _viewState
+    private val _viewState = MutableStateFlow(Pair<List<Section>, List<Section>>(emptyList(), emptyList()))
 
     fun requestSections(languageId: String) {
         viewModelScope.launch {
@@ -24,12 +24,12 @@ class SectionViewModel(private val repository: ApiRepository): ViewModel() {
         }
     }
 
-    private fun handlePageData(sections: List<SectionItem>) {
-        var breadcrums: MutableList<SectionDrawer> = mutableListOf()
-        var drawer: MutableList<SectionItem> = mutableListOf()
+    private fun handlePageData(sections: List<Section>) {
+        var breadcrums: MutableList<Section> = mutableListOf()
+        var drawer: MutableList<Section> = mutableListOf()
         for(section in sections)
             if(section.inBreadcrumb) {
-                breadcrums.add(SectionDrawer(section.sectionId, section.name, section.api, section.subSections!!.isEmpty()))
+                breadcrums.add(section)
             } else {
                 drawer.add(section)
             }

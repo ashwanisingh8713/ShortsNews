@@ -11,9 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import com.ns.news.data.db.Section
 import com.ns.news.databinding.FragmentArticleNdWidgetBinding
 import com.ns.news.domain.asMergedLoadStates
-import com.ns.news.domain.model.SectionDrawer
 import com.ns.news.presentation.adapter.ArticleNdWidgetAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -26,7 +26,7 @@ class HomeArticleNdWidgetFragment : Fragment() {
     private val viewModel: ArticleNdWidgetViewModel by viewModels { ArticleNdWidgetViewModelFactory }
 
     private var _binding: FragmentArticleNdWidgetBinding? = null
-    private lateinit var section: SectionDrawer
+    private lateinit var section: Section
 
     private val binding get() = _binding!!
 
@@ -34,7 +34,7 @@ class HomeArticleNdWidgetFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         section = if (Build.VERSION.SDK_INT >= 33) {
-            arguments?.getParcelable(ARG_SECTION, SectionDrawer::class.java)!!
+            arguments?.getParcelable(ARG_SECTION, Section::class.java)!!
         } else {
             arguments?.getParcelable(ARG_SECTION)!!
         }
@@ -68,7 +68,7 @@ class HomeArticleNdWidgetFragment : Fragment() {
     private fun requestPaginationApi() {
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.getArticleNdWidget(sectionId = section.sectionId, url = section.sectionApi)
+            viewModel.getArticleNdWidget(sectionId = section.sectionId, url = section.api)
                 .collectLatest {
                     adapter.submitData(it)
                     Log.i("Ashwani", "Response :: ArticleNdWidget")
@@ -109,7 +109,7 @@ class HomeArticleNdWidgetFragment : Fragment() {
          * number.
          */
         @JvmStatic
-        fun newInstance(section: SectionDrawer): HomeArticleNdWidgetFragment {
+        fun newInstance(section: Section): HomeArticleNdWidgetFragment {
             return HomeArticleNdWidgetFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_SECTION, section)
