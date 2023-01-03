@@ -12,11 +12,21 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/parantSectionNameLayout"
+            android:id="@+id/parentSectionNameLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/newTagImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/ic_home_black_24dp"
+                android:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/title"
@@ -25,19 +35,12 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:paddingTop="10dp"
                 android:textSize="16sp"
-                app:textType="M"/>
-
-            <ImageView
-                android:id="@+id/newTagImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/ic_epaper_day_24x24"
-                android:visibility="gone" />
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/badgeImageView"
@@ -62,8 +65,8 @@
     <View
         android:id="@+id/groupDivider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height=".5dp"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
-        android:background="@color/black" />
+        android:background="@color/color_divider" />
 </androidx.appcompat.widget.LinearLayoutCompat>

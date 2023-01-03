@@ -13,6 +13,7 @@ import com.example.videopager.ui.MainActivity
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.google.android.material.snackbar.Snackbar
 import com.ns.news.R
 import com.ns.news.databinding.ActivityBottomNavBinding
 import com.ns.news.databinding.ContentNavigationHeaderBinding
@@ -28,17 +29,15 @@ class BottomNavActivity : AppCompatActivity() {
     private val viewModel: SectionViewModel by viewModels { SectionViewModelFactory }
     private val sharedSectionViewModel: SectionTypeSharedViewModel by viewModels { SectionTypeSharedViewModelFactory() }
     private lateinit var expandableListViewAdapter: NavigationExpandableListViewAdapter
-
     private lateinit var binding: ActivityBottomNavBinding
     private lateinit var navigationHeaderBinding: ContentNavigationHeaderBinding
-    private var flag = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityBottomNavBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         navigationHeaderBinding = binding.navigationViewContent
+        setContentView(binding.root)
 
         binding.viewPager.adapter = BottomNavPagerAdapter(this)
 
@@ -46,15 +45,28 @@ class BottomNavActivity : AppCompatActivity() {
         binding.viewPager.isUserInputEnabled = false;
         binding.fab.setupParentLayout(binding.sheetParent)
         binding.articleShortOption.setOnClickListener {
-            IntentUtils.openArticleShorts(this, Constants.shortsArticleIntentTag)
+            if (CommonFunctions.checkForInternet(this)){
+                IntentUtils.openArticleShorts(this, Constants.shortsArticleIntentTag)
+            } else{
+                CommonFunctions.showSnackBar(this,"No Internet connection", duration = Snackbar.LENGTH_LONG)
+            }
+
         }
         binding.videoShortOption.setOnClickListener {
-//            IntentUtils.openArticleShorts(this, Constants.shortsVideoIntentTag)
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            if (CommonFunctions.checkForInternet(this)){
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            } else{
+                CommonFunctions.showSnackBar(this,"No Internet connection", duration = Snackbar.LENGTH_LONG)
+            }
+
         }
         binding.podcastShortOption.setOnClickListener {
-            IntentUtils.openArticleShorts(this, Constants.podcastIntentTag)
+            if (CommonFunctions.checkForInternet(this)) {
+                IntentUtils.openArticleShorts(this, Constants.podcastIntentTag)
+            } else{
+                CommonFunctions.showSnackBar(this,"No Internet connection", duration = Snackbar.LENGTH_LONG)
+            }
         }
 
         binding.bottomNavView.setOnItemSelectedListener { item ->
@@ -123,7 +135,7 @@ class BottomNavActivity : AppCompatActivity() {
                 sharedSectionViewModel.setDrawerSections(it.first)
                 sharedSectionViewModel.setBreadcrumbSections(it.second)
 
-                expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it.second)
+                expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it.first)
                 navigationHeaderBinding.expandableListViewNavigation.setAdapter(expandableListViewAdapter)
             }
         }
@@ -152,6 +164,9 @@ class BottomNavActivity : AppCompatActivity() {
         binding.buttonSearch.loadSvg("file:///android_asset/search_icon.svg")
 
         navigationHeaderBinding.logoNavigation.loadSvg("file:///android_asset/logo_hamburger.svg")
+
+        navigationHeaderBinding.buttonClose.loadSvg("file:///android_asset/close_icon_hamburger.svg")
+        navigationHeaderBinding.buttonClose.setOnClickListener {binding.drawerLayout.close()}
     }
 
 }

@@ -15,20 +15,15 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import com.ns.news.R;
 import com.ns.news.data.api.model.SectionItem;
-import com.ns.news.domain.model.Section;
 
 import java.util.List;
 
-/**
- * Created by arvind on 24/12/16.
- */
-
 public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapter {
-    private Context mContext;
-    private List<Section> mSectionList;
+    private final Context mContext;
+    private final List<SectionItem> mSectionList;
 //    private OnExpandableListViewItemClickListener onExpandableListViewItemClickListener;
 
-    public NavigationExpandableListViewAdapter(Context mContext, List<Section> mSectionList) {
+    public NavigationExpandableListViewAdapter(Context mContext, List<SectionItem> mSectionList) {
         this.mContext = mContext;
         this.mSectionList = mSectionList;
     }
@@ -40,17 +35,17 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return 0;
+        return mSectionList.get(groupPosition).getSubSections().size();
     }
 
     @Override
-    public Section getGroup(int groupPosition) {
+    public SectionItem getGroup(int groupPosition) {
         return mSectionList.get(groupPosition);
     }
 
     @Override
     public SectionItem getChild(int groupPosition, int childPosition) {
-        return null;
+        return mSectionList.get(groupPosition).getSubSections().get(childPosition);
     }
 
     @Override
@@ -75,7 +70,7 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
             mGroupViewHolder = new GroupViewHolder();
             convertView = ((LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).
                     inflate(R.layout.navigation_group_row, parent, false);
-            mGroupViewHolder.mSectionNameLayout = convertView.findViewById(R.id.parantSectionNameLayout);
+            mGroupViewHolder.mSectionNameLayout = convertView.findViewById(R.id.parentSectionNameLayout);
             mGroupViewHolder.textView = convertView.findViewById(R.id.title);
             mGroupViewHolder.mExpandButton = convertView.findViewById(R.id.expandButton);
             mGroupViewHolder.mNewTagImageView = convertView.findViewById(R.id.newTagImage);
@@ -87,8 +82,8 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
 
         if(getGroup(groupPosition) != null) {
 
-            String mSectionName = getGroup(groupPosition).getSectionName();
-            Section sectionBean = getGroup(groupPosition);
+            String mSectionName = getGroup(groupPosition).getName();
+            SectionItem sectionBean = getGroup(groupPosition);
 //            boolean isNewSection = sectionBean != null && sectionBean.isNew();
 //            String customeScreen = getGroup(groupPosition).getCustomScreen();
             if(mSectionName == null) {
@@ -99,8 +94,7 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
 
 
 
-            //List<SectionItem> mChildList = getGroup(groupPosition).getSubSections();
-            List<SectionItem> mChildList = null;
+            List<SectionItem> mChildList = getGroup(groupPosition).getSubSections();
             if (mChildList != null && mChildList.size() > 0) {
                 mGroupViewHolder.mExpandButton.setVisibility(View.VISIBLE);
             } else {
