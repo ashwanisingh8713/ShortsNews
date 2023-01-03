@@ -1,4 +1,4 @@
-package com.ns.news.presentation.activity
+package com.ns.news.presentation.activity.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,9 +13,9 @@ class ArticleNdWidgetViewModel(private val repository: ApiRepository) : ViewMode
 
     private var articleNdWidgetResult: Flow<PagingData<Cell>>? = null
 
-    suspend fun getArticleNdWidget(sectionId: String): Flow<PagingData<Cell>> {
+    suspend fun getArticleNdWidget(sectionId: String, url: String): Flow<PagingData<Cell>> {
         val newResult: Flow<PagingData<Cell>> =
-            repository.getArticleNdWidget(sectionId).cachedIn(viewModelScope)
+            repository.getArticleNdWidget(sectionId, url).cachedIn(viewModelScope)
         articleNdWidgetResult = newResult
         return newResult
     }

@@ -30,7 +30,7 @@ class SectionViewModel(private val repository: ApiRepository): ViewModel() {
         var drawer: MutableList<SectionItem> = mutableListOf()
         for(section in sections)
             if(section.inBreadcrumb) {
-                breadcrums.add(Section(section.id, section.name, section.api, section.subSections!!.isEmpty()))
+                breadcrums.add(Section(section.sectionId, section.name, section.api, section.subSections!!.isEmpty()))
             } else {
                 drawer.add(section)
             }

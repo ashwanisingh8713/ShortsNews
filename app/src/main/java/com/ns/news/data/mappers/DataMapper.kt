@@ -1,16 +1,15 @@
 package com.ns.news.data.mappers
 
-import com.ns.news.data.api.model.AWDataItem
 import com.ns.news.data.api.model.CellsItem
 import com.ns.news.data.api.model.SectionItem
 import com.ns.news.domain.Result
 import com.ns.news.domain.model.Cell
 
-class SectionMapper {
+class DataMapper {
     fun toDomain(categoryItem: SectionItem): Result<SectionItem> {
-        val(id, api, name, inHamburger, inBreadcrumb, logo, subSections, _
+        val(sectionId, api, name, inHamburger, inBreadcrumb, logo, subSections, _
         ) = categoryItem
-        return SectionItem.of(id=id, api=api, name=name, inHamburger=inHamburger, inBreadcrumb=inBreadcrumb,
+        return SectionItem.of(sectionId=sectionId, api=api, name=name, inHamburger=inHamburger, inBreadcrumb=inBreadcrumb,
         logo=logo, subSections=subSections)
     }
 

@@ -7,7 +7,7 @@ import com.news.data.api.ApiConstants.CATEGORY
 import com.news.data.api.ApiConstants.LANGUAGE
 import com.news.data.api.ApiConstants.SECTION
 import com.news.data.api.ConnectionManager
-import com.news.data.api.interceptors.NetworkStatusInterceptor
+import com.ns.news.data.api.interceptors.NetworkStatusInterceptor
 import com.news.data.api.model.CategoryResponse
 import com.ns.news.data.api.model.ArticleNdWidgetResponse
 import com.ns.news.data.api.model.LanguageResponse
@@ -35,10 +35,16 @@ interface NewsApi {
   suspend fun getArticleNdWidget(@Url url: String): ArticleNdWidgetResponse
 
   companion object {
-    fun create(context: Context): NewsApi {
+    fun create(): NewsApi {
+        val logger = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { Log.d("API", it) })
+        logger.level = HttpLoggingInterceptor.Level.BASIC
+
+        val client = OkHttpClient.Builder()
+            .addInterceptor(logger)
+            .build()
       return Retrofit.Builder()
           .baseUrl(BASE_ENDPOINT)
-          .client(createOkHttpClient(context))
+          .client(client)
           .addConverterFactory(MoshiConverterFactory.create())
           .build()
           .create(NewsApi::class.java)

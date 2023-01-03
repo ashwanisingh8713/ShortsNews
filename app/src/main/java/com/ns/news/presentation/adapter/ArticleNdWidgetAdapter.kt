@@ -7,12 +7,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.ns.news.data.api.model.CellsItem
 import com.ns.news.databinding.ArticleItemBinding
+import com.ns.news.domain.model.Cell
 
 /**
  * Adapter for the [RecyclerView] in [ArticleNdWidgetFragment].
  */
 
-class ArticleNdWidgetAdapter : PagingDataAdapter<CellsItem, ArticleNdWidgetAdapter.ArticleViewHolder>(REPO_COMPARATOR) {
+class ArticleNdWidgetAdapter : PagingDataAdapter<Cell, ArticleNdWidgetAdapter.ArticleViewHolder>(REPO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
         return ArticleViewHolder(
@@ -33,7 +34,7 @@ class ArticleNdWidgetAdapter : PagingDataAdapter<CellsItem, ArticleNdWidgetAdapt
     class ArticleViewHolder(
         private val binding: ArticleItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: CellsItem, position: Int) {
+        fun bind(item: Cell, position: Int) {
             binding.apply {
                 titleTv.text = item.cellType+" :: $position"
             }
@@ -41,12 +42,13 @@ class ArticleNdWidgetAdapter : PagingDataAdapter<CellsItem, ArticleNdWidgetAdapt
     }
 
     companion object {
-        private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<CellsItem>() {
-            override fun areItemsTheSame(oldItem: CellsItem, newItem: CellsItem): Boolean =
-                oldItem.title == newItem.title
+        private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Cell>() {
+            override fun areContentsTheSame(oldItem: Cell, newItem: Cell): Boolean =
+                oldItem.data == newItem.data
 
-            override fun areContentsTheSame(oldItem: CellsItem, newItem: CellsItem): Boolean =
-                oldItem == newItem
+            override fun areItemsTheSame(oldItem: Cell, newItem: Cell): Boolean =
+                oldItem.type == newItem.type
+
         }
     }
 }

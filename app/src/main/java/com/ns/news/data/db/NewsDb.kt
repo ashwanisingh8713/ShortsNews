@@ -14,30 +14,21 @@
  * limitations under the License.
  */
 
-package com.ns.pagingwithnetwork.reddit.db
+package com.ns.news.data.db
 
 import android.content.Context
 import androidx.room.*
-import com.android.example.paging.pagingwithnetwork.reddit.db.SubredditRemoteKeyDao
-import com.ns.libpagingwithnetwork.reddit.article.AWData
-import com.ns.libpagingwithnetwork.reddit.article.Cell
-import com.ns.libpagingwithnetwork.reddit.vo.SubredditRemoteKey
-import com.ns.libpagingwithnetwork.reddit.article.CellsItem
-import com.ns.libpagingwithnetwork.reddit.article.SectionPageRemote
-import com.ns.libpagingwithnetwork.reddit.vo.RedditPost
+import com.ns.news.domain.model.Cell
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-/**
- * Database schema used by the DbRedditPostRepository
- */
 @Database(
-    entities = [RedditPost::class, SubredditRemoteKey::class, Cell::class, SectionPageRemote::class],
+    entities = [Cell::class, SectionPageRemote::class],
     version = 1,
     exportSchema = false
 )
 @TypeConverters(ArticleConverter::class)
-abstract class RedditDb : RoomDatabase() {
+abstract class NewsDb : RoomDatabase() {
     companion object {
         val moshi: Moshi = Moshi.Builder()
             .addLast(KotlinJsonAdapterFactory())
@@ -45,21 +36,16 @@ abstract class RedditDb : RoomDatabase() {
 
         private val roomConverter = ArticleConverter(moshi)
 
-        fun create(context: Context, useInMemory: Boolean): RedditDb {
-            val databaseBuilder = if (useInMemory) {
-                Room.inMemoryDatabaseBuilder(context, RedditDb::class.java)
-            } else {
-                Room.databaseBuilder(context, RedditDb::class.java, "reddit.db").addTypeConverter(roomConverter)
-            }
-            return databaseBuilder
+        fun create(context: Context): NewsDb {
+            val databaseBuilder =
+                Room.databaseBuilder(context, NewsDb::class.java, "news.db").addTypeConverter(roomConverter)
 
+            return databaseBuilder
                 .fallbackToDestructiveMigration()
                 .build()
         }
     }
 
-    abstract fun posts(): RedditPostDao
-    abstract fun remoteKeys(): SubredditRemoteKeyDao
     abstract fun cellItems(): CellItemsDao
     abstract fun remotePage(): SectionPageRemoteDao
 }

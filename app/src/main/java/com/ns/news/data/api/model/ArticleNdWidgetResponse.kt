@@ -1,8 +1,40 @@
 package com.ns.news.data.api.model
 
 
+import com.ns.news.domain.model.Cell
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
+data class CellsItem(@Json(name = "action_text")
+                     val actionText: String = "",
+                     @Json(name = "data")
+                     val data: List<AWDataItem> = emptyList(),
+                     @Json(name = "link")
+                     val link: String = "",
+                     @Json(name = "section_id")
+                     val sectionId: String = "",
+                     @Json(name = "cell_type")
+                     val cellType: String = "",
+                     @Json(name = "type")
+                     val type: String = "",
+                     @Json(name = "title")
+                     val title: String = "") {
+
+    companion object {
+        fun of(
+               actionText: String,
+               data: List<AWDataItem>,
+               link: String,
+               sectionId: String,
+               cellType: String,
+               type: String,
+               title: String):Cell {
+            return Cell(actionText= actionText, data = data, link = link,sectionId = sectionId,
+                cellType = cellType, type = type, title = title)
+        }
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class AWDataItem(@Json(name = "category_name")
@@ -51,22 +83,6 @@ data class Images(@Json(name = "thumbnail")
                   val medium: String = "",
                   @Json(name = "medium_large")
                   val mediumLarge: String = "")
-
-@JsonClass(generateAdapter = true)
-data class CellsItem(@Json(name = "action_text")
-                     val actionText: String = "",
-                     @Json(name = "data")
-                     val data: List<AWDataItem> = emptyList(),
-                     @Json(name = "link")
-                     val link: String = "",
-                     /*@Json(name = "id")
-                     val id: String = "",*/
-                     @Json(name = "cell_type")
-                     val cellType: String = "",
-                     @Json(name = "type")
-                     val type: String = "",
-                     @Json(name = "title")
-                     val title: String = "")
 
 @JsonClass(generateAdapter = true)
 data class ArticleNdWidgetResponse(@Json(name = "msg")

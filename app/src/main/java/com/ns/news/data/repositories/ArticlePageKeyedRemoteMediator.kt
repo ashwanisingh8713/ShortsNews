@@ -7,22 +7,23 @@ import androidx.paging.LoadType.*
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.ns.libpagingwithnetwork.reddit.article.Cell
-import com.ns.pagingwithnetwork.reddit.api.RedditApi
-import com.ns.pagingwithnetwork.reddit.db.RedditDb
-import com.ns.libpagingwithnetwork.reddit.article.CellsItem
-import com.ns.libpagingwithnetwork.reddit.article.SectionPageRemote
-import com.ns.pagingwithnetwork.reddit.db.CellItemsDao
-import com.ns.pagingwithnetwork.reddit.db.SectionPageRemoteDao
+import com.ns.news.data.api.NewsApi
+import com.ns.news.data.db.CellItemsDao
+import com.ns.news.data.db.NewsDb
+import com.ns.news.data.db.SectionPageRemote
+import com.ns.news.data.db.SectionPageRemoteDao
+import com.ns.news.data.mappers.DataMapper
+import com.ns.news.domain.model.Cell
 import retrofit2.HttpException
 import java.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
 class ArticlePageKeyedRemoteMediator(
-    private val db: RedditDb,
-    private val redditApi: RedditApi,
+    private val db: NewsDb,
+    private val newsApi: NewsApi,
     private val sectionId: String,
-    private val url: String
+    private val url: String,
+    private val sectionMapper: DataMapper,
 ) : RemoteMediator<Int, Cell>() {
     private val cellItemsDao: CellItemsDao = db.cellItems()
     private val remoteKeyDao: SectionPageRemoteDao = db.remotePage()
@@ -69,7 +70,7 @@ class ArticlePageKeyedRemoteMediator(
             Log.i("Ashwani", "PageState.initialLoadSize :: ${state.config.initialLoadSize}")
             Log.i("Ashwani", "PageState.pageSize :: ${state.config.pageSize}")
 
-            var data = redditApi.getArticleNdWidget(url+loadKey).data
+            var data = newsApi.getArticleNdWidget(url+loadKey).data
 
 
             val items = data.cells
@@ -83,7 +84,7 @@ class ArticlePageKeyedRemoteMediator(
                 remoteKeyDao.insert(SectionPageRemote(sectionId, nextLoadKey))
                 var cells = items
                     .orEmpty()
-                    .map { CellsItem.of(it, sectionId) }
+                    .map { sectionMapper.toDomain(it, sectionId) }
                 cellItemsDao.insertAll(cells)
             }
 

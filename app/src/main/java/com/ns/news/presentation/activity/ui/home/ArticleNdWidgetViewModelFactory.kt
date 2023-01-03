@@ -1,9 +1,8 @@
-package com.ns.news.presentation.activity
+package com.ns.news.presentation.activity.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ns.news.domain.repositories.ApiRepository
-import com.ns.news.presentation.activity.ui.home.ArticleNdWidgetViewModel
 
 object ArticleNdWidgetViewModelFactory: ViewModelProvider.Factory {
 

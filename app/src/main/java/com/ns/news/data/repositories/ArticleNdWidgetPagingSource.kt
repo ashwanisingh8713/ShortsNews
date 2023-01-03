@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package com.ns.news.data.api
+package com.ns.news.data.repositories
 
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.ns.news.data.api.model.CellsItem
+import com.ns.news.data.api.NewsApi
+import com.ns.news.data.mappers.DataMapper
 import com.ns.news.domain.model.Cell
 
 private const val UNSPLASH_STARTING_PAGE_INDEX = 1
 
 class ArticleNdWidgetPagingSource(
     private val apis: NewsApi,
-    private val url: String
+    private val url: String,
+    private val mapper: DataMapper,
 ) : PagingSource<Int, Cell>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Cell> {
@@ -45,7 +47,7 @@ class ArticleNdWidgetPagingSource(
 
             var cells = cellsItems
                 .orEmpty()
-                .map { CellsItem.of(it) }
+                .map { mapper.toDomain(it) }
 
             LoadResult.Page(
                 data = cells,

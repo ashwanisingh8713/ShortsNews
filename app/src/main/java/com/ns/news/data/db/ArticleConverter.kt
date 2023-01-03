@@ -1,11 +1,11 @@
-package com.ns.pagingwithnetwork.reddit.db
+package com.ns.news.data.db
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.ns.libpagingwithnetwork.reddit.article.AWDataItem
-import com.ns.libpagingwithnetwork.reddit.article.AuthorItem
-import com.ns.libpagingwithnetwork.reddit.article.Images
-import com.ns.libpagingwithnetwork.reddit.article.MediaItem
+import com.ns.news.data.api.model.AWDataItem
+import com.ns.news.data.api.model.AuthorItem
+import com.ns.news.data.api.model.Images
+import com.ns.news.data.api.model.MediaItem
 import com.squareup.moshi.*
 import java.lang.reflect.Type
 

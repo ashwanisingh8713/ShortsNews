@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.ns.news.presentation.activity.ui.dashboard.DashboardFragment
-import com.ns.news.presentation.activity.ui.home.HomeFragment
+import com.ns.news.presentation.activity.ui.home.HomeTabFragment
 import com.ns.news.presentation.activity.ui.notifications.NotificationsFragment
 import com.ns.news.presentation.activity.ui.more.MoreFragment
 
@@ -20,11 +20,11 @@ class BottomNavPagerAdapter(fragment: FragmentActivity) : FragmentStateAdapter(f
 
     override fun createFragment(position: Int): Fragment {
         return when(position) {
-            0-> HomeFragment()
+            0-> HomeTabFragment()
             1-> DashboardFragment()
             2-> NotificationsFragment()
             3-> MoreFragment()
-            else -> HomeFragment()
+            else -> HomeTabFragment()
 
         }
     }

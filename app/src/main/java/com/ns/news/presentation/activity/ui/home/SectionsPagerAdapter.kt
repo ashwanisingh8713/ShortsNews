@@ -15,6 +15,6 @@ class SectionsPagerAdapter(fragment: Fragment, private val sections: List<Sectio
     }
 
     override fun createFragment(position: Int): Fragment {
-        return ArticleNdWidgetFragment.newInstance(sections[position])
+        return HomeArticleNdWidgetFragment.newInstance(sections[position])
     }
 }

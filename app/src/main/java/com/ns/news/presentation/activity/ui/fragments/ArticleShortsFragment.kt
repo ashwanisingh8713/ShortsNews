@@ -1,6 +1,5 @@
 package com.ns.news.presentation.activity.ui.fragments
 
-import android.app.ActionBar
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,9 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.viewpager2.widget.ViewPager2
-import com.news.data.api.ConnectionManager
-import com.news.data.api.interceptors.NetworkStatusInterceptor
-import com.ns.news.R
 import com.ns.news.databinding.FragmentArticleShortsBinding
 import com.ns.news.presentation.activity.ui.shorts.adapter.ArticleShortsPagerAdapter
 import com.ns.news.presentation.activity.ui.shorts.data.ArticleShortsData

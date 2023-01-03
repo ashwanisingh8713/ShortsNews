@@ -32,7 +32,7 @@
  * THE SOFTWARE.
  */
 
-package com.news.data.api.interceptors
+package com.ns.news.data.api.interceptors
 
 import com.news.data.api.ConnectionManager
 import com.news.domain.model.NetworkUnavailable

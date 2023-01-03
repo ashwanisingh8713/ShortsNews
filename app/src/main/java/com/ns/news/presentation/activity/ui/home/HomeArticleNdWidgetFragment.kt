@@ -14,15 +14,13 @@ import androidx.paging.LoadState
 import com.ns.news.databinding.FragmentArticleNdWidgetBinding
 import com.ns.news.domain.asMergedLoadStates
 import com.ns.news.domain.model.Section
-import com.ns.news.presentation.activity.ArticleNdWidgetViewModel
-import com.ns.news.presentation.activity.ArticleNdWidgetViewModelFactory
 import com.ns.news.presentation.adapter.ArticleNdWidgetAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 
 
-class ArticleNdWidgetFragment : Fragment() {
+class HomeArticleNdWidgetFragment : Fragment() {
 
     private val adapter = ArticleNdWidgetAdapter()
     private val viewModel: ArticleNdWidgetViewModel by viewModels { ArticleNdWidgetViewModelFactory }
@@ -70,7 +68,7 @@ class ArticleNdWidgetFragment : Fragment() {
     private fun requestPaginationApi() {
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.getArticleNdWidget(section.sectionApi)
+            viewModel.getArticleNdWidget(sectionId = section.sectionId, url = section.sectionApi)
                 .collectLatest {
                     adapter.submitData(it)
                     Log.i("Ashwani", "Response :: ArticleNdWidget")
@@ -111,8 +109,8 @@ class ArticleNdWidgetFragment : Fragment() {
          * number.
          */
         @JvmStatic
-        fun newInstance(section: Section): ArticleNdWidgetFragment {
-            return ArticleNdWidgetFragment().apply {
+        fun newInstance(section: Section): HomeArticleNdWidgetFragment {
+            return HomeArticleNdWidgetFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_SECTION, section)
                 }

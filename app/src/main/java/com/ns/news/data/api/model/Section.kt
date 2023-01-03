@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class SectionItem(@Json(name = "section_id")
-                        val id: Int = 0,
+                        val sectionId: String = "",
                        @Json(name = "api")
                        val api: String = "",
                        @Json(name = "name")
@@ -26,14 +26,12 @@ data class SectionItem(@Json(name = "section_id")
 
     companion object {
         fun of(
-            id: Int, api: String, name: String,
+            sectionId: String, api: String, name: String,
             inHamburger: Boolean, inBreadcrumb: Boolean, logo: Logo, subSections: List<SectionItem>?
         ): Result<SectionItem> {
             return Result{
-                requireNotNull(id)
-                requireNotNull(api)
                 SectionItem(
-                    id = id,
+                    sectionId = sectionId,
                     api = api,
                     name = name,
                     inBreadcrumb = inBreadcrumb,
