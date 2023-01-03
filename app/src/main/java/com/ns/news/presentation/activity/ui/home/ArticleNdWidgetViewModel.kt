@@ -5,19 +5,18 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.ns.news.data.api.model.CellsItem
+import com.ns.news.domain.model.Cell
 import com.ns.news.domain.repositories.ApiRepository
 import kotlinx.coroutines.flow.Flow
 
 class ArticleNdWidgetViewModel(private val repository: ApiRepository) : ViewModel() {
 
-    private var currentQueryValue: String? = null
-    private var currentSearchResult: Flow<PagingData<CellsItem>>? = null
+    private var articleNdWidgetResult: Flow<PagingData<Cell>>? = null
 
-    suspend fun getArticleNdWidget(queryString: String): Flow<PagingData<CellsItem>> {
-        currentQueryValue = queryString
-        val newResult: Flow<PagingData<CellsItem>> =
-            repository.getArticleNdWidget(queryString).cachedIn(viewModelScope)
-        currentSearchResult = newResult
+    suspend fun getArticleNdWidget(sectionId: String): Flow<PagingData<Cell>> {
+        val newResult: Flow<PagingData<Cell>> =
+            repository.getArticleNdWidget(sectionId).cachedIn(viewModelScope)
+        articleNdWidgetResult = newResult
         return newResult
     }
 

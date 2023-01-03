@@ -20,15 +20,16 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.ns.news.data.api.model.CellsItem
+import com.ns.news.domain.model.Cell
 
 private const val UNSPLASH_STARTING_PAGE_INDEX = 1
 
 class ArticleNdWidgetPagingSource(
     private val apis: NewsApi,
     private val url: String
-) : PagingSource<Int, CellsItem>() {
+) : PagingSource<Int, Cell>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CellsItem> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Cell> {
         val page = params.key ?: UNSPLASH_STARTING_PAGE_INDEX
         return try {
             val response = apis.getArticleNdWidget(url+page)
@@ -42,8 +43,12 @@ class ArticleNdWidgetPagingSource(
             Log.i("Ashwani", "PrevKey :: $prevKey")
             Log.i("Ashwani", "NextKey :: $pag")
 
+            var cells = cellsItems
+                .orEmpty()
+                .map { CellsItem.of(it) }
+
             LoadResult.Page(
-                data = cellsItems,
+                data = cells,
                 prevKey = prevKey,
                 nextKey = nextKey,
                 itemsBefore = LoadResult.Page.COUNT_UNDEFINED,
@@ -54,7 +59,7 @@ class ArticleNdWidgetPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, CellsItem>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, Cell>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             // This loads starting from previous page, but since PagingConfig.initialLoadSize spans
             // multiple pages, the initial load will still load items centered around

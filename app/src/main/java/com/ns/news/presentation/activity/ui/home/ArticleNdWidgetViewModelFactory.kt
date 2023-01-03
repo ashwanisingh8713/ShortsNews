@@ -3,6 +3,7 @@ package com.ns.news.presentation.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ns.news.domain.repositories.ApiRepository
+import com.ns.news.presentation.activity.ui.home.ArticleNdWidgetViewModel
 
 object ArticleNdWidgetViewModelFactory: ViewModelProvider.Factory {
 
