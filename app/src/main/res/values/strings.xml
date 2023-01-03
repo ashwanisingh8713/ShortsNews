@@ -17,9 +17,6 @@
     <string name="title_notifications">Videos</string>
     <string name="title_more">Podcast</string>
     <string name="title_activity_bottom_nav">BottomNavActivity</string>
-    <string name="title_activity_tabbed">TabbedActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
     <string name="article_shorts">Article Shorts</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

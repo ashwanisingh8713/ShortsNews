@@ -1,6 +1,7 @@
 package com.ns.news.data.api.model
 
 
+import com.ns.news.data.db.Section
 import com.ns.news.domain.Result
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -13,11 +14,11 @@ data class SectionItem(@Json(name = "section_id")
                        @Json(name = "name")
                        val name: String = "",
                        @Json(name = "show_in_hamburger")
-                        val inHamburger: Boolean = false,
+                       val inHamburger: Boolean = false,
                        @Json(name = "show_in_breadcrumbs")
-                        val inBreadcrumb: Boolean = false,
+                       val inBreadcrumb: Boolean = false,
                        @Json(name = "logo")
-                        val logo: Logo,
+                       val logo: Logo,
                        @Json(name = "subSections")
                        val subSections: List<SectionItem>? = listOf(),
                        @Json(name = "slug")
@@ -41,6 +42,21 @@ data class SectionItem(@Json(name = "section_id")
                 )
             }
 
+        }
+        fun of(
+            sectionId: String, api: String, name: String,
+            inHamburger: Boolean, inBreadcrumb: Boolean, logo: Logo, subSections: List<SectionItem>, slug: String
+        ): Section {
+            return Section(
+                    sectionId = sectionId,
+                    api = api,
+                    name = name,
+                    inBreadcrumb = inBreadcrumb,
+                    inHamburger = inHamburger,
+                    logo = logo,
+                    subSections = subSections,
+                    slug = slug
+                )
         }
     }
 

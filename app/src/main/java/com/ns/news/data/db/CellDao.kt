@@ -5,10 +5,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.ns.news.domain.model.Cell
 
 @Dao
-interface CellItemsDao {
+interface CellDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(cells: List<Cell>)
 

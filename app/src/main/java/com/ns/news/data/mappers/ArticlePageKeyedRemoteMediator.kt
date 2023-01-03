@@ -8,11 +8,11 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.ns.news.data.api.NewsApi
-import com.ns.news.data.db.CellItemsDao
+import com.ns.news.data.db.CellDao
 import com.ns.news.data.db.NewsDb
 import com.ns.news.data.db.SectionPageRemote
 import com.ns.news.data.db.SectionPageRemoteDao
-import com.ns.news.domain.model.Cell
+import com.ns.news.data.db.Cell
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -24,7 +24,7 @@ class ArticlePageKeyedRemoteMediator(
     private val url: String,
     private val sectionMapper: DataMapper,
 ) : RemoteMediator<Int, Cell>() {
-    private val cellItemsDao: CellItemsDao = db.cellItems()
+    private val cellItemsDao: CellDao = db.cellItems()
     private val remoteKeyDao: SectionPageRemoteDao = db.remotePage()
 
     override suspend fun initialize(): InitializeAction {

@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.ns.news.databinding.FragmentArticleNdWidgetBinding
 import com.ns.news.domain.asMergedLoadStates
-import com.ns.news.domain.model.Section
+import com.ns.news.domain.model.SectionDrawer
 import com.ns.news.presentation.adapter.ArticleNdWidgetAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -26,7 +26,7 @@ class HomeArticleNdWidgetFragment : Fragment() {
     private val viewModel: ArticleNdWidgetViewModel by viewModels { ArticleNdWidgetViewModelFactory }
 
     private var _binding: FragmentArticleNdWidgetBinding? = null
-    private lateinit var section: Section
+    private lateinit var section: SectionDrawer
 
     private val binding get() = _binding!!
 
@@ -34,7 +34,7 @@ class HomeArticleNdWidgetFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         section = if (Build.VERSION.SDK_INT >= 33) {
-            arguments?.getParcelable(ARG_SECTION, Section::class.java)!!
+            arguments?.getParcelable(ARG_SECTION, SectionDrawer::class.java)!!
         } else {
             arguments?.getParcelable(ARG_SECTION)!!
         }
@@ -109,7 +109,7 @@ class HomeArticleNdWidgetFragment : Fragment() {
          * number.
          */
         @JvmStatic
-        fun newInstance(section: Section): HomeArticleNdWidgetFragment {
+        fun newInstance(section: SectionDrawer): HomeArticleNdWidgetFragment {
             return HomeArticleNdWidgetFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_SECTION, section)

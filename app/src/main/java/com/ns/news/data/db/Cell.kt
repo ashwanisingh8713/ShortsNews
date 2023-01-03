@@ -1,4 +1,4 @@
-package com.ns.news.domain.model
+package com.ns.news.data.db
 
 import androidx.room.Entity
 import androidx.room.Index

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.ns.news.data.api.NewsApi
-import com.ns.news.domain.model.Cell
+import com.ns.news.data.db.Cell
 
 private const val UNSPLASH_STARTING_PAGE_INDEX = 1
 

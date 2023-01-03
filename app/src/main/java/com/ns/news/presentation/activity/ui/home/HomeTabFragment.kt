@@ -11,7 +11,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ns.news.databinding.FragmentHomeBinding
-import com.ns.news.domain.model.Section
+import com.ns.news.domain.model.SectionDrawer
 import com.ns.news.presentation.shared.SectionTypeSharedViewModel
 import com.ns.news.presentation.shared.SectionTypeSharedViewModelFactory
 
@@ -37,7 +37,7 @@ class HomeTabFragment : Fragment() {
         return root
     }
 
-    fun setupUI(sections: List<Section>) {
+    fun setupUI(sections: List<SectionDrawer>) {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, sections)
         val viewPager: ViewPager2 = binding.viewPager
         viewPager.adapter = sectionsPagerAdapter

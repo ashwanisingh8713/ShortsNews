@@ -3,6 +3,7 @@ package com.ns.news.data.repositories
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.ns.news.data.api.NewsApi
 import com.ns.news.data.mappers.DataMapper
 import com.ns.news.domain.Result
@@ -10,7 +11,10 @@ import com.ns.news.domain.repositories.ApiRepository
 import com.ns.news.domain.requireValue
 import com.news.utils.DispatchersProvider
 import com.ns.news.data.db.NewsDb
+import com.ns.news.data.db.Section
 import com.ns.news.data.mappers.ArticlePageKeyedRemoteMediator
+import com.ns.news.data.mappers.SectionRemoteMediator
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class NewsRepository(
@@ -32,9 +36,17 @@ class NewsRepository(
         }
     }
 
-    override suspend fun getSections() = withContext(dispatchersProvider.io()) {
+    @OptIn(ExperimentalPagingApi::class)
+    override suspend fun getSectionsDB(languageId: String) = Pager(
+    config = PagingConfig(50),
+    remoteMediator = SectionRemoteMediator(db, newsApi = apis, languageId, mapper)
+    ) {
+        db.sectionDao().getSections()
+    }.flow
+
+    override suspend fun getSectionsDirect(languageId: String) = withContext(dispatchersProvider.io()) {
         Result {
-            apis.getSection().data.sections
+            apis.getSection(languageId).data.sections
                 .orEmpty()
                 .map { mapper.toDomain(it) }
                 .map { it.requireValue() }

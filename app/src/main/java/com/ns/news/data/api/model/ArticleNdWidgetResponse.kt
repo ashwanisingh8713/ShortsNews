@@ -1,7 +1,7 @@
 package com.ns.news.data.api.model
 
 
-import com.ns.news.domain.model.Cell
+import com.ns.news.data.db.Cell
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -29,7 +29,7 @@ data class CellsItem(@Json(name = "action_text")
                sectionId: String,
                cellType: String,
                type: String,
-               title: String):Cell {
+               title: String): Cell {
             return Cell(actionText= actionText, data = data, link = link,sectionId = sectionId,
                 cellType = cellType, type = type, title = title)
         }

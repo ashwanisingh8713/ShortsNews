@@ -29,7 +29,7 @@ interface NewsApi {
   suspend fun getLanguage(): LanguageResponse
 
   @GET("$SECTION/{language}")
-  suspend fun getSection(@Path("language") languageId: String = "1"): SectionResponse
+  suspend fun getSection(@Path("language") languageId: String): SectionResponse
 
   @GET("")
   suspend fun getArticleNdWidget(@Url url: String): ArticleNdWidgetResponse

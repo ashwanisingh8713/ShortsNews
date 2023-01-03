@@ -5,9 +5,8 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.ns.news.data.api.model.CellsItem
 import com.ns.news.databinding.ArticleItemBinding
-import com.ns.news.domain.model.Cell
+import com.ns.news.data.db.Cell
 
 /**
  * Adapter for the [RecyclerView] in [ArticleNdWidgetFragment].
