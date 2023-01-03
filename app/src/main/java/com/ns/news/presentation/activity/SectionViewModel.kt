@@ -3,7 +3,6 @@ package com.ns.news.presentation.activity
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ns.news.data.api.model.SectionItem
 import com.ns.news.data.db.Section
 import com.ns.news.domain.repositories.ApiRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,12 +26,14 @@ class SectionViewModel(private val repository: ApiRepository): ViewModel() {
     private fun handlePageData(sections: List<Section>) {
         var breadcrums: MutableList<Section> = mutableListOf()
         var drawer: MutableList<Section> = mutableListOf()
-        for(section in sections)
-            if(section.inBreadcrumb) {
+        for(section in sections) {
+            if (section.inBreadcrumb) {
                 breadcrums.add(section)
-            } else {
+            }
+            if (section.inHamburger) {
                 drawer.add(section)
             }
+        }
         _viewState.value = Pair(drawer, breadcrums)
     }
 
