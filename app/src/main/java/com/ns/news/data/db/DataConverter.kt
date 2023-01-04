@@ -112,4 +112,5 @@ class DataConverter(var moshi: Moshi) {
         return moshi.adapter(Logo::class.java).fromJson(json)
     }
 
+
 }

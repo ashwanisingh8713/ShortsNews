@@ -26,8 +26,6 @@ class TopicViewModel(private val repository: ApiRepository): ViewModel() {
 
     }
 
-
-
     private fun handlePageData(categoryPageData: CategoryPageData) {
         _viewState.value = categoryPageData
     }

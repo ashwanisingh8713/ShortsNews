@@ -2,6 +2,7 @@ package com.ns.news.data.db
 
 import android.content.Context
 import androidx.room.*
+import com.ns.news.domain.model.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 

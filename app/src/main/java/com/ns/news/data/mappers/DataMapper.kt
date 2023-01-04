@@ -14,7 +14,7 @@ class DataMapper {
         logo=logo, subSections=subSections)
     }*/
 
-    fun toDomain(cellItem: CellsItem, sectionId: String = "") : Cell {
+    fun toDomain(cellItem: CellsItem, sectionId: String) : Cell {
         val(
         actionText,
         data,

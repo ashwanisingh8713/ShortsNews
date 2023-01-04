@@ -60,6 +60,7 @@ dependencies {
     implementation "com.squareup.moshi:moshi-kotlin:1.14.0"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:1.14.0"
 
+
     // Coroutine
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
