@@ -36,16 +36,20 @@ data class CellsItem(
             title: String
         ): Cell {
             var viewType = when (type) {
+                "PHOTOS" -> ViewType.ARTICLE_VT_PHOTOS
+                "VIDEO" -> ViewType.ARTICLE_VT_VIDEO
                 "STANDART" -> ViewType.ARTICLE_VT_STANDARD
                 "TOP_NEWS_COROUSAL" -> ViewType.WIDGET_VT_TOP_NEWS_COROUSAL
                 "HERO_PLAIN_WIDGET" -> ViewType.WIDGET_VT_HERO_PLAIN_WIDGET
                 "WEB_WIDGET" -> ViewType.WIDGET_VT_WEB_WIDGET
                 "PLAIN_WITH_COROUSAL" -> ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL
                 "STACK_CARD_WITH_COROUSAL" -> ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL
+                "ALL_TOPICS_WIDGET" -> ViewType.WIDGET_VT_ALL_TOPICS_WIDGET
+                "FOR_YOU_WIDGET" -> ViewType.WIDGET_VT_FOR_YOU_WIDGET
                 else -> {
                     when(cellType) {
-                        "" -> ViewType.ARTICLE_VT_NOT_VALID
-                        "" -> ViewType.WIDGET_VT_NOT_VALID
+//                        "" -> ViewType.ARTICLE_VT_NOT_VALID
+//                        "" -> ViewType.WIDGET_VT_NOT_VALID
                         else -> ViewType.VT_NOT_DEFINED
                     }
                 }

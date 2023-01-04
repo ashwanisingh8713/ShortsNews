@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".presentation.activity.ui.home.HomeArticleNdWidgetFragment">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <com.ns.view.customviews.MySwipeToRefresh
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/article_item" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            tools:listitem="@layout/article_standard" />
+    </com.ns.view.customviews.MySwipeToRefresh>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

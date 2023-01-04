@@ -49,7 +49,7 @@ class HomeTabFragment : Fragment() {
         }*/
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getBreadcrumb().collect {
-                setupUI(it)
+                if(it.size>2) setupUI(it.subList(0,1))
             }
         }
     }

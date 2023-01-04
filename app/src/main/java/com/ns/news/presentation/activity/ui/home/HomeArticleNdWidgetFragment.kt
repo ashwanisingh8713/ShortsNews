@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import coil.imageLoader
 import com.ns.news.data.db.Section
 import com.ns.news.databinding.FragmentArticleNdWidgetBinding
 import com.ns.news.domain.asMergedLoadStates
@@ -23,7 +24,7 @@ import kotlinx.coroutines.flow.filter
 
 class HomeArticleNdWidgetFragment : Fragment() {
 
-    private val adapter = ArticleNdWidgetAdapter()
+    private lateinit var adapter: ArticleNdWidgetAdapter
     private val viewModel: ArticleNdWidgetViewModel by viewModels { ArticleNdWidgetViewModelFactory }
 
     private var _binding: FragmentArticleNdWidgetBinding? = null
@@ -48,6 +49,7 @@ class HomeArticleNdWidgetFragment : Fragment() {
     ): View? {
         _binding = FragmentArticleNdWidgetBinding.inflate(inflater, container, false)
         val root = binding.root
+        adapter = ArticleNdWidgetAdapter(requireActivity().imageLoader)
         binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
             header = ArticleLoadStateAdapter(adapter),
             footer = ArticleLoadStateAdapter(adapter)

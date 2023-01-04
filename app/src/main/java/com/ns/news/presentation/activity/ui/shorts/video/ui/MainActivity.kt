@@ -5,7 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
-import com.example.videopager.di.MainModule
+import com.ns.news.presentation.activity.ui.shorts.video.di.MainModule
 import com.ns.news.databinding.MainActivityBinding
 import com.ns.news.utils.CommonFunctions
 import com.videopager.ui.VideoPagerFragment

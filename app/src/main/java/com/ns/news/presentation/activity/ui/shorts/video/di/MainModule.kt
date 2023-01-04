@@ -1,4 +1,4 @@
-package com.example.videopager.di
+package com.ns.news.presentation.activity.ui.shorts.video.di
 
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
