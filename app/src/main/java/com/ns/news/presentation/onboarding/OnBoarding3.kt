@@ -59,11 +59,6 @@ class OnBoarding3 : Fragment() {
     private fun observeViewStateUpdates() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.viewState.collect {
-                Log.i("Ashwani", "Category/Topic :: ${it.categories}")
-
-                // binding.onboardingTitle.text = it.states.statesPageTitle
-                // binding.onboardingSubtitle.text = it.states.statesPageSubTitle
-
                 binding.idFlowlayout.setTagAdapter(object : TagAdapter<Category>(it.categories) {
                     override fun getView(
                         parent: FlowLayout?,

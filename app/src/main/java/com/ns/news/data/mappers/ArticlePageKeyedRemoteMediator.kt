@@ -62,13 +62,6 @@ class ArticlePageKeyedRemoteMediator(
                 }
             }
 
-            Log.i("Ashwani", "##########################################################")
-            Log.i("Ashwani", "loadType :: $loadType")
-            Log.i("Ashwani", "sectionId :: $sectionId")
-            Log.i("Ashwani", "nextPageKey :: $loadKey")
-            Log.i("Ashwani", "PageState.initialLoadSize :: ${state.config.initialLoadSize}")
-            Log.i("Ashwani", "PageState.pageSize :: ${state.config.pageSize}")
-
             var data = newsApi.getArticleNdWidget(url+loadKey).data
 
 

@@ -68,8 +68,6 @@ class OnBoarding2 : Fragment() {
     private fun observeSelectedLanguage() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             sharedSectionViewModel.onBoardingSharedViewModel.collect {
-                Log.i("Ashwani", "OnBoarding - 2 State :: " + it.states.data?.size)
-
                 binding.onboardingTitle.text = it.states.statesPageTitle
                 binding.onboardingSubtitle.text = it.states.statesPageSubTitle
 

@@ -77,7 +77,6 @@ class HomeArticleNdWidgetFragment : Fragment() {
             viewModel.getArticleNdWidget(sectionId = section.sectionId, url = section.api)
                 .collectLatest {
                     adapter.submitData(it)
-                    Log.i("Ashwani", "Response :: ArticleNdWidget")
                 }
         }
 

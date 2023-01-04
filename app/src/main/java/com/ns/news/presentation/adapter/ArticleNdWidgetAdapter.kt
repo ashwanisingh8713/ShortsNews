@@ -1,5 +1,6 @@
 package com.ns.news.presentation.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -61,6 +62,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
             ViewType.WIDGET_VT_FOR_YOU_WIDGET -> R.layout.widget_vt_for_you_widget // NOT DONE
             else -> {
                 R.layout.not_defined
+                Log.i("Ashwani", "Else not defined")
             }
         }
     }

@@ -38,7 +38,7 @@ data class CellsItem(
             var viewType = when (type) {
                 "PHOTOS" -> ViewType.ARTICLE_VT_PHOTOS
                 "VIDEO" -> ViewType.ARTICLE_VT_VIDEO
-                "STANDART" -> ViewType.ARTICLE_VT_STANDARD
+                "STANDARD" -> ViewType.ARTICLE_VT_STANDARD
                 "TOP_NEWS_COROUSAL" -> ViewType.WIDGET_VT_TOP_NEWS_COROUSAL
                 "HERO_PLAIN_WIDGET" -> ViewType.WIDGET_VT_HERO_PLAIN_WIDGET
                 "WEB_WIDGET" -> ViewType.WIDGET_VT_WEB_WIDGET
@@ -46,13 +46,7 @@ data class CellsItem(
                 "STACK_CARD_WITH_COROUSAL" -> ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL
                 "ALL_TOPICS_WIDGET" -> ViewType.WIDGET_VT_ALL_TOPICS_WIDGET
                 "FOR_YOU_WIDGET" -> ViewType.WIDGET_VT_FOR_YOU_WIDGET
-                else -> {
-                    when(cellType) {
-//                        "" -> ViewType.ARTICLE_VT_NOT_VALID
-//                        "" -> ViewType.WIDGET_VT_NOT_VALID
-                        else -> ViewType.VT_NOT_DEFINED
-                    }
-                }
+                else -> ViewType.VT_NOT_DEFINED
             }
             return Cell(
                 actionText = actionText, data = data, link = link, sectionId = sectionId,
