@@ -35,10 +35,10 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
     companion object {
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Cell>() {
             override fun areContentsTheSame(oldItem: Cell, newItem: Cell): Boolean =
-                oldItem.data == newItem.data
+                true//oldItem.data == newItem.data
 
             override fun areItemsTheSame(oldItem: Cell, newItem: Cell): Boolean =
-                oldItem.type == newItem.type
+                true//oldItem.type == newItem.type
 
         }
     }
@@ -168,9 +168,10 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
     class WidgetTopNewsCorousalVH(
         private val binding: WidgetVtTopNewsCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Cell, position: Int, viewType: ViewType) {
-            val adapter = HorizontalRecyclerAdapter(item.data, viewType)
+        fun bind(cell: Cell, position: Int, viewType: ViewType) {
+            val adapter = HorizontalRecyclerAdapter(cell, viewType)
             binding.pager.adapter = adapter
+            binding.cellTitle.text = cell.title
         }
     }
 
@@ -178,7 +179,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         private val binding: WidgetVtPlainWithCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cell, position: Int, viewType: ViewType) {
-            val adapter = HorizontalRecyclerAdapter(item.data, viewType)
+            val adapter = HorizontalRecyclerAdapter(item, viewType)
             binding.pager.adapter = adapter
         }
     }
@@ -186,7 +187,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         private val binding: WidgetVtStackCardWithCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cell, position: Int, viewType: ViewType) {
-            val adapter = HorizontalRecyclerAdapter(item.data, viewType)
+            val adapter = HorizontalRecyclerAdapter(item, viewType)
             binding.pager.adapter = adapter
         }
     }
@@ -210,17 +211,20 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
     class WidgetTopNewsCorousalItemVH(
         private val binding: WidgetVtTopNewsCorousalItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(content: AWDataItem) {
+        fun bind(content: AWDataItem, index: Int) {
             binding.apply {
-                text.text = content.title
+                top9Title.text = content.title
+                top9Index.text = "${index+1}"
             }
         }
     }
 
     class HorizontalRecyclerAdapter(
-        private val data: List<AWDataItem>,
+        private val cell: Cell,
         private val viewType: ViewType
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+        private val contents = cell.data
 
         override fun getItemViewType(position: Int): Int {
             return when (viewType) {
@@ -250,16 +254,16 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val content = data[position]
+            val content = contents[position]
             when (viewType) {
                 ViewType.WIDGET_VT_TOP_NEWS_COROUSAL -> (holder as WidgetTopNewsCorousalItemVH).bind(
-                    content
+                    content, position
                 )
                 ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL -> (holder as WidgetTopNewsCorousalItemVH).bind(
-                    content
+                    content, position
                 )
                 ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL -> (holder as WidgetTopNewsCorousalItemVH).bind(
-                    content
+                    content, position
                 )
                 else-> {
                     (holder as NotDefinedVH).bind()
@@ -268,7 +272,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         }
 
         override fun getItemCount(): Int {
-            return data.size
+            return contents.size
         }
 
 

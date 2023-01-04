@@ -50,10 +50,11 @@ class HomeArticleNdWidgetFragment : Fragment() {
         _binding = FragmentArticleNdWidgetBinding.inflate(inflater, container, false)
         val root = binding.root
         adapter = ArticleNdWidgetAdapter(requireActivity().imageLoader)
-        binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+        /*binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
             header = ArticleLoadStateAdapter(adapter),
             footer = ArticleLoadStateAdapter(adapter)
-        )
+        )*/
+        binding.recyclerView.adapter = adapter.withLoadStateFooter(ArticleLoadStateAdapter(adapter))
         requestPaginationApi()
         return root
     }

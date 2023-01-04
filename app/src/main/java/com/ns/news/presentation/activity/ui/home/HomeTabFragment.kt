@@ -49,7 +49,8 @@ class HomeTabFragment : Fragment() {
         }*/
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getBreadcrumb().collect {
-                if(it.size>2) setupUI(it.subList(0,1))
+//                if(it.size>2) setupUI(it.subList(0,1))
+                setupUI(it)
             }
         }
     }
