@@ -24,6 +24,7 @@
 
     <string name="back">Back</string>
     <string name="next">Next</string>
+    <string name="retry">Retry</string>
 
     <string name="onboard_title1">Choose Language</string>
     <string name="onboard_desc1">You can modify your selection anytime later</string>

@@ -14,6 +14,7 @@ import androidx.paging.LoadState
 import com.ns.news.data.db.Section
 import com.ns.news.databinding.FragmentArticleNdWidgetBinding
 import com.ns.news.domain.asMergedLoadStates
+import com.ns.news.presentation.adapter.ArticleLoadStateAdapter
 import com.ns.news.presentation.adapter.ArticleNdWidgetAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -47,7 +48,10 @@ class HomeArticleNdWidgetFragment : Fragment() {
     ): View? {
         _binding = FragmentArticleNdWidgetBinding.inflate(inflater, container, false)
         val root = binding.root
-        binding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = ArticleLoadStateAdapter(adapter),
+            footer = ArticleLoadStateAdapter(adapter)
+        )
         requestPaginationApi()
         return root
     }

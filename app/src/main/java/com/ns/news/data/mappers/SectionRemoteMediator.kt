@@ -40,7 +40,7 @@ class SectionRemoteMediator(
                 }
                 var cells = items
                     .orEmpty()
-                    .map { sectionMapper.toDomain(it, "") }
+                    .map { sectionMapper.toDomain(it) }
                 sectionDao.insertAll(cells)
             }
 

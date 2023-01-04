@@ -7,12 +7,12 @@ import com.ns.news.data.db.Cell
 import com.ns.news.data.db.Section
 
 class DataMapper {
-    fun toDomain(categoryItem: SectionItem): Result<SectionItem> {
+    /*fun toDomain(categoryItem: SectionItem): Result<SectionItem> {
         val(sectionId, api, name, inHamburger, inBreadcrumb, logo, subSections, _
         ) = categoryItem
         return SectionItem.of(sectionId=sectionId, api=api, name=name, inHamburger=inHamburger, inBreadcrumb=inBreadcrumb,
         logo=logo, subSections=subSections)
-    }
+    }*/
 
     fun toDomain(cellItem: CellsItem, sectionId: String = "") : Cell {
         val(
@@ -27,7 +27,7 @@ class DataMapper {
             cellType = cellType, type = type, title = title)
     }
 
-    fun toDomain(sectionItem: SectionItem, s: String): Section {
+    fun toDomain(sectionItem: SectionItem): Section {
         val(sectionId, api, name, inHamburger, inBreadcrumb, logo, subSections, slug
         ) = sectionItem
         return SectionItem.of(sectionId=sectionId, api=api, name=name, inHamburger=inHamburger,

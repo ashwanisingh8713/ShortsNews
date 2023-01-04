@@ -36,19 +36,19 @@ class NewsRepository(
         }
     }
 
-    @OptIn(ExperimentalPagingApi::class)
-    override suspend fun getSectionsDB(languageId: String) = Pager(
-    config = PagingConfig(50),
-    remoteMediator = SectionRemoteMediator(db, newsApi = apis, languageId, mapper)
-    ) {
-        db.sectionDao().getSections()
-    }.flow
-
     override suspend fun getSectionsDirect(languageId: String) = withContext(dispatchersProvider.io()) {
         Result {
             apis.getSection(languageId).data.sections
                 .orEmpty()
-                .map { mapper.toDomain(it, "") }
+                .map {
+                    mapper.toDomain(it)
+                }.apply {
+                    val section = this
+                    db.sectionDao().apply {
+                        deleteAll()
+                        insertAll(section)
+                    }
+                }
         }
     }
 

@@ -8,24 +8,32 @@ import com.news.utils.DefaultDispatchersProvider
 import com.ns.news.data.db.NewsDb
 import com.ns.news.presentation.activity.ui.home.ArticleNdWidgetViewModelFactory
 import com.ns.news.presentation.activity.SectionViewModelFactory
+import com.ns.news.presentation.activity.ui.home.SectionDBViewModelFactory
 
 class NewsApplication : Application() {
 
     companion object {
-        var newsRepository: NewsRepository? = null
+        lateinit var newsRepository: NewsRepository
+        lateinit var newsDb: NewsDb
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        newsRepository = createRepository()
-        SectionViewModelFactory.inject(newsRepository!!)
-        ArticleNdWidgetViewModelFactory.inject(newsRepository!!)
+        newsDb = createDB()
+        newsRepository = createRepository(newsDb)
+        SectionViewModelFactory.inject(newsRepository)
+        SectionDBViewModelFactory.inject(newsDb.sectionDao())
+        ArticleNdWidgetViewModelFactory.inject(newsRepository)
 
     }
 
-    private fun createRepository(): NewsRepository? {
-        return NewsRepository(DefaultDispatchersProvider(), DataMapper(), NewsApi.create(), NewsDb.create(this))
+    private fun createDB() : NewsDb{
+        return NewsDb.create(this)
+    }
+
+    private fun createRepository(newsDb: NewsDb): NewsRepository {
+        return NewsRepository(DefaultDispatchersProvider(), DataMapper(), NewsApi.create(), newsDb)
     }
 
 

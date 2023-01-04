@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 import com.ns.news.domain.Result
 
 class SectionViewModel(private val repository: ApiRepository): ViewModel() {
-    val viewState: StateFlow<Pair<List<Section>, List<Section>>> get() = _viewState
-    private val _viewState = MutableStateFlow(Pair<List<Section>, List<Section>>(emptyList(), emptyList()))
+//    val viewState: StateFlow<Pair<List<Section>, List<Section>>> get() = _viewState
+//    private val _viewState = MutableStateFlow(Pair<List<Section>, List<Section>>(emptyList(), emptyList()))
 
     fun requestSections(languageId: String) {
         viewModelScope.launch {
@@ -24,7 +24,7 @@ class SectionViewModel(private val repository: ApiRepository): ViewModel() {
     }
 
     private fun handlePageData(sections: List<Section>) {
-        var breadcrums: MutableList<Section> = mutableListOf()
+        /*var breadcrums: MutableList<Section> = mutableListOf()
         var drawer: MutableList<Section> = mutableListOf()
         for(section in sections) {
             if (section.inBreadcrumb) {
@@ -33,8 +33,8 @@ class SectionViewModel(private val repository: ApiRepository): ViewModel() {
             if (section.inHamburger) {
                 drawer.add(section)
             }
-        }
-        _viewState.value = Pair(drawer, breadcrums)
+        }*/
+//        _viewState.value = Pair(drawer, breadcrums)
     }
 
     private fun handleFailure(cause: Throwable) {
