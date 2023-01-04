@@ -15,5 +15,7 @@
     <color name="color_818181_light">#818181</color>
     <color name="color_divider">#818181</color>
     <color name="color_006599">#006599</color>
+    <color name="section_time_text_color">#919191</color>
+    <color name="divider">#E7E7E7</color>
 
 </resources>

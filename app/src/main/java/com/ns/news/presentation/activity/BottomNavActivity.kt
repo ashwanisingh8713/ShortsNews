@@ -49,31 +49,9 @@ class BottomNavActivity : AppCompatActivity() {
         // To Enable or Disable swipe of Pager
         binding.viewPager.isUserInputEnabled = false;
         binding.fab.setupParentLayout(binding.sheetParent)
-        binding.articleShortOption.setOnClickListener {
-            if (CommonFunctions.checkForInternet(this)){
-                IntentUtils.openArticleShorts(this, Constants.shortsArticleIntentTag)
-            } else{
-                CommonFunctions.showSnackBar(this,"No Internet connection", duration = Snackbar.LENGTH_LONG)
-            }
-
-        }
-        binding.videoShortOption.setOnClickListener {
-            if (CommonFunctions.checkForInternet(this)){
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-            } else{
-                CommonFunctions.showSnackBar(this,"No Internet connection", duration = Snackbar.LENGTH_LONG)
-            }
-
-        }
-        binding.podcastShortOption.setOnClickListener {
-            if (CommonFunctions.checkForInternet(this)) {
-                IntentUtils.openArticleShorts(this, Constants.podcastIntentTag)
-            } else{
-                CommonFunctions.showSnackBar(this,"No Internet connection", duration = Snackbar.LENGTH_LONG)
-            }
-        }
-
+        binding.articleShortOption.setupArticleOptionView(this,binding.articleShortOption,this)
+        binding.videoShortOption.setupVideoOptionView(this,binding.videoShortOption,this)
+        binding.podcastShortOption.setupPodcastOptionView(this,binding.podcastShortOption,this)
         binding.bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home->{
