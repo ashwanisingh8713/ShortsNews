@@ -1,8 +1,13 @@
 package com.ns.news.presentation.adapter
 
+import android.graphics.Color
+import android.text.Spannable
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.text.toSpannable
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -21,9 +26,9 @@ import com.ns.news.databinding.WidgetVtHeroPlainWidgetBinding
 import com.ns.news.databinding.WidgetVtPlainWithCorousalBinding
 import com.ns.news.databinding.WidgetVtStackCardWithCorousalBinding
 import com.ns.news.databinding.WidgetVtTopNewsCorousalBinding
-import com.ns.news.databinding.WidgetVtTopNewsCorousalItemBinding
 import com.ns.news.databinding.WidgetWebviewBinding
 import com.ns.news.domain.model.ViewType
+import com.ns.news.utils.loadSvg
 
 /**
  * Adapter for the [RecyclerView] in [ArticleNdWidgetFragment].
@@ -39,6 +44,7 @@ import com.ns.news.domain.model.ViewType
 class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataAdapter<Cell, RecyclerView.ViewHolder>(REPO_COMPARATOR) {
 
     companion object {
+        private val CATEGORY_AND_TIME_DELIMETER = "##"
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Cell>() {
             override fun areContentsTheSame(oldItem: Cell, newItem: Cell): Boolean  {
                 return if((newItem.type == newItem.type) && oldItem.data.isNotEmpty() && newItem.data.isNotEmpty()) {
@@ -63,7 +69,6 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         }
 
     }
-
 
 
     override fun getItemViewType(position: Int): Int {
@@ -98,7 +103,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
             R.layout.article_photos -> ArticlePhotosVH(ArticlePhotosBinding.inflate(inflater(parent), parent, false))
             R.layout.article_video -> ArticleVideoVH(ArticleVideoBinding.inflate(inflater(parent), parent, false))
             R.layout.widget_webview -> WidgetWebViewVH(WidgetWebviewBinding.inflate(inflater(parent), parent, false))
-            R.layout.widget_vt_hero_plain_widget -> WidgetHeroPlainVH(imageLoader, WidgetVtHeroPlainWidgetBinding.inflate(inflater(parent), parent, false))
+            R.layout.widget_vt_hero_plain_widget -> WidgetHeroPlainWidgetVH(WidgetVtHeroPlainWidgetBinding.inflate(inflater(parent), parent, false))
             R.layout.widget_vt_top_news_corousal -> WidgetTopNewsCorousalVH(WidgetVtTopNewsCorousalBinding.inflate(inflater(parent), parent, false))
             R.layout.widget_vt_plain_with_corousal -> WidgetPlainWithCorousalVH(WidgetVtPlainWithCorousalBinding.inflate(inflater(parent), parent, false))
             R.layout.widget_vt_stack_card_with_corousal -> WidgetStackCardWithCorousalVH(WidgetVtStackCardWithCorousalBinding.inflate(inflater(parent), parent, false))
@@ -117,7 +122,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
             ViewType.ARTICLE_VT_PHOTOS -> (holder as ArticlePhotosVH).bind(item, position)
             ViewType.ARTICLE_VT_VIDEO -> (holder as ArticleVideoVH).bind(item, position)
             ViewType.WIDGET_VT_WEB_WIDGET -> (holder as WidgetWebViewVH).bind(item)
-            ViewType.WIDGET_VT_HERO_PLAIN_WIDGET -> (holder as WidgetHeroPlainVH).bind(item.data, position)
+            ViewType.WIDGET_VT_HERO_PLAIN_WIDGET -> (holder as WidgetHeroPlainWidgetVH).bind(item.data, position)
             ViewType.WIDGET_VT_TOP_NEWS_COROUSAL -> (holder as WidgetTopNewsCorousalVH).bind(item, position, item.viewType)
             ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL -> (holder as WidgetPlainWithCorousalVH).bind(item, position, item.viewType)
             ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL -> (holder as WidgetStackCardWithCorousalVH).bind(item, position, item.viewType)
@@ -140,7 +145,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cell, position: Int) {
             binding.apply {
-                cellType.text = item.cellType + " :: $position"
+                titleTv.text = " :: $position :: ${item.data[0].title}"
             }
         }
     }
@@ -150,7 +155,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cell, position: Int) {
             binding.apply {
-                cellType.text = item.cellType + " :: $position"
+                titleTv.text = " :: $position :: ${item.data[0].title}"
             }
         }
     }
@@ -160,7 +165,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cell, position: Int) {
             binding.apply {
-                cellType.text = item.cellType + " :: $position"
+                titleTv.text = " :: $position :: ${item.data[0].title}"
             }
         }
     }
@@ -175,21 +180,28 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         }
     }
 
-    class WidgetHeroPlainVH(
-        private val imageLoader: ImageLoader, private val binding: WidgetVtHeroPlainWidgetBinding
+    inner class WidgetHeroPlainWidgetVH(
+        private val binding: WidgetVtHeroPlainWidgetBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(contents: List<AWDataItem>, position: Int) {
-            binding.heroImg.load(contents[0].media[0].images.medium, imageLoader)
+
+            val item = contents[0]
+            binding.apply {
+                bannerImg.load(item.media[0].images.large, imageLoader)
+                titleTv.text = " :: $position :: ${item.title}"
+                categoryTv.text = item.categoryName
+                timeTv.text = item.modifiedGmt
+                recyclerView.adapter = HighlightsAdapter(item.highlights)
+            }
         }
     }
-
 
 
     class WidgetTopNewsCorousalVH(
         private val binding: WidgetVtTopNewsCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, position: Int, viewType: ViewType) {
-            val adapter = HorizontalRecyclerAdapter(cell, viewType)
+            val adapter = ItemRecyclerAdapter(cell, viewType)
             binding.pager.adapter = adapter
             binding.cellTitle.text = cell.title
         }
@@ -199,7 +211,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         private val binding: WidgetVtPlainWithCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cell, position: Int, viewType: ViewType) {
-            val adapter = HorizontalRecyclerAdapter(item, viewType)
+            val adapter = ItemRecyclerAdapter(item, viewType)
             binding.pager.adapter = adapter
         }
     }
@@ -207,7 +219,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         private val binding: WidgetVtStackCardWithCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cell, position: Int, viewType: ViewType) {
-            val adapter = HorizontalRecyclerAdapter(item, viewType)
+            val adapter = ItemRecyclerAdapter(item, viewType)
             binding.pager.adapter = adapter
         }
     }
@@ -226,76 +238,6 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         fun bind(contents: List<AWDataItem>, position: Int) {
 
         }
-    }
-
-    class WidgetTopNewsCorousalItemVH(
-        private val binding: WidgetVtTopNewsCorousalItemBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(content: AWDataItem, index: Int) {
-            binding.apply {
-                top9Title.text = content.title
-                top9Index.text = "${index+1}"
-            }
-        }
-    }
-
-    class HorizontalRecyclerAdapter(
-        private val cell: Cell,
-        private val viewType: ViewType
-    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-        private val contents = cell.data
-
-        override fun getItemViewType(position: Int): Int {
-            return when (viewType) {
-                ViewType.WIDGET_VT_TOP_NEWS_COROUSAL -> R.layout.widget_vt_top_news_corousal_item
-                ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL -> R.layout.widget_vt_top_news_corousal_item
-                ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL -> R.layout.widget_vt_top_news_corousal_item
-                else -> {
-                    R.layout.not_defined
-                }
-            }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            return when (viewType) {
-                R.layout.widget_vt_top_news_corousal_item -> {
-                    WidgetTopNewsCorousalItemVH(
-                        WidgetVtTopNewsCorousalItemBinding.inflate(
-                            LayoutInflater.from(parent.context),
-                            parent, false
-                        )
-                    )
-                }
-
-                else -> NotDefinedVH(NotDefinedBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-
-            }
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val content = contents[position]
-            when (viewType) {
-                ViewType.WIDGET_VT_TOP_NEWS_COROUSAL -> (holder as WidgetTopNewsCorousalItemVH).bind(
-                    content, position
-                )
-                ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL -> (holder as WidgetTopNewsCorousalItemVH).bind(
-                    content, position
-                )
-                ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL -> (holder as WidgetTopNewsCorousalItemVH).bind(
-                    content, position
-                )
-                else-> {
-                    (holder as NotDefinedVH).bind()
-                }
-            }
-        }
-
-        override fun getItemCount(): Int {
-            return contents.size
-        }
-
-
     }
 
 

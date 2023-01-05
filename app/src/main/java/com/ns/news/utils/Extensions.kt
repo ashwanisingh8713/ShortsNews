@@ -6,6 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.LayoutRes
+import androidx.appcompat.widget.AppCompatImageView
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -55,3 +59,18 @@ suspend inline fun <T> runMain(crossinline func: suspend () -> T): T {
 }
 
 //endregion
+
+fun AppCompatImageView.loadSvg(url: String) {
+    val imageLoader = ImageLoader.Builder(context)
+        .components { add(SvgDecoder.Factory()) }
+        .build()
+
+    val request = ImageRequest.Builder(this.context)
+        .crossfade(true)
+        .crossfade(500)
+        .data(url)
+        .target(this)
+        .build()
+
+    imageLoader.enqueue(request)
+}

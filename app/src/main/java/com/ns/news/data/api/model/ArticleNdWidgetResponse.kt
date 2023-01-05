@@ -64,6 +64,10 @@ data class AWDataItem(
     val modifiedGmt: String = "",
     @Json(name = "author")
     val author: List<AuthorItem> = emptyList(),
+    @Json(name = "highlights")
+    val highlights: List<String> = emptyList(),
+    @Json(name = "tags")
+    val tags: List<TagItem> = emptyList(),
     @Json(name = "link")
     val link: String = "",
     @Json(name = "format")
@@ -134,6 +138,14 @@ data class AWData(
 data class AuthorItem(
     @Json(name = "avatar_url")
     val avatarUrl: String = "",
+    @Json(name = "name")
+    val name: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class TagItem(
+    @Json(name = "id")
+    val id: String = "",
     @Json(name = "name")
     val name: String = ""
 )

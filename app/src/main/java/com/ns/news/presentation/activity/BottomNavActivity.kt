@@ -27,6 +27,7 @@ import com.ns.news.presentation.shared.SectionTypeSharedViewModelFactory
 import com.ns.news.utils.Constants
 import com.ns.news.utils.CommonFunctions
 import com.ns.news.utils.IntentUtils
+import com.ns.news.utils.loadSvg
 
 class BottomNavActivity : AppCompatActivity() {
 
@@ -92,21 +93,6 @@ class BottomNavActivity : AppCompatActivity() {
         requestSections()
 
         showIcons();
-    }
-
-    private fun AppCompatImageView.loadSvg(url: String) {
-        val imageLoader = ImageLoader.Builder(context)
-            .components { add(SvgDecoder.Factory()) }
-            .build()
-
-        val request = ImageRequest.Builder(this.context)
-            .crossfade(true)
-            .crossfade(500)
-            .data(url)
-            .target(this)
-            .build()
-
-        imageLoader.enqueue(request)
     }
 
     /**
