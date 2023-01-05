@@ -28,19 +28,40 @@ import com.ns.news.domain.model.ViewType
 /**
  * Adapter for the [RecyclerView] in [ArticleNdWidgetFragment].
  * https://guides.codepath.com/android/Paging-Library-Guide#add-a-data-source
+ * https://stackoverflow.com/questions/63019699/using-recyclerview-with-diffutil-for-multiple-data-types
+ * https://blog.devgenius.io/diffutil-in-multiple-columns-list-with-different-items-ae52a8134f0a
+ * https://serjantarbuz.medium.com/recyclerview-with-different-items-and-multiple-columns-grid-724618d5d4e4
+ * https://github.com/SerjantArbuz/AdapterExample
+ *
+ * *******Demystifying DiffUtil.ItemCallback Class -> https://jermainedilao.medium.com/demystifying-diffutil-itemcallback-class-8c0201cc69b1
  */
 
 class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataAdapter<Cell, RecyclerView.ViewHolder>(REPO_COMPARATOR) {
 
     companion object {
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Cell>() {
-            override fun areContentsTheSame(oldItem: Cell, newItem: Cell): Boolean =
-                true//oldItem.data == newItem.data
+            override fun areContentsTheSame(oldItem: Cell, newItem: Cell): Boolean  {
+                return if((newItem.type == newItem.type) && oldItem.data.isNotEmpty() && newItem.data.isNotEmpty()) {
+//                    Log.i("Ashwani", "areContentsTheSame IF :: true")
+                    oldItem.data[0].id == newItem.data[0].id
+                } else if((newItem.type == newItem.type) && oldItem.data.isNotEmpty() && newItem.data.isNotEmpty()) {
+//                    Log.i("Ashwani", "areContentsTheSame ELSE IF :: true")
+                    true
+                } else {
+                    val isSame = (oldItem.type == newItem.type) && oldItem.data.isEmpty() && newItem.data.isEmpty()
+                    Log.i("Ashwani", "areContentsTheSame ELSE :: $isSame")
+                    isSame
+                }
+            }
 
-            override fun areItemsTheSame(oldItem: Cell, newItem: Cell): Boolean =
-                true//oldItem.type == newItem.type
+            override fun areItemsTheSame(oldItem: Cell, newItem: Cell): Boolean {
+                val isSame = oldItem == newItem
+                Log.i("Ashwani", "areItemsTheSame :: $isSame")
+                return isSame
+            }
 
         }
+
     }
 
 
@@ -62,7 +83,6 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
             ViewType.WIDGET_VT_FOR_YOU_WIDGET -> R.layout.widget_vt_for_you_widget // NOT DONE
             else -> {
                 R.layout.not_defined
-                Log.i("Ashwani", "Else not defined")
             }
         }
     }
@@ -96,7 +116,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
             ViewType.ARTICLE_VT_STANDARD -> (holder as ArticleStandardVH).bind(item, position)
             ViewType.ARTICLE_VT_PHOTOS -> (holder as ArticlePhotosVH).bind(item, position)
             ViewType.ARTICLE_VT_VIDEO -> (holder as ArticleVideoVH).bind(item, position)
-            ViewType.WIDGET_VT_WEB_WIDGET -> (holder as WidgetWebViewVH).bind()
+            ViewType.WIDGET_VT_WEB_WIDGET -> (holder as WidgetWebViewVH).bind(item)
             ViewType.WIDGET_VT_HERO_PLAIN_WIDGET -> (holder as WidgetHeroPlainVH).bind(item.data, position)
             ViewType.WIDGET_VT_TOP_NEWS_COROUSAL -> (holder as WidgetTopNewsCorousalVH).bind(item, position, item.viewType)
             ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL -> (holder as WidgetPlainWithCorousalVH).bind(item, position, item.viewType)
@@ -148,9 +168,9 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
     class WidgetWebViewVH(
         private val binding: WidgetWebviewBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind() {
+        fun bind(cell: Cell) {
             binding.apply {
-
+                webView.loadUrl(cell.link)
             }
         }
     }

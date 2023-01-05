@@ -94,11 +94,17 @@ class HomeArticleNdWidgetFragment : Fragment() {
                 .asMergedLoadStates()
                 // Only emit when REFRESH changes, as we only want to react on loads replacing the
                 // list.
-                .distinctUntilChangedBy { it.refresh }
+                .distinctUntilChangedBy {
+                    it.refresh
+                }
                 // Only react to cases where REFRESH completes i.e., NotLoading.
-                .filter { it.refresh is LoadState.NotLoading }
+                .filter {
+                    it.refresh is LoadState.NotLoading
+                }
                 // Scroll to top is synchronous with UI updates, even if remote load was triggered.
-                .collect { binding.recyclerView.scrollToPosition(0) }
+                .collect {
+                    binding.recyclerView.scrollToPosition(0)
+                }
         }
 
     }

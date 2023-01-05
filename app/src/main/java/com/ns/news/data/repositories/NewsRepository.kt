@@ -61,14 +61,14 @@ class NewsRepository(
 
     @OptIn(ExperimentalPagingApi::class)
     override suspend fun getArticleNdWidget(sectionId: String, url: String) = Pager(
-        config = PagingConfig(5),
+        config = PagingConfig(NETWORK_PAGE_SIZE),
         remoteMediator = ArticlePageKeyedRemoteMediator(db, newsApi = apis, sectionId, url, mapper)
     ) {
         db.cellItems().articleBySectionId(sectionId)
     }.flow
 
     companion object {
-        private const val NETWORK_PAGE_SIZE = 10
+        private const val NETWORK_PAGE_SIZE = 20
     }
 
 

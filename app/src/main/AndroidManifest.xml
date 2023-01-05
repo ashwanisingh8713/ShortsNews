@@ -32,7 +32,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity
+        <!--<activity
             android:name=".presentation.activity.BottomNavActivity"
             android:exported="false"
             android:label="@string/title_activity_nav"
@@ -40,9 +40,9 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
+        </activity>-->
         <activity
-            android:name=".presentation.onboarding.OnBoardingActivity"
+            android:name=".presentation.activity.BottomNavActivity"
             android:exported="true"
             android:theme="@style/Theme.News.NoActionBar" >
             <intent-filter>
