@@ -1,13 +1,9 @@
 package com.ns.news.presentation.adapter
 
-import android.graphics.Color
-import android.text.Spannable
-import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.text.toSpannable
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +24,7 @@ import com.ns.news.databinding.WidgetVtStackCardWithCorousalBinding
 import com.ns.news.databinding.WidgetVtTopNewsCorousalBinding
 import com.ns.news.databinding.WidgetWebviewBinding
 import com.ns.news.domain.model.ViewType
-import com.ns.news.utils.loadSvg
+import com.ns.news.utils.showToast
 
 /**
  * Adapter for the [RecyclerView] in [ArticleNdWidgetFragment].
@@ -115,19 +111,19 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = getItem(position)
-        when (item?.viewType) {
+        val cell = getItem(position)
+        when (cell?.viewType) {
             ViewType.VT_NOT_DEFINED -> (holder as NotDefinedVH).bind()
-            ViewType.ARTICLE_VT_STANDARD -> (holder as ArticleStandardVH).bind(item, position)
-            ViewType.ARTICLE_VT_PHOTOS -> (holder as ArticlePhotosVH).bind(item, position)
-            ViewType.ARTICLE_VT_VIDEO -> (holder as ArticleVideoVH).bind(item, position)
-            ViewType.WIDGET_VT_WEB_WIDGET -> (holder as WidgetWebViewVH).bind(item)
-            ViewType.WIDGET_VT_HERO_PLAIN_WIDGET -> (holder as WidgetHeroPlainWidgetVH).bind(item.data, position)
-            ViewType.WIDGET_VT_TOP_NEWS_COROUSAL -> (holder as WidgetTopNewsCorousalVH).bind(item, position, item.viewType)
-            ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL -> (holder as WidgetPlainWithCorousalVH).bind(item, position, item.viewType)
-            ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL -> (holder as WidgetStackCardWithCorousalVH).bind(item, position, item.viewType)
-            ViewType.WIDGET_VT_ALL_TOPICS_WIDGET -> (holder as WidgetAllTopicsVH).bind(item.data, position)
-            ViewType.WIDGET_VT_FOR_YOU_WIDGET -> (holder as WidgetForYouVH).bind(item.data, position)
+            ViewType.ARTICLE_VT_STANDARD -> (holder as ArticleStandardVH).bind(cell, position)
+            ViewType.ARTICLE_VT_PHOTOS -> (holder as ArticlePhotosVH).bind(cell, position)
+            ViewType.ARTICLE_VT_VIDEO -> (holder as ArticleVideoVH).bind(cell, position)
+            ViewType.WIDGET_VT_WEB_WIDGET -> (holder as WidgetWebViewVH).bind(cell)
+            ViewType.WIDGET_VT_HERO_PLAIN_WIDGET -> (holder as WidgetHeroPlainWidgetVH).bind(cell, position)
+            ViewType.WIDGET_VT_TOP_NEWS_COROUSAL -> (holder as WidgetTopNewsCorousalVH).bind(cell, position, cell.viewType)
+            ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL -> (holder as WidgetPlainWithCorousalVH).bind(cell, position, cell.viewType)
+            ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL -> (holder as WidgetStackCardWithCorousalVH).bind(cell, position, cell.viewType)
+            ViewType.WIDGET_VT_ALL_TOPICS_WIDGET -> (holder as WidgetAllTopicsVH).bind(cell.data, position)
+            ViewType.WIDGET_VT_FOR_YOU_WIDGET -> (holder as WidgetForYouVH).bind(cell.data, position)
             else -> (holder as NotDefinedVH).bind()
         }
     }
@@ -140,12 +136,16 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         }
     }
 
-    class ArticleStandardVH(
+    inner class ArticleStandardVH(
         private val binding: ArticleStandardBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cell, position: Int) {
+            val item = item.data[0]
             binding.apply {
-                titleTv.text = " :: $position :: ${item.data[0].title}"
+                titleTv.text = "${item.title}"
+                categoryTv.text = item.categoryName
+                timeTv.text = item.modifiedGmt
+                bannerImg.load(item.media[0].images.mediumLarge, imageLoader)
             }
         }
     }
@@ -183,10 +183,17 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
     inner class WidgetHeroPlainWidgetVH(
         private val binding: WidgetVtHeroPlainWidgetBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(contents: List<AWDataItem>, position: Int) {
-
-            val item = contents[0]
+        fun bind(cell: Cell, position: Int) {
+            val item = cell.data[0]
             binding.apply {
+                if(cell.title.isNotEmpty()) {
+                    cellTitleTv.text = cell.title
+                    cellActionBtn.setOnClickListener {
+                        it.context.showToast(cell.link)
+                    }
+                    cellTitleTv.visibility = View.VISIBLE
+                    cellActionBtn.visibility = View.VISIBLE
+                }
                 bannerImg.load(item.media[0].images.large, imageLoader)
                 titleTv.text = " :: $position :: ${item.title}"
                 categoryTv.text = item.categoryName

@@ -6,6 +6,27 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/_14sdp">
 
+    <TextView
+        android:id="@+id/cell_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="@dimen/_16sdp"
+        android:textStyle="bold"
+        android:maxEms="14"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/cell_action_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="ARROW Img "
+        android:visibility="gone"
+        android:maxEms="14"/>
+
     <ImageView
         android:id="@+id/banner_img"
         android:layout_width="0dp"
@@ -13,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cell_action_btn"
         android:scaleType="fitXY"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
@@ -22,7 +43,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:textSize="16sp"
+        android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
