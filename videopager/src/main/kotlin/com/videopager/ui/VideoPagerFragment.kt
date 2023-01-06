@@ -51,6 +51,7 @@ class VideoPagerFragment(
         val adapter = PagerAdapter(imageLoader)
         binding.viewPager.adapter = adapter
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
+        binding.viewPager.isUserInputEnabled = false
 
         val states = viewModel.states
             .onEach { state ->
@@ -83,6 +84,7 @@ class VideoPagerFragment(
                     // If the player media is rendering frames, then show the player
                     if (state.showPlayer) {
                         adapter.showPlayerFor(state.page)
+                        binding.viewPager.isUserInputEnabled = true
                     }
                 }
             }
