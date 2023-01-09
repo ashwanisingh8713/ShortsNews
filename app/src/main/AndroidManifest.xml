@@ -19,14 +19,23 @@
         android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name="com.example.videopager.ui.MainActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:exported="false" >
+            android:theme="@style/FullScreenWindow"
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".presentation.activity.ui.shorts.ShortsActivity"
+            android:theme="@style/FullScreenWindow"
+            android:exported="false" >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name="com.ns.articledetail.ArticleDetailMain"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:exported="false" >
             <meta-data

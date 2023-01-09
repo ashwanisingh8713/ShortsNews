@@ -8,10 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import coil.imageLoader
 import coil.load
+import coil.request.ImageRequest
 import com.ns.news.R
 import com.ns.news.databinding.FragmentArticleShortsViewHolderBinding
-import com.ns.news.presentation.activity.ui.shorts.adapter.ArticleShortsPagerAdapter
 import com.ns.news.presentation.activity.ui.shorts.data.ArticleShortsData
 
 class ArticleShortsViewHolderFragment : Fragment() {
@@ -22,10 +24,11 @@ class ArticleShortsViewHolderFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            if (VERSION.SDK_INT>=33){
+            if (VERSION.SDK_INT >= 33) {
                 articleShort = it.getParcelable(ARM_ARTICLE_SHORT, ArticleShortsData::class.java)
+            } else {
+                articleShort = it.getParcelable(ARM_ARTICLE_SHORT)
             }
-            articleShort = it.getParcelable(ARM_ARTICLE_SHORT)
         }
     }
 
@@ -53,11 +56,18 @@ class ArticleShortsViewHolderFragment : Fragment() {
     }
     fun setupView(){
         articleShort.let {
-            binding.imageView.load(it?.articleImage)
-            binding.articleSection?.text = it?.section
+            val circularProgressDrawable = activity?.let { it1 -> CircularProgressDrawable(it1) }
+            circularProgressDrawable?.strokeWidth = 5f
+            circularProgressDrawable?.centerRadius = 30f
+            circularProgressDrawable?.start()
+
+            binding.imageView.load(it?.articleImage) {
+                placeholder(circularProgressDrawable)
+            }
+            binding.articleSection.text = it?.section
             binding.articlePublishTime.text = it?.timeStamp
             binding.articleTitle.text = it?.articleTitle
-            binding.shortDes?.text = it?.shortDes?.get(0)
+            binding.shortDes.text = it?.shortDes?.get(0)
         }
 
     }

@@ -36,9 +36,9 @@ class BottomNavActivity : AppCompatActivity() {
         // To Enable or Disable swipe of Pager
         binding.viewPager.isUserInputEnabled = false;
         binding.fab.setupParentLayout(binding.sheetParent)
-        binding.articleShortOption.setupArticleOptionView(this,binding.articleShortOption,this)
-        binding.videoShortOption.setupVideoOptionView(this,binding.videoShortOption,this)
-        binding.podcastShortOption.setupPodcastOptionView(this,binding.podcastShortOption,this)
+        binding.articleShortOption.setupArticleOptionView(this,binding.articleShortOption,this, binding.fab)
+        binding.videoShortOption.setupVideoOptionView(this,binding.videoShortOption,this,  binding.fab)
+        binding.podcastShortOption.setupPodcastOptionView(this,binding.podcastShortOption,this,  binding.fab)
         binding.bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home->{

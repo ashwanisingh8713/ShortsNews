@@ -21,6 +21,9 @@ class CustomArticleOptionView @JvmOverloads constructor(
     var viewGroupPodcast:ViewGroup? = null
     var activity: Activity? = null
     var viewContext: Context? = null
+    var customFloatingActionButtonArticle:CustomFloatingActionButton? = null
+    var customFloatingActionButtonShorts:CustomFloatingActionButton? = null
+    var customFloatingActionButtonPodcast:CustomFloatingActionButton? = null
 
     init {
         setOnClickListener {
@@ -28,6 +31,7 @@ class CustomArticleOptionView @JvmOverloads constructor(
 
                 if (CommonFunctions.checkForInternet(context)) {
                     IntentUtils.openArticleShorts(context, Constants.shortsArticleIntentTag)
+                    customFloatingActionButtonArticle?.closeBottomSheet()
                 } else {
                     CommonFunctions.showSnackBar(
                         this.activity!!,
@@ -37,8 +41,11 @@ class CustomArticleOptionView @JvmOverloads constructor(
                 }
             } else if (it.equals(viewGroupVideo)){
                 if (CommonFunctions.checkForInternet(context)) {
+
                     val intent = Intent(this.activity, MainActivity::class.java)
                     this.activity?.startActivity(intent)
+                    customFloatingActionButtonShorts?.closeBottomSheet()
+
                 } else {
                     this.activity?.let { it1 ->
                         CommonFunctions.showSnackBar(
@@ -51,6 +58,8 @@ class CustomArticleOptionView @JvmOverloads constructor(
             } else if (it.equals(viewGroupPodcast)){
                 if (CommonFunctions.checkForInternet(context)) {
                     IntentUtils.openArticleShorts(context, Constants.podcastIntentTag)
+                    customFloatingActionButtonPodcast?.closeBottomSheet()
+
                 } else {
                     this.activity?.let { it1 ->
                         CommonFunctions.showSnackBar(
@@ -64,21 +73,24 @@ class CustomArticleOptionView @JvmOverloads constructor(
         }
     }
 
-    fun setupArticleOptionView(activity: Activity, viewGroup: ViewGroup, context: Context) {
+    fun setupArticleOptionView(activity: Activity, viewGroup: ViewGroup, context: Context, fab:CustomFloatingActionButton) {
         this.viewGroupArticle = viewGroup
         this.activity = activity
         viewContext = context
+        customFloatingActionButtonArticle = fab
     }
 
-    fun setupVideoOptionView(activity: Activity, viewGroup: ViewGroup, context: Context) {
+    fun setupVideoOptionView(activity: Activity, viewGroup: ViewGroup, context: Context, fab:CustomFloatingActionButton) {
         this.viewGroupVideo = viewGroup
         this.activity = activity
         viewContext = context
+        customFloatingActionButtonShorts = fab
     }
 
-    fun setupPodcastOptionView(activity: Activity,viewGroup: ViewGroup, context: Context){
+    fun setupPodcastOptionView(activity: Activity,viewGroup: ViewGroup, context: Context, fab:CustomFloatingActionButton){
         this.viewGroupPodcast = viewGroup
         this.activity = activity
         viewContext = context
+        customFloatingActionButtonPodcast = fab
     }
 }
