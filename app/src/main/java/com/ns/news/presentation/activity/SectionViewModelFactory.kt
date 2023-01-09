@@ -13,7 +13,7 @@ object SectionViewModelFactory : ViewModelProvider.Factory {
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SectionViewModel(
+        return SectionApiViewModel(
             repository
         ) as T
     }

@@ -49,7 +49,6 @@ class HomeTabFragment : Fragment() {
         }*/
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getBreadcrumb().collect {
-//                if(it.size>2) setupUI(it.subList(0,1))
                 setupUI(it)
             }
         }
@@ -58,6 +57,7 @@ class HomeTabFragment : Fragment() {
     private fun setupUI(sections: List<Section>) {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, sections)
         val viewPager: ViewPager2 = binding.viewPager
+        viewPager.isUserInputEnabled = false
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = binding.tabs
 

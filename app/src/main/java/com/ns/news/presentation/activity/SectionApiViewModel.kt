@@ -5,12 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ns.news.data.db.Section
 import com.ns.news.domain.repositories.ApiRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.ns.news.domain.Result
 
-class SectionViewModel(private val repository: ApiRepository): ViewModel() {
+class SectionApiViewModel(private val repository: ApiRepository): ViewModel() {
 //    val viewState: StateFlow<Pair<List<Section>, List<Section>>> get() = _viewState
 //    private val _viewState = MutableStateFlow(Pair<List<Section>, List<Section>>(emptyList(), emptyList()))
 
@@ -24,6 +22,7 @@ class SectionViewModel(private val repository: ApiRepository): ViewModel() {
     }
 
     private fun handlePageData(sections: List<Section>) {
+        Log.i("", "")
         /*var breadcrums: MutableList<Section> = mutableListOf()
         var drawer: MutableList<Section> = mutableListOf()
         for(section in sections) {

@@ -1,7 +1,6 @@
 package com.ns.news.data.api.model
 
 
-import android.view.View
 import com.ns.news.data.db.Cell
 import com.ns.news.domain.model.*
 import com.squareup.moshi.Json
@@ -46,6 +45,8 @@ data class CellsItem(
                 "STACK_CARD_WITH_COROUSAL" -> ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL
                 "ALL_TOPICS_WIDGET" -> ViewType.WIDGET_VT_ALL_TOPICS_WIDGET
                 "FOR_YOU_WIDGET" -> ViewType.WIDGET_VT_FOR_YOU_WIDGET
+                "GLAMOR_COROUSAL_WIDGET" -> ViewType.WIDGET_VT_GLAMOR_COROUSAL_WIDGET
+                "PAGER_GALLERY" -> ViewType.WIDGET_VT_PAGER_GALLERY
                 else -> ViewType.VT_NOT_DEFINED
             }
             return Cell(

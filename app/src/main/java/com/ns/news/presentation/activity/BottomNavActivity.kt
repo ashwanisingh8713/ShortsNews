@@ -1,37 +1,23 @@
 package com.ns.news.presentation.activity
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.OnClickListener
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.videopager.ui.MainActivity
-import coil.ImageLoader
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
-import com.google.android.material.snackbar.Snackbar
 import com.ns.news.R
 import com.ns.news.databinding.ActivityBottomNavBinding
 import com.ns.news.databinding.ContentNavigationHeaderBinding
 import com.ns.news.presentation.activity.ui.home.SectionDBViewModel
 import com.ns.news.presentation.activity.ui.home.SectionDBViewModelFactory
 import com.ns.news.presentation.adapter.NavigationExpandableListViewAdapter
-import com.ns.news.presentation.shared.SectionTypeSharedViewModel
-import com.ns.news.presentation.shared.SectionTypeSharedViewModelFactory
-import com.ns.news.utils.Constants
-import com.ns.news.utils.CommonFunctions
-import com.ns.news.utils.IntentUtils
 import com.ns.news.utils.loadSvg
 
 class BottomNavActivity : AppCompatActivity() {
 
-    private val viewModel: SectionViewModel by viewModels { SectionViewModelFactory }
+    private val viewModel: SectionApiViewModel by viewModels { SectionViewModelFactory }
     private val viewModelHamburger: SectionDBViewModel by viewModels { SectionDBViewModelFactory }
 //    private val sharedSectionViewModel: SectionTypeSharedViewModel by viewModels { SectionTypeSharedViewModelFactory() }
     private lateinit var expandableListViewAdapter: NavigationExpandableListViewAdapter

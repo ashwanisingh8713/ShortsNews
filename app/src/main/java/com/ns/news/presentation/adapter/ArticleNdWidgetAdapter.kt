@@ -6,7 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.CompositePageTransformer
+import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import coil.ImageLoader
 import coil.load
 import com.ns.news.R
@@ -18,13 +23,18 @@ import com.ns.news.databinding.ArticleVideoBinding
 import com.ns.news.databinding.NotDefinedBinding
 import com.ns.news.databinding.WidgetVtAllTopicsWidgetBinding
 import com.ns.news.databinding.WidgetVtForYouWidgetBinding
+import com.ns.news.databinding.WidgetVtGalleryBinding
+import com.ns.news.databinding.WidgetVtGlamourBinding
 import com.ns.news.databinding.WidgetVtHeroPlainWidgetBinding
 import com.ns.news.databinding.WidgetVtPlainWithCorousalBinding
 import com.ns.news.databinding.WidgetVtStackCardWithCorousalBinding
 import com.ns.news.databinding.WidgetVtTopNewsCorousalBinding
 import com.ns.news.databinding.WidgetWebviewBinding
 import com.ns.news.domain.model.ViewType
+import com.ns.news.utils.SnapHelperOneByOne
 import com.ns.news.utils.showToast
+import com.ns.view.decoration.HorizontalMarginItemDecoration
+import java.lang.Math.abs
 
 /**
  * Adapter for the [RecyclerView] in [ArticleNdWidgetFragment].
@@ -40,7 +50,6 @@ import com.ns.news.utils.showToast
 class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataAdapter<Cell, RecyclerView.ViewHolder>(REPO_COMPARATOR) {
 
     companion object {
-        private val CATEGORY_AND_TIME_DELIMETER = "##"
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Cell>() {
             override fun areContentsTheSame(oldItem: Cell, newItem: Cell): Boolean  {
                 return if((newItem.type == newItem.type) && oldItem.data.isNotEmpty() && newItem.data.isNotEmpty()) {
@@ -81,7 +90,9 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
             ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL -> R.layout.widget_vt_plain_with_corousal // DONE
             ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL -> R.layout.widget_vt_stack_card_with_corousal // DONE
             ViewType.WIDGET_VT_ALL_TOPICS_WIDGET -> R.layout.widget_vt_all_topics_widget // DONE
-            ViewType.WIDGET_VT_FOR_YOU_WIDGET -> R.layout.widget_vt_for_you_widget // NOT DONE
+            ViewType.WIDGET_VT_FOR_YOU_WIDGET -> R.layout.widget_vt_for_you_widget // DONE
+            ViewType.WIDGET_VT_GLAMOR_COROUSAL_WIDGET  -> R.layout.widget_vt_glamour // DONE
+            ViewType.WIDGET_VT_PAGER_GALLERY  -> R.layout.widget_vt_gallery // DONE
             else -> {
                 R.layout.not_defined
             }
@@ -105,6 +116,8 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
             R.layout.widget_vt_stack_card_with_corousal -> WidgetStackCardWithCorousalVH(WidgetVtStackCardWithCorousalBinding.inflate(inflater(parent), parent, false))
             R.layout.widget_vt_all_topics_widget -> WidgetAllTopicsVH(WidgetVtAllTopicsWidgetBinding.inflate(inflater(parent), parent, false))
             R.layout.widget_vt_for_you_widget -> WidgetForYouVH(WidgetVtForYouWidgetBinding.inflate(inflater(parent), parent, false))
+            R.layout.widget_vt_glamour -> WidgetGlamourVH(WidgetVtGlamourBinding.inflate(inflater(parent), parent, false))
+            R.layout.widget_vt_gallery -> WidgetGalleryVH(WidgetVtGalleryBinding.inflate(inflater(parent), parent, false))
             else ->  NotDefinedVH(NotDefinedBinding.inflate(inflater(parent), parent, false))
         }
 
@@ -124,6 +137,8 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
             ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL -> (holder as WidgetStackCardWithCorousalVH).bind(cell, position, cell.viewType)
             ViewType.WIDGET_VT_ALL_TOPICS_WIDGET -> (holder as WidgetAllTopicsVH).bind(cell.data, position)
             ViewType.WIDGET_VT_FOR_YOU_WIDGET -> (holder as WidgetForYouVH).bind(cell.data, position)
+            ViewType.WIDGET_VT_GLAMOR_COROUSAL_WIDGET -> (holder as WidgetGlamourVH).bind(cell, ViewType.WIDGET_VT_GLAMOR_COROUSAL_WIDGET)
+            ViewType.WIDGET_VT_PAGER_GALLERY -> (holder as WidgetGalleryVH).bind(cell, ViewType.WIDGET_VT_PAGER_GALLERY)
             else -> (holder as NotDefinedVH).bind()
         }
     }
@@ -145,7 +160,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
                 titleTv.text = "${item.title}"
                 categoryTv.text = item.categoryName
                 timeTv.text = item.modifiedGmt
-                bannerImg.load(item.media[0].images.mediumLarge, imageLoader)
+                if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, imageLoader)
             }
         }
     }
@@ -245,6 +260,70 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         fun bind(contents: List<AWDataItem>, position: Int) {
 
         }
+    }
+
+    class WidgetGlamourVH(
+        private val binding: WidgetVtGlamourBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(cell: Cell, viewType: ViewType) {
+            binding.apply {
+                if(cell.title.isNotEmpty()) {
+                    cellTitleTv.text = cell.title
+                    cellActionBtn.setOnClickListener {
+                        it.context.showToast(cell.link)
+                    }
+                    cellTitleTv.visibility = View.VISIBLE
+                    cellActionBtn.visibility = View.VISIBLE
+                }
+                glamourRecyclerView.onFlingListener = null
+                val linearSnapHelper: LinearSnapHelper = SnapHelperOneByOne()
+                linearSnapHelper.attachToRecyclerView(glamourRecyclerView)
+                glamourRecyclerView.adapter = ItemPagerAdapter(cell, viewType)
+            }
+        }
+    }
+
+    inner class WidgetGalleryVH(
+        private val binding: WidgetVtGalleryBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(cell: Cell, viewType: ViewType) {
+            binding.apply {
+                if(cell.title.isNotEmpty()) {
+                    cellTitleTv.text = cell.title
+                    cellActionBtn.setOnClickListener {
+                        it.context.showToast(cell.link)
+                    }
+                    cellTitleTv.visibility = View.VISIBLE
+                    cellActionBtn.visibility = View.VISIBLE
+                }
+                viewPager.adapter = ItemPagerAdapter(cell, viewType)
+                transformation1(viewPager)
+                val currentItem = 1
+                viewPager.currentItem = currentItem
+                galleryTitleTv.text = cell.data[currentItem].title
+                viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback(){
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        galleryTitleTv.text = cell.data[position].title
+                    }
+                })
+            }
+        }
+    }
+
+    private fun transformation1(vpLocations: ViewPager2) {
+        vpLocations.clipToPadding = false
+        vpLocations.clipChildren = false
+        vpLocations.offscreenPageLimit = 3
+        vpLocations.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+
+        val compositeTransformer = CompositePageTransformer()
+        compositeTransformer.addTransformer(MarginPageTransformer(40))
+        compositeTransformer.addTransformer { page, position ->
+            val r = 1 - kotlin.math.abs(position)
+            page.scaleY = (0.90f + r * 0.10f)
+        }
+        vpLocations.setPageTransformer(compositeTransformer)
     }
 
 
