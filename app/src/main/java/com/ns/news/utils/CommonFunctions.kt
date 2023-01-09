@@ -18,6 +18,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.ViewCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -49,12 +50,15 @@ class CommonFunctions {
         }
 
         fun openChooserOption(title:String, articleUrl:String, context: Context){
-            val shareIntent = Intent()
-            shareIntent.action = Intent.ACTION_SEND
-            shareIntent.type =  "text/plain"
-            shareIntent.putExtra("title", title)
-            shareIntent.putExtra("link", articleUrl)
-            context.startActivity(Intent.createChooser(shareIntent, "Send To"))
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, articleUrl)
+                putExtra(Intent.EXTRA_TITLE, title)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            context.startActivity(shareIntent)
 
         }
 
