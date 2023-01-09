@@ -25,6 +25,7 @@ import com.videopager.models.ViewResult
 import com.videopager.models.ViewState
 import com.player.players.AppPlayer
 import com.videopager.ui.extensions.ViewState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
@@ -60,6 +61,7 @@ internal class VideoPagerViewModel(
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(): Flow<ViewResult> {
         return flatMapLatest { repository.videoData() }
             .map { videoData ->
