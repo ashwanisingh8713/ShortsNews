@@ -47,7 +47,6 @@ class VideoPagerFragment(
         val binding = VideoPagerFragmentBinding.bind(view)
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
         val appPlayerView = appPlayerViewFactory.create(view.context)
-
         val adapter = PagerAdapter(imageLoader)
         binding.viewPager.adapter = adapter
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
@@ -85,6 +84,7 @@ class VideoPagerFragment(
                     if (state.showPlayer) {
                         adapter.showPlayerFor(state.page)
                         binding.viewPager.isUserInputEnabled = true
+                        binding.progressBarVideoShorts.visibility = View.GONE
                     }
                 }
             }

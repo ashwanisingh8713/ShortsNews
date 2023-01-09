@@ -16,6 +16,17 @@
         android:scaleType="centerCrop"
         card_view:layout_constraintTop_toTopOf="parent" />
 
+    <ProgressBar
+        android:id="@+id/progress_bar_article_shorts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        card_view:layout_constraintStart_toStartOf="@id/imageView"
+        card_view:layout_constraintEnd_toEndOf="@id/imageView"
+        card_view:layout_constraintTop_toTopOf="@id/imageView"
+        card_view:layout_constraintBottom_toBottomOf="@id/imageView"
+        android:visibility="gone"/>
+
+
     <TextView
         android:id="@+id/article_section"
         android:layout_width="wrap_content"

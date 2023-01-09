@@ -56,7 +56,7 @@ class ArticleShortsFragment : Fragment() {
         )
         articleMutableList.add(
             ArticleShortsData(
-                "https://d2jo35ozacw6sq.cloudfront.net/wp-content/uploads/2022/12/Dharwad-Soppu-Mela-3-300x169.jpg",
+                "https://media.istockphoto.com/id/1291177121/photo/low-angle-of-tall-building-in-manhattan.jpg?s=612x612&w=is&k=20&c=IiK5KvS-tENobs5KVV2hye6gxpumRqrVw7KTW9GM6Ic=",
                 "Russia Ukraine War",
                 "05:30",
                 "Crypto Prices: दो साल के निचले स्तर पर बिटकॉइन, इथीरियम में भी बड़ी गिरावट दर्ज",
@@ -65,7 +65,7 @@ class ArticleShortsFragment : Fragment() {
         )
         articleMutableList.add(
             ArticleShortsData(
-                "https://d2jo35ozacw6sq.cloudfront.net/wp-content/uploads/2022/12/R-Ashoka-Revenue-Minister-300x169.jpg",
+                "https://media.istockphoto.com/id/1291177121/photo/low-angle-of-tall-building-in-manhattan.jpg?s=612x612&w=is&k=20&c=IiK5KvS-tENobs5KVV2hye6gxpumRqrVw7KTW9GM6Ic=",
                 "Russia Ukraine War",
                 "05:30",
                 "Crypto Prices: दो साल के निचले स्तर पर बिटकॉइन, इथीरियम में भी बड़ी गिरावट दर्ज",
@@ -74,7 +74,7 @@ class ArticleShortsFragment : Fragment() {
         )
         articleMutableList.add(
             ArticleShortsData(
-                "https://d2jo35ozacw6sq.cloudfront.net/wp-content/uploads/2022/12/New-Project-74-2-300x169.jpg",
+                "https://media.istockphoto.com/id/1291177121/photo/low-angle-of-tall-building-in-manhattan.jpg?s=612x612&w=is&k=20&c=IiK5KvS-tENobs5KVV2hye6gxpumRqrVw7KTW9GM6Ic=",
                 "Russia Ukraine War",
                 "05:30",
                 "Crypto Prices: दो साल के निचले स्तर पर बिटकॉइन, इथीरियम में भी बड़ी गिरावट दर्ज",
@@ -83,7 +83,7 @@ class ArticleShortsFragment : Fragment() {
         )
         articleMutableList.add(
             ArticleShortsData(
-                "https://d2jo35ozacw6sq.cloudfront.net/wp-content/uploads/2022/12/Nes-6-300x169.jpg",
+                "https://media.istockphoto.com/id/1291177121/photo/low-angle-of-tall-building-in-manhattan.jpg?s=612x612&w=is&k=20&c=IiK5KvS-tENobs5KVV2hye6gxpumRqrVw7KTW9GM6Ic=",
                 "Russia Ukraine War",
                 "05:30",
                 "Crypto Prices: दो साल के निचले स्तर पर बिटकॉइन, इथीरियम में भी बड़ी गिरावट दर्ज",
@@ -92,7 +92,7 @@ class ArticleShortsFragment : Fragment() {
         )
         articleMutableList.add(
             ArticleShortsData(
-                "https://d2jo35ozacw6sq.cloudfront.net/wp-content/uploads/2022/12/Janardhana-Reddy-Bommai-300x169.jpg",
+                "https://media.istockphoto.com/id/1291177121/photo/low-angle-of-tall-building-in-manhattan.jpg?s=612x612&w=is&k=20&c=IiK5KvS-tENobs5KVV2hye6gxpumRqrVw7KTW9GM6Ic=",
                 "Russia Ukraine War",
                 "05:30",
                 "Crypto Prices: दो साल के निचले स्तर पर बिटकॉइन, इथीरियम में भी बड़ी गिरावट दर्ज",
@@ -110,7 +110,7 @@ class ArticleShortsFragment : Fragment() {
         )
         articleMutableList.add(
             ArticleShortsData(
-                "https://d2jo35ozacw6sq.cloudfront.net/wp-content/uploads/2022/12/New-Project-72-2-300x169.jpg",
+                "https://media.istockphoto.com/id/1291177121/photo/low-angle-of-tall-building-in-manhattan.jpg?s=612x612&w=is&k=20&c=IiK5KvS-tENobs5KVV2hye6gxpumRqrVw7KTW9GM6Ic=",
                 "Russia Ukraine War",
                 "05:30",
                 "Crypto Prices: दो साल के निचले स्तर पर बिटकॉइन, इथीरियम में भी बड़ी गिरावट दर्ज",
@@ -119,7 +119,7 @@ class ArticleShortsFragment : Fragment() {
         )
         articleMutableList.add(
             ArticleShortsData(
-                "https://d2jo35ozacw6sq.cloudfront.net/wp-content/uploads/2022/12/Investment-300x169.jpg",
+                "https://media.istockphoto.com/id/1291177121/photo/low-angle-of-tall-building-in-manhattan.jpg?s=612x612&w=is&k=20&c=IiK5KvS-tENobs5KVV2hye6gxpumRqrVw7KTW9GM6Ic=",
                 "Russia Ukraine War",
                 "05:30",
                 "Crypto Prices: दो साल के निचले स्तर पर बिटकॉइन, इथीरियम में भी बड़ी गिरावट दर्ज",
@@ -128,7 +128,7 @@ class ArticleShortsFragment : Fragment() {
         )
         articleMutableList.add(
             ArticleShortsData(
-                "https://d2jo35ozacw6sq.cloudfront.net/wp-content/uploads/2022/12/Dharwad-Soppu-Mela-3-300x169.jpg",
+                "https://media.istockphoto.com/id/1291177121/photo/low-angle-of-tall-building-in-manhattan.jpg?s=612x612&w=is&k=20&c=IiK5KvS-tENobs5KVV2hye6gxpumRqrVw7KTW9GM6Ic=",
                 "Russia Ukraine War",
                 "05:30",
                 "Crypto Prices: दो साल के निचले स्तर पर बिटकॉइन, इथीरियम में भी बड़ी गिरावट दर्ज",

@@ -3,6 +3,7 @@ package com.ns.news.utils
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -14,6 +15,7 @@ import android.view.animation.Animation
 import android.view.animation.OvershootInterpolator
 import android.view.animation.TranslateAnimation
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -45,5 +47,16 @@ class CommonFunctions {
             }
             snackBar.show()
         }
+
+        fun openChooserOption(title:String, articleUrl:String, context: Context){
+            val shareIntent = Intent()
+            shareIntent.action = Intent.ACTION_SEND
+            shareIntent.type =  "text/plain"
+            shareIntent.putExtra("title", title)
+            shareIntent.putExtra("link", articleUrl)
+            context.startActivity(Intent.createChooser(shareIntent, "Send To"))
+
+        }
+
     }
 }

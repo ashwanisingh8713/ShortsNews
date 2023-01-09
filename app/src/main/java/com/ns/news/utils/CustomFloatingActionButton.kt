@@ -24,23 +24,36 @@ class CustomFloatingActionButton @JvmOverloads constructor(
     init {
         setImageDrawable(ContextCompat.getDrawable(context,R.drawable.fab_image))
         setOnClickListener {
-            val interpolator = OvershootInterpolator()
-            ViewCompat.animate(this).setInterpolator(interpolator).setListener(null)
-                .rotationBy(360f).withLayer().setDuration(900).start()
-            flag = !flag
-            if (flag) {
-                this.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.fab_cross))
-                viewGroup?.let { it1 -> slideUp(it1) }
-
-            } else if (!flag) {
-                this.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.fab_image))
-                viewGroup?.let { it1 -> slideDown(it1) }
-            }
+          setUpUI(true)
         }
     }
     fun setupParentLayout(viewGroup: ViewGroup){
         this.viewGroup = viewGroup
     }
+    fun closeBottomSheet(){
+//        viewGroup?.let { it1 -> slideDown(it1) }
+        setUpUI(false)
+
+    }
+
+    fun setUpUI(from:Boolean){
+        if (from) {
+            val interpolator = OvershootInterpolator()
+            ViewCompat.animate(this).setInterpolator(interpolator).setListener(null)
+                .rotationBy(360f).withLayer().setDuration(900).start()
+        }
+        flag = !flag
+        if (flag) {
+            this.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.fab_cross))
+            viewGroup?.let { it1 -> slideUp(it1) }
+
+        } else if (!flag) {
+            this.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.fab_image))
+            viewGroup?.let { it1 -> slideDown(it1) }
+        }
+    }
+
+
 
 }
 
