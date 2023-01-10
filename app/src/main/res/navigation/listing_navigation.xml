@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/navigation_detailPager"
-        android:name="com.ns.news.presentation.activity.ui.launch.DetailPagerFragment"
+        android:name="com.ns.news.presentation.activity.ui.detail.DetailPagerFragment"
         tools:layout="@layout/fragment_item_detail" >
 
         <argument
@@ -33,6 +33,10 @@
         <argument
             android:name="section_id"
             app:argType="string" />
+
+        <argument
+            android:name="article_id"
+            app:argType="integer" />
 
     </fragment>
 

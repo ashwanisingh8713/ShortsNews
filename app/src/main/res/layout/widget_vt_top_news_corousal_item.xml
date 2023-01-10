@@ -3,20 +3,21 @@
     android:layout_width="@dimen/_150sdp"
     android:layout_height="@dimen/_60sdp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="@dimen/_10sdp"
-    >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="@dimen/_10sdp">
 
     <TextView
         android:id="@+id/top9_index"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="H"
+        tools:text="H"
         android:textSize="@dimen/_20ssp"
         android:background="@drawable/circle_top9"
         android:textColor="@android:color/holo_red_light"
         android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:focusable="false"
          />
 
     <TextView
@@ -31,6 +32,7 @@
         android:textSize="@dimen/_14ssp"
         android:minLines="3"
         android:maxLines="3"
+        android:focusable="false"
         />
 
     <View

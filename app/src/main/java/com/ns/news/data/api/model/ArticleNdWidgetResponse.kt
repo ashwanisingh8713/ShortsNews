@@ -1,10 +1,12 @@
 package com.ns.news.data.api.model
 
 
+import android.os.Parcelable
 import com.ns.news.data.db.Cell
 import com.ns.news.domain.model.*
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 
 @JsonClass(generateAdapter = true)
 data class CellsItem(
@@ -57,6 +59,7 @@ data class CellsItem(
     }
 }
 
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class AWDataItem(
     @Json(name = "category_name")
@@ -93,16 +96,31 @@ data class AWDataItem(
     val id: Int = 0,
     @Json(name = "excerpt")
     val excerpt: String = ""
-)
+): Parcelable {
 
+    override fun equals(other: Any?): Boolean{
+        if(other is AWDataItem){
+            return id == (other.id)
+        }
+        return false;
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+}
+
+
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class MediaItem(
     @Json(name = "images")
     val images: Images,
     @Json(name = "caption")
     val caption: String = ""
-)
+):Parcelable
 
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class Images(
     @Json(name = "thumbnail")
@@ -113,7 +131,7 @@ data class Images(
     val medium: String = "",
     @Json(name = "medium_large")
     val mediumLarge: String = ""
-)
+):Parcelable
 
 @JsonClass(generateAdapter = true)
 data class ArticleNdWidgetResponse(
@@ -135,20 +153,22 @@ data class AWData(
     val page: Int = 0
 )
 
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class AuthorItem(
     @Json(name = "avatar_url")
     val avatarUrl: String = "",
     @Json(name = "name")
     val name: String = ""
-)
+):Parcelable
 
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class TagItem(
     @Json(name = "id")
     val id: String = "",
     @Json(name = "name")
     val name: String = ""
-)
+):Parcelable
 
 

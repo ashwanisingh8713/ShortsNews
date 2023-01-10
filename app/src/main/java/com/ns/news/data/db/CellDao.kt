@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CellDao {
@@ -13,6 +14,9 @@ interface CellDao {
 
     @Query("SELECT * FROM Cell WHERE sectionId = :sectionId")
     fun articleBySectionId(sectionId: String): PagingSource<Int, Cell>
+
+    @Query("SELECT * FROM Cell WHERE sectionId = :sectionId")
+    fun detailArticles(sectionId: String): Flow<List<Cell>>
 
     @Query("DELETE FROM Cell WHERE sectionId = :sectionId")
     suspend fun deleteBySectionId(sectionId: String)

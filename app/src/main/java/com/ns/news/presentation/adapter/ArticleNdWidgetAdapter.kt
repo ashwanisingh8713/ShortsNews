@@ -229,10 +229,6 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
             val adapter = ItemRecyclerAdapter(cell, viewType)
             binding.pager.adapter = adapter
             binding.cellTitle.text = cell.title
-            binding.root.setOnClickListener {
-                val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell.cellType, cell.type, cell.sectionId)
-                itemView.findNavController().navigate(direction)
-            }
         }
 
     }
