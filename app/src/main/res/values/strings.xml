@@ -34,4 +34,5 @@
 
     <string name="onboard_title3">Choose Category</string>
     <string name="onboard_desc3">Choose at least 5 topics</string>
+    <string name="title_activity_bnav">BNavActivity</string>
 </resources>

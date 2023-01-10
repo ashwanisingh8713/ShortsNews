@@ -1,4 +1,4 @@
-package com.ns.articledetail.model
+package com.ns.news.presentation.activity.ui.detail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,7 +15,7 @@ class ArticleDetailViewModel: ViewModel() {
     init {
         createArticleDetailData()
     }
-    fun createArticleDetailData(){
+    private fun createArticleDetailData(){
         articlesMutableList.add(ArticleData("1","First"))
         articlesMutableList.add(ArticleData("2","Second"))
         articlesMutableList.add(ArticleData("3","Third"))

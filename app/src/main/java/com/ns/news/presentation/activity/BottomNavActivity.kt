@@ -31,7 +31,7 @@ class BottomNavActivity : AppCompatActivity() {
         navigationHeaderBinding = binding.navigationViewContent
         setContentView(binding.root)
 
-        binding.viewPager.adapter = BottomNavPagerAdapter(this)
+        /*binding.viewPager.adapter = BottomNavPagerAdapter(this)
 
         // To Enable or Disable swipe of Pager
         binding.viewPager.isUserInputEnabled = false;
@@ -49,7 +49,7 @@ class BottomNavActivity : AppCompatActivity() {
                 R.id.navigation_more->{binding.viewPager.currentItem = 3 }
             }
             true
-        }
+        }*/
 
         // NavigationDrawer Toggle Action Setup
         val toggle = object : ActionBarDrawerToggle(
@@ -66,19 +66,18 @@ class BottomNavActivity : AppCompatActivity() {
         toggle.syncState()
 
         // Toolbar Navigation Button Click
-        binding.toolbar.setNavigationOnClickListener(object : OnClickListener {
-            override fun onClick(v: View?) {
-                binding.drawerLayout.open()
-            }
-        })
+//        binding.toolbar.setNavigationOnClickListener(object : OnClickListener {
+//            override fun onClick(v: View?) {
+//                binding.drawerLayout.open()
+//            }
+//        })
 
         //Toolbar Navigation Button Click
-        binding.toolbar.setNavigationOnClickListener { binding.drawerLayout.open() }
+//        binding.toolbar.setNavigationOnClickListener { binding.drawerLayout.open() }
 
         observeViewStateUpdates()
         requestSections()
-
-        showIcons();
+        showIcons()
     }
 
     /**
@@ -104,17 +103,6 @@ class BottomNavActivity : AppCompatActivity() {
      * It shows Icons
      */
     fun showIcons() {
-        binding.buttonHamburger.loadSvg("file:///android_asset/ic_hamburger.svg")
-        binding.buttonHamburger.setOnClickListener {binding.drawerLayout.open()}
-
-        binding.logoHamburger.loadSvg("file:///android_asset/logo_hamburger.svg")
-
-        binding.buttonLivetv.loadSvg("file:///android_asset/live_tv_icon.svg")
-
-        binding.buttonNotification.loadSvg("file:///android_asset/notification_icon.svg")
-
-        binding.buttonSearch.loadSvg("file:///android_asset/search_icon.svg")
-
         navigationHeaderBinding.logoNavigation.loadSvg("file:///android_asset/logo_hamburger.svg")
 
         navigationHeaderBinding.buttonClose.loadSvg("file:///android_asset/close_icon_hamburger.svg")
