@@ -11,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.ns.news.databinding.ActivityOnboardingBinding
 import com.ns.news.presentation.activity.BottomNavActivity
+import com.ns.news.presentation.activity.ui.search.SearchActivity
+import com.ns.news.presentation.activity.ui.settings.SettingsActivity
 
 class OnBoardingActivity : AppCompatActivity() {
 
@@ -51,7 +53,9 @@ class OnBoardingActivity : AppCompatActivity() {
 
         // Skip button event
         binding.skipBtn.setOnClickListener {
-            redirectSkipScreens(binding.pager2.currentItem)
+            //redirectSkipScreens(binding.pager2.currentItem)
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
         }
 
         // Back button event
