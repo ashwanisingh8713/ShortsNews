@@ -15,6 +15,7 @@ import coil.request.ImageRequest
 import com.ns.news.R
 import com.ns.news.databinding.FragmentArticleShortsViewHolderBinding
 import com.ns.news.presentation.activity.ui.shorts.data.ArticleShortsData
+import com.ns.news.utils.CommonFunctions
 
 class ArticleShortsViewHolderFragment : Fragment() {
     private var articleShort: ArticleShortsData? = null
@@ -41,6 +42,12 @@ class ArticleShortsViewHolderFragment : Fragment() {
         binding = FragmentArticleShortsViewHolderBinding.inflate(inflater, container, false)
         val root = binding.root
         setupView()
+        binding.shareCardArticleShorts.setOnClickListener {
+            articleShort.let {
+                CommonFunctions.openChooserOption(it?.articleTitle ?: "",
+                    it?.articleImage ?: "", requireActivity())
+            }
+        }
         return root
     }
 

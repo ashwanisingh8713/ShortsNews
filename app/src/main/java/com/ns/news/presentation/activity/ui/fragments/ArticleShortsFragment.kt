@@ -29,6 +29,9 @@ class ArticleShortsFragment : Fragment() {
         binding.retryButton.setOnClickListener {
             setUpUi()
         }
+        binding.crossCardArticleShorts.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
 
         return root
     }

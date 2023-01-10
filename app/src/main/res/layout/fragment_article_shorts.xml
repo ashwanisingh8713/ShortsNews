@@ -38,5 +38,25 @@
         app:layout_constraintStart_toStartOf="@id/internet_connection_tv"
         app:layout_constraintTop_toBottomOf="@id/internet_connection_tv" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cross_card_article_shorts"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_26sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="#EDEDED"
+        app:cardCornerRadius="@dimen/_5sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
+            android:layout_gravity="center"
+            android:src="@drawable/fab_cross" />
+    </androidx.cardview.widget.CardView>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
