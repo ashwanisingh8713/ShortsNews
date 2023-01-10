@@ -48,7 +48,7 @@ class DetailPagerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        observeArticles()
+        observeArticles()
     }
 
     private fun setupDetailViewPager(contentList: List<AWDataItem>) {
