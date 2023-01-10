@@ -8,6 +8,7 @@ import com.news.utils.DefaultDispatchersProvider
 import com.ns.news.data.db.NewsDb
 import com.ns.news.presentation.activity.ui.home.ArticleNdWidgetViewModelFactory
 import com.ns.news.presentation.activity.SectionViewModelFactory
+import com.ns.news.presentation.activity.ui.detail.ArticleDetailViewModelFactory
 import com.ns.news.presentation.activity.ui.home.SectionDBViewModelFactory
 
 class NewsApplication : Application() {
@@ -24,6 +25,7 @@ class NewsApplication : Application() {
         newsRepository = createRepository(newsDb)
         SectionViewModelFactory.inject(newsRepository)
         SectionDBViewModelFactory.inject(newsDb.sectionDao())
+        ArticleDetailViewModelFactory.inject(newsDb.cellItems())
         ArticleNdWidgetViewModelFactory.inject(newsRepository)
 
     }

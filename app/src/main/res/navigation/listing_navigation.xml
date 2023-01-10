@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_launch"
+    >
+
+    <fragment
+        android:id="@+id/navigation_launch"
+        android:name="com.ns.news.presentation.activity.ui.launch.LaunchFragment"
+        tools:layout="@layout/fragment_launch" >
+        <action
+            android:id="@+id/action_section_fragment_to_detail_fragment"
+            app:destination="@id/navigation_detailPager"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_detailPager"
+        android:name="com.ns.news.presentation.activity.ui.detail.DetailPagerFragment"
+        tools:layout="@layout/fragment_item_detail" >
+
+        <argument
+            android:name="cell_type"
+            app:argType="string" />
+        <argument
+            android:name="type"
+            app:argType="string" />
+        <argument
+            android:name="section_id"
+            app:argType="string" />
+
+        <argument
+            android:name="article_id"
+            app:argType="integer" />
+
+    </fragment>
+
+</navigation>

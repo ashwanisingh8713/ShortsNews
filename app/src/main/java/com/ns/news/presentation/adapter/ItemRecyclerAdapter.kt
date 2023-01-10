@@ -2,6 +2,7 @@ package com.ns.news.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.ns.news.R
 import com.ns.news.data.api.model.AWDataItem
@@ -9,6 +10,7 @@ import com.ns.news.data.db.Cell
 import com.ns.news.databinding.NotDefinedBinding
 import com.ns.news.databinding.WidgetVtTopNewsCorousalItemBinding
 import com.ns.news.domain.model.ViewType
+import com.ns.news.presentation.activity.ui.launch.LaunchFragmentDirections
 
 class ItemRecyclerAdapter(private val cell: Cell, private val viewType: ViewType) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -69,16 +71,21 @@ class ItemRecyclerAdapter(private val cell: Cell, private val viewType: ViewType
         return contents.size
     }
 
-}
-
-
-class WidgetTopNewsCorousalItemVH(
-    private val binding: WidgetVtTopNewsCorousalItemBinding
-) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(content: AWDataItem, index: Int) {
-        binding.apply {
-            top9Title.text = content.title
-            top9Index.text = "${index+1}"
+    inner class WidgetTopNewsCorousalItemVH(
+        private val binding: WidgetVtTopNewsCorousalItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(content: AWDataItem, index: Int) {
+            binding.apply {
+                top9Title.text = content.title
+                top9Index.text = "${index+1}"
+                binding.root.setOnClickListener {
+                    val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell.cellType, cell.type, cell.sectionId, content.id)
+                    itemView.findNavController().navigate(direction)
+                }
+            }
         }
     }
+
 }
+
+

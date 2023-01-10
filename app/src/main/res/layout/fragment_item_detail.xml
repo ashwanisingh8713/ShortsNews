@@ -3,13 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.ns.articledetail.fragment.ItemDetailFragment">
+    tools:context=".presentation.activity.ui.detail.ArticleDetailFragment">
 
     <TextView
         android:id="@+id/article_detail_fragment_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hello_blank_fragment"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:background="@color/teal_700"
+        android:textSize="@dimen/_16sdp"/>
 
 </FrameLayout>

@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -31,6 +32,8 @@ import com.ns.news.databinding.WidgetVtStackCardWithCorousalBinding
 import com.ns.news.databinding.WidgetVtTopNewsCorousalBinding
 import com.ns.news.databinding.WidgetWebviewBinding
 import com.ns.news.domain.model.ViewType
+import com.ns.news.presentation.activity.ui.launch.LaunchFragment
+import com.ns.news.presentation.activity.ui.launch.LaunchFragmentDirections
 import com.ns.news.utils.SnapHelperOneByOne
 import com.ns.news.utils.showToast
 import com.ns.view.decoration.HorizontalMarginItemDecoration
@@ -227,6 +230,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
             binding.pager.adapter = adapter
             binding.cellTitle.text = cell.title
         }
+
     }
 
     class WidgetPlainWithCorousalVH(
