@@ -2,7 +2,6 @@ package com.ns.news.presentation.activity
 
 import android.os.Bundle
 import android.view.View
-import android.view.View.OnClickListener
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +13,7 @@ import com.ns.news.presentation.activity.ui.home.SectionDBViewModel
 import com.ns.news.presentation.activity.ui.home.SectionDBViewModelFactory
 import com.ns.news.presentation.adapter.NavigationExpandableListViewAdapter
 import com.ns.news.utils.loadSvg
+
 
 class BottomNavActivity : AppCompatActivity() {
 
@@ -31,25 +31,21 @@ class BottomNavActivity : AppCompatActivity() {
         navigationHeaderBinding = binding.navigationViewContent
         setContentView(binding.root)
 
-        /*binding.viewPager.adapter = BottomNavPagerAdapter(this)
-
-        // To Enable or Disable swipe of Pager
-        binding.viewPager.isUserInputEnabled = false;
-        binding.fab.setupParentLayout(binding.sheetParent)
-        binding.articleShortOption.setupArticleOptionView(this,binding.articleShortOption,this, binding.fab)
-        binding.videoShortOption.setupVideoOptionView(this,binding.videoShortOption,this,  binding.fab)
-        binding.podcastShortOption.setupPodcastOptionView(this,binding.podcastShortOption,this,  binding.fab)
-        binding.bottomNavView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_home->{
-                    binding.viewPager.currentItem = 0
+        // This callback will only be called when MyFragment is at least Started.
+        // This callback will only be called when MyFragment is at least Started.
+        /*val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val fm = supportFragmentManager
+                    val navHostFragment = fm?.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                    navHostFragment.allowEnterTransitionOverlap = true
+                    navHostFragment.reenterTransition = true
+                    val navController = navHostFragment.navController
+                    navController.popBackStack()
                 }
-                R.id.navigation_dashboard->{binding.viewPager.currentItem = 1 }
-                R.id.navigation_notifications->{binding.viewPager.currentItem = 2 }
-                R.id.navigation_more->{binding.viewPager.currentItem = 3 }
             }
-            true
-        }*/
+        onBackPressedDispatcher.addCallback(this, callback)*/
+
 
         // NavigationDrawer Toggle Action Setup
         val toggle = object : ActionBarDrawerToggle(

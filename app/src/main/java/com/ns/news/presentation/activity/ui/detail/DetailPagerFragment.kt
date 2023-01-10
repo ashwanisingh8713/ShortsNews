@@ -29,10 +29,10 @@ class DetailPagerFragment : Fragment() {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        Log.i("Ashwani", "${args.cellType}")
+        /*Log.i("Ashwani", "${args.cellType}")
         Log.i("Ashwani", "${args.type}")
         Log.i("Ashwani", "${args.sectionId}")
-        Log.i("Ashwani", "ArticleId :: ${args.articleId}")
+        Log.i("Ashwani", "ArticleId :: ${args.articleId}")*/
 
 
 
@@ -48,7 +48,7 @@ class DetailPagerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeArticles()
+//        observeArticles()
     }
 
     private fun setupDetailViewPager(contentList: List<AWDataItem>) {

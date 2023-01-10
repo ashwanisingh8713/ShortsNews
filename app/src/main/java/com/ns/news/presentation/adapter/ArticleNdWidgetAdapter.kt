@@ -4,7 +4,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -13,7 +12,7 @@ import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import coil.ImageLoader
+import coil.imageLoader
 import coil.load
 import com.ns.news.R
 import com.ns.news.data.api.model.AWDataItem
@@ -32,12 +31,9 @@ import com.ns.news.databinding.WidgetVtStackCardWithCorousalBinding
 import com.ns.news.databinding.WidgetVtTopNewsCorousalBinding
 import com.ns.news.databinding.WidgetWebviewBinding
 import com.ns.news.domain.model.ViewType
-import com.ns.news.presentation.activity.ui.launch.LaunchFragment
-import com.ns.news.presentation.activity.ui.launch.LaunchFragmentDirections
+import com.ns.news.presentation.activity.ArticleNdWidgetClickListener
 import com.ns.news.utils.SnapHelperOneByOne
 import com.ns.news.utils.showToast
-import com.ns.view.decoration.HorizontalMarginItemDecoration
-import java.lang.Math.abs
 
 /**
  * Adapter for the [RecyclerView] in [ArticleNdWidgetFragment].
@@ -50,7 +46,8 @@ import java.lang.Math.abs
  * *******Demystifying DiffUtil.ItemCallback Class -> https://jermainedilao.medium.com/demystifying-diffutil-itemcallback-class-8c0201cc69b1
  */
 
-class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataAdapter<Cell, RecyclerView.ViewHolder>(REPO_COMPARATOR) {
+
+class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener) : PagingDataAdapter<Cell, RecyclerView.ViewHolder>(REPO_COMPARATOR) {
 
     companion object {
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Cell>() {
@@ -163,7 +160,8 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
                 titleTv.text = "${item.title}"
                 categoryTv.text = item.categoryName
                 timeTv.text = item.modifiedGmt
-                if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, imageLoader)
+                if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
+
             }
         }
     }
@@ -212,7 +210,8 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
                     cellTitleTv.visibility = View.VISIBLE
                     cellActionBtn.visibility = View.VISIBLE
                 }
-                bannerImg.load(item.media[0].images.large, imageLoader)
+
+                if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
                 titleTv.text = " :: $position :: ${item.title}"
                 categoryTv.text = item.categoryName
                 timeTv.text = item.modifiedGmt
@@ -222,30 +221,30 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
     }
 
 
-    class WidgetTopNewsCorousalVH(
+    inner class WidgetTopNewsCorousalVH(
         private val binding: WidgetVtTopNewsCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, position: Int, viewType: ViewType) {
-            val adapter = ItemRecyclerAdapter(cell, viewType)
+            val adapter = ItemRecyclerAdapter(listener, cell, viewType)
             binding.pager.adapter = adapter
             binding.cellTitle.text = cell.title
         }
 
     }
 
-    class WidgetPlainWithCorousalVH(
+    inner class WidgetPlainWithCorousalVH(
         private val binding: WidgetVtPlainWithCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cell, position: Int, viewType: ViewType) {
-            val adapter = ItemRecyclerAdapter(item, viewType)
+            val adapter = ItemRecyclerAdapter(listener, item, viewType)
             binding.pager.adapter = adapter
         }
     }
-    class WidgetStackCardWithCorousalVH(
+    inner class WidgetStackCardWithCorousalVH(
         private val binding: WidgetVtStackCardWithCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Cell, position: Int, viewType: ViewType) {
-            val adapter = ItemRecyclerAdapter(item, viewType)
+            val adapter = ItemRecyclerAdapter(listener, item, viewType)
             binding.pager.adapter = adapter
         }
     }
@@ -266,7 +265,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
         }
     }
 
-    class WidgetGlamourVH(
+    inner class WidgetGlamourVH(
         private val binding: WidgetVtGlamourBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, viewType: ViewType) {
@@ -282,7 +281,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
                 glamourRecyclerView.onFlingListener = null
                 val linearSnapHelper: LinearSnapHelper = SnapHelperOneByOne()
                 linearSnapHelper.attachToRecyclerView(glamourRecyclerView)
-                glamourRecyclerView.adapter = ItemPagerAdapter(cell, viewType)
+                glamourRecyclerView.adapter = ItemPagerAdapter(listener, cell, viewType)
             }
         }
     }
@@ -300,7 +299,7 @@ class ArticleNdWidgetAdapter(private val imageLoader: ImageLoader) : PagingDataA
                     cellTitleTv.visibility = View.VISIBLE
                     cellActionBtn.visibility = View.VISIBLE
                 }
-                viewPager.adapter = ItemPagerAdapter(cell, viewType)
+                viewPager.adapter = ItemPagerAdapter(listener, cell, viewType)
                 transformation1(viewPager)
                 val currentItem = 1
                 viewPager.currentItem = currentItem

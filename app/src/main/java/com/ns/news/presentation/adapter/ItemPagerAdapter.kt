@@ -13,8 +13,9 @@ import com.ns.news.databinding.NotDefinedBinding
 import com.ns.news.databinding.WidgetVtGlamorCorousalItemBinding
 import com.ns.news.databinding.WidgetVtPagerGalleryCorousalItemBinding
 import com.ns.news.domain.model.ViewType
+import com.ns.news.presentation.activity.ArticleNdWidgetClickListener
 
-class ItemPagerAdapter(private val cell: Cell, private val viewType: ViewType) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ItemPagerAdapter(val listener: ArticleNdWidgetClickListener, private val cell: Cell, private val viewType: ViewType) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val contents = cell.data
 
@@ -34,7 +35,11 @@ class ItemPagerAdapter(private val cell: Cell, private val viewType: ViewType) :
         return when (viewType) {
             R.layout.item_sample_card_layout -> {
                 ItemSampleCardVH(
-                    ItemSampleCardLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    ItemSampleCardLayoutBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
                 )
             }
             R.layout.widget_vt_glamor_corousal_item -> {
@@ -80,7 +85,7 @@ class ItemPagerAdapter(private val cell: Cell, private val viewType: ViewType) :
             ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL -> (holder as WidgetGlamorCorousalItemVH).bind(
                 content, position
             )
-            else-> {
+            else -> {
                 (holder as ArticleNdWidgetAdapter.NotDefinedVH).bind()
             }
         }
@@ -90,34 +95,44 @@ class ItemPagerAdapter(private val cell: Cell, private val viewType: ViewType) :
         return contents.size
     }
 
-}
 
-class ItemSampleCardVH(
-    private val binding: ItemSampleCardLayoutBinding
-) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: AWDataItem, index: Int) {
-        binding.apply {
+    class ItemSampleCardVH(
+        private val binding: ItemSampleCardLayoutBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: AWDataItem, index: Int) {
+            binding.apply {
+            }
         }
     }
-}
 
-class WidgetGlamorCorousalItemVH(
-    private val binding: WidgetVtGlamorCorousalItemBinding
-) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: AWDataItem, index: Int) {
-        binding.apply {
-            bannerImg.load(item.media[0].images.mediumLarge, binding.bannerImg.context.imageLoader)
-            titleTv.text = "${item.title}"
+    inner class WidgetGlamorCorousalItemVH(
+        private val binding: WidgetVtGlamorCorousalItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: AWDataItem, index: Int) {
+            binding.apply {
+                bannerImg.load(
+                    item.media[0].images.mediumLarge,
+                    binding.bannerImg.context.imageLoader
+                )
+                titleTv.text = "${item.title}"
+                root.setOnClickListener {
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.id)
+                }
+            }
         }
     }
-}
 
-class WidgetPagerGalleryItemVH(
-    private val binding: WidgetVtPagerGalleryCorousalItemBinding
-) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: AWDataItem, index: Int) {
-        binding.apply {
-            bannerImg.load(item.media[0].images.large, binding.bannerImg.context.imageLoader)
+    inner class WidgetPagerGalleryItemVH(
+        private val binding: WidgetVtPagerGalleryCorousalItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: AWDataItem, index: Int) {
+            binding.apply {
+                bannerImg.load(item.media[0].images.large, binding.bannerImg.context.imageLoader)
+                root.setOnClickListener {
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.id)
+                }
+            }
         }
     }
+
 }

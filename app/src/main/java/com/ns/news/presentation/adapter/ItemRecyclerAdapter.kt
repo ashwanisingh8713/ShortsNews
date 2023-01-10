@@ -10,9 +10,10 @@ import com.ns.news.data.db.Cell
 import com.ns.news.databinding.NotDefinedBinding
 import com.ns.news.databinding.WidgetVtTopNewsCorousalItemBinding
 import com.ns.news.domain.model.ViewType
+import com.ns.news.presentation.activity.ArticleNdWidgetClickListener
 import com.ns.news.presentation.activity.ui.launch.LaunchFragmentDirections
 
-class ItemRecyclerAdapter(private val cell: Cell, private val viewType: ViewType) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ItemRecyclerAdapter(val listener: ArticleNdWidgetClickListener, private val cell: Cell, private val viewType: ViewType) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val contents = cell.data
 
@@ -79,8 +80,7 @@ class ItemRecyclerAdapter(private val cell: Cell, private val viewType: ViewType
                 top9Title.text = content.title
                 top9Index.text = "${index+1}"
                 binding.root.setOnClickListener {
-                    val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell.cellType, cell.type, cell.sectionId, content.id)
-                    itemView.findNavController().navigate(direction)
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, content.id)
                 }
             }
         }

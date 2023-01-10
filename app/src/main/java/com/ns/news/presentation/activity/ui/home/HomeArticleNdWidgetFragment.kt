@@ -2,7 +2,6 @@ package com.ns.news.presentation.activity.ui.home
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +9,16 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import coil.imageLoader
+import com.ns.news.R
 import com.ns.news.data.db.Section
 import com.ns.news.databinding.FragmentArticleNdWidgetBinding
 import com.ns.news.domain.asMergedLoadStates
+import com.ns.news.presentation.activity.ui.detail.DetailPagerFragment
+import com.ns.news.presentation.activity.ui.detail.DetailPagerFragmentArgs
+import com.ns.news.presentation.activity.ui.launch.LaunchFragmentDirections
 import com.ns.news.presentation.adapter.ArticleLoadStateAdapter
 import com.ns.news.presentation.adapter.ArticleNdWidgetAdapter
 import kotlinx.coroutines.flow.collectLatest
@@ -43,17 +47,46 @@ class HomeArticleNdWidgetFragment : Fragment() {
 
     }
 
+    //https://github.com/googlecodelabs/android-navigation/issues/70
+    //https://stackoverflow.com/questions/52716962/add-not-replace-fragment-with-navigation-architecture-component/59531175#59531175
+    private fun navigateToDetailPage(cell_type: String, type: String, section_id: String, article_id: Int) {
+        val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell_type, type, section_id, article_id)
+        findNavController().navigate(direction)
+
+//        requireActivity().supportFragmentManager.beginTransaction()
+//            .add(R.id.nav_host_fragment, DetailPagerFragment())
+//            .addToBackStack("f2").commit()
+
+
+
+
+        /*val fm = activity?.supportFragmentManager
+        val navHostFragment = fm?.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragment.allowEnterTransitionOverlap = true
+        navHostFragment.reenterTransition = true
+        val navController = navHostFragment.navController
+        navController.navigate(direction)*/
+
+
+
+    }
+
+    private fun createAdapter(): ArticleNdWidgetAdapter {
+        return ArticleNdWidgetAdapter {cell_type: String, type: String, section_id: String, article_id: Int -> navigateToDetailPage(cell_type, type, section_id, article_id) }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentArticleNdWidgetBinding.inflate(inflater, container, false)
         val root = binding.root
-        adapter = ArticleNdWidgetAdapter(requireActivity().imageLoader)
+
         /*binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
             header = ArticleLoadStateAdapter(adapter),
             footer = ArticleLoadStateAdapter(adapter)
         )*/
+        adapter = createAdapter()
         binding.recyclerView.adapter = adapter.withLoadStateFooter(ArticleLoadStateAdapter(adapter))
         requestPaginationApi()
         return root
