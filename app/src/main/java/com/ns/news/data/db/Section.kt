@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.ns.news.data.api.model.AWDataItem
 import com.ns.news.data.api.model.Logo
 import com.ns.news.data.api.model.SectionItem
 import kotlinx.parcelize.IgnoredOnParcel
@@ -24,4 +25,15 @@ data class Section(
     @IgnoredOnParcel
     val subSections: List<SectionItem>,
     val slug: String
-) : Parcelable
+) : Parcelable {
+    override fun equals(other: Any?): Boolean{
+        if(other is Section){
+            return sectionId == (other.sectionId)
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return sectionId.hashCode()
+    }
+}

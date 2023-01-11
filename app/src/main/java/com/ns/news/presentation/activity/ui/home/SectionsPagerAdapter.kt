@@ -9,7 +9,7 @@ import com.ns.news.data.db.Section
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-class SectionsPagerAdapter(fragment: Fragment, private val sections: List<Section>) : FragmentStateAdapter(fragment) {
+class SectionsPagerAdapter(fragment: Fragment, val sections: List<Section>) : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int {
         return sections.size
     }

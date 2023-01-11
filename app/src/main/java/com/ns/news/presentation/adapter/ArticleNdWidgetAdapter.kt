@@ -266,7 +266,6 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                     }
                 }
 
-
             }
         }
     }

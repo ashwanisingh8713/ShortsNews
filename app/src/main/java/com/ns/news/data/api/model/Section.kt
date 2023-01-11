@@ -24,6 +24,17 @@ data class SectionItem(@Json(name = "section_id")
                        @Json(name = "slug")
                        val slug: String = "") {
 
+    override fun equals(other: Any?): Boolean{
+        if(other is Section){
+            return sectionId == (other.sectionId)
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return sectionId.hashCode()
+    }
+
 
     companion object {
         fun of(

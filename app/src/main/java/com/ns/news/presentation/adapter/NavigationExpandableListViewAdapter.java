@@ -16,17 +16,19 @@ import androidx.appcompat.widget.AppCompatImageView;
 import com.ns.news.R;
 import com.ns.news.data.api.model.SectionItem;
 import com.ns.news.data.db.Section;
+import com.ns.news.presentation.activity.LaunchSharedViewModel;
 
 import java.util.List;
 
 public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapter {
     private final Context mContext;
     private final List<Section> mSectionList;
-//    private OnExpandableListViewItemClickListener onExpandableListViewItemClickListener;
+    private final LaunchSharedViewModel launchShareViewModel;
 
-    public NavigationExpandableListViewAdapter(Context mContext, List<Section> mSectionList) {
+    public NavigationExpandableListViewAdapter(Context mContext, List<Section> mSectionList, LaunchSharedViewModel launchShareViewModel) {
         this.mContext = mContext;
         this.mSectionList = mSectionList;
+        this.launchShareViewModel = launchShareViewModel;
     }
 
     @Override
@@ -83,8 +85,8 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
 
         if(getGroup(groupPosition) != null) {
 
-            String mSectionName = getGroup(groupPosition).getName();
             Section sectionBean = getGroup(groupPosition);
+            String mSectionName = sectionBean.getName();
 //            boolean isNewSection = sectionBean != null && sectionBean.isNew();
 //            String customeScreen = getGroup(groupPosition).getCustomScreen();
             if(mSectionName == null) {
@@ -95,7 +97,7 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
 
 
 
-            List<SectionItem> mChildList = getGroup(groupPosition).getSubSections();
+            List<SectionItem> mChildList = sectionBean.getSubSections();
             if (mChildList != null && mChildList.size() > 0) {
                 mGroupViewHolder.mExpandButton.setVisibility(View.VISIBLE);
             } else {
@@ -120,6 +122,7 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
                         finalMGroupViewHolder.mExpandButton.setBackgroundResource(R.drawable.minus_new);
 
                     }*/
+                    launchShareViewModel.navigationItemClick(sectionBean, null);
                 }
             });
 
@@ -127,6 +130,7 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
                 @Override
                 public void onClick(View v) {
                     //onExpandableListViewItemClickListener.onGroupClick(groupPosition, getGroup(groupPosition), isExpanded);
+                    launchShareViewModel.navigationItemClick(sectionBean, null);
                 }
             });
         }
@@ -149,7 +153,7 @@ public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapt
         childViewHolder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //onExpandableListViewItemClickListener.onChildClick(groupPosition, childPosition, getGroup(groupPosition), getChild(groupPosition, childPosition));
+                launchShareViewModel.navigationItemClick(getGroup(groupPosition), getChild(groupPosition, childPosition));
             }
         });
         return convertView;

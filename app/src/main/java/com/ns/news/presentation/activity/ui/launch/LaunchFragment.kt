@@ -5,14 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.ns.news.R
 import com.ns.news.databinding.FragmentLaunchBinding
+import com.ns.news.presentation.activity.LaunchSharedViewModel
+import com.ns.news.presentation.activity.LaunchSharedViewModelFactory
+import com.ns.news.presentation.activity.SharedClickEvent
 import com.ns.news.utils.loadSvg
 
 class LaunchFragment : Fragment() {
     private var _binding: FragmentLaunchBinding? = null
     private val binding get() = _binding!!
+    private val launchShareViewModel: LaunchSharedViewModel by activityViewModels { LaunchSharedViewModelFactory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,17 +52,19 @@ class LaunchFragment : Fragment() {
             }
             true
         }
-
         showIcons()
+
     }
+
+
 
     /**
      * It shows Icons
      */
-    fun showIcons() {
+    private fun showIcons() {
         binding.buttonHamburger.loadSvg("file:///android_asset/ic_hamburger.svg")
         binding.buttonHamburger.setOnClickListener {
-//            binding.drawerLayout.open()
+            launchShareViewModel.openDrawer()
         }
 
         binding.logoHamburger.loadSvg("file:///android_asset/logo_hamburger.svg")

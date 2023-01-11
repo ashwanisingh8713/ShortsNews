@@ -19,7 +19,7 @@ class BottomNavActivity : AppCompatActivity() {
 
     private val viewModel: SectionApiViewModel by viewModels { SectionViewModelFactory }
     private val viewModelHamburger: SectionDBViewModel by viewModels { SectionDBViewModelFactory }
-//    private val sharedSectionViewModel: SectionTypeSharedViewModel by viewModels { SectionTypeSharedViewModelFactory() }
+    private val launchShareViewModel: LaunchSharedViewModel by viewModels { LaunchSharedViewModelFactory}
     private lateinit var expandableListViewAdapter: NavigationExpandableListViewAdapter
     private lateinit var binding: ActivityBottomNavBinding
     private lateinit var navigationHeaderBinding: ContentNavigationHeaderBinding
@@ -36,12 +36,7 @@ class BottomNavActivity : AppCompatActivity() {
         /*val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    val fm = supportFragmentManager
-                    val navHostFragment = fm?.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-                    navHostFragment.allowEnterTransitionOverlap = true
-                    navHostFragment.reenterTransition = true
-                    val navController = navHostFragment.navController
-                    navController.popBackStack()
+
                 }
             }
         onBackPressedDispatcher.addCallback(this, callback)*/
@@ -61,28 +56,34 @@ class BottomNavActivity : AppCompatActivity() {
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // Toolbar Navigation Button Click
-//        binding.toolbar.setNavigationOnClickListener(object : OnClickListener {
-//            override fun onClick(v: View?) {
-//                binding.drawerLayout.open()
-//            }
-//        })
-
-        //Toolbar Navigation Button Click
-//        binding.toolbar.setNavigationOnClickListener { binding.drawerLayout.open() }
-
-        observeViewStateUpdates()
+        observeDrawerItems()
         requestSections()
         showIcons()
+        observeSharedClickEvents()
     }
 
     /**
-     * Observing Language & State Data
+     * Observing Drawer Click Event
      */
-    private fun observeViewStateUpdates() {
+    private fun observeSharedClickEvents() {
+        lifecycleScope.launchWhenStarted {
+            launchShareViewModel.drawerSharedClick.collect {
+                when(it) {
+                    SharedClickEvent.DRAWER_OPEN-> binding.drawerLayout.open()
+                    SharedClickEvent.DRAWER_CLOSE-> binding.drawerLayout.close()
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Observing Drawer related Data
+     */
+    private fun observeDrawerItems() {
         lifecycleScope.launchWhenStarted {
             viewModelHamburger.getHamburger().collect {
-                expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it)
+                expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it, launchShareViewModel)
                 navigationHeaderBinding.expandableListViewNavigation.setAdapter(expandableListViewAdapter)
             }
         }

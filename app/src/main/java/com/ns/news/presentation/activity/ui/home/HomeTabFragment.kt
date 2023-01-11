@@ -13,14 +13,17 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ns.news.data.db.Section
 import com.ns.news.databinding.FragmentHomeBinding
+import com.ns.news.presentation.activity.LaunchSharedViewModel
+import com.ns.news.presentation.activity.LaunchSharedViewModelFactory
 
 class HomeTabFragment : Fragment() {
 
 //    private val sharedSectionViewModel: SectionTypeSharedViewModel by activityViewModels { SectionTypeSharedViewModelFactory() }
     private val viewModel: SectionDBViewModel by viewModels { SectionDBViewModelFactory }
+    private val launchShareViewModel: LaunchSharedViewModel by activityViewModels { LaunchSharedViewModelFactory }
     private var _binding: FragmentHomeBinding? = null
-
     private val binding get() = _binding!!
+    private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,20 +36,32 @@ class HomeTabFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeNavigationDrawerClicks()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
     /**
+     * Observing Navigation Drawer Click Event
+     */
+    private fun observeNavigationDrawerClicks() {
+        lifecycleScope.launchWhenStarted {
+            launchShareViewModel.navigationItemClick.collect {
+                val index = sectionsPagerAdapter.sections.indexOf(it.first)
+                if(index != -1) binding.viewPager.currentItem = index
+            }
+        }
+    }
+
+    /**
      * Observing Breadcrumb Data
      */
     private fun observeSectionUpdates() {
-        /*viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            sharedSectionViewModel.breadcrumbSharedViewModel.collect {
-                setupUI(it)
-            }
-        }*/
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getBreadcrumb().collect {
                 setupUI(it)
@@ -54,15 +69,17 @@ class HomeTabFragment : Fragment() {
         }
     }
 
-    private fun setupUI(sections: List<Section>) {
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, sections)
-        val viewPager: ViewPager2 = binding.viewPager
-        viewPager.isUserInputEnabled = false
-        viewPager.adapter = sectionsPagerAdapter
-        val tabs: TabLayout = binding.tabs
 
-        TabLayoutMediator(tabs, viewPager) { tab, position ->
-            tab.text = sections.get(position).name
-        }.attach()
+    private fun setupUI(sections: List<Section>) {
+        sectionsPagerAdapter = SectionsPagerAdapter(this, sections)
+        binding.apply {
+            viewPager.isUserInputEnabled = false
+            viewPager.adapter = sectionsPagerAdapter
+            val tabs: TabLayout = binding.tabs
+            TabLayoutMediator(tabs, viewPager) { tab, position ->
+                tab.text = sections.get(position).name
+            }.attach()
+        }
+
     }
 }
