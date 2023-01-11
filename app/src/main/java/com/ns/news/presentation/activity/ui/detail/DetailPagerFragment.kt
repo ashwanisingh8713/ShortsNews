@@ -34,26 +34,25 @@ class DetailPagerFragment : Fragment() {
         Log.i("Ashwani", "${args.sectionId}")
         Log.i("Ashwani", "ArticleId :: ${args.articleId}")*/
 
+        observeArticles()
 
-
-        binding.viewPagerArticleDetail.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-            }
-        })
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeArticles()
+        binding.viewPager.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+            }
+        })
     }
 
     private fun setupDetailViewPager(contentList: List<AWDataItem>) {
         articleDetailPagerAdapter = ArticleDetailViewpagerAdapter(this, contentList)
-        binding.viewPagerArticleDetail.adapter = articleDetailPagerAdapter
+        binding.viewPager.adapter = articleDetailPagerAdapter
 
     }
 
@@ -66,10 +65,10 @@ class DetailPagerFragment : Fragment() {
                 val awList = mutableListOf<AWDataItem>()
                 it.map { awList.addAll(it.data) }
                 setupDetailViewPager(awList)
-                var awData = AWDataItem(id=args.articleId)
+                var awData = AWDataItem(articleId=args.articleId)
                 val index = awList.indexOf(awData)
                 if(index != -1) {
-                    binding.viewPagerArticleDetail.currentItem = index
+                    binding.viewPager.currentItem = index
                 }
             }
         }

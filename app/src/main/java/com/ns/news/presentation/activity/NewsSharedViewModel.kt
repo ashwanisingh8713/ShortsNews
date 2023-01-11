@@ -3,12 +3,15 @@ package com.ns.news.presentation.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ns.news.data.api.model.SectionItem
+import com.ns.news.data.db.ReadDao
 import com.ns.news.data.db.Section
+import com.ns.news.data.db.TableRead
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-class LaunchSharedViewModel : ViewModel() {
+class NewsSharedViewModel(private val readDao: ReadDao) : ViewModel() {
 
   private val _drawerShareClick = MutableSharedFlow<SharedClickEvent>() // 1
   val drawerSharedClick = _drawerShareClick.asSharedFlow() // 2
@@ -33,6 +36,12 @@ class LaunchSharedViewModel : ViewModel() {
             _navigationItemClick.emit(Pair(section, subSection)) // 4
         }
         closeDrawer();
+    }
+
+    fun readArticle(articleId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            readDao.insertReadArticle(TableRead(articleId = articleId))
+        }
     }
 
 }

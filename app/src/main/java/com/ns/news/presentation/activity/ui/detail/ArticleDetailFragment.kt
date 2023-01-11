@@ -7,20 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.ns.news.R
 import com.ns.news.data.api.model.AWDataItem
 import com.ns.news.data.db.Section
+import com.ns.news.presentation.activity.NewsSharedViewModel
+import com.ns.news.presentation.activity.NewsSharedViewModelFactory
 import com.ns.news.presentation.activity.ui.home.HomeArticleNdWidgetFragment
 
 class ArticleDetailFragment : Fragment() {
     lateinit var item: AWDataItem
     lateinit var fragmentTitle: TextView
+    private val newsShareViewModel: NewsSharedViewModel by activityViewModels { NewsSharedViewModelFactory }
 
     companion object {
-
         private const val ARTICLE_DATA = "articleData"
-
         fun newInstance(data: AWDataItem): ArticleDetailFragment {
             return ArticleDetailFragment().apply {
                 arguments = Bundle().apply {
@@ -39,13 +41,6 @@ class ArticleDetailFragment : Fragment() {
         }
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,4 +50,15 @@ class ArticleDetailFragment : Fragment() {
         fragmentTitle.text = item.title
         return view
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        newsShareViewModel.readArticle(articleId = item.articleId)
+    }
+
+
 }

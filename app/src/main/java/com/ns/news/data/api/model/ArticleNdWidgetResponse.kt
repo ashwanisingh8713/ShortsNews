@@ -156,20 +156,20 @@ data class AWDataItem(
     @Json(name = "action_value")
     val actionValue: String = "",
     @Json(name = "id")
-    val id: Int = 0,
+    val articleId: String = "",
     @Json(name = "excerpt")
     val excerpt: String = ""
 ): Parcelable {
 
     override fun equals(other: Any?): Boolean{
         if(other is AWDataItem){
-            return id == (other.id)
+            return articleId == (other.articleId)
         }
         return false
     }
 
     override fun hashCode(): Int {
-        return id.hashCode()
+        return articleId.hashCode()
     }
 }
 

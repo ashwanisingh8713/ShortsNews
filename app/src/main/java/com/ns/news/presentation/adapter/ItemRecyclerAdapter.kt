@@ -80,7 +80,7 @@ class ItemRecyclerAdapter(val listener: ArticleNdWidgetClickListener, private va
                 top9Title.text = content.title
                 top9Index.text = "${index+1}"
                 binding.root.setOnClickListener {
-                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, content.id)
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, content.articleId)
                 }
             }
         }

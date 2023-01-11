@@ -7,20 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import com.ns.news.R
 import com.ns.news.databinding.FragmentLaunchBinding
 import com.ns.news.presentation.activity.ui.search.SearchActivity
-import com.ns.news.presentation.activity.ui.settings.SettingsActivity
-import com.ns.news.presentation.activity.LaunchSharedViewModel
-import com.ns.news.presentation.activity.LaunchSharedViewModelFactory
-import com.ns.news.presentation.activity.SharedClickEvent
+import com.ns.news.presentation.activity.NewsSharedViewModel
+import com.ns.news.presentation.activity.NewsSharedViewModelFactory
 import com.ns.news.utils.loadSvg
 
 class LaunchFragment : Fragment() {
     private var _binding: FragmentLaunchBinding? = null
     private val binding get() = _binding!!
-    private val launchShareViewModel: LaunchSharedViewModel by activityViewModels { LaunchSharedViewModelFactory }
+    private val launchShareViewModel: NewsSharedViewModel by activityViewModels { NewsSharedViewModelFactory }
 
     override fun onCreateView(
         inflater: LayoutInflater,

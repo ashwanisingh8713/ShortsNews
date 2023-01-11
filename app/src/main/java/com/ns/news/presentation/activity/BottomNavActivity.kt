@@ -21,7 +21,7 @@ class BottomNavActivity : AppCompatActivity() {
 
     private val viewModel: SectionApiViewModel by viewModels { SectionViewModelFactory }
     private val viewModelHamburger: SectionDBViewModel by viewModels { SectionDBViewModelFactory }
-    private val launchShareViewModel: LaunchSharedViewModel by viewModels { LaunchSharedViewModelFactory}
+    private val launchShareViewModel: NewsSharedViewModel by viewModels { NewsSharedViewModelFactory}
     private lateinit var expandableListViewAdapter: NavigationExpandableListViewAdapter
     private lateinit var binding: ActivityBottomNavBinding
     private lateinit var navigationHeaderBinding: ContentNavigationHeaderBinding

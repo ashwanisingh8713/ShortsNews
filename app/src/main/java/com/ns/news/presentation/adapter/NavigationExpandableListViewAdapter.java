@@ -1,7 +1,6 @@
 package com.ns.news.presentation.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +15,16 @@ import androidx.appcompat.widget.AppCompatImageView;
 import com.ns.news.R;
 import com.ns.news.data.api.model.SectionItem;
 import com.ns.news.data.db.Section;
-import com.ns.news.presentation.activity.LaunchSharedViewModel;
+import com.ns.news.presentation.activity.NewsSharedViewModel;
 
 import java.util.List;
 
 public class NavigationExpandableListViewAdapter extends BaseExpandableListAdapter {
     private final Context mContext;
     private final List<Section> mSectionList;
-    private final LaunchSharedViewModel launchShareViewModel;
+    private final NewsSharedViewModel launchShareViewModel;
 
-    public NavigationExpandableListViewAdapter(Context mContext, List<Section> mSectionList, LaunchSharedViewModel launchShareViewModel) {
+    public NavigationExpandableListViewAdapter(Context mContext, List<Section> mSectionList, NewsSharedViewModel launchShareViewModel) {
         this.mContext = mContext;
         this.mSectionList = mSectionList;
         this.launchShareViewModel = launchShareViewModel;

@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.ns.news.data.db.Cell
+import com.ns.news.data.db.ReadDao
+import com.ns.news.data.db.TableRead
 import com.ns.news.domain.repositories.ApiRepository
 import kotlinx.coroutines.flow.Flow
 
-class ArticleNdWidgetViewModel(private val repository: ApiRepository) : ViewModel() {
+class ArticleNdWidgetViewModel(private val repository: ApiRepository, private val readDao: ReadDao) : ViewModel() {
 
     private var articleNdWidgetResult: Flow<PagingData<Cell>>? = null
 
@@ -18,5 +20,9 @@ class ArticleNdWidgetViewModel(private val repository: ApiRepository) : ViewMode
         articleNdWidgetResult = newResult
         return newResult
     }
+
+    private var readArticle: Flow<TableRead>? = null
+
+    suspend fun isArticleRead(articleId: String) = readDao.getArticle(articleId)
 
 }

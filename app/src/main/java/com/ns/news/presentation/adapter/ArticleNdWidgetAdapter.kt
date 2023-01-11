@@ -35,8 +35,12 @@ import com.ns.news.databinding.WidgetVtTopNewsCorousalBinding
 import com.ns.news.databinding.WidgetWebviewBinding
 import com.ns.news.domain.model.ViewType
 import com.ns.news.presentation.activity.ArticleNdWidgetClickListener
+import com.ns.news.presentation.activity.ui.home.ArticleNdWidgetViewModel
 import com.ns.news.utils.SnapHelperOneByOne
 import com.ns.news.utils.showToast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Adapter for the [RecyclerView] in [ArticleNdWidgetFragment].
@@ -53,26 +57,36 @@ import com.ns.news.utils.showToast
 class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener) : PagingDataAdapter<Cell, RecyclerView.ViewHolder>(REPO_COMPARATOR) {
 
     private val isDayMode = true
+    var viewModel: ArticleNdWidgetViewModel? = null
+
+    private fun isRead(articleId: String, view: View) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel?.isArticleRead(articleId)?.collect{
+                if(it == null) {
+                    view.alpha = 1.0f
+                } else {
+                    view.alpha = 0.35f
+                }
+            }
+        }
+
+    }
 
     companion object {
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Cell>() {
             override fun areContentsTheSame(oldItem: Cell, newItem: Cell): Boolean  {
                 return if((newItem.type == newItem.type) && oldItem.data.isNotEmpty() && newItem.data.isNotEmpty()) {
-//                    Log.i("Ashwani", "areContentsTheSame IF :: true")
-                    oldItem.data[0].id == newItem.data[0].id
+                    oldItem.data[0].articleId == newItem.data[0].articleId
                 } else if((newItem.type == newItem.type) && oldItem.data.isNotEmpty() && newItem.data.isNotEmpty()) {
-//                    Log.i("Ashwani", "areContentsTheSame ELSE IF :: true")
                     true
                 } else {
                     val isSame = (oldItem.type == newItem.type) && oldItem.data.isEmpty() && newItem.data.isEmpty()
-                    Log.i("Ashwani", "areContentsTheSame ELSE :: $isSame")
                     isSame
                 }
             }
 
             override fun areItemsTheSame(oldItem: Cell, newItem: Cell): Boolean {
                 val isSame = oldItem == newItem
-                Log.i("Ashwani", "areItemsTheSame :: $isSame")
                 return isSame
             }
 
@@ -196,8 +210,9 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 timeTv.text = item.modifiedGmt
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
                 root.setOnClickListener {
-                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.id)
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.articleId)
                 }
+                isRead(item.articleId, root)
             }
         }
     }
@@ -212,8 +227,9 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 titleTv.text = setArticleTitle(cell.type, item.title)
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
                 root.setOnClickListener {
-                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.id)
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.articleId)
                 }
+                isRead(item.articleId, root)
             }
         }
     }
@@ -228,8 +244,9 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 titleTv.text = setArticleTitle(cell.type, item.title)
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
                 root.setOnClickListener {
-                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.id)
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.articleId)
                 }
+                isRead(item.articleId, root)
             }
         }
     }
@@ -262,9 +279,12 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                     timeTv.text = modifiedGmt
                     recyclerView.adapter = HighlightsAdapter(highlights)
                     root.setOnClickListener {
-                        listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, id)
+                        listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, articleId)
                     }
+
+                    isRead(articleId, root)
                 }
+
 
             }
         }

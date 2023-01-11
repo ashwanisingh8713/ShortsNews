@@ -67,16 +67,22 @@ class HomeArticleNdWidgetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initSwipeToRefresh()
+        adapter.viewModel = viewModel
     }
 
-    private fun navigateToDetailPage(cell_type: String, type: String, section_id: String, article_id: Int) {
+    override fun onResume() {
+        super.onResume()
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun navigateToDetailPage(cell_type: String, type: String, section_id: String, article_id: String) {
         val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell_type, type, section_id, article_id)
         findNavController().navigate(direction)
 
     }
 
     private fun createAdapter(): ArticleNdWidgetAdapter {
-        return ArticleNdWidgetAdapter {cell_type: String, type: String, section_id: String, article_id: Int -> navigateToDetailPage(cell_type, type, section_id, article_id) }
+        return ArticleNdWidgetAdapter {cell_type: String, type: String, sectionId: String, articleId: String -> navigateToDetailPage(cell_type, type, sectionId, articleId) }
     }
 
     private fun initSwipeToRefresh() {

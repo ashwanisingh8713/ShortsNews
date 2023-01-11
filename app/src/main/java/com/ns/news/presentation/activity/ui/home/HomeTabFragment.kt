@@ -8,19 +8,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ns.news.data.db.Section
 import com.ns.news.databinding.FragmentHomeBinding
-import com.ns.news.presentation.activity.LaunchSharedViewModel
-import com.ns.news.presentation.activity.LaunchSharedViewModelFactory
+import com.ns.news.presentation.activity.NewsSharedViewModel
+import com.ns.news.presentation.activity.NewsSharedViewModelFactory
 
 class HomeTabFragment : Fragment() {
 
 //    private val sharedSectionViewModel: SectionTypeSharedViewModel by activityViewModels { SectionTypeSharedViewModelFactory() }
     private val viewModel: SectionDBViewModel by viewModels { SectionDBViewModelFactory }
-    private val launchShareViewModel: LaunchSharedViewModel by activityViewModels { LaunchSharedViewModelFactory }
+    private val launchShareViewModel: NewsSharedViewModel by activityViewModels { NewsSharedViewModelFactory }
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
