@@ -52,7 +52,7 @@ import com.ns.news.utils.showToast
 
 class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener) : PagingDataAdapter<Cell, RecyclerView.ViewHolder>(REPO_COMPARATOR) {
 
-    val isDayMode = true
+    private val isDayMode = true
 
     companion object {
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Cell>() {
