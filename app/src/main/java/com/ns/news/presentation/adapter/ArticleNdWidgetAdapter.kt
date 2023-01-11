@@ -18,7 +18,6 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import coil.imageLoader
 import coil.load
 import com.ns.news.R
-import com.ns.news.data.api.model.AWDataItem
 import com.ns.news.data.api.model.CellBackground
 import com.ns.news.data.db.Cell
 import com.ns.news.databinding.ArticlePhotosBinding
@@ -171,7 +170,8 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
         }
     }
 
-    private fun setTitle(type: String, title: String) = "$type :: $title"
+    private fun setArticleTitle(type: String, title: String) = "$type :: $title"
+    private fun setWidgetTitle(type: String, title: String) = "$type :: $title"
 
 
     class NotDefinedVH(
@@ -191,7 +191,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
             val item = cell.data[0]
             binding.apply {
                 setCellBackground(root,cell.cellBg)
-                titleTv.text = setTitle(cell.type, item.title)
+                titleTv.text = setArticleTitle(cell.type, item.title)
                 categoryTv.text = item.categoryName
                 timeTv.text = item.modifiedGmt
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
@@ -207,7 +207,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
             val item= cell.data[0]
             binding.apply {
                 setCellBackground(root,cell.cellBg)
-                titleTv.text = setTitle(cell.type, item.title)
+                titleTv.text = setArticleTitle(cell.type, item.title)
             }
         }
     }
@@ -219,7 +219,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
             val item= cell.data[0]
             binding.apply {
                 setCellBackground(root,cell.cellBg)
-                titleTv.text = setTitle(cell.type, item.title)
+                titleTv.text = setArticleTitle(cell.type, item.title)
             }
         }
     }
@@ -239,18 +239,20 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
         private val binding: WidgetVtHeroPlainWidgetBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, position: Int) {
-            val item = cell.data[0]
             binding.apply {
                 cell.apply {
                     setCellBackground(root, cellBg)
-                    setCellHeader(cellTitle = setTitle(type, title), cellAction = link,
+                    setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
                         cellTitleTv= cellTitleTv, cellActionBtn= cellActionBtn)
                 }
-                if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
-                titleTv.text = setTitle(cell.type, item.title)
-                categoryTv.text = item.categoryName
-                timeTv.text = item.modifiedGmt
-                recyclerView.adapter = HighlightsAdapter(item.highlights)
+                cell.data[0].apply {
+                    if(media.isNotEmpty())  bannerImg.load(media[0].images.mediumLarge, bannerImg.context.imageLoader)
+                    titleTv.text = title
+                    categoryTv.text = categoryName
+                    timeTv.text = modifiedGmt
+                    recyclerView.adapter = HighlightsAdapter(highlights)
+                }
+
             }
         }
     }
@@ -324,7 +326,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
             binding.apply {
                 cell.apply {
                     setCellBackground(root, cellBg)
-                    setCellHeader(cellTitle = setTitle(type, title), cellAction = link,
+                    setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
                         cellTitleTv= cellTitleTv, cellActionBtn= cellActionBtn)
                 }
                 glamourRecyclerView.onFlingListener = null
@@ -342,7 +344,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
             binding.apply {
                 cell.apply {
                     setCellBackground(root, cellBg)
-                    setCellHeader(cellTitle = setTitle(type, title), cellAction = link,
+                    setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
                         cellTitleTv= cellTitleTv, cellActionBtn= cellActionBtn)
                 }
                 viewPager.adapter = ItemPagerAdapter(listener, cell, viewType)
