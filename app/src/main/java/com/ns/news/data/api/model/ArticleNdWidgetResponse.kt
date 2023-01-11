@@ -2,6 +2,8 @@ package com.ns.news.data.api.model
 
 
 import android.os.Parcelable
+import com.ns.news.data.api.model.CellBackground.Companion.defaultColorDay
+import com.ns.news.data.api.model.CellBackground.Companion.defaultColorNight
 import com.ns.news.data.db.Cell
 import com.ns.news.domain.model.*
 import com.squareup.moshi.Json
@@ -36,24 +38,79 @@ data class CellsItem(
             type: String,
             title: String
         ): Cell {
+            var colorDay = defaultColorDay
+            var colorNight = defaultColorNight
+
             var viewType = when (type) {
-                "PHOTOS" -> ViewType.ARTICLE_VT_PHOTOS
-                "VIDEO" -> ViewType.ARTICLE_VT_VIDEO
-                "STANDARD" -> ViewType.ARTICLE_VT_STANDARD
-                "TOP_NEWS_COROUSAL" -> ViewType.WIDGET_VT_TOP_NEWS_COROUSAL
-                "HERO_PLAIN_WIDGET" -> ViewType.WIDGET_VT_HERO_PLAIN_WIDGET
-                "WEB_WIDGET" -> ViewType.WIDGET_VT_WEB_WIDGET
-                "PLAIN_WITH_COROUSAL" -> ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL
-                "STACK_CARD_WITH_COROUSAL" -> ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL
-                "ALL_TOPICS_WIDGET" -> ViewType.WIDGET_VT_ALL_TOPICS_WIDGET
-                "FOR_YOU_WIDGET" -> ViewType.WIDGET_VT_FOR_YOU_WIDGET
-                "GLAMOR_COROUSAL_WIDGET" -> ViewType.WIDGET_VT_GLAMOR_COROUSAL_WIDGET
-                "PAGER_GALLERY" -> ViewType.WIDGET_VT_PAGER_GALLERY
-                else -> ViewType.VT_NOT_DEFINED
+                "PHOTOS" -> {
+                    colorDay = "#c15fe8"
+                    colorNight = "#d69aed"
+                    ViewType.ARTICLE_VT_PHOTOS
+                }
+                "VIDEO" -> {
+                    colorDay = "#eda279"
+                    colorNight = "#e36e2d"
+                    ViewType.ARTICLE_VT_VIDEO
+                }
+                "STANDARD" -> {
+                    colorDay = "#e8bf5f"
+                    colorNight = "#a19e97"
+                    ViewType.ARTICLE_VT_STANDARD
+                }
+                "TOP_NEWS_COROUSAL" -> {
+                    colorDay = "#736e55"
+                    colorNight = "#665f39"
+                    ViewType.WIDGET_VT_TOP_NEWS_COROUSAL
+                }
+                "HERO_PLAIN_WIDGET" -> {
+                    colorDay = "#f2eed8"
+                    colorNight = "#aba791"
+                    ViewType.WIDGET_VT_HERO_PLAIN_WIDGET
+                }
+                "WEB_WIDGET" -> {
+                    colorDay = "#969692"
+                    colorNight = "#54544c"
+                    ViewType.WIDGET_VT_WEB_WIDGET
+                }
+                "PLAIN_WITH_COROUSAL" -> {
+                    colorDay = "#6e6e46"
+                    colorNight = "#b0b086"
+                    ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL
+                }
+                "STACK_CARD_WITH_COROUSAL" -> {
+                    colorDay = "#b0b086"
+                    colorNight = "#4b4778"
+                    ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL
+                }
+                "ALL_TOPICS_WIDGET" -> {
+                    colorDay = "#476878"
+                    colorNight = "#718791"
+                    ViewType.WIDGET_VT_ALL_TOPICS_WIDGET
+                }
+                "FOR_YOU_WIDGET" -> {
+                    colorDay = "#bfa7d1"
+                    colorNight = "#8b7999"
+                    ViewType.WIDGET_VT_FOR_YOU_WIDGET
+                }
+                "GLAMOR_COROUSAL_WIDGET" -> {
+                    colorDay = "#99798d"
+                    colorNight = "#a64c83"
+                    ViewType.WIDGET_VT_GLAMOR_COROUSAL_WIDGET
+                }
+                "PAGER_GALLERY" -> {
+                    colorDay = "#ab1a72"
+                    colorNight = "#a61aab"
+                    ViewType.WIDGET_VT_PAGER_GALLERY
+                }
+                else ->{
+                    ViewType.VT_NOT_DEFINED
+                }
             }
+
             return Cell(
                 actionText = actionText, data = data, link = link, sectionId = sectionId,
-                cellType = cellType, type = type, title = title, viewType = viewType
+                cellType = cellType, type = type, title = title, viewType = viewType,
+                cellBg = CellBackground(colorDay, colorNight)
             )
         }
     }
@@ -170,5 +227,17 @@ data class TagItem(
     @Json(name = "name")
     val name: String = ""
 ):Parcelable
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class CellBackground(
+    val colorDay: String = defaultColorDay,
+    val colorNight: String = defaultColorNight
+):Parcelable {
+    companion object{
+        const val defaultColorDay = "#808080"
+        const val defaultColorNight = "#FAFFF7"
+    }
+}
 
 

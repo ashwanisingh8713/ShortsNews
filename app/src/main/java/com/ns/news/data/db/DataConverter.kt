@@ -112,5 +112,15 @@ class DataConverter(var moshi: Moshi) {
         return moshi.adapter(Logo::class.java).fromJson(json)
     }
 
+    @TypeConverter
+    fun fromCellBackground(data: CellBackground): String {
+        return moshi.adapter(CellBackground::class.java).toJson(data)
+    }
+
+    @TypeConverter
+    fun toCellBackground(json: String): CellBackground? {
+        return moshi.adapter(CellBackground::class.java).fromJson(json)
+    }
+
 
 }

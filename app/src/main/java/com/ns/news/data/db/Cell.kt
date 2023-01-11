@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.ns.news.data.api.model.AWDataItem
+import com.ns.news.data.api.model.CellBackground
 import com.ns.news.domain.model.ViewType
 
 @Entity(tableName = "Cell", indices = [Index(value = ["sectionId"], unique = false)])
@@ -17,7 +18,8 @@ data class Cell(
     val type: String,
     val title: String,
     val sectionId: String,
-    val viewType: ViewType
+    val viewType: ViewType,
+    val cellBg: CellBackground
 ) {
 
 

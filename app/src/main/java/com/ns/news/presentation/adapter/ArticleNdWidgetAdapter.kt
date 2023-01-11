@@ -1,9 +1,12 @@
 package com.ns.news.presentation.adapter
 
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -16,6 +19,7 @@ import coil.imageLoader
 import coil.load
 import com.ns.news.R
 import com.ns.news.data.api.model.AWDataItem
+import com.ns.news.data.api.model.CellBackground
 import com.ns.news.data.db.Cell
 import com.ns.news.databinding.ArticlePhotosBinding
 import com.ns.news.databinding.ArticleStandardBinding
@@ -48,6 +52,8 @@ import com.ns.news.utils.showToast
 
 
 class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener) : PagingDataAdapter<Cell, RecyclerView.ViewHolder>(REPO_COMPARATOR) {
+
+    val isDayMode = true
 
     companion object {
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Cell>() {
@@ -135,13 +141,38 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
             ViewType.WIDGET_VT_TOP_NEWS_COROUSAL -> (holder as WidgetTopNewsCorousalVH).bind(cell, position, cell.viewType)
             ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL -> (holder as WidgetPlainWithCorousalVH).bind(cell, position, cell.viewType)
             ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL -> (holder as WidgetStackCardWithCorousalVH).bind(cell, position, cell.viewType)
-            ViewType.WIDGET_VT_ALL_TOPICS_WIDGET -> (holder as WidgetAllTopicsVH).bind(cell.data, position)
-            ViewType.WIDGET_VT_FOR_YOU_WIDGET -> (holder as WidgetForYouVH).bind(cell.data, position)
+            ViewType.WIDGET_VT_ALL_TOPICS_WIDGET -> (holder as WidgetAllTopicsVH).bind(cell, position)
+            ViewType.WIDGET_VT_FOR_YOU_WIDGET -> (holder as WidgetForYouVH).bind(cell, position)
             ViewType.WIDGET_VT_GLAMOR_COROUSAL_WIDGET -> (holder as WidgetGlamourVH).bind(cell, ViewType.WIDGET_VT_GLAMOR_COROUSAL_WIDGET)
             ViewType.WIDGET_VT_PAGER_GALLERY -> (holder as WidgetGalleryVH).bind(cell, ViewType.WIDGET_VT_PAGER_GALLERY)
             else -> (holder as NotDefinedVH).bind()
         }
     }
+
+    private fun setCellBackground(root: View, cellBackground: CellBackground) {
+        when(isDayMode) {
+            true->root.setBackgroundColor(Color.parseColor(cellBackground.colorDay))
+            false->root.setBackgroundColor(Color.parseColor(cellBackground.colorNight))
+        }
+    }
+
+    private fun setCellHeader(cellTitle: String, cellAction: String, cellTitleTv: TextView, cellActionBtn: Button) {
+        if(cellTitle.isNotEmpty()) {
+            cellTitleTv.text = cellTitle
+            cellActionBtn.setOnClickListener {
+                it.context.showToast(cellAction)
+            }
+            cellActionBtn.text = cellAction
+            cellTitleTv.visibility = View.VISIBLE
+            cellActionBtn.visibility = View.VISIBLE
+        } else {
+            cellTitleTv.visibility = View.GONE
+            cellActionBtn.visibility = View.GONE
+        }
+    }
+
+    private fun setTitle(type: String, title: String) = "$type :: $title"
+
 
     class NotDefinedVH(
         private val binding: NotDefinedBinding
@@ -151,13 +182,16 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
         }
     }
 
+
+
     inner class ArticleStandardVH(
         private val binding: ArticleStandardBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Cell, position: Int) {
-            val item = item.data[0]
+        fun bind(cell: Cell, position: Int) {
+            val item = cell.data[0]
             binding.apply {
-                titleTv.text = "${item.title}"
+                setCellBackground(root,cell.cellBg)
+                titleTv.text = setTitle(cell.type, item.title)
                 categoryTv.text = item.categoryName
                 timeTv.text = item.modifiedGmt
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
@@ -166,31 +200,36 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
         }
     }
 
-    class ArticlePhotosVH(
+    inner class ArticlePhotosVH(
         private val binding: ArticlePhotosBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Cell, position: Int) {
+        fun bind(cell: Cell, position: Int) {
+            val item= cell.data[0]
             binding.apply {
-                titleTv.text = " :: $position :: ${item.data[0].title}"
+                setCellBackground(root,cell.cellBg)
+                titleTv.text = setTitle(cell.type, item.title)
             }
         }
     }
 
-    class ArticleVideoVH(
+    inner class ArticleVideoVH(
         private val binding: ArticleVideoBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Cell, position: Int) {
+        fun bind(cell: Cell, position: Int) {
+            val item= cell.data[0]
             binding.apply {
-                titleTv.text = " :: $position :: ${item.data[0].title}"
+                setCellBackground(root,cell.cellBg)
+                titleTv.text = setTitle(cell.type, item.title)
             }
         }
     }
 
-    class WidgetWebViewVH(
+    inner class WidgetWebViewVH(
         private val binding: WidgetWebviewBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell) {
             binding.apply {
+                setCellBackground(root,cell.cellBg)
                 webView.loadUrl(cell.link)
             }
         }
@@ -202,17 +241,13 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
         fun bind(cell: Cell, position: Int) {
             val item = cell.data[0]
             binding.apply {
-                if(cell.title.isNotEmpty()) {
-                    cellTitleTv.text = cell.title
-                    cellActionBtn.setOnClickListener {
-                        it.context.showToast(cell.link)
-                    }
-                    cellTitleTv.visibility = View.VISIBLE
-                    cellActionBtn.visibility = View.VISIBLE
+                cell.apply {
+                    setCellBackground(root, cellBg)
+                    setCellHeader(cellTitle = setTitle(type, title), cellAction = link,
+                        cellTitleTv= cellTitleTv, cellActionBtn= cellActionBtn)
                 }
-
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
-                titleTv.text = " :: $position :: ${item.title}"
+                titleTv.text = setTitle(cell.type, item.title)
                 categoryTv.text = item.categoryName
                 timeTv.text = item.modifiedGmt
                 recyclerView.adapter = HighlightsAdapter(item.highlights)
@@ -225,9 +260,13 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
         private val binding: WidgetVtTopNewsCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, position: Int, viewType: ViewType) {
-            val adapter = ItemRecyclerAdapter(listener, cell, viewType)
-            binding.pager.adapter = adapter
-            binding.cellTitle.text = cell.title
+            binding.apply {
+                setCellBackground(root,cell.cellBg)
+                val adapter = ItemRecyclerAdapter(listener, cell, viewType)
+                pager.adapter = adapter
+                cellTitle.text = cell.title
+            }
+
         }
 
     }
@@ -235,48 +274,58 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
     inner class WidgetPlainWithCorousalVH(
         private val binding: WidgetVtPlainWithCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Cell, position: Int, viewType: ViewType) {
-            val adapter = ItemRecyclerAdapter(listener, item, viewType)
-            binding.pager.adapter = adapter
+        fun bind(cell: Cell, position: Int, viewType: ViewType) {
+            binding.apply {
+                setCellBackground(root,cell.cellBg)
+                val adapter = ItemRecyclerAdapter(listener, cell, viewType)
+                pager.adapter = adapter
+            }
         }
     }
     inner class WidgetStackCardWithCorousalVH(
         private val binding: WidgetVtStackCardWithCorousalBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Cell, position: Int, viewType: ViewType) {
-            val adapter = ItemRecyclerAdapter(listener, item, viewType)
-            binding.pager.adapter = adapter
+        fun bind(cell: Cell, position: Int, viewType: ViewType) {
+            binding.apply {
+                setCellBackground(root,cell.cellBg)
+                val adapter = ItemRecyclerAdapter(listener, cell, viewType)
+                pager.adapter = adapter
+            }
+
         }
     }
 
-    class WidgetAllTopicsVH(
+    inner class WidgetAllTopicsVH(
         private val binding: WidgetVtAllTopicsWidgetBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(contents: List<AWDataItem>, position: Int) {
-
+        fun bind(cell: Cell, position: Int) {
+            binding.apply {
+                setCellBackground(root, cell.cellBg)
+            }
         }
     }
 
-    class WidgetForYouVH(
+    inner class WidgetForYouVH(
         private val binding: WidgetVtForYouWidgetBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(contents: List<AWDataItem>, position: Int) {
-
+        fun bind(cell: Cell, position: Int) {
+            binding.apply {
+                setCellBackground(root, cell.cellBg)
+            }
         }
     }
+
+
 
     inner class WidgetGlamourVH(
         private val binding: WidgetVtGlamourBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, viewType: ViewType) {
             binding.apply {
-                if(cell.title.isNotEmpty()) {
-                    cellTitleTv.text = cell.title
-                    cellActionBtn.setOnClickListener {
-                        it.context.showToast(cell.link)
-                    }
-                    cellTitleTv.visibility = View.VISIBLE
-                    cellActionBtn.visibility = View.VISIBLE
+                cell.apply {
+                    setCellBackground(root, cellBg)
+                    setCellHeader(cellTitle = setTitle(type, title), cellAction = link,
+                        cellTitleTv= cellTitleTv, cellActionBtn= cellActionBtn)
                 }
                 glamourRecyclerView.onFlingListener = null
                 val linearSnapHelper: LinearSnapHelper = SnapHelperOneByOne()
@@ -291,13 +340,10 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, viewType: ViewType) {
             binding.apply {
-                if(cell.title.isNotEmpty()) {
-                    cellTitleTv.text = cell.title
-                    cellActionBtn.setOnClickListener {
-                        it.context.showToast(cell.link)
-                    }
-                    cellTitleTv.visibility = View.VISIBLE
-                    cellActionBtn.visibility = View.VISIBLE
+                cell.apply {
+                    setCellBackground(root, cellBg)
+                    setCellHeader(cellTitle = setTitle(type, title), cellAction = link,
+                        cellTitleTv= cellTitleTv, cellActionBtn= cellActionBtn)
                 }
                 viewPager.adapter = ItemPagerAdapter(listener, cell, viewType)
                 transformation1(viewPager)

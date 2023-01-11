@@ -53,22 +53,6 @@ class HomeArticleNdWidgetFragment : Fragment() {
         val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell_type, type, section_id, article_id)
         findNavController().navigate(direction)
 
-//        requireActivity().supportFragmentManager.beginTransaction()
-//            .add(R.id.nav_host_fragment, DetailPagerFragment())
-//            .addToBackStack("f2").commit()
-
-
-
-
-        /*val fm = activity?.supportFragmentManager
-        val navHostFragment = fm?.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navHostFragment.allowEnterTransitionOverlap = true
-        navHostFragment.reenterTransition = true
-        val navController = navHostFragment.navController
-        navController.navigate(direction)*/
-
-
-
     }
 
     private fun createAdapter(): ArticleNdWidgetAdapter {
