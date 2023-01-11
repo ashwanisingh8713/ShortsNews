@@ -2,6 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:paddingTop="@dimen/size_16dp"
+    android:paddingBottom="@dimen/size_16dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/_14sdp">
@@ -11,8 +13,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxEms="14"
-        android:textSize="@dimen/_16sdp"
+        android:fontFamily="@font/bold_font"
+        android:textColor="@color/black"
         android:textStyle="bold"
+        android:textSize="@dimen/size_18sp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,7 +34,7 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_110sdp"
+        android:layout_height="190dp"
         android:layout_marginTop="@dimen/_8sdp"
         android:paddingStart="@dimen/_40sdp"
         android:paddingEnd="@dimen/_40sdp"
@@ -45,14 +49,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_pager"
-        android:paddingTop="@dimen/_5sdp"
-        android:paddingStart="@dimen/_40sdp"
-        android:paddingEnd="@dimen/_40sdp"
-        android:textSize="@dimen/_12ssp"
-        android:ellipsize="end"
+        android:gravity="center"
+        android:fontFamily="@font/semibold_font"
+        android:textColor="@color/black"
+        android:textSize="@dimen/size_16sp"
+        android:paddingTop="@dimen/size_14sp"
+        android:paddingStart="@dimen/size_60dp"
+        android:paddingEnd="@dimen/size_60dp"
         android:maxLines="2"
-        android:minLines="2"
-        />
+        android:minLines="2"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

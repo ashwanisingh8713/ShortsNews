@@ -9,10 +9,14 @@
         android:id="@+id/cell_title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingStart="@dimen/size_12dp"
+        android:paddingEnd="@dimen/size_12dp"
         android:maxEms="14"
-        android:textSize="@dimen/_16sdp"
-        android:textStyle="bold"
         android:visibility="gone"
+        android:fontFamily="@font/bold_font"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="@dimen/size_18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -21,6 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxEms="14"
+        android:paddingStart="@dimen/size_12dp"
+        android:paddingEnd="@dimen/size_12dp"
         android:text="ARROW Img "
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,6 +44,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:clipChildren="false"
         android:clipToPadding="false"
+        android:paddingStart="@dimen/size_12dp"
         android:paddingEnd="@dimen/_50sdp"
         />
 
