@@ -13,7 +13,14 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabMode="scrollable"/>
+            app:tabMode="scrollable"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/red"
+            app:tabIndicatorHeight="3dp"
+            app:tabSelectedTextColor="@color/black"
+            app:tabTextAppearance="@style/NavigationTabTextAppeareance"
+            app:tabTextColor="@color/black"
+            />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2

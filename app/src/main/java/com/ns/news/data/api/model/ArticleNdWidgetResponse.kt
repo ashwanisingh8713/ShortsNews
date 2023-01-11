@@ -57,17 +57,17 @@ data class CellsItem(
                     ViewType.ARTICLE_VT_VIDEO
                 }
                 "STANDARD" -> {
-                    colorDay = "#e8bf5f"
+                    colorDay = "#ffffff"
                     colorNight = "#a19e97"
                     ViewType.ARTICLE_VT_STANDARD
                 }
                 "TOP_NEWS_COROUSAL" -> {
-                    colorDay = "#736e55"
+                    colorDay = "#f6f6f6"
                     colorNight = "#665f39"
                     ViewType.WIDGET_VT_TOP_NEWS_COROUSAL
                 }
                 "HERO_PLAIN_WIDGET" -> {
-                    colorDay = "#f2eed8"
+                    colorDay = "#ffffff"
                     colorNight = "#aba791"
                     cellType = CELLTYPE_ARTICLE
                     ViewType.WIDGET_VT_HERO_PLAIN_WIDGET
@@ -99,12 +99,12 @@ data class CellsItem(
                     ViewType.WIDGET_VT_FOR_YOU_WIDGET
                 }
                 "GLAMOR_COROUSAL_WIDGET" -> {
-                    colorDay = "#99798d"
+                    colorDay = "#ffffff"
                     colorNight = "#a64c83"
                     ViewType.WIDGET_VT_GLAMOR_COROUSAL_WIDGET
                 }
                 "PAGER_GALLERY" -> {
-                    colorDay = "#ab1a72"
+                    colorDay = "#e4e4e4"
                     colorNight = "#a61aab"
                     ViewType.WIDGET_VT_PAGER_GALLERY
                 }

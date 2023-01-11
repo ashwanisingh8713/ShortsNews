@@ -34,6 +34,21 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".presentation.activity.ui.search.SearchActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".presentation.activity.ui.settings.SettingsActivity"
+            android:theme="@style/Theme.Design.Light.NoActionBar"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".presentation.articledetail.ArticleDetailMain"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">

@@ -1,5 +1,6 @@
 package com.ns.news.presentation.activity.ui.launch
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.ns.news.R
 import com.ns.news.databinding.FragmentLaunchBinding
+import com.ns.news.presentation.activity.ui.search.SearchActivity
+import com.ns.news.presentation.activity.ui.settings.SettingsActivity
 import com.ns.news.utils.loadSvg
 
 class LaunchFragment : Fragment() {
@@ -67,6 +70,10 @@ class LaunchFragment : Fragment() {
         binding.buttonNotification.loadSvg("file:///android_asset/notification_icon.svg")
 
         binding.buttonSearch.loadSvg("file:///android_asset/search_icon.svg")
+        binding.buttonSearch.setOnClickListener {
+            val intent = Intent(context,SearchActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 }

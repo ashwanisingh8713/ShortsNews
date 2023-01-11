@@ -1,5 +1,6 @@
 package com.ns.news.presentation.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -11,6 +12,7 @@ import com.ns.news.databinding.ActivityBottomNavBinding
 import com.ns.news.databinding.ContentNavigationHeaderBinding
 import com.ns.news.presentation.activity.ui.home.SectionDBViewModel
 import com.ns.news.presentation.activity.ui.home.SectionDBViewModelFactory
+import com.ns.news.presentation.activity.ui.settings.SettingsActivity
 import com.ns.news.presentation.adapter.NavigationExpandableListViewAdapter
 import com.ns.news.utils.loadSvg
 
@@ -60,6 +62,12 @@ class BottomNavActivity : AppCompatActivity() {
         }
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+
+        //search
+        binding.navigationViewContent.buttonClose.setOnClickListener {
+            val intent = Intent(this,SettingsActivity::class.java)
+            startActivity(intent)
+        }
 
         // Toolbar Navigation Button Click
 //        binding.toolbar.setNavigationOnClickListener(object : OnClickListener {

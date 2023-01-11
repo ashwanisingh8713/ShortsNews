@@ -5,8 +5,6 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="@dimen/_8sdp"
-    android:paddingEnd="@dimen/_8sdp"
     tools:context=".presentation.activity.ui.home.HomeArticleNdWidgetFragment">
 
     <com.ns.view.customviews.MySwipeToRefresh
