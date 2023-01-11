@@ -155,18 +155,18 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
         }
     }
 
-    private fun setCellHeader(cellTitle: String, cellAction: String, cellTitleTv: TextView, cellActionBtn: Button) {
+    private fun setCellHeader(cellTitle: String, cellAction: String, cellTitleTv: TextView, cellActionBtn: Button?) {
         if(cellTitle.isNotEmpty()) {
             cellTitleTv.text = cellTitle
-            cellActionBtn.setOnClickListener {
+            cellActionBtn?.setOnClickListener {
                 it.context.showToast(cellAction)
             }
-            cellActionBtn.text = cellAction
+            cellActionBtn?.text = cellAction
             cellTitleTv.visibility = View.VISIBLE
-            cellActionBtn.visibility = View.VISIBLE
+            cellActionBtn?.visibility = View.VISIBLE
         } else {
             cellTitleTv.visibility = View.GONE
-            cellActionBtn.visibility = View.GONE
+            cellActionBtn?.visibility = View.GONE
         }
     }
 
@@ -263,10 +263,13 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, position: Int, viewType: ViewType) {
             binding.apply {
-                setCellBackground(root,cell.cellBg)
+                cell.apply {
+                    setCellBackground(root, cellBg)
+                    setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
+                        cellTitleTv= cellTitle, cellActionBtn= null)
+                }
                 val adapter = ItemRecyclerAdapter(listener, cell, viewType)
                 pager.adapter = adapter
-                cellTitle.text = cell.title
             }
 
         }
@@ -278,9 +281,13 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, position: Int, viewType: ViewType) {
             binding.apply {
-                setCellBackground(root,cell.cellBg)
                 val adapter = ItemRecyclerAdapter(listener, cell, viewType)
                 pager.adapter = adapter
+                cell.apply {
+                    setCellBackground(root, cellBg)
+                    setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
+                        cellTitleTv= cellTitleTv, cellActionBtn= null)
+                }
             }
         }
     }
@@ -289,9 +296,13 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, position: Int, viewType: ViewType) {
             binding.apply {
-                setCellBackground(root,cell.cellBg)
                 val adapter = ItemRecyclerAdapter(listener, cell, viewType)
                 pager.adapter = adapter
+                cell.apply {
+                    setCellBackground(root, cellBg)
+                    setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
+                        cellTitleTv= cellTitleTv, cellActionBtn= null)
+                }
             }
 
         }
@@ -302,7 +313,11 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, position: Int) {
             binding.apply {
-                setCellBackground(root, cell.cellBg)
+                cell.apply {
+                    setCellBackground(root, cellBg)
+                    setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
+                        cellTitleTv= cellTitleTv, cellActionBtn= null)
+                }
             }
         }
     }
@@ -312,7 +327,11 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cell: Cell, position: Int) {
             binding.apply {
-                setCellBackground(root, cell.cellBg)
+                cell.apply {
+                    setCellBackground(root, cellBg)
+                    setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
+                        cellTitleTv= cellTitleTv, cellActionBtn= null)
+                }
             }
         }
     }
