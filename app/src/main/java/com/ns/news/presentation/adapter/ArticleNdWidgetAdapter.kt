@@ -195,7 +195,9 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 categoryTv.text = item.categoryName
                 timeTv.text = item.modifiedGmt
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
-
+                root.setOnClickListener {
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.id)
+                }
             }
         }
     }
@@ -208,6 +210,10 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
             binding.apply {
                 setCellBackground(root,cell.cellBg)
                 titleTv.text = setArticleTitle(cell.type, item.title)
+                if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
+                root.setOnClickListener {
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.id)
+                }
             }
         }
     }
@@ -220,6 +226,10 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
             binding.apply {
                 setCellBackground(root,cell.cellBg)
                 titleTv.text = setArticleTitle(cell.type, item.title)
+                if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
+                root.setOnClickListener {
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.id)
+                }
             }
         }
     }
@@ -251,7 +261,11 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                     categoryTv.text = categoryName
                     timeTv.text = modifiedGmt
                     recyclerView.adapter = HighlightsAdapter(highlights)
+                    root.setOnClickListener {
+                        listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, id)
+                    }
                 }
+
 
             }
         }

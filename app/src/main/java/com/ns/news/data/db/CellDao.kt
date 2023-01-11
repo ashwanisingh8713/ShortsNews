@@ -16,7 +16,13 @@ interface CellDao {
     fun articleBySectionId(sectionId: String): PagingSource<Int, Cell>
 
     @Query("SELECT * FROM Cell WHERE sectionId = :sectionId")
-    fun detailArticles(sectionId: String): Flow<List<Cell>>
+    fun getAllArticlesBySectionId(sectionId: String): Flow<List<Cell>>
+
+    @Query("SELECT * FROM Cell WHERE sectionId = :sectionId AND cellType = :articleCellType")
+    fun getArticles(sectionId: String, articleCellType: String): Flow<List<Cell>>
+
+    @Query("SELECT * FROM Cell WHERE sectionId = :sectionId AND type = :type")
+    fun getWidgetArticles(sectionId: String, type: String): Flow<List<Cell>>
 
     @Query("DELETE FROM Cell WHERE sectionId = :sectionId")
     suspend fun deleteBySectionId(sectionId: String)

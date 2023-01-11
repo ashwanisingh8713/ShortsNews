@@ -62,7 +62,7 @@ class DetailPagerFragment : Fragment() {
      */
     private fun observeArticles() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.getArticle(args.sectionId).collect {
+            viewModel.getArticle(sectionId = args.sectionId, cellType = args.cellType, type = args.type).collect {
                 val awList = mutableListOf<AWDataItem>()
                 it.map { awList.addAll(it.data) }
                 setupDetailViewPager(awList)

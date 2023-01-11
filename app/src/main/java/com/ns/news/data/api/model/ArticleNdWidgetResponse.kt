@@ -2,8 +2,8 @@ package com.ns.news.data.api.model
 
 
 import android.os.Parcelable
-import com.ns.news.data.api.model.CellBackground.Companion.defaultColorDay
-import com.ns.news.data.api.model.CellBackground.Companion.defaultColorNight
+import com.ns.news.data.api.model.CellsItem.Companion.defaultColorDay
+import com.ns.news.data.api.model.CellsItem.Companion.defaultColorNight
 import com.ns.news.data.db.Cell
 import com.ns.news.domain.model.*
 import com.squareup.moshi.Json
@@ -27,8 +27,11 @@ data class CellsItem(
     @Json(name = "title")
     val title: String = ""
 ) {
-
     companion object {
+        const val defaultColorDay = "#808080"
+        const val defaultColorNight = "#FAFFF7"
+        const val CELLTYPE_WIDGET = "WIDGET"
+        const val CELLTYPE_ARTICLE = "ARTICLE"
         fun of(
             actionText: String,
             data: List<AWDataItem>,
@@ -40,6 +43,7 @@ data class CellsItem(
         ): Cell {
             var colorDay = defaultColorDay
             var colorNight = defaultColorNight
+            var cellType = cellType
 
             var viewType = when (type) {
                 "PHOTOS" -> {
@@ -65,6 +69,7 @@ data class CellsItem(
                 "HERO_PLAIN_WIDGET" -> {
                     colorDay = "#f2eed8"
                     colorNight = "#aba791"
+                    cellType = CELLTYPE_ARTICLE
                     ViewType.WIDGET_VT_HERO_PLAIN_WIDGET
                 }
                 "WEB_WIDGET" -> {
@@ -90,6 +95,7 @@ data class CellsItem(
                 "FOR_YOU_WIDGET" -> {
                     colorDay = "#bfa7d1"
                     colorNight = "#8b7999"
+                    cellType = CELLTYPE_ARTICLE
                     ViewType.WIDGET_VT_FOR_YOU_WIDGET
                 }
                 "GLAMOR_COROUSAL_WIDGET" -> {
@@ -159,7 +165,7 @@ data class AWDataItem(
         if(other is AWDataItem){
             return id == (other.id)
         }
-        return false;
+        return false
     }
 
     override fun hashCode(): Int {
@@ -234,10 +240,8 @@ data class CellBackground(
     val colorDay: String = defaultColorDay,
     val colorNight: String = defaultColorNight
 ):Parcelable {
-    companion object{
-        const val defaultColorDay = "#808080"
-        const val defaultColorNight = "#FAFFF7"
-    }
+
 }
+
 
 

@@ -47,18 +47,6 @@ class HomeArticleNdWidgetFragment : Fragment() {
 
     }
 
-    //https://github.com/googlecodelabs/android-navigation/issues/70
-    //https://stackoverflow.com/questions/52716962/add-not-replace-fragment-with-navigation-architecture-component/59531175#59531175
-    private fun navigateToDetailPage(cell_type: String, type: String, section_id: String, article_id: Int) {
-        val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell_type, type, section_id, article_id)
-        findNavController().navigate(direction)
-
-    }
-
-    private fun createAdapter(): ArticleNdWidgetAdapter {
-        return ArticleNdWidgetAdapter {cell_type: String, type: String, section_id: String, article_id: Int -> navigateToDetailPage(cell_type, type, section_id, article_id) }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -79,6 +67,16 @@ class HomeArticleNdWidgetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initSwipeToRefresh()
+    }
+
+    private fun navigateToDetailPage(cell_type: String, type: String, section_id: String, article_id: Int) {
+        val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell_type, type, section_id, article_id)
+        findNavController().navigate(direction)
+
+    }
+
+    private fun createAdapter(): ArticleNdWidgetAdapter {
+        return ArticleNdWidgetAdapter {cell_type: String, type: String, section_id: String, article_id: Int -> navigateToDetailPage(cell_type, type, section_id, article_id) }
     }
 
     private fun initSwipeToRefresh() {
