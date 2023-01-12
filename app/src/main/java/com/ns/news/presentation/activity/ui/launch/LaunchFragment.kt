@@ -17,7 +17,7 @@ import com.ns.news.utils.loadSvg
 class LaunchFragment : Fragment() {
     private var _binding: FragmentLaunchBinding? = null
     private val binding get() = _binding!!
-    private val launchShareViewModel: NewsSharedViewModel by activityViewModels { NewsSharedViewModelFactory }
+    private val newsShareViewModel: NewsSharedViewModel by activityViewModels { NewsSharedViewModelFactory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,14 +57,13 @@ class LaunchFragment : Fragment() {
     }
 
 
-
     /**
      * It shows Icons
      */
     private fun showIcons() {
         binding.buttonHamburger.loadSvg("file:///android_asset/ic_hamburger.svg")
         binding.buttonHamburger.setOnClickListener {
-            launchShareViewModel.openDrawer()
+            newsShareViewModel.openDrawer()
         }
 
         binding.logoHamburger.loadSvg("file:///android_asset/logo_hamburger.svg")
@@ -80,4 +79,6 @@ class LaunchFragment : Fragment() {
         }
 
     }
+
+
 }

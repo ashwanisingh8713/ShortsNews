@@ -38,6 +38,17 @@ class NewsSharedViewModel(private val readDao: ReadDao, private val bookmarkDao:
         }
     }
 
+    fun disableDrawer() {
+        viewModelScope.launch { // 1
+            _sharedChannelEvent.emit(SharedChannelEvent.DRAWER_DISABLE) // 4
+        }
+    }
+    fun enableDrawer() {
+        viewModelScope.launch { // 1
+            _sharedChannelEvent.emit(SharedChannelEvent.DRAWER_ENABLE) // 4
+        }
+    }
+
     fun navigationItemClick(section: Section, subSection: SectionItem?) {
         viewModelScope.launch { // 1
             _navigationItemClick.emit(Pair(section, subSection)) // 4

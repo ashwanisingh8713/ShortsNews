@@ -1,18 +1,18 @@
 package com.ns.news.presentation.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
 import com.ns.news.R
 import com.ns.news.databinding.ActivityBottomNavBinding
 import com.ns.news.databinding.ContentNavigationHeaderBinding
 import com.ns.news.presentation.activity.ui.home.SectionDBViewModel
 import com.ns.news.presentation.activity.ui.home.SectionDBViewModelFactory
-import com.ns.news.presentation.activity.ui.settings.SettingsActivity
 import com.ns.news.presentation.adapter.NavigationExpandableListViewAdapter
 import com.ns.news.utils.loadSvg
 
@@ -21,7 +21,7 @@ class BottomNavActivity : AppCompatActivity() {
 
     private val viewModel: SectionApiViewModel by viewModels { SectionViewModelFactory }
     private val viewModelHamburger: SectionDBViewModel by viewModels { SectionDBViewModelFactory }
-    private val launchShareViewModel: NewsSharedViewModel by viewModels { NewsSharedViewModelFactory}
+    private val newsShareViewModel: NewsSharedViewModel by viewModels { NewsSharedViewModelFactory }
     private lateinit var expandableListViewAdapter: NavigationExpandableListViewAdapter
     private lateinit var binding: ActivityBottomNavBinding
     private lateinit var navigationHeaderBinding: ContentNavigationHeaderBinding
@@ -58,12 +58,6 @@ class BottomNavActivity : AppCompatActivity() {
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        //search
-        binding.navigationViewContent.buttonClose.setOnClickListener {
-            val intent = Intent(this,SettingsActivity::class.java)
-            startActivity(intent)
-        }
-
         observeDrawerItems()
         requestSections()
         showIcons()
@@ -75,14 +69,24 @@ class BottomNavActivity : AppCompatActivity() {
      */
     private fun observeSharedClickEvents() {
         lifecycleScope.launchWhenStarted {
-            launchShareViewModel.sharedChannelEvent.collect {
-                when(it) {
-                    SharedChannelEvent.DRAWER_OPEN-> binding.drawerLayout.open()
-                    SharedChannelEvent.DRAWER_CLOSE-> binding.drawerLayout.close()
-                    else->""
+            newsShareViewModel.sharedChannelEvent.collect {
+                when (it) {
+                    SharedChannelEvent.DRAWER_OPEN -> binding.drawerLayout.open()
+                    SharedChannelEvent.DRAWER_CLOSE -> closeDrawer()
+                    SharedChannelEvent.DRAWER_DISABLE -> {
+                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                    }
+                    SharedChannelEvent.DRAWER_ENABLE -> {
+                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                    }
+                    else -> ""
                 }
             }
         }
+    }
+
+    private fun closeDrawer() {
+        binding.drawerLayout.close()
     }
 
 
@@ -92,8 +96,14 @@ class BottomNavActivity : AppCompatActivity() {
     private fun observeDrawerItems() {
         lifecycleScope.launchWhenStarted {
             viewModelHamburger.getHamburger().collect {
-                expandableListViewAdapter = NavigationExpandableListViewAdapter(this@BottomNavActivity, it, launchShareViewModel)
-                navigationHeaderBinding.expandableListViewNavigation.setAdapter(expandableListViewAdapter)
+                expandableListViewAdapter = NavigationExpandableListViewAdapter(
+                    this@BottomNavActivity,
+                    it,
+                    newsShareViewModel
+                )
+                navigationHeaderBinding.expandableListViewNavigation.setAdapter(
+                    expandableListViewAdapter
+                )
             }
         }
     }
@@ -110,9 +120,23 @@ class BottomNavActivity : AppCompatActivity() {
      */
     fun showIcons() {
         navigationHeaderBinding.logoNavigation.loadSvg("file:///android_asset/logo_hamburger.svg")
-
         navigationHeaderBinding.buttonClose.loadSvg("file:///android_asset/close_icon_hamburger.svg")
-        navigationHeaderBinding.buttonClose.setOnClickListener {binding.drawerLayout.close()}
+        navigationHeaderBinding.buttonClose.setOnClickListener { binding.drawerLayout.close() }
+        navigationHeaderBinding.buttonBookmark.setOnClickListener {
+            closeDrawer()
+            val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            val navController = navHostFragment.navController
+            navController.navigate(R.id.navigation_bookmark)
+        }
+
+        navigationHeaderBinding.buttonSetting.setOnClickListener {
+            closeDrawer()
+            val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            val navController = navHostFragment.navController
+            navController.navigate(R.id.navigation_setting)
+        }
     }
 
 }

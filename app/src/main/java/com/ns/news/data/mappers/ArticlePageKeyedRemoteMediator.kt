@@ -38,6 +38,7 @@ class ArticlePageKeyedRemoteMediator(
         state: PagingState<Int, Cell>
     ): MediatorResult {
 
+
         try {
             // Get the closest item from PagingState that we want to load data around.
             val loadKey = when (loadType) {

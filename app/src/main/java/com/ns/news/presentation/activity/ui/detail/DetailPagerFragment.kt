@@ -46,14 +46,7 @@ class DetailPagerFragment : Fragment() {
     ): View {
         _binding = FragmentDetailPagerBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-        /*Log.i("Ashwani", "${args.cellType}")
-        Log.i("Ashwani", "${args.type}")
-        Log.i("Ashwani", "${args.sectionId}")
-        Log.i("Ashwani", "ArticleId :: ${args.articleId}")*/
-
         observeArticles()
-
         return root
     }
 
@@ -68,6 +61,16 @@ class DetailPagerFragment : Fragment() {
         })
 
         topbarOptionsClick()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        newsShareViewModel.disableDrawer()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        newsShareViewModel.enableDrawer()
     }
 
     /**
@@ -91,6 +94,7 @@ class DetailPagerFragment : Fragment() {
             }
         }
 
+        // Collect current visible Article
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             newsShareViewModel.detailArticle.collect {
                 awDataItem = it

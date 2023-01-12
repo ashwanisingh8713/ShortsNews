@@ -37,6 +37,30 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/button_bookmark"
+                android:layout_width="@dimen/icon_width"
+                android:layout_height="@dimen/icon_width"
+                android:layout_marginLeft="@dimen/icon_margin"
+                android:layout_marginRight="@dimen/icon_margin"
+                android:background="@drawable/video_bottom"
+                android:padding="@dimen/close_icon_padding"
+                app:layout_constraintRight_toLeftOf="@+id/button_setting"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/button_setting"
+                android:layout_width="@dimen/icon_width"
+                android:layout_height="@dimen/icon_width"
+                android:layout_marginLeft="@dimen/icon_margin"
+                android:layout_marginRight="@dimen/icon_margin"
+                android:background="@drawable/circle"
+                android:padding="@dimen/close_icon_padding"
+                app:layout_constraintRight_toLeftOf="@+id/button_close"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/button_close"
                 android:layout_width="@dimen/icon_width"
                 android:layout_height="@dimen/icon_width"

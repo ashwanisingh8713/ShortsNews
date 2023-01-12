@@ -6,13 +6,11 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.ns.news.databinding.ActivityOnboardingBinding
 import com.ns.news.presentation.activity.BottomNavActivity
 import com.ns.news.presentation.activity.ui.search.SearchActivity
-import com.ns.news.presentation.activity.ui.settings.SettingsActivity
 
 class OnBoardingActivity : AppCompatActivity() {
 
