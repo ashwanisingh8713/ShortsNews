@@ -17,7 +17,6 @@ import com.ns.news.presentation.activity.NewsSharedViewModelFactory
 
 class HomeTabFragment : Fragment() {
 
-//    private val sharedSectionViewModel: SectionTypeSharedViewModel by activityViewModels { SectionTypeSharedViewModelFactory() }
     private val viewModel: SectionDBViewModel by viewModels { SectionDBViewModelFactory }
     private val launchShareViewModel: NewsSharedViewModel by activityViewModels { NewsSharedViewModelFactory }
     private var _binding: FragmentHomeBinding? = null
@@ -29,7 +28,6 @@ class HomeTabFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         observeSectionUpdates()
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -75,6 +73,9 @@ class HomeTabFragment : Fragment() {
             viewPager.isUserInputEnabled = false
             viewPager.adapter = sectionsPagerAdapter
             val tabs: TabLayout = binding.tabs
+            if(sections.size<5) {
+                tabs.tabMode = TabLayout.MODE_FIXED
+            }
             TabLayoutMediator(tabs, viewPager) { tab, position ->
                 tab.text = sections.get(position).name
             }.attach()

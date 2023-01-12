@@ -9,17 +9,24 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.ns.news.R
 import com.ns.news.data.api.model.AWDataItem
 import com.ns.news.data.db.Section
+import com.ns.news.databinding.FragmentHomeBinding
+import com.ns.news.databinding.FragmentItemDetailBinding
 import com.ns.news.presentation.activity.NewsSharedViewModel
 import com.ns.news.presentation.activity.NewsSharedViewModelFactory
+import com.ns.news.presentation.activity.SharedChannelEvent
 import com.ns.news.presentation.activity.ui.home.HomeArticleNdWidgetFragment
 
 class ArticleDetailFragment : Fragment() {
     lateinit var item: AWDataItem
     lateinit var fragmentTitle: TextView
     private val newsShareViewModel: NewsSharedViewModel by activityViewModels { NewsSharedViewModelFactory }
+
+    private var _binding: FragmentItemDetailBinding? = null
+    private val binding get() = _binding!!
 
     companion object {
         private const val ARTICLE_DATA = "articleData"
@@ -45,19 +52,23 @@ class ArticleDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view: View = inflater.inflate(R.layout.fragment_item_detail, container, false)
-        fragmentTitle = view.findViewById(R.id.article_detail_fragment_text)
-        fragmentTitle.text = item.title
-        return view
+        _binding = FragmentItemDetailBinding.inflate(inflater, container, false)
+        binding.articleDetailFragmentText.text =  item.title
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun onResume() {
+        super.onResume()
+        newsShareViewModel.sendArticle(item)
+    }
+
+
     override fun onPause() {
         super.onPause()
-        newsShareViewModel.readArticle(articleId = item.articleId)
     }
 
 

@@ -124,7 +124,7 @@ data class CellsItem(
 
 @Parcelize
 @JsonClass(generateAdapter = true)
-data class AWDataItem(
+open class AWDataItem(
     @Json(name = "category_name")
     val categoryName: String = "",
     @Json(name = "modified_gmt")

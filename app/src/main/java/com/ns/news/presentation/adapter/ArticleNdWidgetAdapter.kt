@@ -381,9 +381,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                     setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
                         cellTitleTv= cellTitleTv, cellActionBtn= cellActionBtn)
                 }
-                glamourRecyclerView.onFlingListener = null
-                val linearSnapHelper: LinearSnapHelper = SnapHelperOneByOne()
-                linearSnapHelper.attachToRecyclerView(glamourRecyclerView)
+                glamourRecyclerView.setHasFixedSize(true)
                 glamourRecyclerView.adapter = ItemPagerAdapter(listener, cell, viewType)
             }
         }

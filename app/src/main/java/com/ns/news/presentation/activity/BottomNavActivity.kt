@@ -75,10 +75,11 @@ class BottomNavActivity : AppCompatActivity() {
      */
     private fun observeSharedClickEvents() {
         lifecycleScope.launchWhenStarted {
-            launchShareViewModel.drawerSharedClick.collect {
+            launchShareViewModel.sharedChannelEvent.collect {
                 when(it) {
-                    SharedClickEvent.DRAWER_OPEN-> binding.drawerLayout.open()
-                    SharedClickEvent.DRAWER_CLOSE-> binding.drawerLayout.close()
+                    SharedChannelEvent.DRAWER_OPEN-> binding.drawerLayout.open()
+                    SharedChannelEvent.DRAWER_CLOSE-> binding.drawerLayout.close()
+                    else->""
                 }
             }
         }

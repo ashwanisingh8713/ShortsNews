@@ -9,8 +9,8 @@
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="icon_margin">15dp</dimen>
     <dimen name="hamburger_logo_margin">20dp</dimen>
-    <dimen name="icon_width">25dp</dimen>
-    <dimen name="icon_height">25dp</dimen>
+    <dimen name="icon_width">32dp</dimen>
+    <dimen name="icon_height">32dp</dimen>
     <dimen name="hamburger_logo_width">30dp</dimen>
     <dimen name="hamburger_logo_height">30dp</dimen>
     <dimen name="close_icon_padding">7dp</dimen>

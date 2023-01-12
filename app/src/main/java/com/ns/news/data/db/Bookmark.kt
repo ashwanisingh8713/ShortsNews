@@ -7,8 +7,9 @@ import com.ns.news.data.api.model.AWDataItem
 import com.ns.news.data.api.model.CellBackground
 import com.ns.news.domain.model.ViewType
 
-@Entity(tableName = "Cell", indices = [Index(value = ["sectionId"], unique = false)])
-data class Cell(
+
+@Entity(tableName = "Bookmark")
+data class Bookmark(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     val actionText: String,
@@ -21,3 +22,9 @@ data class Cell(
     val viewType: ViewType,
     val cellBg: CellBackground
 )
+
+/*@Entity(tableName = "Bookmark")
+data class Bookmark(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0,
+): AWDataItem()*/

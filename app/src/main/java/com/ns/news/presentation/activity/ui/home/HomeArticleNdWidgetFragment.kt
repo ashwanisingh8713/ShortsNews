@@ -16,6 +16,7 @@ import com.ns.news.R
 import com.ns.news.data.db.Section
 import com.ns.news.databinding.FragmentArticleNdWidgetBinding
 import com.ns.news.domain.asMergedLoadStates
+import com.ns.news.domain.model.ViewType
 import com.ns.news.presentation.activity.ui.detail.DetailPagerFragment
 import com.ns.news.presentation.activity.ui.detail.DetailPagerFragmentArgs
 import com.ns.news.presentation.activity.ui.launch.LaunchFragmentDirections
@@ -68,6 +69,9 @@ class HomeArticleNdWidgetFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initSwipeToRefresh()
         adapter.viewModel = viewModel
+
+        binding.recyclerView.setItemViewCacheSize(40)
+
     }
 
     override fun onResume() {

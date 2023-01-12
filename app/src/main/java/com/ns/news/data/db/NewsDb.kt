@@ -7,7 +7,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 @Database(
-    entities = [Section::class, Cell::class, SectionPageRemote::class, TableRead::class],
+    entities = [Section::class, Cell::class, SectionPageRemote::class, TableRead::class, Bookmark::class],
     version = 1,
     exportSchema = false
 )
@@ -34,6 +34,7 @@ abstract class NewsDb : RoomDatabase() {
     abstract fun remotePage(): SectionPageRemoteDao
     abstract fun sectionDao(): SectionDao
     abstract fun readDao(): ReadDao
+    abstract fun bookmarkDao(): BookmarkDao
 }
 
 

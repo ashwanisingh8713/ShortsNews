@@ -28,7 +28,7 @@ class NewsApplication : Application() {
         SectionDBViewModelFactory.inject(newsDb.sectionDao())
         ArticleDetailViewModelFactory.inject(newsDb.cellItems())
         ArticleNdWidgetViewModelFactory.inject(newsRepository, newsDb.readDao())
-        NewsSharedViewModelFactory.inject(newsDb.readDao())
+        NewsSharedViewModelFactory.inject(newsDb.readDao(), newsDb.bookmarkDao())
 
     }
 
