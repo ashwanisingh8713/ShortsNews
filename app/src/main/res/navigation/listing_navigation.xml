@@ -55,6 +55,15 @@
         android:id="@+id/navigation_setting"
         android:name="com.ns.news.presentation.activity.ui.setting.SettingFragment"
         tools:layout="@layout/fragment_bookmark" >
+
+        <action
+            android:id="@+id/action_section_fragment_to_detail_fragment"
+            app:destination="@id/navigation_detailPager"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
     </fragment>
 
 </navigation>

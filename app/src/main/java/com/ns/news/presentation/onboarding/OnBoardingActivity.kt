@@ -118,7 +118,6 @@ class OnBoardingActivity : AppCompatActivity() {
                     isStates = true
                     binding.pager2.currentItem = 1
                 }
-
             }
         }
     }

@@ -3,7 +3,6 @@ package com.ns.news.presentation.activity.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ns.news.data.db.SectionDao
-import com.ns.news.domain.repositories.ApiRepository
 
 object SectionDBViewModelFactory: ViewModelProvider.Factory {
 

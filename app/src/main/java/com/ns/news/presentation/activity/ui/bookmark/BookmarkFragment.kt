@@ -6,14 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.ns.news.data.api.model.AWDataItem
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.ns.news.data.db.Bookmark
+import com.ns.news.data.db.NewsDb
 import com.ns.news.databinding.FragmentBookmarkBinding
 import com.ns.news.presentation.activity.NewsSharedViewModel
 import com.ns.news.presentation.activity.NewsSharedViewModelFactory
+import com.ns.news.presentation.adapter.BookmarkAdapter
 
-class BookmarkFragment:Fragment() {
+
+class BookmarkFragment:Fragment(), BookmarkAdapter.Callback {
 
     private val newsShareViewModel: NewsSharedViewModel by activityViewModels { NewsSharedViewModelFactory }
+    private var viewModel: BookmarkViewModel? = null
     private var _binding: FragmentBookmarkBinding? = null
     private val binding get() = _binding!!
 
@@ -28,6 +34,16 @@ class BookmarkFragment:Fragment() {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this, BookmarkViewModelFactory(NewsDb.create(requireActivity()).bookmarkDao()))[BookmarkViewModel::class.java]
+        lifecycleScope.launchWhenStarted {
+            viewModel!!.getAllBookmarks().collect{
+                binding.recyclerView.adapter = BookmarkAdapter(it.reversed(), this@BookmarkFragment)
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         newsShareViewModel.disableDrawer()
@@ -36,6 +52,10 @@ class BookmarkFragment:Fragment() {
     override fun onPause() {
         super.onPause()
         newsShareViewModel.enableDrawer()
+    }
+
+    override fun onBookmarkClick(item: Bookmark) {
+
     }
 
 }

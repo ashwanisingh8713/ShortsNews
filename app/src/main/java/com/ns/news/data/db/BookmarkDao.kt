@@ -11,8 +11,8 @@ interface BookmarkDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(cells: Bookmark)
 
-    @Query("SELECT * FROM Bookmark WHERE articleId = :articleId")
-    fun getAllBookmarks(articleId: String): Flow<List<Bookmark>>
+    @Query("SELECT * FROM Bookmark")
+    fun getAllBookmarks(): Flow<List<Bookmark>>
 
     @Query("SELECT * FROM Bookmark WHERE articleId = :articleId")
     fun bookmarkArticle(articleId: String): Flow<Bookmark?>
