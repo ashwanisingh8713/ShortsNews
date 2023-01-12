@@ -25,7 +25,7 @@
         android:name="com.ns.news.presentation.activity.ui.detail.DetailPagerFragment"
         tools:layout="@layout/fragment_item_detail" >
 
-        <argument
+        <!--<argument
             android:name="cell_type"
             app:argType="string" />
         <argument
@@ -33,7 +33,11 @@
             app:argType="string" />
         <argument
             android:name="section_id"
-            app:argType="string" />
+            app:argType="string" />-->
+
+        <argument
+            android:name="cell"
+            app:argType="com.ns.news.data.db.Cell" />
 
         <argument
             android:name="article_id"

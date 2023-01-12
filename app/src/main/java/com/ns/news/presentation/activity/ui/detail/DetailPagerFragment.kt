@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.ns.news.data.api.model.AWDataItem
+import com.ns.news.data.db.Cell
 import com.ns.news.data.db.TableRead
 import com.ns.news.databinding.FragmentDetailPagerBinding
 import com.ns.news.presentation.activity.NewsSharedViewModel
@@ -30,6 +31,13 @@ class DetailPagerFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: DetailPagerFragmentArgs by navArgs()
     private var awDataItem: AWDataItem? = null
+    private var cell: Cell? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        cell = args.cell
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,9 +76,9 @@ class DetailPagerFragment : Fragment() {
     private fun observeArticles() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getArticle(
-                sectionId = args.sectionId,
-                cellType = args.cellType,
-                type = args.type
+                sectionId = cell!!.sectionId,
+                cellType = cell!!.cellType,
+                type = cell!!.type
             ).collect {
                 val awList = mutableListOf<AWDataItem>()
                 it.map { awList.addAll(it.data) }
@@ -98,11 +106,7 @@ class DetailPagerFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             newsShareViewModel.sharedChannelEvent.collect {
-                when(it){
-                    SharedChannelEvent.BOOKMARKED-> Log.i("Ashwani", "IS BOOKMARKED")
-                    SharedChannelEvent.UN_BOOKMARKED->Log.i("Ashwani", "NOT BOOKMARKED")
-                    else->Log.i("Ashwani", "Something went wrong....In Bookmark Logic")
-                }
+                updateBookmarkUI(it)
             }
         }
 
@@ -117,14 +121,28 @@ class DetailPagerFragment : Fragment() {
     private fun topbarOptionsClick() {
         binding.buttonBookmark.setOnClickListener {
             awDataItem?.let { it1 ->
-                newsShareViewModel.addToBookmark(it1)
+                newsShareViewModel.addToBookmark(it1, cell!!.cellType)
             }
         }
 
-        binding.buttonComment.setOnClickListener {
+        binding.buttonRemoveBookmark.setOnClickListener {
             awDataItem?.let { it1 ->
                 newsShareViewModel.removeFromBookmark(it1.articleId)
             }
+        }
+    }
+
+    private fun updateBookmarkUI(bookmarkEvent:SharedChannelEvent) {
+        when(bookmarkEvent){
+            SharedChannelEvent.BOOKMARKED-> {
+                binding.buttonBookmark.visibility = View.GONE
+                binding.buttonRemoveBookmark.visibility = View.VISIBLE
+            }
+            SharedChannelEvent.UN_BOOKMARKED->{
+                binding.buttonBookmark.visibility = View.VISIBLE
+                binding.buttonRemoveBookmark.visibility = View.GONE
+            }
+            else->Log.i("Ashwani", "Something went wrong....In Bookmark Logic")
         }
     }
 

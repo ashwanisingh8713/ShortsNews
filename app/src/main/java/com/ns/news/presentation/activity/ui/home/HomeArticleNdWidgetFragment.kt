@@ -13,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.ns.news.R
+import com.ns.news.data.db.Cell
 import com.ns.news.data.db.Section
 import com.ns.news.databinding.FragmentArticleNdWidgetBinding
 import com.ns.news.domain.asMergedLoadStates
@@ -79,14 +80,20 @@ class HomeArticleNdWidgetFragment : Fragment() {
         adapter.notifyDataSetChanged()
     }
 
-    private fun navigateToDetailPage(cell_type: String, type: String, section_id: String, article_id: String) {
+    /*private fun navigateToDetailPage(cell_type: String, type: String, section_id: String, article_id: String) {
         val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell_type, type, section_id, article_id)
+        findNavController().navigate(direction)
+
+    }*/
+
+    private fun navigateToDetailPage(cell: Cell, article_id: String) {
+        val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell, article_id)
         findNavController().navigate(direction)
 
     }
 
     private fun createAdapter(): ArticleNdWidgetAdapter {
-        return ArticleNdWidgetAdapter {cell_type: String, type: String, sectionId: String, articleId: String -> navigateToDetailPage(cell_type, type, sectionId, articleId) }
+        return ArticleNdWidgetAdapter {cell: Cell, articleId: String -> navigateToDetailPage(cell, articleId) }
     }
 
     private fun initSwipeToRefresh() {

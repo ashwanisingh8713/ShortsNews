@@ -70,9 +70,16 @@ class NewsSharedViewModel(private val readDao: ReadDao, private val bookmarkDao:
 
     }
 
-    fun addToBookmark(awDataItem: AWDataItem) {
+    fun addToBookmark(awDataItem: AWDataItem, cellType: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            bookmarkDao.insert(awDataItem as Bookmark)
+            val data = mutableListOf<AWDataItem>()
+            data.add(awDataItem)
+            val bookmark = Bookmark(
+                type = cellType,
+                articleId = awDataItem.articleId,
+                data = awDataItem
+            )
+            bookmarkDao.insert(bookmark)
         }
     }
 

@@ -47,16 +47,27 @@
 
 
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <TextView
                 android:id="@+id/button_bookmark"
-                android:layout_width="@dimen/icon_width"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/icon_height"
                 android:layout_marginLeft="@dimen/icon_margin"
                 android:layout_marginRight="@dimen/icon_margin"
                 app:layout_constraintRight_toLeftOf="@id/button_comment"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:background="@android:drawable/ic_dialog_email"/>
+                android:text="Mark As Bookmark"/>
+
+            <TextView
+                android:id="@+id/button_remove_bookmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/icon_margin"
+                android:layout_marginRight="@dimen/icon_margin"
+                app:layout_constraintRight_toLeftOf="@id/button_comment"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Remove From Bookmark"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/button_comment"

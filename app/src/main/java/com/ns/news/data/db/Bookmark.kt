@@ -12,15 +12,9 @@ import com.ns.news.domain.model.ViewType
 data class Bookmark(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-    val actionText: String,
-    val data: List<AWDataItem>,
-    val link: String,
-    val cellType: String,
-    val type: String,
-    val title: String,
-    val sectionId: String,
-    val viewType: ViewType,
-    val cellBg: CellBackground
+    val articleId:String,
+    val data: AWDataItem,
+    val type: String
 )
 
 /*@Entity(tableName = "Bookmark")

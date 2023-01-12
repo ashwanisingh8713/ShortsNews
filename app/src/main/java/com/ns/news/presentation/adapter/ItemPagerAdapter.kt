@@ -116,7 +116,7 @@ class ItemPagerAdapter(val listener: ArticleNdWidgetClickListener, private val c
                 )
                 titleTv.text = "${item.title}"
                 root.setOnClickListener {
-                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.articleId)
+                    listener.onArticleClick(cell, item.articleId)
                 }
             }
         }
@@ -129,7 +129,7 @@ class ItemPagerAdapter(val listener: ArticleNdWidgetClickListener, private val c
             binding.apply {
                 bannerImg.load(item.media[0].images.large, binding.bannerImg.context.imageLoader)
                 root.setOnClickListener {
-                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.articleId)
+                    listener.onArticleClick(cell, item.articleId)
                 }
             }
         }
