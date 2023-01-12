@@ -10,6 +10,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigator
 import com.ns.news.R
+import com.ns.news.presentation.activity.ui.launch.LaunchFragment
 
 @Navigator.Name("fragment") // `keep_state_fragment` is used in navigation xml
 class NewsFragmentNavigator(
@@ -88,8 +89,12 @@ class NewsFragmentNavigator(
             popExitAnim = if (popExitAnim != -1) popExitAnim else 0
             ft.setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
         }
-//        ft.replace(containerId, frag)
-        ft.add(containerId, frag)
+        if(frag is LaunchFragment){
+            ft.add(containerId, frag)
+        } else {
+            ft.replace(containerId, frag)
+        }
+
         ft.setPrimaryNavigationFragment(frag)
         ft.setReorderingAllowed(true)
         return ft

@@ -1,8 +1,6 @@
 package com.ns.news.presentation.activity
 
-import com.ns.news.data.db.Cell
-
 
 fun interface ArticleNdWidgetClickListener {
-  fun onArticleClick(cell: Cell, articleId: String)
+  fun onArticleClick(cellType: String, type: String, sectionId: String, articleId: String)
 }

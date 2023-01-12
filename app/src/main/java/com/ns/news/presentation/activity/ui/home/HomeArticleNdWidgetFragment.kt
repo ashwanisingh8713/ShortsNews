@@ -86,14 +86,14 @@ class HomeArticleNdWidgetFragment : Fragment() {
 
     }*/
 
-    private fun navigateToDetailPage(cell: Cell, article_id: String) {
-        val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cell, article_id)
+    private fun navigateToDetailPage(cellType: String, type: String, sectionId: String, articleId: String) {
+        val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cellType, type, sectionId, articleId)
         findNavController().navigate(direction)
 
     }
 
     private fun createAdapter(): ArticleNdWidgetAdapter {
-        return ArticleNdWidgetAdapter {cell: Cell, articleId: String -> navigateToDetailPage(cell, articleId) }
+        return ArticleNdWidgetAdapter {cellType: String, type: String, sectionId: String, articleId: String -> navigateToDetailPage(cellType, type, sectionId, articleId) }
     }
 
     private fun initSwipeToRefresh() {

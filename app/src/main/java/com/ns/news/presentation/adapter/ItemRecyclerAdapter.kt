@@ -2,7 +2,6 @@ package com.ns.news.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.ns.news.R
 import com.ns.news.data.api.model.AWDataItem
@@ -11,7 +10,6 @@ import com.ns.news.databinding.NotDefinedBinding
 import com.ns.news.databinding.WidgetVtTopNewsCorousalItemBinding
 import com.ns.news.domain.model.ViewType
 import com.ns.news.presentation.activity.ArticleNdWidgetClickListener
-import com.ns.news.presentation.activity.ui.launch.LaunchFragmentDirections
 
 class ItemRecyclerAdapter(val listener: ArticleNdWidgetClickListener, private val cell: Cell, private val viewType: ViewType) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -75,12 +73,12 @@ class ItemRecyclerAdapter(val listener: ArticleNdWidgetClickListener, private va
     inner class WidgetTopNewsCorousalItemVH(
         private val binding: WidgetVtTopNewsCorousalItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(content: AWDataItem, index: Int) {
+        fun bind(item: AWDataItem, index: Int) {
             binding.apply {
-                top9Title.text = content.title
+                top9Title.text = item.title
                 top9Index.text = "${index+1}"
                 binding.root.setOnClickListener {
-                    listener.onArticleClick(cell, content.articleId)
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.articleId)
                 }
             }
         }

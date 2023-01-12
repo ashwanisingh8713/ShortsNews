@@ -8,20 +8,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.ns.news.data.api.model.AWDataItem
-import com.ns.news.data.db.Cell
-import com.ns.news.data.db.TableRead
+import com.ns.news.data.db.NewsDb
 import com.ns.news.databinding.FragmentDetailPagerBinding
 import com.ns.news.presentation.activity.NewsSharedViewModel
 import com.ns.news.presentation.activity.NewsSharedViewModelFactory
 import com.ns.news.presentation.activity.SharedChannelEvent
+import com.ns.news.presentation.activity.ui.bookmark.BookmarkViewModel
+import com.ns.news.presentation.activity.ui.bookmark.BookmarkViewModelFactory
 import com.ns.news.presentation.adapter.ArticleDetailViewpagerAdapter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.ns.news.presentation.adapter.BookmarkAdapter
 
 class DetailPagerFragment : Fragment() {
     private lateinit var articleDetailPagerAdapter: ArticleDetailViewpagerAdapter
@@ -31,12 +31,9 @@ class DetailPagerFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: DetailPagerFragmentArgs by navArgs()
     private var awDataItem: AWDataItem? = null
-    private var cell: Cell? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        cell = args.cell
     }
 
     override fun onCreateView(
@@ -46,7 +43,7 @@ class DetailPagerFragment : Fragment() {
     ): View {
         _binding = FragmentDetailPagerBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        observeArticles()
+        loadArticles()
         return root
     }
 
@@ -59,7 +56,7 @@ class DetailPagerFragment : Fragment() {
                 super.onPageSelected(position)
             }
         })
-
+        observeUpdates()
         topbarOptionsClick()
     }
 
@@ -76,24 +73,42 @@ class DetailPagerFragment : Fragment() {
     /**
      * Listening all Cell's Articles of respective Section
      */
-    private fun observeArticles() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.getArticle(
-                sectionId = cell!!.sectionId,
-                cellType = cell!!.cellType,
-                type = cell!!.type
-            ).collect {
-                val awList = mutableListOf<AWDataItem>()
-                it.map { awList.addAll(it.data) }
-                setupDetailViewPager(awList)
-                var awData = AWDataItem(articleId = args.articleId)
-                val index = awList.indexOf(awData)
-                if (index != -1) {
-                    binding.viewPager.currentItem = index
+    private fun loadArticles() {
+        if(args.sectionId.equals("Bookmark")) {
+            lifecycleScope.launchWhenStarted {
+                val viewModel = ViewModelProvider(this@DetailPagerFragment, BookmarkViewModelFactory(NewsDb.create(requireActivity()).bookmarkDao()))[BookmarkViewModel::class.java]
+                viewModel.getAllBookmarks().collect{
+                    val awList = mutableListOf<AWDataItem>()
+                    it.reversed().map { awList.add(it.data) }
+                    setupDetailViewPager(awList)
+                    var awData = AWDataItem(articleId = args.articleId)
+                    val index = awList.indexOf(awData)
+                    if (index != -1) {
+                        binding.viewPager.currentItem = index
+                    }
+                }
+            }
+        } else {
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                viewModel.getArticle(
+                    sectionId = args.sectionId,
+                    cellType = args.cellType,
+                    type = args.type
+                ).collect {
+                    val awList = mutableListOf<AWDataItem>()
+                    it.map { awList.addAll(it.data) }
+                    setupDetailViewPager(awList)
+                    var awData = AWDataItem(articleId = args.articleId)
+                    val index = awList.indexOf(awData)
+                    if (index != -1) {
+                        binding.viewPager.currentItem = index
+                    }
                 }
             }
         }
+    }
 
+    private fun observeUpdates() {
         // Collect current visible Article
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             newsShareViewModel.detailArticle.collect {
@@ -113,7 +128,6 @@ class DetailPagerFragment : Fragment() {
                 updateBookmarkUI(it)
             }
         }
-
     }
 
     private fun setupDetailViewPager(contentList: List<AWDataItem>) {
@@ -125,7 +139,7 @@ class DetailPagerFragment : Fragment() {
     private fun topbarOptionsClick() {
         binding.buttonBookmark.setOnClickListener {
             awDataItem?.let { it1 ->
-                newsShareViewModel.addToBookmark(it1, cell!!.cellType)
+                newsShareViewModel.addToBookmark(it1, args.cellType)
             }
         }
 

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.ns.news.data.db.Bookmark
 import com.ns.news.data.db.NewsDb
 import com.ns.news.databinding.FragmentBookmarkBinding
@@ -30,13 +31,13 @@ class BookmarkFragment:Fragment(), BookmarkAdapter.Callback {
     ): View {
         _binding = FragmentBookmarkBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
+        viewModel = ViewModelProvider(this, BookmarkViewModelFactory(NewsDb.create(requireActivity()).bookmarkDao()))[BookmarkViewModel::class.java]
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, BookmarkViewModelFactory(NewsDb.create(requireActivity()).bookmarkDao()))[BookmarkViewModel::class.java]
+
         lifecycleScope.launchWhenStarted {
             viewModel!!.getAllBookmarks().collect{
                 binding.recyclerView.adapter = BookmarkAdapter(it.reversed(), this@BookmarkFragment)
@@ -55,7 +56,10 @@ class BookmarkFragment:Fragment(), BookmarkAdapter.Callback {
     }
 
     override fun onBookmarkClick(item: Bookmark) {
-
+//        val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cellType, type, sectionId, articleId)
+//        val direction = BookmarkFragmentDirections.actionSectionFragmentToDetailFragment(cellType, type, sectionId, articleId)
+        val direction = BookmarkFragmentDirections.actionBookmarkFragmentToDetailFragment("Bookmark", "Bookmark", "Bookmark", item.articleId)
+        findNavController().navigate(direction)
     }
 
 }

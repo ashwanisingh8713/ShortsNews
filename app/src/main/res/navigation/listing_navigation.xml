@@ -25,7 +25,7 @@
         android:name="com.ns.news.presentation.activity.ui.detail.DetailPagerFragment"
         tools:layout="@layout/fragment_item_detail" >
 
-        <!--<argument
+        <argument
             android:name="cell_type"
             app:argType="string" />
         <argument
@@ -33,11 +33,11 @@
             app:argType="string" />
         <argument
             android:name="section_id"
-            app:argType="string" />-->
+            app:argType="string" />
 
-        <argument
+        <!--<argument
             android:name="cell"
-            app:argType="com.ns.news.data.db.Cell" />
+            app:argType="com.ns.news.data.db.Cell" />-->
 
         <argument
             android:name="article_id"
@@ -49,21 +49,22 @@
         android:id="@+id/navigation_bookmark"
         android:name="com.ns.news.presentation.activity.ui.bookmark.BookmarkFragment"
         tools:layout="@layout/fragment_bookmark" >
-    </fragment>
-
-    <fragment
-        android:id="@+id/navigation_setting"
-        android:name="com.ns.news.presentation.activity.ui.setting.SettingFragment"
-        tools:layout="@layout/fragment_bookmark" >
 
         <action
-            android:id="@+id/action_section_fragment_to_detail_fragment"
+            android:id="@+id/action_bookmark_fragment_to_detail_fragment"
             app:destination="@id/navigation_detailPager"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_setting"
+        android:name="com.ns.news.presentation.activity.ui.setting.SettingFragment"
+        tools:layout="@layout/fragment_bookmark" >
     </fragment>
 
 </navigation>

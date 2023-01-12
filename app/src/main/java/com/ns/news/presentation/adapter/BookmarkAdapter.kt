@@ -39,7 +39,7 @@ class BookmarkAdapter(private val bookmarks: List<Bookmark>, private val callbac
                 timeTv.text = item.modifiedGmt
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
                 root.setOnClickListener {
-                    //listener.onArticleClick(cell, item.articleId)
+                    callback.onBookmarkClick(bookmark)
                 }
             }
         }

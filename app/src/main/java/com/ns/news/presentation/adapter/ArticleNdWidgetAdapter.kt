@@ -210,7 +210,8 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 timeTv.text = item.modifiedGmt
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
                 root.setOnClickListener {
-                    listener.onArticleClick(cell, item.articleId)
+                    //cellType, type, sectionId, articleId
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.articleId)
                 }
                 isRead(item.articleId, root)
             }
@@ -227,7 +228,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 titleTv.text = setArticleTitle(cell.type, item.title)
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
                 root.setOnClickListener {
-                    listener.onArticleClick(cell, item.articleId)
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.articleId)
                 }
                 isRead(item.articleId, root)
             }
@@ -244,7 +245,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 titleTv.text = setArticleTitle(cell.type, item.title)
                 if(item.media.isNotEmpty())  bannerImg.load(item.media[0].images.mediumLarge, bannerImg.context.imageLoader)
                 root.setOnClickListener {
-                    listener.onArticleClick(cell, item.articleId)
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.articleId)
                 }
                 isRead(item.articleId, root)
             }
@@ -279,7 +280,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                     timeTv.text = modifiedGmt
                     recyclerView.adapter = HighlightsAdapter(highlights)
                     root.setOnClickListener {
-                        listener.onArticleClick(cell, articleId)
+                        listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, articleId)
                     }
 
                     isRead(articleId, root)
