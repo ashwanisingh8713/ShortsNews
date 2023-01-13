@@ -14,10 +14,16 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="ShapeAppearanceOverlay.SubCategory" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+    <style name="ShapeAppearanceOverlay.CornerRadius1" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/image_corner_radius</item>
+        <item name="cornerSize">@dimen/image_corner_radius1</item>
     </style>
+
+    <style name="ShapeAppearanceOverlay.CornerRadius2" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/image_corner_radius2</item>
+    </style>
+
     <style name="circleImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>

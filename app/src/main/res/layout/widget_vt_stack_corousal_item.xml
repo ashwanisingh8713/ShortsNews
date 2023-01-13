@@ -69,7 +69,7 @@
                 android:layout_width="@dimen/author_icon_width_height"
                 android:layout_height="@dimen/author_icon_width_height"
                 android:layout_marginTop="@dimen/margin_10dp"
-                android:layout_marginEnd="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/margin_4dp"
                 android:background="@color/black"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"

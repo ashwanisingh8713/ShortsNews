@@ -14,7 +14,7 @@
         android:paddingEnd="@dimen/end_layout_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_8dp"
+        android:layout_marginTop="@dimen/margin_8dp"
         android:fontFamily="@font/bold_font"
         android:textColor="@color/black"
         android:textStyle="bold"
@@ -25,8 +25,8 @@
 
     <Button
         android:id="@+id/cell_action_btn"
-        android:layout_width="@dimen/size_40dp"
-        android:layout_height="@dimen/size_40dp"
+        android:layout_width="@dimen/margin_40dp"
+        android:layout_height="@dimen/margin_40dp"
         android:gravity="center"
         android:layout_marginEnd="@dimen/end_layout_padding"
         android:background="@drawable/right_arrow_background"
@@ -55,10 +55,10 @@
         android:gravity="center"
         android:fontFamily="@font/semibold_font"
         android:textColor="@color/black"
-        android:textSize="@dimen/size_16sp"
-        android:paddingTop="@dimen/size_14sp"
-        android:paddingStart="@dimen/size_60dp"
-        android:paddingEnd="@dimen/size_60dp"
+        android:textSize="@dimen/title_article_size"
+        android:paddingTop="@dimen/margin_14sp"
+        android:paddingStart="@dimen/margin_60dp"
+        android:paddingEnd="@dimen/margin_60dp"
         android:maxLines="2"
         android:minLines="2"/>
 
