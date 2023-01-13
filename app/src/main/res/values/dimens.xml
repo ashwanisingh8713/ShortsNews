@@ -16,6 +16,9 @@
     <dimen name="close_icon_padding">7dp</dimen>
     <dimen name="nav_sub_header_height">56dp</dimen>
 
+    <dimen name="indicator_length">30dp</dimen>
+    <dimen name="indicator_height">2dp</dimen>
+
 
     <!-- size in sp-->
     <dimen name="size_1sp">1sp</dimen>

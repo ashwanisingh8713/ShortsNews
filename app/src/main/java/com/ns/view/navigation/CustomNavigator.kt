@@ -89,12 +89,8 @@ class NewsFragmentNavigator(
             popExitAnim = if (popExitAnim != -1) popExitAnim else 0
             ft.setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
         }
-        if(frag is LaunchFragment){
-            ft.add(containerId, frag)
-        } else {
-            ft.replace(containerId, frag)
-        }
 
+        ft.add(containerId, frag)
         ft.setPrimaryNavigationFragment(frag)
         ft.setReorderingAllowed(true)
         return ft

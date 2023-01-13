@@ -2,10 +2,12 @@ package com.ns.news.presentation.activity
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.ns.news.R
@@ -38,7 +40,8 @@ class BottomNavActivity : AppCompatActivity() {
         /*val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-
+                    val fm: FragmentManager = supportFragmentManager
+                    fm.popBackStack()
                 }
             }
         onBackPressedDispatcher.addCallback(this, callback)*/

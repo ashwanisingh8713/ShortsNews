@@ -1,4 +1,4 @@
-package com.ns.pref;
+package com.ns.news.utils;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -12,10 +12,7 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
@@ -193,30 +190,6 @@ public class ResUtil {
         spanText.setSpan(new RelativeSizeSpan(size), String.valueOf(firstString).length(),totalString.length(), 0); // set size
         spanText.setSpan(new ForegroundColorSpan(colorResId), String.valueOf(firstString).length(),totalString.length(), 0); // set color
         txtSpan.setText(spanText);
-    }
-
-    private static class MyClickableSpan extends ClickableSpan {
-
-        private final Context context;
-        private final int colorResId;
-        private final TextSpanCallback textSpanCallback;
-
-        public MyClickableSpan(String string, Context context, int colorResId, TextSpanCallback textSpanCallback) {
-            super();
-            this.context = context;
-            this.colorResId = colorResId;
-            this.textSpanCallback = textSpanCallback;
-        }
-        public void onClick(View tv) {
-            if(textSpanCallback != null) {
-                textSpanCallback.onTextSpanClick();
-            }
-        }
-        public void updateDrawState(TextPaint ds) {
-
-            ds.setColor(ResUtil.getColor(context.getResources(), colorResId));
-            ds.setUnderlineText(false); // set to true to show underline
-        }
     }
 
     /**

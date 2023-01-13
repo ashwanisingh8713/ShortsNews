@@ -88,6 +88,8 @@ dependencies {
 
     implementation "androidx.activity:activity-ktx:1.6.1"
     implementation "androidx.fragment:fragment-ktx:1.5.5"
+
+    // Canary Leak, to detact memory leaks
     debugImplementation "com.squareup.leakcanary:leakcanary-android:2.7"
 
     // Only needed for RedditVideoDataRepository
@@ -104,5 +106,11 @@ dependencies {
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:2.4.3"
     implementation "androidx.room:room-paging:2.4.3"
+
+    //Preferences DataStore
+    implementation "androidx.datastore:datastore-preferences:1.1.0-alpha01"
+
+    // ViewPager Indicator
+    implementation 'com.github.zhpanvip:viewpagerindicator:1.2.1'
 
 }

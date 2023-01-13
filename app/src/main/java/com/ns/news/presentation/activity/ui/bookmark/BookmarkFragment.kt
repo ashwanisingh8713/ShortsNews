@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -43,6 +45,15 @@ class BookmarkFragment:Fragment(), BookmarkAdapter.Callback {
                 binding.recyclerView.adapter = BookmarkAdapter(it.reversed(), this@BookmarkFragment)
             }
         }
+
+        /*val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val fm: FragmentManager = requireActivity().supportFragmentManager
+                    fm.popBackStack()
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)*/
     }
 
     override fun onResume() {
