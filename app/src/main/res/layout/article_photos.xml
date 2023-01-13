@@ -2,14 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:paddingStart="@dimen/start_layout_padding"
+    android:paddingEnd="@dimen/end_layout_padding"
+    android:layout_marginTop="@dimen/margin_10dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/_8sdp">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/banner_img"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="@dimen/_60sdp"
+        app:shapeAppearance="@style/ShapeAppearanceOverlay.SubCategory"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintTop_toTopOf="parent"
@@ -18,10 +23,14 @@
     <TextView
         android:id="@+id/title_tv"
         android:layout_width="0dp"
+        android:layout_marginEnd="@dimen/margin_10dp"
         android:layout_height="wrap_content"
         android:textSize="@dimen/_14ssp"
         android:paddingEnd="@dimen/_5ssp"
-        android:textStyle="bold"
+        android:fontFamily="@font/regular_font"
+        android:textColor="@color/black"
+        android:maxLines="2"
+        android:minLines="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/banner_img"
@@ -33,6 +42,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
+        android:textColor="@color/tv9color_red"
+        android:fontFamily="@font/regular_font"
+        android:textSize="@dimen/category_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_tv"
         android:maxLines="1"/>
@@ -43,6 +55,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_11sdp"
         android:layout_marginTop="@dimen/_8sdp"
+        android:textSize="@dimen/time_size"
+        android:fontFamily="@font/regular_font"
+        android:textColor="@color/section_time_text_color"
         app:layout_constraintStart_toEndOf="@+id/category_tv"
         app:layout_constraintTop_toBottomOf="@+id/title_tv"
         android:maxLines="1"/>
@@ -51,8 +66,8 @@
         android:id="@+id/view"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#AFA4A4"
-        android:layout_marginTop="@dimen/_8sdp"
+        android:background="@color/divider"
+        android:layout_marginTop="@dimen/margin_24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/category_tv" />

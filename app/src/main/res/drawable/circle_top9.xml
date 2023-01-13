@@ -5,11 +5,11 @@
     <solid android:color="@android:color/white" />
 
     <size
-        android:height="@dimen/_30sdp"
-        android:width="@dimen/_30sdp" />
+        android:height="@dimen/circle_radius"
+        android:width="@dimen/circle_radius"/>
 
     <stroke
-        android:width="@dimen/_2sdp"
+        android:width="@dimen/margin_1dp"
         android:color="@color/tv9color_red" />
 
 </shape>

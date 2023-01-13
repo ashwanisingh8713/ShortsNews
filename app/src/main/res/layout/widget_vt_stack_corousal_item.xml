@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="260dp"
+    android:layout_height="210dp"
+    android:layout_margin="6dp"
+    android:background="#f6f6f6"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:cardCornerRadius="18dp">
+
+    <View
+        android:layout_width="254dp"
+        android:layout_height="140dp"
+        android:background="@drawable/gray_corners_background"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="1dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/titleWidget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:minLines="3"
+                android:text="सुपर ओवर का रोमांच, हजारों लोागें के सामने भारत ने तोड़ा ऑस्ट्रेलिया का घमंड"
+                android:textColor="@color/black"
+                android:fontFamily="@font/semibold_font"
+                android:textSize="@dimen/title_article_size_bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/autherName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:layout_marginEnd="@dimen/margin_10dp"
+                android:gravity="right"
+                android:maxLines="1"
+                android:fontFamily="@font/regular_font"
+                android:ellipsize="end"
+                android:text="ऋषभ पंत"
+                android:textColor="@color/red"
+                android:textSize="@dimen/author_name_size"
+                app:layout_constraintBottom_toBottomOf="@id/autherImage"
+                app:layout_constraintEnd_toStartOf="@id/autherImage"
+                app:layout_constraintTop_toBottomOf="@id/titleWidget" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/autherImage"
+                android:layout_width="@dimen/author_icon_width_height"
+                android:layout_height="@dimen/author_icon_width_height"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:layout_marginEnd="@dimen/size_4dp"
+                android:background="@color/black"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/titleWidget"
+                app:shapeAppearance="@style/circleImageView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

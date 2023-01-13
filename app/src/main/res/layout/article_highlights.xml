@@ -18,6 +18,8 @@
         android:id="@+id/title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/regular_font"
+        android:textSize="@dimen/title_article_size"
         app:layout_constraintStart_toEndOf="@+id/bullet_img"
         app:layout_constraintTop_toTopOf="parent"
         android:paddingStart="@dimen/_10sdp"

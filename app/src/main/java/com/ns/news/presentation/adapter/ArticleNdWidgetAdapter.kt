@@ -1,11 +1,10 @@
 package com.ns.news.presentation.adapter
 
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -169,18 +168,22 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
         }
     }
 
-    private fun setCellHeader(cellTitle: String, cellAction: String, cellTitleTv: TextView, cellActionBtn: Button?) {
+    private fun setCellHeader(cellTitle: String, cellAction: String, cellTitleTv: TextView, cellActionView: View?) {
         if(cellTitle.isNotEmpty()) {
             cellTitleTv.text = cellTitle
-            cellActionBtn?.setOnClickListener {
+            cellActionView?.setOnClickListener {
                 it.context.showToast(cellAction)
             }
-            cellActionBtn?.text = cellAction
+            when(cellActionView) {
+                is TextView -> cellActionView.text = cellAction
+                is ImageView -> cellActionView.load(cellAction, cellActionView.context.imageLoader)
+            }
+
             cellTitleTv.visibility = View.VISIBLE
-            cellActionBtn?.visibility = View.VISIBLE
+            cellActionView?.visibility = View.VISIBLE
         } else {
             cellTitleTv.visibility = View.GONE
-            cellActionBtn?.visibility = View.GONE
+            cellActionView?.visibility = View.GONE
         }
     }
 
@@ -259,6 +262,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
             binding.apply {
                 setCellBackground(root,cell.cellBg)
                 webView.loadUrl(cell.link)
+//                webView.loadUrl("https://www.google.co.in/")
             }
         }
     }
@@ -271,7 +275,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 cell.apply {
                     setCellBackground(root, cellBg)
                     setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
-                        cellTitleTv= cellTitleTv, cellActionBtn= cellActionBtn)
+                        cellTitleTv= cellTitleTv, cellActionView= cellActionBtn)
                 }
                 cell.data[0].apply {
                     if(media.isNotEmpty())  bannerImg.load(media[0].images.mediumLarge, bannerImg.context.imageLoader)
@@ -300,7 +304,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 cell.apply {
                     setCellBackground(root, cellBg)
                     setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
-                        cellTitleTv= cellTitle, cellActionBtn= null)
+                        cellTitleTv= cellTitle, cellActionView= null)
                 }
                 val adapter = ItemRecyclerAdapter(listener, cell, viewType)
                 pager.adapter = adapter
@@ -320,7 +324,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 cell.apply {
                     setCellBackground(root, cellBg)
                     setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
-                        cellTitleTv= cellTitleTv, cellActionBtn= null)
+                        cellTitleTv= cellTitleTv, cellActionView= null)
                 }
             }
         }
@@ -335,7 +339,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 cell.apply {
                     setCellBackground(root, cellBg)
                     setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
-                        cellTitleTv= cellTitleTv, cellActionBtn= null)
+                        cellTitleTv= cellTitleTv, cellActionView= null)
                 }
             }
 
@@ -350,7 +354,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 cell.apply {
                     setCellBackground(root, cellBg)
                     setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
-                        cellTitleTv= cellTitleTv, cellActionBtn= null)
+                        cellTitleTv= cellTitleTv, cellActionView= null)
                 }
             }
         }
@@ -364,7 +368,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 cell.apply {
                     setCellBackground(root, cellBg)
                     setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
-                        cellTitleTv= cellTitleTv, cellActionBtn= null)
+                        cellTitleTv= cellTitleTv, cellActionView= null)
                 }
             }
         }
@@ -380,7 +384,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 cell.apply {
                     setCellBackground(root, cellBg)
                     setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
-                        cellTitleTv= cellTitleTv, cellActionBtn= cellActionBtn)
+                        cellTitleTv= cellTitleTv, cellActionView= cellActionBtn)
                 }
                 glamourRecyclerView.setHasFixedSize(true)
                 glamourRecyclerView.adapter = ItemPagerAdapter(listener, cell, viewType)
@@ -396,7 +400,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                 cell.apply {
                     setCellBackground(root, cellBg)
                     setCellHeader(cellTitle = setWidgetTitle(type, title), cellAction = link,
-                        cellTitleTv= cellTitleTv, cellActionBtn= cellActionBtn)
+                        cellTitleTv= cellTitleTv, cellActionView= cellActionBtn)
                 }
                 viewPager.adapter = ItemPagerAdapter(listener, cell, viewType)
                 transformation1(viewPager)

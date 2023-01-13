@@ -47,7 +47,7 @@ data class CellsItem(
 
             var viewType = when (type) {
                 "PHOTOS" -> {
-                    colorDay = "#c15fe8"
+                    colorDay = "#ffffff"
                     colorNight = "#d69aed"
                     ViewType.ARTICLE_VT_PHOTOS
                 }
@@ -83,7 +83,7 @@ data class CellsItem(
                     ViewType.WIDGET_VT_PLAIN_WITH_COROUSAL
                 }
                 "STACK_CARD_WITH_COROUSAL" -> {
-                    colorDay = "#b0b086"
+                    colorDay = "#f6f6f6"
                     colorNight = "#4b4778"
                     ViewType.WIDGET_VT_STACK_CARD_WITH_COROUSAL
                 }

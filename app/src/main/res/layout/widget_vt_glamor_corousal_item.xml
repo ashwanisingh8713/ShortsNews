@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/_115sdp"
     android:layout_height="match_parent"
-    android:layout_marginEnd="@dimen/size_10dp">
+    android:layout_marginEnd="@dimen/margin_10dp">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/banner_img"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/title_tv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

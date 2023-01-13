@@ -16,6 +16,10 @@
 
     <style name="ShapeAppearanceOverlay.SubCategory" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/size_10sp</item>
+        <item name="cornerSize">@dimen/image_corner_radius</item>
+    </style>
+    <style name="circleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
 </resources>

@@ -166,5 +166,10 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="MyCustomView">
+        <attr name="title" format="string|reference" />
+        <attr name="android:drawable" />
+    </declare-styleable>
+
 
 </resources>
