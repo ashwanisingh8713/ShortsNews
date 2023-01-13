@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.ns.news.R
 import com.ns.news.databinding.FragmentWebstoriesBinding
@@ -14,11 +15,13 @@ class WebstoriesFragment : Fragment() {
     lateinit var indicatorView: IndicatorView
     var imageUrlList: MutableList<ImageData> = ArrayList()
     lateinit var binding: FragmentWebstoriesBinding
+    private val args: WebstoriesFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentWebstoriesBinding.inflate(inflater, container, false)
         val root = binding.root
         indicatorView = IndicatorView(requireActivity())

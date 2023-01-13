@@ -89,9 +89,9 @@ class HomeArticleNdWidgetFragment : Fragment() {
     private fun navigateToDetailPage(cellType: String, type: String, sectionId: String, articleId: String) {
         var direction:Any
         direction = if(type == "GLAMOR_COROUSAL_WIDGET") {
-            LaunchFragmentDirections.actionSectionFragmentToWebstoriesFragment()
+            LaunchFragmentDirections.actionSectionFragmentToWebstoriesFragment(cellType= cellType, sectionId= sectionId, articleId= articleId)
         } else {
-            LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cellType, type, sectionId, articleId)
+            LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cellType= cellType, type= type, sectionId= sectionId, articleId= articleId)
         }
         findNavController().navigate(direction)
 

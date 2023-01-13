@@ -43,11 +43,6 @@
         <argument
             android:name="section_id"
             app:argType="string" />
-
-        <!--<argument
-            android:name="cell"
-            app:argType="com.ns.news.data.db.Cell" />-->
-
         <argument
             android:name="article_id"
             app:argType="string" />
@@ -80,6 +75,15 @@
         android:id="@+id/navigation_webstories"
         android:name="com.ns.news.presentation.activity.ui.webstories.WebstoriesFragment"
         tools:layout="@layout/fragment_webstories" >
+        <argument
+            android:name="cell_type"
+            app:argType="string" />
+        <argument
+            android:name="section_id"
+            app:argType="string" />
+        <argument
+            android:name="article_id"
+            app:argType="string" />
     </fragment>
 
 </navigation>

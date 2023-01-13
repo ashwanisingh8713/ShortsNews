@@ -37,7 +37,12 @@ class SectionApiViewModel(private val repository: ApiRepository): ViewModel() {
     }
 
     private fun handleFailure(cause: Throwable) {
-        Log.e("Ashwani", "Section API :: ${cause.message}")
+        Log.e("NEWSAPP", "Section API :: ${cause.message}")
+        Log.e("NEWSAPP", "Section API :: ${cause.message}")
+        Log.e("NEWSAPP", "Section API :: ${cause.message}")
+        Log.e("NEWSAPP", "Section API :: ${cause.message}")
+        Log.e("NEWSAPP", "Section API :: ${cause.message}")
+        Log.e("NEWSAPP", "Section API :: ${cause.message}")
     }
 
 }

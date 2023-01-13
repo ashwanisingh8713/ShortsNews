@@ -98,13 +98,13 @@ class ItemRecyclerAdapter(val listener: ArticleNdWidgetClickListener, private va
     inner class WidgetStackCorousalItemVH(
         private val binding: WidgetVtStackCorousalItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(content: AWDataItem, index: Int) {
+        fun bind(item: AWDataItem, index: Int) {
             binding.apply {
-                titleWidget.text = content.title
-                autherName.text = content.author[0].name
-                if(content.author.isNotEmpty())  autherImage.load(content.author[0].avatarUrl, autherImage.context.imageLoader)
+                titleWidget.text = item.title
+                autherName.text = item.author[0].name
+                if(item.author.isNotEmpty())  autherImage.load(item.author[0].avatarUrl, autherImage.context.imageLoader)
                 binding.root.setOnClickListener {
-                    listener.onArticleClick(cell, content.articleId)
+                    listener.onArticleClick(cell.cellType, cell.type, cell.sectionId, item.articleId)
                 }
             }
         }
