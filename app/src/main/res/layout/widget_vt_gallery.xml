@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingTop="@dimen/margin_16dp"
-    android:paddingBottom="@dimen/margin_16dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/_14sdp">
+    android:layout_marginBottom="@dimen/_14sdp"
+    android:paddingTop="@dimen/margin_16dp"
+    android:paddingBottom="@dimen/margin_20dp">
 
     <TextView
         android:id="@+id/cell_title_tv"
-        android:paddingStart="@dimen/start_layout_padding"
-        android:paddingEnd="@dimen/end_layout_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_8dp"
         android:fontFamily="@font/bold_font"
+        android:paddingStart="@dimen/start_layout_padding"
+        android:paddingEnd="@dimen/end_layout_padding"
         android:textColor="@color/black"
-        android:textStyle="bold"
         android:textSize="@dimen/title_article_size_bold"
+        android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,12 +26,12 @@
         android:id="@+id/cell_action_btn"
         android:layout_width="@dimen/margin_40dp"
         android:layout_height="@dimen/margin_40dp"
-        android:gravity="center"
         android:layout_marginEnd="@dimen/end_layout_padding"
         android:background="@drawable/right_arrow_background"
+        android:gravity="center"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
@@ -49,18 +48,34 @@
         android:id="@+id/gallery_title_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_pager"
-        android:gravity="center"
         android:fontFamily="@font/semibold_font"
+        android:gravity="center"
+        android:maxLines="2"
+        android:minLines="2"
+        android:paddingStart="@dimen/margin_60dp"
+        android:paddingTop="@dimen/margin_14sp"
+        android:paddingEnd="@dimen/margin_60dp"
         android:textColor="@color/black"
         android:textSize="@dimen/title_article_size"
-        android:paddingTop="@dimen/margin_14sp"
-        android:paddingStart="@dimen/margin_60dp"
-        android:paddingEnd="@dimen/margin_60dp"
-        android:maxLines="2"
-        android:minLines="2"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view_pager" />
+
+
+    <com.zhpan.indicator.IndicatorView
+        android:id="@+id/indicatorView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gallery_title_tv"
+        app:vpi_slide_mode="worm"
+        app:vpi_slider_radius="@dimen/margin_4dp"
+        app:vpi_orientation="horizontal"
+        app:vpi_slider_checked_color="@color/color_dot_indicator_selected"
+        app:vpi_slider_normal_color="@color/color_dot_indicator"
+        app:vpi_style="round_rect" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
@@ -95,11 +96,14 @@
             android:id="@+id/bottom_nav_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:theme="@style/NavigationViewTextAppearance"
             android:background="?android:attr/windowBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:itemPaddingBottom="@dimen/margin_1dp"
             app:menu="@menu/bottom_nav_menu"
+            android:paddingBottom="@dimen/margin_6dp"
             />
 
         <com.ns.news.utils.CustomFloatingActionButton
@@ -107,7 +111,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             app:layout_anchor="@id/bottom_nav_view"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="20dp"
             android:layout_marginTop="4dp"
             app:layout_constraintStart_toStartOf="@id/bottom_nav_view"
             app:layout_constraintEnd_toEndOf="@id/bottom_nav_view"
@@ -120,7 +124,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/sheet_parent"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_90sdp"
+            android:layout_height="@dimen/height_bottom_option_view"
             android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_anchor="@id/bottom_nav_view"
@@ -133,7 +137,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="@dimen/_20sdp"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
@@ -152,7 +155,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/article_shorts"
+                    android:fontFamily="@font/regular_font"
+                    tools:text = "Article Shorts"
                     android:textStyle="bold"
+                    android:layout_marginTop="@dimen/margin_2dp"
+                    android:textSize="@dimen/margin_14sp"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="@id/video_shorts"
                     app:layout_constraintStart_toStartOf="@id/video_shorts"
                     app:layout_constraintTop_toBottomOf="@id/video_shorts" />
@@ -166,7 +174,6 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="@dimen/_20sdp"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
@@ -186,7 +193,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Videos Shorts"
+                    android:layout_marginTop="@dimen/margin_2dp"
+                    android:fontFamily="@font/regular_font"
+                    tools:text = "Videos Shorts"
+                    android:textColor="@color/black"
                     android:textStyle="bold"
+                    android:textSize="@dimen/margin_14sp"
                     app:layout_constraintEnd_toEndOf="@id/article_shorts_image"
                     app:layout_constraintStart_toStartOf="@id/article_shorts_image"
                     app:layout_constraintTop_toBottomOf="@id/article_shorts_image" />
@@ -199,7 +211,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_30sdp"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/_20sdp"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
@@ -217,6 +228,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Podcast Shorts"
+                    android:fontFamily="@font/regular_font"
+                    tools:text = "Podcast Shorts"
+                    android:layout_marginTop="@dimen/margin_2dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/margin_14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="@id/podcast_image"
                     app:layout_constraintStart_toStartOf="@id/podcast_image"

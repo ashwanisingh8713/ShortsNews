@@ -41,4 +41,12 @@
     <dimen name="image_corner_radius1">5dp</dimen>
     <dimen name="image_corner_radius2">10dp</dimen>
 
+    <style name="NavigationViewTextAppearance">
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/regular_font</item>
+        <item name="colorPrimary">@color/bottom_manu_active</item>
+        <item name="android:textColorSecondary">@color/bottom_manu_inactive</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>

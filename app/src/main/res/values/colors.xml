@@ -19,6 +19,16 @@
     <color name="section_time_text_color">#919191</color>
     <color name="divider">#E7E7E7</color>
     <color name="tv9color_red">#DC0000</color>
+    <color name="tv9color_red_secondary">#e33232</color>
     <color name="gray_arrow_back">#EDEDED</color>
+
+    <color name="color_dot_indicator_selected">#6d6d6d</color>
+    <color name="color_dot_indicator">#9D9D9D</color>
+
+
+    <color name="bottom_manu_active">#DC0000</color>
+    <color name="bottom_manu_inactive">#9D9D9D</color>
+
+
 
 </resources>
