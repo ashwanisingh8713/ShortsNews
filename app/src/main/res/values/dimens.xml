@@ -19,10 +19,10 @@
     <dimen name="indicator_length">30dp</dimen>
     <dimen name="indicator_height">2dp</dimen>
 
-
     <dimen name="widget_header_title_size">22sp</dimen>
     <dimen name="title_article_size">16sp</dimen>
     <dimen name="title_article_size_bold">18sp</dimen>
+
     <dimen name="start_layout_padding">12dp</dimen>
     <dimen name="end_layout_padding">12dp</dimen>
     <dimen name="category_size">14sp</dimen>
@@ -35,20 +35,18 @@
     <dimen name="margin_1dp">1dp</dimen>
     <dimen name="margin_10dp">10dp</dimen>
     <dimen name="margin_16dp">16dp</dimen>
-
     <dimen name="margin_24dp">24dp</dimen>
-    <dimen name="size_60dp">60dp</dimen>
-    <dimen name="size_16sp">16dp</dimen>
-    <dimen name="size_14sp">14dp</dimen>
-    <dimen name="size_8dp">8dp</dimen>
-    <dimen name="size_40dp">40dp</dimen>
-    <dimen name="size_6dp">6dp</dimen>
-    <dimen name="size_10sp">10dp</dimen>
-    <dimen name="size_20dp">20dp</dimen>
-    <dimen name="size_4dp">4dp</dimen>
-    <dimen name="size_14dp">14dp</dimen>
-
-
+    <dimen name="margin_60dp">60dp</dimen>
+    <dimen name="margin_14sp">14dp</dimen>
+    <dimen name="margin_8dp">8dp</dimen>
+    <dimen name="margin_40dp">40dp</dimen>
+    <dimen name="margin_6dp">6dp</dimen>
+    <dimen name="margin_20dp">20dp</dimen>
+    <dimen name="margin_4dp">4dp</dimen>
+    <dimen name="margin_14dp">14dp</dimen>
+    <dimen name="margin_18dp">18dp</dimen>
+    <dimen name="height_bottom_option_view">80dp</dimen>
+    <dimen name="margin_2dp">2dp</dimen>
 
 
 </resources>

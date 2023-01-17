@@ -13,7 +13,7 @@
         android:id="@+id/banner_img"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="@dimen/_60sdp"
-        app:shapeAppearance="@style/ShapeAppearanceOverlay.SubCategory"
+        app:shapeAppearance="@style/ShapeAppearanceOverlay.CornerRadius1"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

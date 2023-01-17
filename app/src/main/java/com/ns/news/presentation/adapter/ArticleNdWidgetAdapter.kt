@@ -37,6 +37,8 @@ import com.ns.news.presentation.activity.ArticleNdWidgetClickListener
 import com.ns.news.presentation.activity.ui.home.ArticleNdWidgetViewModel
 import com.ns.news.utils.SnapHelperOneByOne
 import com.ns.news.utils.showToast
+import com.zhpan.indicator.enums.IndicatorSlideMode
+import com.zhpan.indicator.enums.IndicatorStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -413,6 +415,16 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
                         galleryTitleTv.text = cell.data[position].title
                     }
                 })
+
+                //dot indicator code
+                indicatorView.apply {
+//                   setSliderColor(R.drawable.circle_top9, R.drawable.circle)
+//                    setSliderWidth(resources.getDimension(R.dimen.margin_10dp))
+//                    setSliderHeight(resources.getDimension(R.dimen.margin_4dp))
+//                    setSlideMode(IndicatorSlideMode.WORM)
+//                    setIndicatorStyle(IndicatorStyle.CIRCLE)
+                    setupWithViewPager(viewPager)
+                }
             }
         }
     }

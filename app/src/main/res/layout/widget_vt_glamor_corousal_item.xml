@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearance="@style/ShapeAppearanceOverlay.SubCategory"
+        app:shapeAppearance="@style/ShapeAppearanceOverlay.CornerRadius2"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
 
@@ -26,7 +26,7 @@
         android:maxLines="3"
         android:minLines="3"
         android:padding="@dimen/_5sdp"
-        android:textSize="@dimen/size_16sp"
+        android:textSize="@dimen/title_article_size"
         android:textColor="@color/black"
         android:fontFamily="@font/semibold_font"
         app:layout_constraintBottom_toBottomOf="parent"
