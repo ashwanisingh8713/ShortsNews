@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
-import coil.load
 import com.ns.news.data.api.model.AWDataItem
 import com.ns.news.data.db.NewsDb
 import com.ns.news.databinding.FragmentDetailPagerBinding
@@ -26,6 +25,7 @@ import com.ns.news.presentation.activity.ui.bookmark.BookmarkViewModelFactory
 import com.ns.news.presentation.adapter.ArticleDetailViewpagerAdapter
 import com.ns.news.presentation.adapter.BookmarkAdapter
 import com.ns.news.utils.loadSvg
+import kotlinx.coroutines.launch
 
 class DetailPagerFragment : Fragment() {
     private lateinit var articleDetailPagerAdapter: ArticleDetailViewpagerAdapter
@@ -82,7 +82,12 @@ class DetailPagerFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        newsShareViewModel.enableDrawer()
+
+        if(args.sectionId.equals("Bookmark")) {
+            newsShareViewModel.refreshBookmarkList()
+        } else {
+            newsShareViewModel.enableDrawer()
+        }
     }
 
     /**
@@ -178,7 +183,6 @@ class DetailPagerFragment : Fragment() {
             else->Log.i("Ashwani", "Something went wrong....In Bookmark Logic")
         }
     }
-
 
 
 }

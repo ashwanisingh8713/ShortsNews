@@ -10,8 +10,7 @@ import com.ns.news.domain.model.ViewType
 
 @Entity(tableName = "Bookmark")
 data class Bookmark(
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0,
+    @PrimaryKey
     val articleId:String,
     val data: AWDataItem,
     val type: String

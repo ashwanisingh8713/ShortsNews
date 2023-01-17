@@ -100,6 +100,12 @@ class NewsSharedViewModel(private val readDao: ReadDao, private val bookmarkDao:
         }
     }
 
+    fun refreshBookmarkList() {
+        viewModelScope.launch { // 1
+            _sharedChannelEvent.emit(SharedChannelEvent.REFRESH_BOOKMARK_LIST) // 4
+        }
+    }
+
 
 }
 

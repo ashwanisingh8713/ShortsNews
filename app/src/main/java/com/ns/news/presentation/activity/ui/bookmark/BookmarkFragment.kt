@@ -17,7 +17,9 @@ import com.ns.news.data.db.NewsDb
 import com.ns.news.databinding.FragmentBookmarkBinding
 import com.ns.news.presentation.activity.NewsSharedViewModel
 import com.ns.news.presentation.activity.NewsSharedViewModelFactory
+import com.ns.news.presentation.activity.SharedChannelEvent
 import com.ns.news.presentation.adapter.BookmarkAdapter
+import kotlinx.coroutines.launch
 
 
 class BookmarkFragment:Fragment(), BookmarkAdapter.Callback {
@@ -48,23 +50,38 @@ class BookmarkFragment:Fragment(), BookmarkAdapter.Callback {
         super.onResume()
         newsShareViewModel.disableDrawer()
 
-        childFragmentManager.addOnBackStackChangedListener{
-            Log.i("","")
-        }
+        loadBookmarkData()
 
-        requireActivity().supportFragmentManager.addOnBackStackChangedListener {
-            loadBookmarkData()
-        }
+        observeBookmarkRefreshData();
 
     }
 
-    private fun loadBookmarkData() {
-        lifecycleScope.launchWhenStarted {
-            viewModel?.getAllBookmarks()?.collect{
-                binding.recyclerView.adapter = BookmarkAdapter(it.reversed(), this@BookmarkFragment)
+    private fun observeBookmarkRefreshData() {
+        lifecycleScope.launch{
+            newsShareViewModel.sharedChannelEvent.collect{
+                if(it == SharedChannelEvent.REFRESH_BOOKMARK_LIST) {
+                    loadBookmarkData()
+                }
             }
         }
     }
+
+    private fun loadBookmarkData() {
+        lifecycleScope.launch {
+            viewModel?.getAllBookmarks()?.collect{
+                binding.recyclerView.adapter = BookmarkAdapter(it.reversed(), this@BookmarkFragment)
+                if (it.isEmpty()) {
+                    binding.recyclerView.visibility = View.GONE
+                    binding.viewEmpty.visibility = View.VISIBLE
+                } else {
+                    binding.recyclerView.visibility = View.VISIBLE
+                    binding.viewEmpty.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+
 
     override fun onPause() {
         super.onPause()

@@ -6,6 +6,7 @@ enum class SharedChannelEvent {
     DRAWER_DISABLE,
     DRAWER_ENABLE,
     BOOKMARKED,
-    UN_BOOKMARKED
+    UN_BOOKMARKED,
+    REFRESH_BOOKMARK_LIST
 
 }
