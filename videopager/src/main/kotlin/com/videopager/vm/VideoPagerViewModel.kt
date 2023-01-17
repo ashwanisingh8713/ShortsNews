@@ -83,6 +83,7 @@ internal class VideoPagerViewModel(
      * tied to the AppPlayer instance, e.g. [AppPlayer.onPlayerRendering], when the player is being
      * torn down.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<PlayerLifecycleEvent>.toPlayerLifecycleResults(): Flow<ViewResult> {
         val managePlayerInstance = filterNot { event ->
             // Don't need to create a player when one already exists. This can happen

@@ -119,6 +119,7 @@ class NewsFragmentNavigator(
             val className = destination.className
             fragment = fragmentManager.fragmentFactory.instantiate(context.classLoader, className)
             transaction.add(containerId, fragment, tag)
+            transaction.addToBackStack(null)
         } else {
             transaction.attach(fragment)
         }

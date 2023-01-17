@@ -1,6 +1,7 @@
 package com.ns.news.presentation.activity.ui.bookmark
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,25 +41,29 @@ class BookmarkFragment:Fragment(), BookmarkAdapter.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launchWhenStarted {
-            viewModel!!.getAllBookmarks().collect{
-                binding.recyclerView.adapter = BookmarkAdapter(it.reversed(), this@BookmarkFragment)
-            }
-        }
-
-        /*val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    val fm: FragmentManager = requireActivity().supportFragmentManager
-                    fm.popBackStack()
-                }
-            }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)*/
+        loadBookmarkData()
     }
 
     override fun onResume() {
         super.onResume()
         newsShareViewModel.disableDrawer()
+
+        childFragmentManager.addOnBackStackChangedListener{
+            Log.i("","")
+        }
+
+        requireActivity().supportFragmentManager.addOnBackStackChangedListener {
+            loadBookmarkData()
+        }
+
+    }
+
+    private fun loadBookmarkData() {
+        lifecycleScope.launchWhenStarted {
+            viewModel?.getAllBookmarks()?.collect{
+                binding.recyclerView.adapter = BookmarkAdapter(it.reversed(), this@BookmarkFragment)
+            }
+        }
     }
 
     override fun onPause() {
@@ -67,8 +72,6 @@ class BookmarkFragment:Fragment(), BookmarkAdapter.Callback {
     }
 
     override fun onBookmarkClick(item: Bookmark) {
-//        val direction = LaunchFragmentDirections.actionSectionFragmentToDetailFragment(cellType, type, sectionId, articleId)
-//        val direction = BookmarkFragmentDirections.actionSectionFragmentToDetailFragment(cellType, type, sectionId, articleId)
         val direction = BookmarkFragmentDirections.actionBookmarkFragmentToDetailFragment("Bookmark", "Bookmark", "Bookmark", item.articleId)
         findNavController().navigate(direction)
     }
