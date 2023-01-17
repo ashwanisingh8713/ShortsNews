@@ -29,6 +29,8 @@
     <color name="bottom_manu_active">#DC0000</color>
     <color name="bottom_manu_inactive">#9D9D9D</color>
 
+    <color name="live_widget_background_color">#FFEAEA</color>
+    <color name="live_red_color">#DC0000</color>
 
 
 </resources>

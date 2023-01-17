@@ -47,6 +47,7 @@
     <dimen name="margin_18dp">18dp</dimen>
     <dimen name="height_bottom_option_view">80dp</dimen>
     <dimen name="margin_2dp">2dp</dimen>
+    <dimen name="margin_12dp">12dp</dimen>
 
 
 </resources>
