@@ -153,6 +153,7 @@ class DetailPagerFragment : Fragment() {
     private fun setupDetailViewPager(contentList: List<AWDataItem>) {
         articleDetailPagerAdapter = ArticleDetailViewpagerAdapter(this, contentList)
         binding.viewPager.adapter = articleDetailPagerAdapter
+        binding.viewPager.offscreenPageLimit = 1
 
     }
 
@@ -180,7 +181,7 @@ class DetailPagerFragment : Fragment() {
                 binding.buttonBookmark.visibility = View.VISIBLE
                 binding.buttonRemoveBookmark.visibility = View.GONE
             }
-            else->Log.i("Ashwani", "Something went wrong....In Bookmark Logic")
+            else->Log.i("Ashwani", "updateBookmarkUI :: Something went wrong :: ${bookmarkEvent}")
         }
     }
 

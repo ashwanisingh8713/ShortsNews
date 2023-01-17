@@ -74,3 +74,5 @@ fun AppCompatImageView.loadSvg(url: String) {
 
     imageLoader.enqueue(request)
 }
+
+val findParagraphIndex = {inputString: String, startIndex: Int -> inputString.indexOf("</p>", startIndex)}
