@@ -1,6 +1,7 @@
 package com.ns.news
 
 import android.app.Application
+import com.google.android.gms.ads.MobileAds
 import com.ns.news.data.api.NewsApi
 import com.ns.news.data.mappers.DataMapper
 import com.ns.news.data.repositories.NewsRepository
@@ -21,7 +22,7 @@ class NewsApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
+        MobileAds.initialize(this) {}
         newsDb = createDB()
         newsRepository = createRepository(newsDb)
         SectionViewModelFactory.inject(newsRepository)

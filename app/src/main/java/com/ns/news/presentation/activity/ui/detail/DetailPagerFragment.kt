@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
+import coil.load
 import com.ns.news.data.api.model.AWDataItem
 import com.ns.news.data.db.NewsDb
 import com.ns.news.databinding.FragmentDetailPagerBinding
@@ -24,6 +25,7 @@ import com.ns.news.presentation.activity.ui.bookmark.BookmarkViewModel
 import com.ns.news.presentation.activity.ui.bookmark.BookmarkViewModelFactory
 import com.ns.news.presentation.adapter.ArticleDetailViewpagerAdapter
 import com.ns.news.presentation.adapter.BookmarkAdapter
+import com.ns.news.utils.loadSvg
 
 class DetailPagerFragment : Fragment() {
     private lateinit var articleDetailPagerAdapter: ArticleDetailViewpagerAdapter
@@ -45,8 +47,18 @@ class DetailPagerFragment : Fragment() {
     ): View {
         _binding = FragmentDetailPagerBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        loadToolbarAssets()
         loadArticles()
         return root
+    }
+
+    private fun loadToolbarAssets() {
+        binding.backButtonToolbar.loadSvg("file:///android_asset/back_button.svg")
+        binding.buttonShare.loadSvg("file:///android_asset/share.svg")
+        binding.buttonComment.loadSvg("file:///android_asset/comment.svg")
+        binding.buttonBookmark.loadSvg("file:///android_asset/bookmark.svg")
+        binding.logoSize.loadSvg("file:///android_asset/text_size.svg")
+        binding.buttonSpeak.loadSvg("file:///android_asset/speak.svg")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

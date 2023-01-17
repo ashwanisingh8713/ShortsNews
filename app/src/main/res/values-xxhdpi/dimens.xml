@@ -2,4 +2,7 @@
 <resources>
     <dimen name="icon_width">26dp</dimen>
     <dimen name="icon_height">26dp</dimen>
+    <dimen name="toolbar_detail_icon_height_width">16dp</dimen>
+    <dimen name="detail_banner_height">250dp</dimen>
+
 </resources>

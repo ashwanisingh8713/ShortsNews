@@ -31,6 +31,8 @@
 
     <color name="live_widget_background_color">#FFEAEA</color>
     <color name="live_red_color">#DC0000</color>
+    <color name="detail_editor">#747474</color>
+
 
 
 </resources>

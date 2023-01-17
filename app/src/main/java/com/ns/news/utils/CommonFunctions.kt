@@ -61,6 +61,12 @@ class CommonFunctions {
             context.startActivity(shareIntent)
 
         }
+        fun splitHtmlString(source:String):MutableList<String>{
+            val splitBy: List<String> =   source.split("</p>")
+            return splitBy.toMutableList()
+        }
+
 
     }
+
 }

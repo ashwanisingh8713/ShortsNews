@@ -123,6 +123,9 @@ dependencies {
     // add the Firebase SDK for Google Analytics
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
+    //Mobile ads
+    implementation 'com.google.android.gms:play-services-ads:21.4.0'
+
 }
 
 protobuf {
