@@ -79,7 +79,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/card_ads1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="300dp"
             android:layout_marginTop="10dp"
             app:layout_constraintBottom_toTopOf="@id/webView_des_2"
             app:layout_constraintTop_toBottomOf="@id/webView_des_1">
@@ -102,13 +102,12 @@
             <com.google.android.gms.ads.AdView
                 xmlns:ads="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/adView1"
-                android:layout_width="300dp"
-                android:layout_height="280dp"
-                ads:adSize="BANNER"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                ads:adSize="MEDIUM_RECTANGLE"
                 ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
                 ads:layout_constraintStart_toStartOf="parent"
                 ads:layout_constraintEnd_toEndOf="parent"
-                android:paddingBottom="@dimen/margin_10dp"
                 ads:layout_constraintTop_toBottomOf="@id/ads_text1">
             </com.google.android.gms.ads.AdView>
 
@@ -188,7 +187,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/card_ads2"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="300dp"
             android:layout_marginTop="10dp"
             app:layout_constraintBottom_toTopOf="@id/webView_des_4"
             app:layout_constraintTop_toBottomOf="@id/webView_des_3">
@@ -212,13 +211,12 @@
             <com.google.android.gms.ads.AdView
                 xmlns:ads="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/adView2"
-                android:layout_width="300dp"
-                android:layout_height="280dp"
-                ads:adSize="BANNER"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                ads:adSize="MEDIUM_RECTANGLE"
                 ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
                 ads:layout_constraintStart_toStartOf="parent"
                 ads:layout_constraintEnd_toEndOf="parent"
-                android:paddingBottom="@dimen/margin_10dp"
                 ads:layout_constraintTop_toBottomOf="@id/ads_text2">
             </com.google.android.gms.ads.AdView>
 
