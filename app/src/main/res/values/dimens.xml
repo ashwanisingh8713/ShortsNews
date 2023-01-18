@@ -48,7 +48,8 @@
     <dimen name="height_bottom_option_view">80dp</dimen>
     <dimen name="margin_2dp">2dp</dimen>
     <dimen name="margin_12dp">12dp</dimen>
-    <dimen name="toolbar_detail_icon_height_width">24dp</dimen>
+    <dimen name="toolbar_detail_icon_height_width">30dp</dimen>
+    <dimen name="toolbar_bookmark_width_height">32dp</dimen>
     <dimen name="detail_banner_height">200dp</dimen>
 
 

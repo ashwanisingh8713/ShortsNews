@@ -263,6 +263,7 @@ class ArticleNdWidgetAdapter(private val listener: ArticleNdWidgetClickListener)
         fun bind(cell: Cell) {
             binding.apply {
                 setCellBackground(root,cell.cellBg)
+                webView.settings.javaScriptEnabled = true
                 webView.loadUrl(cell.link)
 //                webView.loadUrl("https://www.google.co.in/")
             }

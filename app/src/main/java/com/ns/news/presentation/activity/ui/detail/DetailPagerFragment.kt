@@ -56,7 +56,6 @@ class DetailPagerFragment : Fragment() {
         binding.backButtonToolbar.loadSvg("file:///android_asset/back_button.svg")
         binding.buttonShare.loadSvg("file:///android_asset/share.svg")
         binding.buttonComment.loadSvg("file:///android_asset/comment.svg")
-        binding.buttonBookmark.loadSvg("file:///android_asset/bookmark.svg")
         binding.logoSize.loadSvg("file:///android_asset/text_size.svg")
         binding.buttonSpeak.loadSvg("file:///android_asset/speak.svg")
     }
@@ -161,12 +160,14 @@ class DetailPagerFragment : Fragment() {
         binding.buttonBookmark.setOnClickListener {
             awDataItem?.let { it1 ->
                 newsShareViewModel.addToBookmark(it1, args.cellType)
+                it.isEnabled= false
             }
         }
 
         binding.buttonRemoveBookmark.setOnClickListener {
             awDataItem?.let { it1 ->
                 newsShareViewModel.removeFromBookmark(it1.articleId)
+                it.isEnabled= false
             }
         }
     }
@@ -176,10 +177,12 @@ class DetailPagerFragment : Fragment() {
             SharedChannelEvent.BOOKMARKED-> {
                 binding.buttonBookmark.visibility = View.GONE
                 binding.buttonRemoveBookmark.visibility = View.VISIBLE
+                binding.buttonRemoveBookmark.isEnabled = true
             }
             SharedChannelEvent.UN_BOOKMARKED->{
-                binding.buttonBookmark.visibility = View.VISIBLE
                 binding.buttonRemoveBookmark.visibility = View.GONE
+                binding.buttonBookmark.visibility = View.VISIBLE
+                binding.buttonBookmark.isEnabled = true
             }
             else->Log.i("Ashwani", "updateBookmarkUI :: Something went wrong :: ${bookmarkEvent}")
         }

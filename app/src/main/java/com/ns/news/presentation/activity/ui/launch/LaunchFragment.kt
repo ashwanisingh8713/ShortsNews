@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.ns.news.R
 import com.ns.news.databinding.FragmentLaunchBinding
 import com.ns.news.presentation.activity.ui.search.SearchActivity
@@ -54,6 +55,21 @@ class LaunchFragment : Fragment() {
         }
         showIcons()
 
+        observeNavigationDrawerClicks()
+
+    }
+
+    /**
+     * Observing Navigation Drawer Click Event
+     */
+    private fun observeNavigationDrawerClicks() {
+        lifecycleScope.launchWhenStarted {
+            newsShareViewModel.navigationItemClick.collect {
+                // TO Redirect on Home Tab, when some other Tab is opened.
+                binding.viewPager.currentItem = 0
+                binding.bottomNavView.selectedItemId = R.id.navigation_home
+            }
+        }
     }
 
 
