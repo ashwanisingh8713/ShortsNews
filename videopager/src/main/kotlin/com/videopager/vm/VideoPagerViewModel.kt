@@ -180,6 +180,7 @@ internal class VideoPagerViewModel(
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<TappedPlayerResult>.toTappedPlayerEffects(): Flow<ViewEffect> {
         return mapLatest { result -> AnimationEffect(result.drawable) }
     }

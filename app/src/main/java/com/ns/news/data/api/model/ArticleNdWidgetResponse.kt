@@ -128,7 +128,7 @@ open class AWDataItem(
     @Json(name = "category_name")
     val categoryName: String = "",
     @Json(name = "modified_gmt")
-    val modifiedGmt: String = "",
+    val modifiedGmt: String? = "",
     @Json(name = "author")
     val author: List<AuthorItem> = emptyList(),
     @Json(name = "highlights")

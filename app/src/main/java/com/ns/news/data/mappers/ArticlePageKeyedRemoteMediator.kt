@@ -8,6 +8,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.ns.news.data.api.NewsApi
+import com.ns.news.data.api.model.AWData
 import com.ns.news.data.db.CellDao
 import com.ns.news.data.db.NewsDb
 import com.ns.news.data.db.SectionPageRemote
@@ -69,9 +70,9 @@ class ArticlePageKeyedRemoteMediator(
             Log.i("Ashwani", "PageState.initialLoadSize :: ${state.config.initialLoadSize}")
             Log.i("Ashwani", "PageState.pageSize :: ${state.config.pageSize}")
 
-            var data = newsApi.getArticleNdWidget(url+loadKey).data
+//            var data = newsApi.getArticleNdWidget(url+loadKey).data
 
-            val items = data.cells
+            val items = AWData().cells
 
             db.withTransaction {
                 if (loadType == REFRESH) {
