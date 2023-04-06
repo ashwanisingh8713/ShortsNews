@@ -1,8 +1,11 @@
 package com.videopager.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -26,14 +29,12 @@ import com.videopager.ui.extensions.events
 import com.videopager.ui.extensions.isIdle
 import com.videopager.ui.extensions.pageChanges
 import com.videopager.ui.extensions.pageIdlings
+import com.videopager.vm.SharedEventViewModel
+import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
 import com.videopager.vm.VideoPagerViewModelFactory
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
@@ -41,6 +42,7 @@ class VideoPagerFragment(
     private val imageLoader: ImageLoader
 ) : Fragment(R.layout.video_pager_fragment) {
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
+    private val sharedEventViewModel: SharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -110,6 +112,9 @@ class VideoPagerFragment(
 
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        //
+        listenApiRequest()
     }
 
     private fun Lifecycle.viewEvents(): Flow<ViewEvent> {
@@ -141,4 +146,13 @@ class VideoPagerFragment(
     private fun PagerAdapter.viewEvents(): Flow<ViewEvent> {
         return clicks().map { TappedPlayerEvent }
     }
+
+    private fun listenApiRequest() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            sharedEventViewModel.requestedApi.collect{
+                Toast.makeText(requireContext(), "Item $it Clicked", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 }

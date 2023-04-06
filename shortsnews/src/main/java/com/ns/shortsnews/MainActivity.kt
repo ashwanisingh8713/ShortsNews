@@ -4,8 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ns.shortsnews.adapters.CategoryAdapter
@@ -13,6 +15,8 @@ import com.ns.shortsnews.video.di.MainModule
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.video.data.CategoryData
 import com.videopager.ui.VideoPagerFragment
+import com.videopager.vm.SharedEventViewModel
+import com.videopager.vm.SharedEventViewModelFactory
 
 
 class MainActivity : AppCompatActivity(), onProfileItemClick{
@@ -20,6 +24,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
     private lateinit var caAdapter: CategoryAdapter
     val module = MainModule(this)
     val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false)
+
+    private val sharedEventViewModel: SharedEventViewModel by viewModels { SharedEventViewModelFactory }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -59,8 +65,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
     }
 
     override fun itemclick(query: String, position:Int, size:Int) {
-        Toast.makeText(this, "Item $query Clicked", Toast.LENGTH_SHORT).show()
+
         caAdapter.notifyItemRangeChanged(0, size)
+        sharedEventViewModel.requestApi(query)
     }
 
 }
