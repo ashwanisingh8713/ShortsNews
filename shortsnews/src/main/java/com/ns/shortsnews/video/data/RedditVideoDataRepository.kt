@@ -30,18 +30,18 @@ class RedditVideoDataRepository : VideoDataRepository {
                 ?.posts
                 ?.map { post ->
                     val video = post.data?.secureMedia?.video
-                    val width = video?.width
-                    val height = video?.height
-                    val aspectRatio = if (width != null && height != null) {
-                        width.toFloat() / height.toFloat()
-                    } else {
-                        null
-                    }
+//                    val width = video?.width
+//                    val height = video?.height
+//                    val aspectRatio = if (width != null && height != null) {
+//                        width.toFloat() / height.toFloat()
+//                    } else {
+//                        null
+//                    }
                     VideoData(
                         id = post.data?.id.orEmpty(),
                         mediaUri = video?.hlsUrl.orEmpty(),
                         previewImageUri = post.data?.preview?.images?.firstOrNull()?.source?.url.orEmpty(),
-                        aspectRatio = aspectRatio
+                        aspectRatio = null
                     )
                 }
                 ?.filter { videoData ->

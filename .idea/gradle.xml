@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/player" />
             <option value="$PROJECT_DIR$/shortsnews" />
             <option value="$PROJECT_DIR$/videopager" />
+            <option value="$PROJECT_DIR$/videopager_shortsnews" />
           </set>
         </option>
       </GradleProjectSettings>

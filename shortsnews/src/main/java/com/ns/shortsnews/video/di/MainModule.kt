@@ -7,7 +7,6 @@ import coil.imageLoader
 import com.example.videopager.data.RedditVideoDataRepository
 import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
-import com.ns.shortsnews.fragment.ProfileFragment
 import com.videopager.ui.VideoPagerFragment
 import com.videopager.vm.VideoPagerViewModelFactory
 
@@ -27,7 +26,6 @@ import com.videopager.vm.VideoPagerViewModelFactory
                     appPlayerViewFactory = ExoAppPlayerViewFactory(),
                     imageLoader = activity.imageLoader
                 )
-                ProfileFragment::class.java -> ProfileFragment()
                 else -> super.instantiate(classLoader, className)
             }
         }

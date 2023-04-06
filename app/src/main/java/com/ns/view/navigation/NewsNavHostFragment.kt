@@ -4,9 +4,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.fragment.NavHostFragment
 
 class NewsNavHostFragment: NavHostFragment() {
-    override fun createFragmentNavigator() =
-        NewsFragmentNavigator(requireContext(), childFragmentManager, id)
-
 
     override fun onCreateNavHostController(navHostController: NavHostController) {
         super.onCreateNavHostController(navHostController)
