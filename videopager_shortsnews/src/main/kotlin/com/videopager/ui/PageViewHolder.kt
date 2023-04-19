@@ -26,7 +26,6 @@ internal class PageViewHolder(
 
     fun bind(videoData: VideoData) {
         binding.previewImage.load(videoData.previewImageUri,imageLoader)
-
         ConstraintSet().apply {
             clone(binding.root)
             // Optimize video preview / container size if aspect ratio is available. This can avoid

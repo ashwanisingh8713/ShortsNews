@@ -30,15 +30,15 @@ class CategoryAdapter(private var itemList:List<CategoryData>,private val itemLi
             with(itemList[position]){
                 binding.categoryTitle.text = this.title
                 if (position == lastCheckedPosition){
-                    binding.categoryTitle.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.purple_700))
+                    binding.categoryTitle.setTextColor(ContextCompat.getColor(holder.itemView.context, com.videopager.R.color.red))
                 } else {
-                    binding.categoryTitle.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+                    binding.categoryTitle.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.white))
                 }
             }
-
         }
         holder.itemView.setOnClickListener {
             lastCheckedPosition = position
+            notifyItemRangeChanged(0, itemCount)
             itemListener.itemclick(itemList[position].query, position, itemCount)
         }
     }

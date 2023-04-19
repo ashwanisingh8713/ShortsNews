@@ -22,7 +22,7 @@ import com.videopager.vm.SharedEventViewModelFactory
 class MainActivity : AppCompatActivity(), onProfileItemClick{
     private lateinit var binding: ActivityMainBinding
     private lateinit var caAdapter: CategoryAdapter
-    val module = MainModule(this)
+    var module = MainModule(this)
     val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false)
 
     private val sharedEventViewModel: SharedEventViewModel by viewModels { SharedEventViewModelFactory }
@@ -58,16 +58,17 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         categoryDataList.add(CategoryData("Nature", false, "nature"))
         categoryDataList.add(CategoryData("Space", false, "space"))
         categoryDataList.add(CategoryData("Local", false, "local"))
-        categoryDataList.add(CategoryData("US", false, "us"))
-        categoryDataList.add(CategoryData("Canada", false, "canada"))
-        categoryDataList.add(CategoryData("Bihar", false, "bihar"))
+        categoryDataList.add(CategoryData("Entertainment", false, "us"))
+        categoryDataList.add(CategoryData("Media", false, "canada"))
+        categoryDataList.add(CategoryData("Technology", false, "bihar"))
       return categoryDataList
     }
 
     override fun itemclick(query: String, position:Int, size:Int) {
-
-        caAdapter.notifyItemRangeChanged(0, size)
         sharedEventViewModel.requestApi(query)
     }
 
+    private fun topBarResponse() {
+        sharedEventViewModel.requestApi("All")
+    }
 }

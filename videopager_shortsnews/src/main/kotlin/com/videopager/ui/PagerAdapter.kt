@@ -5,16 +5,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.PagerAdapter.POSITION_NONE
 import coil.ImageLoader
+import com.player.models.VideoData
 import com.player.ui.AppPlayerView
 import com.videopager.databinding.PageItemBinding
 import com.videopager.models.PageEffect
-import com.player.models.VideoData
 import com.videopager.ui.extensions.awaitNextLayout
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.isActive
+
 
 /**
  * The two main functions of interest here are [attachPlayerView] and [showPlayerFor].
@@ -95,5 +97,9 @@ internal class PagerAdapter(
         override fun areContentsTheSame(oldItem: VideoData, newItem: VideoData): Boolean {
             return oldItem == newItem
         }
+    }
+
+    fun getItemPosition(`object`: Any): Int {
+        return POSITION_NONE
     }
 }

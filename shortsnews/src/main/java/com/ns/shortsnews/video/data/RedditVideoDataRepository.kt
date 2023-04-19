@@ -1,6 +1,5 @@
-package com.example.videopager.data
+package com.ns.shortsnews.video.data
 
-import android.content.res.Resources
 import android.util.Log
 import com.player.models.VideoData
 import com.squareup.moshi.Json
@@ -22,7 +21,7 @@ class RedditVideoDataRepository : VideoDataRepository {
         .build()
         .create(RedditService::class.java)
 
-    override fun videoData(): Flow<List<VideoData>> = flow {
+    override fun videoData(requestType: String): Flow<List<VideoData>> = flow {
         try {
             val response = api.tikTokCringe()
             val videoData = response

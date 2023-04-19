@@ -40,10 +40,10 @@
 
     <ImageView
         android:id="@+id/thumbUp"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/thumb_up"
+        android:src="@drawable/like"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="100dp"/>
@@ -62,10 +62,10 @@
 
     <ImageView
         android:id="@+id/msg"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/thumbUp"
-        android:src="@drawable/message"
+        android:src="@drawable/comment"
         app:layout_constraintBottom_toTopOf="@id/thumbUp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="50dp"/>
@@ -85,19 +85,19 @@
 
     <ImageView
         android:id="@+id/share"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/thumbUp"
-        android:src="@drawable/message"
+        android:src="@drawable/share"
         app:layout_constraintBottom_toTopOf="@id/msg"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="50dp"/>
 
     <TextView
-        android:id="@+id/msgTitle"
+        android:id="@+id/shareTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Share"
+        android:text="@string/share"
         android:textStyle="bold"
         android:textSize="14sp"
         android:textColor="@color/white"

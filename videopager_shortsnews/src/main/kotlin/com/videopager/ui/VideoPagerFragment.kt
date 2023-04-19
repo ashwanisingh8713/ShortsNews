@@ -17,12 +17,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.videopager.R
 import com.videopager.databinding.VideoPagerFragmentBinding
+import com.videopager.models.*
 import com.videopager.models.OnPageSettledEvent
 import com.videopager.models.PageEffect
 import com.videopager.models.PauseVideoEvent
 import com.videopager.models.PlayerErrorEffect
 import com.videopager.models.PlayerLifecycleEvent
 import com.videopager.models.TappedPlayerEvent
+import com.videopager.models.TappedPlayerResult
 import com.videopager.models.ViewEvent
 import com.videopager.ui.extensions.awaitList
 import com.videopager.ui.extensions.events
@@ -32,7 +34,6 @@ import com.videopager.ui.extensions.pageIdlings
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
-import com.videopager.vm.VideoPagerViewModelFactory
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -43,10 +44,11 @@ class VideoPagerFragment(
 ) : Fragment(R.layout.video_pager_fragment) {
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
     private val sharedEventViewModel: SharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
+    lateinit var binding: VideoPagerFragmentBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = VideoPagerFragmentBinding.bind(view)
+        binding = VideoPagerFragmentBinding.bind(view)
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
         val appPlayerView = appPlayerViewFactory.create(view.context)
         val adapter = PagerAdapter(imageLoader)
@@ -54,6 +56,7 @@ class VideoPagerFragment(
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
         binding.viewPager.isUserInputEnabled = false
 
+        viewModel.initApi("All")
         val states = viewModel.states
             .onEach { state ->
                 // Await the list submission so that the adapter list is in sync with state.videoData
@@ -113,7 +116,6 @@ class VideoPagerFragment(
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        //
         listenApiRequest()
     }
 
@@ -149,8 +151,83 @@ class VideoPagerFragment(
 
     private fun listenApiRequest() {
         viewLifecycleOwner.lifecycleScope.launch {
-            sharedEventViewModel.requestedApi.collect{
+            sharedEventViewModel.requestedApi.collect {
                 Toast.makeText(requireContext(), "Item $it Clicked", Toast.LENGTH_SHORT).show()
+//                val appPlayer = requireNotNull(viewModel.states.value.appPlayer)
+//                val drawable = if (appPlayer.currentPlayerState.isPlaying) {
+//                    appPlayer.pause()
+//                    R.drawable.pause
+//                } else {
+//                    appPlayer.play()
+//                    R.drawable.play
+//                }
+//                TappedPlayerResult(drawable)
+//                viewModel.resetPlayerData
+                viewModel.initApi(it)
+                val appPlayerView = appPlayerViewFactory.create(requireContext())
+                val adapter = PagerAdapter(imageLoader)
+                val states = viewModel.states
+                    .onEach { state ->
+                        // Await the list submission so that the adapter list is in sync with state.videoData
+                        adapter.awaitList(state.videoData)
+
+                        // Attach the player to the View whenever it's ready. Note that attachPlayer can
+                        // be false while appPlayer is non-null during configuration changes and, conversely,
+                        // attachPlayer can be true while appPlayer is null when the appPlayer hasn't been
+                        // set up but the view is ready for it. That is why both are checked here.
+                        if (state.attachPlayer && state.appPlayer != null) {
+                            appPlayerView.attach(state.appPlayer)
+                        } else {
+                            appPlayerView.detachPlayer()
+                        }
+
+                        // Restore any saved page state from process recreation and configuration changes.
+                        // Guarded by an isIdle check so that state emissions mid-swipe or during page change
+                        // animations are ignored. There would have a jarring page-change effect without that.
+                        if (binding.viewPager.isIdle) {
+                            binding.viewPager.setCurrentItem(state.page, false)
+                        }
+
+                        // Can't query any ViewHolders if the adapter has no pages
+                        if (adapter.currentList.isNotEmpty()) {
+                            // Set the player view on the active page. Note that ExoPlayer won't render
+                            // any frames until the output view (here, appPlayerView) is on-screen
+                            adapter.attachPlayerView(appPlayerView, state.page)
+
+                            // If the player media is rendering frames, then show the player
+                            if (state.showPlayer) {
+                                adapter.showPlayerFor(state.page)
+                                binding.viewPager.isUserInputEnabled = true
+                                binding.progressBarVideoShorts.visibility = View.GONE
+                            }
+                        }
+                    }
+                val effects = viewModel.effects
+                    .onEach { effect ->
+                        when (effect) {
+                            is PageEffect -> adapter.renderEffect(
+                                binding.viewPager.currentItem,
+                                effect
+                            )
+                            is PlayerErrorEffect -> Snackbar.make(
+                                binding.root,
+                                effect.throwable.message ?: "Error",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+
+                val events = merge(
+                    viewLifecycleOwner.lifecycle.viewEvents(),
+                    binding.viewPager.viewEvents(),
+                    adapter.viewEvents()
+                )
+                    .onEach(viewModel::processEvent)
+
+                merge(states, effects, events)
+                    .launchIn(viewLifecycleOwner.lifecycleScope)
+
+
             }
         }
     }

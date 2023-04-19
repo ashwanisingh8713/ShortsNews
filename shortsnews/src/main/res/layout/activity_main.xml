@@ -21,6 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/_20sdp"
         >
 
         <androidx.recyclerview.widget.RecyclerView
@@ -43,7 +44,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginEnd="16.dp"
-        android:layout_marginBottom="@dimen/_4sdp"
+        android:layout_marginBottom="@dimen/_30sdp"
         android:background="@drawable/bottom_background"
         android:clickable="true"
         android:focusable="true"
@@ -56,22 +57,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:src="@drawable/bottom_home"
-            android:padding="@dimen/_10sdp"
+            android:src="@drawable/app_logo"
+            android:padding="@dimen/_8sdp"
             />
 
-
-        <ImageView
-            android:id="@+id/profile_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_view_for_image"
+            android:layout_margin="2dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardCornerRadius="100dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:src="@drawable/bottom_profile"
-            android:padding="@dimen/_10sdp"/>
+            android:layout_marginEnd="@dimen/_15sdp">
+
+            <ImageView
+                android:id="@+id/profile_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

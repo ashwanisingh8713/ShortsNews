@@ -2,30 +2,22 @@ package com.videopager.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.onSubscription
-import kotlinx.coroutines.flow.scan
-import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-internal abstract class MviViewModel<Event, Result, State, Effect>(initialState: State) : ViewModel() {
-    val states: StateFlow<State>
-    val effects: Flow<Effect>
+internal abstract class MviViewModel<Event, Result, State, Effect>(private val initialState: State) : ViewModel() {
+    var states: StateFlow<State> = MutableStateFlow<State>(initialState)
+    var effects: Flow<Effect> = emptyFlow()
     private val events = MutableSharedFlow<Event>()
 
-    init {
+    fun initApi(requestType: String) {
         events
             .onSubscription {
                 check(events.subscriptionCount.value == 1)
                 onStart()
             }
             .share() // Share emissions to individual Flows within toResults()
-            .toResults()
+            .toResults(requestType)
             .share() // Share emissions to states and effects
             .also { results ->
                 states = results.toStates(initialState)
@@ -52,7 +44,7 @@ internal abstract class MviViewModel<Event, Result, State, Effect>(initialState:
     }
 
     protected open fun onStart() = Unit
-    protected abstract fun Flow<Event>.toResults(): Flow<Result>
+    protected abstract fun Flow<Event>.toResults(requestType: String): Flow<Result>
     protected abstract fun Result.reduce(state: State): State
     protected open fun Flow<Result>.toEffects(): Flow<Effect> = emptyFlow()
 

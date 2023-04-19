@@ -1,5 +1,6 @@
 package com.videopager.vm
 
+import android.graphics.drawable.Drawable
 import com.videopager.R
 import com.videopager.data.VideoDataRepository
 import com.videopager.models.AnimationEffect
@@ -50,10 +51,10 @@ internal class VideoPagerViewModel(
         processEvent(LoadVideoDataEvent)
     }
 
-    override fun Flow<ViewEvent>.toResults(): Flow<ViewResult> {
+    override fun Flow<ViewEvent>.toResults(requestType: String): Flow<ViewResult> {
         // MVI boilerplate
         return merge(
-            filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(),
+            filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(requestType),
             filterIsInstance<PlayerLifecycleEvent>().toPlayerLifecycleResults(),
             filterIsInstance<TappedPlayerEvent>().toTappedPlayerResults(),
             filterIsInstance<OnPageSettledEvent>().toPageSettledResults(),
@@ -62,8 +63,8 @@ internal class VideoPagerViewModel(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(): Flow<ViewResult> {
-        return flatMapLatest { repository.videoData() }
+    private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String): Flow<ViewResult> {
+        return flatMapLatest { repository.videoData(requestType) }
             .map { videoData ->
                 val appPlayer = states.value.appPlayer
                 // If the player exists, it should be updated with the latest video data that came in
@@ -118,7 +119,7 @@ internal class VideoPagerViewModel(
         )
     }
 
-    private fun tearDownPlayer(): Flow<ViewResult> {
+     fun tearDownPlayer(): Flow<ViewResult> {
         val appPlayer = requireNotNull(states.value.appPlayer)
         // Keep track of player state so that it can be restored across player recreations.
         handle.set(appPlayer.currentPlayerState)
@@ -127,6 +128,7 @@ internal class VideoPagerViewModel(
         return flowOf(TearDownPlayerResult)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<TappedPlayerEvent>.toTappedPlayerResults(): Flow<ViewResult> {
         return mapLatest {
             val appPlayer = requireNotNull(states.value.appPlayer)
@@ -142,6 +144,7 @@ internal class VideoPagerViewModel(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<OnPageSettledEvent>.toPageSettledResults(): Flow<ViewResult> {
         return mapLatest { event ->
             val appPlayer = requireNotNull(states.value.appPlayer)
@@ -151,6 +154,7 @@ internal class VideoPagerViewModel(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<PauseVideoEvent>.toPauseVideoResults(): Flow<ViewResult> {
         return mapLatest {
             val appPlayer = requireNotNull(states.value.appPlayer)
@@ -185,10 +189,12 @@ internal class VideoPagerViewModel(
         return mapLatest { result -> AnimationEffect(result.drawable) }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<OnNewPageSettledResult>.toNewPageSettledEffects(): Flow<ViewEffect> {
         return mapLatest { ResetAnimationsEffect }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<PlayerErrorResult>.toPlayerErrorEffects(): Flow<ViewEffect> {
         return mapLatest { result -> PlayerErrorEffect(result.throwable) }
     }
