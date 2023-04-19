@@ -15,6 +15,7 @@ import retrofit2.http.Query
 import java.util.concurrent.CancellationException
 
 class RedditVideoDataRepository : VideoDataRepository {
+    // Kamlesh(Changed Base Url)
     private val api = Retrofit.Builder()
         .addConverterFactory(MoshiConverterFactory.create())
         .baseUrl("https://newsdx.io/")
@@ -35,6 +36,7 @@ class RedditVideoDataRepository : VideoDataRepository {
         //                    } else {
         //                        null
         //                    }
+                    /*(Kamlesh)Passing video url to video data class */
                     VideoData(
                         id = post.id.orEmpty(),
                         mediaUri = video.videoUrl,
@@ -42,6 +44,7 @@ class RedditVideoDataRepository : VideoDataRepository {
                         aspectRatio = null
                     )
                 }
+                    /*(Kamlesh)Video id and preview image is not available so commented*/
                 ?.filter { videoData ->
 //                    videoData.id.isNotBlank()
                         /*&&*/ videoData.mediaUri.isNotBlank()
@@ -57,6 +60,7 @@ class RedditVideoDataRepository : VideoDataRepository {
     }
 
     private interface RedditService {
+        /*Changed API end point */
         @GET("dev/shorts/api/get_shorts.php")
         suspend fun tikTokCringe(
 //            @Path("sort") sort: String? = "top",
@@ -72,6 +76,7 @@ data class RedditResponse(
     val status: Boolean
 )
 
+    /*(Kamlesh) Created new data class as per newsdx response */
 @JsonClass(generateAdapter = true)
 data class Data(
     @Json(name = "comment_count")
@@ -87,7 +92,7 @@ data class Data(
     val id:String?= "",
     val preview:String?= ""
 )
-
+    /*(Kamlesh) Commented data class as per newsdx response implementation */
 //    @JsonClass(generateAdapter = true)
 //    internal data class RedditResponse(
 //        val data: Data1?
