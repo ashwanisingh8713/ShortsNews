@@ -65,7 +65,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
     }
 
     override fun itemclick(query: String, position:Int, size:Int) {
-        sharedEventViewModel.requestApi(query)
+//        sharedEventViewModel.requestApi(query)
+        loadHomeFragment()
     }
 
     private fun topBarResponse() {
