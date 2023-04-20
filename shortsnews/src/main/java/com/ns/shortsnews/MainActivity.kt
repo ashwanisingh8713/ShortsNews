@@ -3,26 +3,25 @@ package com.ns.shortsnews
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.imageLoader
+import com.exo.players.ExoAppPlayerFactory
+import com.exo.ui.ExoAppPlayerViewFactory
 import com.ns.shortsnews.adapters.CategoryAdapter
-import com.ns.shortsnews.video.di.MainModule
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.video.data.CategoryData
+import com.ns.shortsnews.video.data.VideoDataRepository
 import com.videopager.ui.VideoPagerFragment
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
+import com.videopager.vm.VideoPagerViewModelFactory
 
 
 class MainActivity : AppCompatActivity(), onProfileItemClick{
     private lateinit var binding: ActivityMainBinding
     private lateinit var caAdapter: CategoryAdapter
-    var module = MainModule(this)
     val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false)
 
     private val sharedEventViewModel: SharedEventViewModel by viewModels { SharedEventViewModelFactory }
@@ -31,8 +30,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        supportFragmentManager.fragmentFactory = module.fragmentFactory
-        loadHomeFragment()
+        loadHomeFragment("")
        // Setup recyclerView
         binding.categoryItems.layoutManager = layoutManager
         caAdapter = CategoryAdapter(getCategoryData(), this)
@@ -40,12 +38,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         binding.profileIcon.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
-        }
-    }
-
-    private fun loadHomeFragment(){
-        supportFragmentManager.commit {
-            replace<VideoPagerFragment>(R.id.fragment_container)
         }
     }
 
@@ -64,12 +56,35 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
       return categoryDataList
     }
 
-    override fun itemclick(query: String, position:Int, size:Int) {
-//        sharedEventViewModel.requestApi(query)
-        loadHomeFragment()
+    override fun itemclick(shortsType: String, position:Int, size:Int) {
+        loadHomeFragment(shortsType)
     }
 
     private fun topBarResponse() {
         sharedEventViewModel.requestApi("All")
     }
+
+    private fun loadHomeFragment(shortsType: String) {
+        val ft = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.fragment_container, makeVideoPagerInstance(shortsType))
+        ft.commit()
+    }
+    private fun makeVideoPagerInstance(shortsType: String): VideoPagerFragment {
+        val vpf =  VideoPagerFragment(
+            viewModelFactory = { owner ->
+                VideoPagerViewModelFactory(
+                    repository = VideoDataRepository(),
+                    appPlayerFactory = ExoAppPlayerFactory(
+                        context = this@MainActivity
+                    )
+                ).create(owner)
+            },
+            appPlayerViewFactory = ExoAppPlayerViewFactory(),
+            imageLoader = this@MainActivity.imageLoader,
+            shortsType = shortsType
+        )
+
+        return vpf
+    }
+
 }

@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
     private val appPlayerViewFactory: AppPlayerView.Factory,
-    private val imageLoader: ImageLoader
+    private val imageLoader: ImageLoader, private val shortsType: String
 ) : Fragment(R.layout.video_pager_fragment) {
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
     private val sharedEventViewModel: SharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
@@ -56,7 +56,7 @@ class VideoPagerFragment(
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
         binding.viewPager.isUserInputEnabled = false
 
-        viewModel.initApi("All")
+        viewModel.initApi(shortsType)
         val states = viewModel.states
             .onEach { state ->
                 // Await the list submission so that the adapter list is in sync with state.videoData
