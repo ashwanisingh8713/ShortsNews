@@ -27,7 +27,7 @@ internal class ExoAppPlayer(
             isPlayerSetUp = true
         }
 
-        player.prepare()
+//        player.prepare()
     }
 
     private fun setUpPlayerState(playerState: PlayerState?) {

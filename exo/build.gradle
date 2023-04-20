@@ -35,6 +35,8 @@ android {
 dependencies {
     implementation project(":player")
     implementation "com.google.android.exoplayer:exoplayer:2.18.5"
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.5'
+
     implementation "io.github.java-diff-utils:java-diff-utils:4.11"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC3"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"

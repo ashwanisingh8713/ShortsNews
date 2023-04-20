@@ -1,0 +1,7 @@
+Issue Link :
+    https://github.com/google/ExoPlayer/issues/6469
+
+Example Link :
+    https://github.com/Ortyom/ProblemHlsCacheExample/tree/master/app/src/main/java/com/example/hlscachesample
+
+
