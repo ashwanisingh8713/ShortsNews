@@ -30,9 +30,14 @@ internal class PageViewHolder(
             clone(binding.root)
             // Optimize video preview / container size if aspect ratio is available. This can avoid
             // a flicker when ExoPlayer renders its first frame but hasn't yet adjusted the video size.
-            val ratio = videoData.aspectRatio?.let { "$it:0" }
+            /*val ratio = videoData.aspectRatio?.let { "$it:0" }
             setDimensionRatio(binding.playerContainer.id, "")
-            setDimensionRatio(binding.previewImage.id, "")
+            setDimensionRatio(binding.previewImage.id, "")*/
+
+            val ratio = videoData.aspectRatio?.let { "$it:0" }
+            setDimensionRatio(binding.playerContainer.id, ratio)
+            setDimensionRatio(binding.previewImage.id, ratio)
+
             applyTo(binding.root)
         }
     }

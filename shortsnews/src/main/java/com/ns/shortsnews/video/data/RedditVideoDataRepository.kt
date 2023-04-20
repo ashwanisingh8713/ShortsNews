@@ -40,15 +40,15 @@ class RedditVideoDataRepository : VideoDataRepository {
                     VideoData(
                         id = post.id.orEmpty(),
                         mediaUri = video.videoUrl,
-                        previewImageUri = "",
+                        previewImageUri = video.preview!!,
                         aspectRatio = null
                     )
                 }
                     /*(Kamlesh)Video id and preview image is not available so commented*/
                 ?.filter { videoData ->
-//                    videoData.id.isNotBlank()
-                        /*&&*/ videoData.mediaUri.isNotBlank()
-                        /*&& videoData.previewImageUri.isNotBlank()*/
+                    videoData.id.isNotBlank()
+                        && videoData.mediaUri.isNotBlank()
+                        && videoData.previewImageUri.isNotBlank()
                 }
                 .orEmpty()
 
@@ -89,7 +89,9 @@ data class Data(
     val title: String,
     @Json(name = "video_url")
     val videoUrl: String,
+    @Json(name = "id")
     val id:String?= "",
+    @Json(name = "videoPreviewUrl")
     val preview:String?= ""
 )
     /*(Kamlesh) Commented data class as per newsdx response implementation */
