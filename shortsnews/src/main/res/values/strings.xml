@@ -8,5 +8,10 @@
     <string name="login_signup">Login / Signup</string>
     <string name="name_hint">What name should we call you</string>
     <string name="email_hint">Enter your Email ID</string>
+    <string name="otp_hint">Enter OTP</string>
     <string name="submit_btn_text">Submit</string>
+    <string name="login_btn_text">Login</string>
+    <string name="resend_text">Resend OTP</string>
+    <string name="otp_sent_text">email@email.com</string>
+    <string name="title_otp_sent_text">OTP sent to</string>
 </resources>

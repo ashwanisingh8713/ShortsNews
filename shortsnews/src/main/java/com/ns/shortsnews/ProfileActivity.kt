@@ -9,6 +9,7 @@ import com.ns.shortsnews.user.data.network.NetService
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.UserUseCases
 import com.ns.shortsnews.user.ui.fragment.LoginFragment
+import com.ns.shortsnews.user.ui.fragment.UserFragment
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
 
@@ -28,7 +29,7 @@ class ProfileActivity : AppCompatActivity() {
         userViewModelFactory.inject(userDataUseCases)
         val userViewModel:UserViewModel by viewModels { userViewModelFactory }
 
-        val loginFragment = LoginFragment()
+        val loginFragment = UserFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, loginFragment).commit()
     }
 }
