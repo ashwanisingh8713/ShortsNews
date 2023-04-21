@@ -2,10 +2,8 @@ package com.ns.shortsnews.user.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ns.shortsnews.user.data.models.*
 import com.ns.shortsnews.user.domain.exception.ApiError
-import com.ns.shortsnews.user.domain.models.OtpData
-import com.ns.shortsnews.user.domain.models.ProfileData
-import com.ns.shortsnews.user.domain.models.User
 import com.ns.shortsnews.user.domain.usecase.UserUseCases
 import com.ns.shortsnews.user.domain.usecase.base.UseCaseResponse
 import com.squareup.moshi.Json
@@ -40,8 +38,8 @@ class UserViewModel(private val userUseCases: UserUseCases) : ViewModel() {
 
     private fun requestRegistrationApi(requestBody: Map<String, String>) {
         userUseCases.invoke(viewModelScope, requestBody, "",
-            object : UseCaseResponse<Json> {
-                override fun onSuccess(type: Json) {
+            object : UseCaseResponse<BaseResult> {
+                override fun onSuccess(type: BaseResult) {
                     val moshi: Moshi = Moshi.Builder().build()
                     val adapter: JsonAdapter<User> = moshi.adapter(User::class.java)
                     val user = adapter.fromJson(type.toString())
@@ -63,8 +61,8 @@ class UserViewModel(private val userUseCases: UserUseCases) : ViewModel() {
 
     private fun requestOtpValidationApi(requestBody: Map<String, String>) {
         userUseCases.invoke(viewModelScope, requestBody, "",
-            object : UseCaseResponse<Json> {
-                override fun onSuccess(type: Json) {
+            object : UseCaseResponse<BaseResult> {
+                override fun onSuccess(type: BaseResult) {
                     val moshi: Moshi = Moshi.Builder().build()
                     val adapter: JsonAdapter<OtpData> = moshi.adapter(OtpData::class.java)
                     val otpData = adapter.fromJson(type.toString())
@@ -86,8 +84,8 @@ class UserViewModel(private val userUseCases: UserUseCases) : ViewModel() {
 
     private fun requestProfileApi(requestBody: Map<String, String>) {
         userUseCases.invoke(viewModelScope, requestBody, "",
-            object : UseCaseResponse<Json> {
-                override fun onSuccess(type: Json) {
+            object : UseCaseResponse<BaseResult> {
+                override fun onSuccess(type: BaseResult) {
                     val moshi: Moshi = Moshi.Builder().build()
                     val adapter: JsonAdapter<ProfileData> = moshi.adapter(ProfileData::class.java)
                     val profileData = adapter.fromJson(type.toString())

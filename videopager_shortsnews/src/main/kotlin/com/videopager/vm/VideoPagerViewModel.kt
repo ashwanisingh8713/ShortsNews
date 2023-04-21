@@ -95,7 +95,8 @@ internal class VideoPagerViewModel(
         }.flatMapLatest { event ->
             when (event) {
                 is PlayerLifecycleEvent.Start -> createPlayer()
-                is PlayerLifecycleEvent.Stop -> tearDownPlayer()
+                is PlayerLifecycleEvent.Stop -> pausePlayer()
+                is PlayerLifecycleEvent.Destroy -> tearDownPlayer()
             }
         }
 
@@ -126,6 +127,16 @@ internal class VideoPagerViewModel(
         // Videos are a heavy resource, so tear player down when the app is not in the foreground.
         appPlayer.release()
         return flowOf(TearDownPlayerResult)
+    }
+
+    // Ashwani
+    fun pausePlayer(): Flow<ViewResult> {
+        val appPlayer = requireNotNull(states.value.appPlayer)
+        // Keep track of player state so that it can be restored across player recreations.
+        handle.set(appPlayer.currentPlayerState)
+        // Videos are a heavy resource, so tear player down when the app is not in the foreground.
+        appPlayer.pause()
+        return flowOf(TappedPlayerResult(R.drawable.pause))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -186,7 +197,9 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<TappedPlayerResult>.toTappedPlayerEffects(): Flow<ViewEffect> {
-        return mapLatest { result -> AnimationEffect(result.drawable) }
+        return mapLatest {
+                result -> AnimationEffect(result.drawable)
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

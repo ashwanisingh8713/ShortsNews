@@ -21,11 +21,13 @@ internal class PageViewHolder(
     private val animationEffect = FadeInThenOutAnimationEffect(binding.playPause)
 
     init {
-        binding.root.setOnClickListener { click() }
+        binding.root.setOnClickListener {
+            click()
+        }
     }
 
     fun bind(videoData: VideoData) {
-        binding.previewImage.load(videoData.previewImageUri,imageLoader)
+//        binding.previewImage.load(videoData.previewImageUri,imageLoader)
         ConstraintSet().apply {
             clone(binding.root)
             // Optimize video preview / container size if aspect ratio is available. This can avoid

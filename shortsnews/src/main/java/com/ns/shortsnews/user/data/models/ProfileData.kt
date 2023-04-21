@@ -1,4 +1,4 @@
-package com.ns.shortsnews.user.domain.models
+package com.ns.shortsnews.user.data.models
 
 import com.squareup.moshi.JsonClass
 

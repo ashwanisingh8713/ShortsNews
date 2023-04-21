@@ -1,5 +1,8 @@
 package com.ns.shortsnews.user.data.source
 
+import com.ns.shortsnews.user.data.models.OTPResult
+import com.ns.shortsnews.user.data.models.ProfileResult
+import com.ns.shortsnews.user.data.models.RegistrationResult
 import com.squareup.moshi.Json
 import retrofit2.http.*
 
@@ -9,12 +12,12 @@ import retrofit2.http.*
 interface UserApiService {
 
     @GET("/explore-home")
-    suspend fun getRegistration(): Json
+    suspend fun getRegistration(): RegistrationResult
 
     @GET("/explore-home")
-    suspend fun getValidateOtp(): Json
+    suspend fun getValidateOtp(): OTPResult
 
     @GET("/explore-home")
-    suspend fun getUserProfile(): Json
+    suspend fun getUserProfile(): ProfileResult
 
 }

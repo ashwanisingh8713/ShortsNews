@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.viewpager2.widget.ViewPager2
@@ -121,13 +122,15 @@ class VideoPagerFragment(
 
     private fun Lifecycle.viewEvents(): Flow<ViewEvent> {
         return events()
-            .filter { event -> event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_STOP }
+            .filter { event -> event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_STOP
+                    || event == Lifecycle.Event.ON_DESTROY}
             .map { event ->
                 // Fragment starting or stopping is a signal to create or tear down the player, respectively.
                 // The player should not be torn down across config changes, however.
                 when (event) {
                     Lifecycle.Event.ON_START -> PlayerLifecycleEvent.Start
                     Lifecycle.Event.ON_STOP -> PlayerLifecycleEvent.Stop(requireActivity().isChangingConfigurations)
+                    Lifecycle.Event.ON_DESTROY -> PlayerLifecycleEvent.Destroy(requireActivity().isChangingConfigurations)
                     else -> error("Unhandled event: $event")
                 }
             }
@@ -141,12 +144,16 @@ class VideoPagerFragment(
             // is useful for when a user is quickly swiping thru pages and the idle state isn't getting reached.
             // It doesn't make sense for a video on a previous page to continue playing while the user is
             // swiping quickly thru pages.
-            pageChanges().map { PauseVideoEvent }
+            pageChanges().map {
+                PauseVideoEvent
+            }
         )
     }
 
     private fun PagerAdapter.viewEvents(): Flow<ViewEvent> {
-        return clicks().map { TappedPlayerEvent }
+        return clicks().map {
+            TappedPlayerEvent
+        }
     }
 
     private fun listenApiRequest() {
@@ -224,8 +231,7 @@ class VideoPagerFragment(
                 )
                     .onEach(viewModel::processEvent)
 
-                merge(states, effects, events)
-                    .launchIn(viewLifecycleOwner.lifecycleScope)
+                merge(states, effects, events).launchIn(viewLifecycleOwner.lifecycleScope)
 
 
             }

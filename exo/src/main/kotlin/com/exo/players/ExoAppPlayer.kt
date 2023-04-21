@@ -27,7 +27,7 @@ internal class ExoAppPlayer(
             isPlayerSetUp = true
         }
 
-//        player.prepare()
+        player.prepare()
     }
 
     private fun setUpPlayerState(playerState: PlayerState?) {
@@ -90,7 +90,9 @@ internal class ExoAppPlayer(
 
     override fun playMediaAt(position: Int) {
         // Already playing media at this position; nothing to do
-        if (player.currentMediaItemIndex == position && player.isPlaying) return
+        if (player.currentMediaItemIndex == position && player.isPlaying) {
+            return
+        }
 
         player.seekToDefaultPosition(position)
         player.playWhenReady = true

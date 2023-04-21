@@ -1,11 +1,12 @@
 package com.ns.shortsnews.user.domain.repository
 
-import com.ns.shortsnews.user.domain.models.ProfileData
-import com.ns.shortsnews.user.domain.models.User
+import com.ns.shortsnews.user.data.models.BaseResult
+import com.ns.shortsnews.user.data.models.ProfileData
+import com.ns.shortsnews.user.data.models.User
 import com.squareup.moshi.Json
 
 interface UserDataRepository {
-    suspend fun getUserRegistration(emailId:String): Json
-    suspend fun getValidateOtpData(otp:String): Json
-    suspend fun getProfileData(): Json
+    suspend fun getUserRegistration(emailId:String): BaseResult
+    suspend fun getValidateOtpData(otp:String): BaseResult
+    suspend fun getProfileData(): BaseResult
 }
