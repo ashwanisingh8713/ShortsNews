@@ -81,6 +81,14 @@ dependencies {
     //Coil - to load SVG files
     implementation("io.coil-kt:coil:2.2.2")
     implementation("io.coil-kt:coil-svg:2.2.2")
+    //Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+
+    // Data store
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation "androidx.preference:preference-ktx:1.2.0"
+
 
 
 
