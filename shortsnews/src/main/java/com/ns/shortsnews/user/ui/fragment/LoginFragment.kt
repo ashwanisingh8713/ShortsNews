@@ -53,13 +53,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.registrationSuccessState.collectLatest {
-
+                binding.progressBarLogin.visibility = View.GONE
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.loadingState.collectLatest {
-
+              binding.progressBarLogin.visibility = View.VISIBLE
             }
         }
 

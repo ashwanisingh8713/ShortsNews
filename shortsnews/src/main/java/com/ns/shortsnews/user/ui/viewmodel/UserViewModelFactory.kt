@@ -14,6 +14,8 @@ class UserViewModelFactory : ViewModelProvider.Factory {
                userOtpValidationDataUseCases: UserOtpValidationDataUseCases,
                profileDataUseCases: UserProfileDataUseCases) {
         this.userRegisterDataUseCases = userUseCases
+        this.userOtpValidationDataUseCases = userOtpValidationDataUseCases
+        this.profileDataUseCases = profileDataUseCases
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
