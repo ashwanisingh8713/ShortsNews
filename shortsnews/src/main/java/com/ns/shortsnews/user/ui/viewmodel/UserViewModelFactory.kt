@@ -2,17 +2,17 @@ package com.ns.shortsnews.user.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCases
-import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCases
-import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCases
+import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
+import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
+import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 
 class UserViewModelFactory : ViewModelProvider.Factory {
-    private lateinit var userRegisterDataUseCases: UserRegistrationDataUseCases
-    private lateinit var userOtpValidationDataUseCases: UserOtpValidationDataUseCases
-    private lateinit var profileDataUseCases: UserProfileDataUseCases
-    fun inject(userUseCases: UserRegistrationDataUseCases,
-               userOtpValidationDataUseCases: UserOtpValidationDataUseCases,
-               profileDataUseCases: UserProfileDataUseCases) {
+    private lateinit var userRegisterDataUseCases: UserRegistrationDataUseCase
+    private lateinit var userOtpValidationDataUseCases: UserOtpValidationDataUseCase
+    private lateinit var profileDataUseCases: UserProfileDataUseCase
+    fun inject(userUseCases: UserRegistrationDataUseCase,
+               userOtpValidationDataUseCases: UserOtpValidationDataUseCase,
+               profileDataUseCases: UserProfileDataUseCase) {
         this.userRegisterDataUseCases = userUseCases
         this.userOtpValidationDataUseCases = userOtpValidationDataUseCases
         this.profileDataUseCases = profileDataUseCases

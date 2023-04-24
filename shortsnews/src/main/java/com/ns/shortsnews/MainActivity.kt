@@ -22,7 +22,6 @@ import com.videopager.vm.VideoPagerViewModelFactory
 class MainActivity : AppCompatActivity(), onProfileItemClick{
     private lateinit var binding: ActivityMainBinding
     private lateinit var caAdapter: CategoryAdapter
-    val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false)
 
     private val sharedEventViewModel: SharedEventViewModel by viewModels { SharedEventViewModelFactory }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,9 +31,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         setContentView(view)
         loadHomeFragment("")
        // Setup recyclerView
-        binding.categoryItems.layoutManager = layoutManager
         caAdapter = CategoryAdapter(getCategoryData(), this)
-        binding.categoryItems.adapter = caAdapter
+        binding.recyclerView.adapter = caAdapter
         binding.profileIcon.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)

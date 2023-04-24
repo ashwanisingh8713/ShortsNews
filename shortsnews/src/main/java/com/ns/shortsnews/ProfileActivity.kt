@@ -9,9 +9,9 @@ import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.databinding.ActivityProfileBinding
 import com.ns.shortsnews.user.data.network.NetService
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
-import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCases
-import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCases
-import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCases
+import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
+import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
+import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.fragment.LoginFragment
 import com.ns.shortsnews.user.ui.fragment.OtpFragment
 import com.ns.shortsnews.user.ui.fragment.UserFragment
@@ -25,9 +25,9 @@ class ProfileActivity : AppCompatActivity() {
     companion object {
         private val netService = NetService()
         private val userDataRepository = UserDataRepositoryImpl(netService.createRetrofit())
-        private val userRegistrationDataUseCases = UserRegistrationDataUseCases(userDataRepository)
-        private val userOtpValidationDataUseCases = UserOtpValidationDataUseCases(userDataRepository)
-        private val userProfileDataUseCases = UserProfileDataUseCases(userDataRepository)
+        private val userRegistrationDataUseCases = UserRegistrationDataUseCase(userDataRepository)
+        private val userOtpValidationDataUseCases = UserOtpValidationDataUseCase(userDataRepository)
+        private val userProfileDataUseCases = UserProfileDataUseCase(userDataRepository)
 
         val userViewModelFactory = UserViewModelFactory().apply {
             inject(
