@@ -3,11 +3,9 @@ package com.ns.shortsnews.user.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ns.shortsnews.user.data.mapper.UserRegistration
-import com.ns.shortsnews.user.data.models.*
 import com.ns.shortsnews.user.domain.exception.ApiError
 import com.ns.shortsnews.user.domain.models.OTPResult
 import com.ns.shortsnews.user.domain.models.ProfileResult
-import com.ns.shortsnews.user.domain.models.RegistrationData
 import com.ns.shortsnews.user.domain.models.RegistrationResult
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.base.UseCaseResponse
@@ -47,7 +45,7 @@ class UserViewModel(private val userRegistrationUseCases: UserRegistrationDataUs
     private val _profileSuccessState = MutableStateFlow<ProfileResult?>(null)
     val profileSuccessState: StateFlow<ProfileResult?> get() = _profileSuccessState
 
-    private val _errorState = MutableStateFlow<String?>(null)
+    private val _errorState = MutableStateFlow<String?>("NA")
     val errorState: StateFlow<String?> get() = _errorState
 
     private val _loadingState = MutableStateFlow(true)

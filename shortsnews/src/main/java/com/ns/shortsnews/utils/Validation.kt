@@ -5,7 +5,13 @@ import java.util.regex.Pattern
 
 object Validation {
     fun validateEmail(email:String):Boolean{
-        return !(email.isEmpty() && !Patterns.EMAIL_ADDRESS.matcher(email).matches())
+        if (email.isEmpty()){
+            return false
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            return false
+        } else{
+            return true
+        }
     }
 
     fun validateOtp(otp:String):Boolean{

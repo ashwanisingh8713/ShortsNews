@@ -25,11 +25,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
 
         binding.submitButton.setOnClickListener{
-            if (binding.nameTextInput.text.isNotEmpty() && Validation.validateEmail(binding.emailTextInput.text.toString())) {
-                val bundle:MutableMap<String, String> = mutableMapOf()
-                bundle["email"] = binding.emailTextInput.toString()
-                bundle["name"] = binding.nameTextInput.toString()
-                userViewModel.requestRegistrationApi(bundle)
+            val name = binding.nameTextInput.text.toString()
+            val email = binding.emailTextInput.text.toString()
+            if (name.isNotEmpty() && email.isNotEmpty()) {
+                if (Validation.validateEmail(email)){
+                    val bundle:MutableMap<String, String> = mutableMapOf()
+                    bundle["email"] = email
+                    bundle["name"] = name
+                    userViewModel.requestRegistrationApi(bundle)
+                } else {
+                    Toast.makeText(requireActivity(),"Please enter valid Email id",Toast.LENGTH_LONG).show()
+                }
+
             } else{
                 Toast.makeText(requireActivity(),"Please fill all required field",Toast.LENGTH_LONG).show()
             }
@@ -37,14 +44,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.collectLatest {
+              if(!it.equals("NA")){
                 Toast.makeText(requireActivity(),"$it",Toast.LENGTH_LONG).show()
-
+                }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.registrationSuccessState.collectLatest {
-                binding.progressBarLogin.visibility = View.GONE
+                it.let {
+                    binding.progressBarLogin.visibility = View.GONE
+                }
+
             }
         }
 

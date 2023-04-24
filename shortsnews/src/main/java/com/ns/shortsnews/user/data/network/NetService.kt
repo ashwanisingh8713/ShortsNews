@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 class NetService {
     companion object{
         private const val TIME_OUT = 30L
-        private const val BASE_URL = "https://newsdx.io/"
+        private const val BASE_URL = "https://shorts.newsdx.io/ci/api/public/"
     }
 
 

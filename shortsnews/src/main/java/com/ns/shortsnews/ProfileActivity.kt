@@ -48,7 +48,6 @@ class ProfileActivity : AppCompatActivity() {
         window.navigationBarColor = Color.parseColor("#1E1E1E")
 
         loginFragment()
-
         listenFragmentUpdate()
     }
 

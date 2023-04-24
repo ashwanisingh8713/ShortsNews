@@ -11,13 +11,13 @@ import retrofit2.http.*
  */
 interface UserApiService {
 
-    @GET("/send-email-otp")
+    @POST("send-email-otp")
     suspend fun getRegistration(): RegistrationResult
 
-    @GET("/verify-email-otp")
+    @POST("verify-email-otp")
     suspend fun getValidateOtp(): OTPResult
 
-    @GET("/explore-home")
+    @GET("explore-home")
     suspend fun getUserProfile(): ProfileResult
 
 }
