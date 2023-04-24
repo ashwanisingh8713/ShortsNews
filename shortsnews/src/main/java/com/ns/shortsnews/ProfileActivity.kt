@@ -47,7 +47,8 @@ class ProfileActivity : AppCompatActivity() {
         window.statusBarColor = Color.parseColor("#1E1E1E")
         window.navigationBarColor = Color.parseColor("#1E1E1E")
 
-        loginFragment()
+//        loginFragment()
+        profileFragment()
         listenFragmentUpdate()
     }
 
@@ -71,7 +72,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun otpFragment() {
         val fragment = OtpFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fragment).commit()
     }
 
 

@@ -36,7 +36,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 } else {
                     Toast.makeText(requireActivity(),"Please enter valid Email id",Toast.LENGTH_LONG).show()
                 }
-
             } else{
                 Toast.makeText(requireActivity(),"Please fill all required field",Toast.LENGTH_LONG).show()
             }

@@ -9,7 +9,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class OTPResult(
-    val data: OtpValidationData,
+    val `data`: OtpValidationData,
     val status: Boolean,
     val msg: String
 )
@@ -17,7 +17,7 @@ data class OTPResult(
 data class OtpValidationData(
     val access_token: String,
     val email: String,
-    val name: Boolean,
+    val name: String,
     val first_time_user: Boolean
 )
 
@@ -25,8 +25,7 @@ data class OtpValidationData(
 data class ProfileResult(val name: String)
 @JsonClass(generateAdapter = true)
 data class RegistrationResult(
-//    @Json(name="data")
-    val `data`: RegistrationData,
+    val `data`: RegistrationData? = null,
     val status: Boolean,
     val msg: String
 )

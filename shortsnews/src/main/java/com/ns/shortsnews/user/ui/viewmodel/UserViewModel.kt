@@ -2,6 +2,7 @@ package com.ns.shortsnews.user.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ns.shortsnews.user.data.mapper.UserOtp
 import com.ns.shortsnews.user.data.mapper.UserRegistration
 import com.ns.shortsnews.user.domain.exception.ApiError
 import com.ns.shortsnews.user.domain.models.OTPResult
@@ -38,8 +39,8 @@ class UserViewModel(private val userRegistrationUseCases: UserRegistrationDataUs
     val registrationSuccessState: StateFlow<UserRegistration?> get() = _registrationSuccessState
 
     // Otp
-    private val _otpSuccessState = MutableStateFlow<OTPResult?>(null)
-    val otpSuccessState: StateFlow<OTPResult?> get() = _otpSuccessState
+    private val _otpSuccessState = MutableStateFlow<UserOtp?>(null)
+    val otpSuccessState: StateFlow<UserOtp?> get() = _otpSuccessState
 
     // Profile
     private val _profileSuccessState = MutableStateFlow<ProfileResult?>(null)
@@ -64,7 +65,7 @@ class UserViewModel(private val userRegistrationUseCases: UserRegistrationDataUs
                 override fun onSuccess(result: RegistrationResult) {
                     // Mapping the data model class, which will be used by UIs.
                     val userRegistration = UserRegistration().mapper(status = result.status, msg = result.msg,
-                    OTP_id = result.data.OTP_id, length = result.data.length, email = result.data.email)
+                    OTP_id = result.data!!.OTP_id, length = result.data.length, email = result.data.email)
                     _registrationSuccessState.value = userRegistration
                     _loadingState.value = false
                 }
@@ -84,8 +85,11 @@ class UserViewModel(private val userRegistrationUseCases: UserRegistrationDataUs
     fun requestOtpValidationApi(requestBody: Map<String, String>) {
         otpValidationDataUseCases.invoke(viewModelScope, requestBody,
             object : UseCaseResponse<OTPResult> {
-                override fun onSuccess(type: OTPResult) {
-                    _otpSuccessState.value = type
+                override fun onSuccess(result: OTPResult) {
+                    val otpValidation = UserOtp().mapper(status = result.status, msg = result.msg,
+                        email = result.data.email, access_token = result.data.access_token,
+                        name = result.data.name, first_time_user = result.data.first_time_user )
+                    _otpSuccessState.value = otpValidation
                     _loadingState.value = false
                 }
 
