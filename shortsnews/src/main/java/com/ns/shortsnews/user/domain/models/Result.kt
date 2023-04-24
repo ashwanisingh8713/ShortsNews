@@ -1,4 +1,4 @@
-package com.ns.shortsnews.user.data.models
+package com.ns.shortsnews.user.domain.models
 
 import com.squareup.moshi.JsonClass
 
@@ -8,7 +8,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class OTPResult(
-    val data:OtpValidationData,
+    val data: OtpValidationData,
     val status: Boolean,
     val msg: String
 )
@@ -33,4 +33,15 @@ data class RegistrationData(
     val OTP_id: Int,
     val length: Int,
     val email: String
+)
+
+@JsonClass(generateAdapter = true)
+data class VideoCategoryResult(
+    val data: List<VideoCategory>,
+    val status: Boolean
+)
+@JsonClass(generateAdapter = true)
+data class VideoCategory(
+    val id: String,
+    val name: String
 )

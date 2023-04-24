@@ -1,8 +1,8 @@
 package com.ns.shortsnews.user.data.source
 
-import com.ns.shortsnews.user.data.models.OTPResult
-import com.ns.shortsnews.user.data.models.ProfileResult
-import com.ns.shortsnews.user.data.models.RegistrationResult
+import com.ns.shortsnews.user.domain.models.OTPResult
+import com.ns.shortsnews.user.domain.models.ProfileResult
+import com.ns.shortsnews.user.domain.models.RegistrationResult
 import com.squareup.moshi.Json
 import retrofit2.http.*
 
