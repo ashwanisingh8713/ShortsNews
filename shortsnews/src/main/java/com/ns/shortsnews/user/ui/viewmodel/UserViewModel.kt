@@ -52,7 +52,7 @@ class UserViewModel(private val userRegistrationUseCases: UserRegistrationDataUs
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
     fun updateFragment(fragmentType:String) {
-        viewModelScope.launch(){
+        viewModelScope.launch{
             _fragmentStateFlow.emit(fragmentType)
         }
     }

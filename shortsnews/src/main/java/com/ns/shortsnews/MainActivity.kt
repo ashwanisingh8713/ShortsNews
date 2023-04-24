@@ -3,7 +3,9 @@ package com.ns.shortsnews
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.imageLoader
@@ -11,12 +13,19 @@ import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
 import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.databinding.ActivityMainBinding
-import com.ns.shortsnews.video.data.CategoryData
+import com.ns.shortsnews.user.data.network.NetService
+import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
+import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
+import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
+import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.video.data.VideoDataRepository
 import com.videopager.ui.VideoPagerFragment
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity(), onProfileItemClick{
@@ -24,35 +33,34 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
     private lateinit var caAdapter: CategoryAdapter
 
     private val sharedEventViewModel: SharedEventViewModel by viewModels { SharedEventViewModelFactory }
+
+    private val netService = NetService()
+    private val videoRepository = VideoCategoryRepositoryImp(netService.createRetrofit())
+    private val videoCategoryUseCase = VideoCategoryUseCase(videoRepository)
+
+    private val userViewModelFactory = VideoCategoryViewModelFactory().apply {
+        inject(
+            videoCategoryUseCase
+        )
+    }
+
+    private val videoCategoryViewModel: VideoCategoryViewModel by viewModels { userViewModelFactory }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        loadHomeFragment("")
-       // Setup recyclerView
-        caAdapter = CategoryAdapter(getCategoryData(), this)
-        binding.recyclerView.adapter = caAdapter
+
         binding.profileIcon.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
+
+        videoCategoryViewModel.loadVideoCategory()
+        showCategory();
     }
 
-    private fun getCategoryData():List<CategoryData>{
-        var categoryDataList = mutableListOf<CategoryData>()
-        categoryDataList.add(CategoryData("All", true, "all"))
-        categoryDataList.add(CategoryData("India", false, "india"))
-        categoryDataList.add(CategoryData("Political", false, "political"))
-        categoryDataList.add(CategoryData("Sports", false, "sports"))
-        categoryDataList.add(CategoryData("Nature", false, "nature"))
-        categoryDataList.add(CategoryData("Space", false, "space"))
-        categoryDataList.add(CategoryData("Local", false, "local"))
-        categoryDataList.add(CategoryData("Entertainment", false, "us"))
-        categoryDataList.add(CategoryData("Media", false, "canada"))
-        categoryDataList.add(CategoryData("Technology", false, "bihar"))
-      return categoryDataList
-    }
 
     override fun itemclick(shortsType: String, position:Int, size:Int) {
         loadHomeFragment(shortsType)
@@ -83,6 +91,22 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         )
 
         return vpf
+    }
+
+    private fun showCategory() {
+        lifecycleScope.launch() {
+            videoCategoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
+                // Setup recyclerView
+                caAdapter = CategoryAdapter(itemList = it.videoCategories, itemListener = this@MainActivity)
+                binding.recyclerView.adapter = caAdapter
+
+                val defaultCate = it.videoCategories[0]
+
+                loadHomeFragment(defaultCate.id)
+            }
+        }
+
+
     }
 
 

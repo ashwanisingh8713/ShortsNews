@@ -10,13 +10,14 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 import java.util.concurrent.CancellationException
 
 class VideoDataRepository : VideoDataRepository {
     // Kamlesh(Changed Base Url)
     private val api = Retrofit.Builder()
         .addConverterFactory(MoshiConverterFactory.create())
-        .baseUrl("https://newsdx.io/")
+        .baseUrl("https://shorts.newsdx.io/ci/api/public/")
         .build()
         .create(RedditService::class.java)
 
@@ -24,7 +25,7 @@ class VideoDataRepository : VideoDataRepository {
         try {
             var rt = requestType
             Log.i("", "$rt")
-            val response = api.getShortsVideos()
+            val response = api.getShortsVideos(rt)
             val videoData = response
                 .data
                 .map { post ->
@@ -51,9 +52,8 @@ class VideoDataRepository : VideoDataRepository {
     }
 
     private interface RedditService {
-        @GET("dev/shorts/api/get_shorts.php")
-        suspend fun getShortsVideos(
-        ): RedditResponse
+        @GET("videos")
+        suspend fun getShortsVideos(@Query("category") category: String): RedditResponse
     }
 
     @JsonClass(generateAdapter = true)
@@ -67,12 +67,6 @@ data class RedditResponse(
     /*(Kamlesh) Created new data class as per newsdx response */
 @JsonClass(generateAdapter = true)
 data class Data(
-    @Json(name = "comment_count")
-    val commentCount: String,
-    @Json(name = "following")
-    val following: Boolean,
-    @Json(name = "like_count")
-    val likeCount: String,
     @Json(name = "title")
     val title: String,
     @Json(name = "video_url")

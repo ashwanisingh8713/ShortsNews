@@ -2,17 +2,15 @@ package com.ns.shortsnews.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.ItemCategoryBinding
 import com.ns.shortsnews.onProfileItemClick
-import com.ns.shortsnews.video.data.CategoryData
+import com.ns.shortsnews.user.domain.models.VideoCategory
 
-class CategoryAdapter(private var itemList:List<CategoryData>,private val itemListener:onProfileItemClick): RecyclerView.Adapter<CategoryAdapter.MyViewHolder>() {
+class CategoryAdapter(private var itemList: List<VideoCategory> = emptyList(), private val itemListener:onProfileItemClick): RecyclerView.Adapter<CategoryAdapter.MyViewHolder>() {
     private var lastCheckedPosition = 0
 
     class MyViewHolder(val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root)
@@ -28,7 +26,7 @@ class CategoryAdapter(private var itemList:List<CategoryData>,private val itemLi
     override fun onBindViewHolder(holder: MyViewHolder, @SuppressLint("RecyclerView") position: Int) {
         with(holder){
             with(itemList[position]){
-                binding.categoryTitle.text = this.title
+                binding.categoryTitle.text = this.name
                 if (position == lastCheckedPosition){
                     binding.categoryTitle.setTextColor(ContextCompat.getColor(holder.itemView.context, com.videopager.R.color.red))
                 } else {
@@ -39,7 +37,9 @@ class CategoryAdapter(private var itemList:List<CategoryData>,private val itemLi
         holder.itemView.setOnClickListener {
             lastCheckedPosition = position
             notifyItemRangeChanged(0, itemCount)
-            itemListener.itemclick(itemList[position].query, position, itemCount)
+            itemListener.itemclick(itemList[position].id, position, itemCount)
         }
     }
+
+
 }

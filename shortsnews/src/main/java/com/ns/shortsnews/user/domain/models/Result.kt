@@ -45,5 +45,6 @@ data class VideoCategoryResult(
 @JsonClass(generateAdapter = true)
 data class VideoCategory(
     val id: String,
-    val name: String
+    val name: String,
+    val selected:Boolean = false,
 )

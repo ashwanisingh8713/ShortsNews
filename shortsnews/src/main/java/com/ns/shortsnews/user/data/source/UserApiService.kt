@@ -3,6 +3,7 @@ package com.ns.shortsnews.user.data.source
 import com.ns.shortsnews.user.domain.models.OTPResult
 import com.ns.shortsnews.user.domain.models.ProfileResult
 import com.ns.shortsnews.user.domain.models.RegistrationResult
+import com.ns.shortsnews.user.domain.models.VideoCategoryResult
 import com.squareup.moshi.Json
 import retrofit2.http.*
 
@@ -19,5 +20,8 @@ interface UserApiService {
 
     @GET("explore-home")
     suspend fun getUserProfile(): ProfileResult
+
+    @GET("categories")
+    suspend fun getVideoCategory(): VideoCategoryResult
 
 }
