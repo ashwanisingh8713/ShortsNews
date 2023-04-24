@@ -61,20 +61,26 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         showCategory();
     }
 
-
+    /**
+     * It listens category item click
+     */
     override fun itemclick(shortsType: String, position:Int, size:Int) {
         loadHomeFragment(shortsType)
     }
 
-    private fun topBarResponse() {
-        sharedEventViewModel.requestApi("All")
-    }
 
+    /**
+     * Loads Home Fragment
+     */
     private fun loadHomeFragment(shortsType: String) {
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.fragment_container, makeVideoPagerInstance(shortsType))
         ft.commit()
     }
+
+    /**
+     * Creates VideoPagerFragment Instance
+     */
     private fun makeVideoPagerInstance(shortsType: String): VideoPagerFragment {
         val vpf =  VideoPagerFragment(
             viewModelFactory = { owner ->
@@ -89,7 +95,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
             imageLoader = this@MainActivity.imageLoader,
             shortsType = shortsType
         )
-
         return vpf
     }
 
@@ -99,14 +104,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
                 // Setup recyclerView
                 caAdapter = CategoryAdapter(itemList = it.videoCategories, itemListener = this@MainActivity)
                 binding.recyclerView.adapter = caAdapter
-
                 val defaultCate = it.videoCategories[0]
-
                 loadHomeFragment(defaultCate.id)
             }
         }
-
-
     }
 
 
