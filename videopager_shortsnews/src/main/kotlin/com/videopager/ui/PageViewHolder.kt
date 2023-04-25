@@ -11,23 +11,42 @@ import com.videopager.models.AnimationEffect
 import com.videopager.models.PageEffect
 import com.videopager.models.ResetAnimationsEffect
 import com.player.models.VideoData
+import com.videopager.ui.extensions.*
 import com.videopager.ui.extensions.findParentById
 
 internal class PageViewHolder(
     private val binding: PageItemBinding,
     private val imageLoader: ImageLoader,
-    private val click: () -> Unit
+    private val click: (pair: Pair<String, ClickEvent>) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     private val animationEffect = FadeInThenOutAnimationEffect(binding.playPause)
 
     init {
         binding.root.setOnClickListener {
-            click()
+            click(Pair("", PlayPauseClick))
         }
     }
 
     fun bind(videoData: VideoData) {
-//        binding.previewImage.load(videoData.previewImageUri,imageLoader)
+        binding.previewImage.load(videoData.previewImageUri,imageLoader)
+        binding.following.setOnClickListener{
+            click(Pair(videoData.id, FollowClick))
+        }
+        binding.clientImage.setOnClickListener{
+            click(Pair(videoData.id, ChannelClick))
+        }
+        binding.share.setOnClickListener{
+            click(Pair(videoData.id, ShareClick))
+        }
+        binding.save.setOnClickListener{
+            click(Pair(videoData.id, SaveClick))
+        }
+        binding.comment.setOnClickListener{
+            click(Pair(videoData.id, CommentClick))
+        }
+        binding.like.setOnClickListener{
+            click(Pair(videoData.id, LikeClick))
+        }
         ConstraintSet().apply {
             clone(binding.root)
             // Optimize video preview / container size if aspect ratio is available. This can avoid

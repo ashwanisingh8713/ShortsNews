@@ -51,7 +51,7 @@
             >
 
             <ImageView
-                android:id="@+id/thumbUp"
+                android:id="@+id/like"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
                 android:src="@drawable/like"
@@ -74,7 +74,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
-                android:id="@+id/msg"
+                android:id="@+id/comment"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
                 android:contentDescription="Comment"
@@ -95,7 +95,7 @@
                 android:textColor="@color/white"
                 android:textSize="10sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@id/thumbUp"
+                app:layout_constraintBottom_toTopOf="@id/like"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -120,7 +120,7 @@
                 android:textColor="@color/white"
                 android:textSize="10sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@id/msg"
+                app:layout_constraintBottom_toTopOf="@id/comment"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 

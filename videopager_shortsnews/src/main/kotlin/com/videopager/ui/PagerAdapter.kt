@@ -5,17 +5,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.PagerAdapter.POSITION_NONE
 import coil.ImageLoader
 import com.player.models.VideoData
 import com.player.ui.AppPlayerView
 import com.videopager.databinding.PageItemBinding
 import com.videopager.models.PageEffect
+import com.videopager.ui.extensions.ClickEvent
 import com.videopager.ui.extensions.awaitNextLayout
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 
 /**
@@ -32,15 +34,17 @@ internal class PagerAdapter(
 ) : ListAdapter<VideoData, PageViewHolder>(VideoDataDiffCallback) {
     private var recyclerView: RecyclerView? = null
     // Extra buffer capacity so that emissions can be sent outside a coroutine
-    private val clicks = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
-
+    private val clicks = MutableSharedFlow<Pair<String, ClickEvent>>(extraBufferCapacity = 1)
     fun clicks() = clicks.asSharedFlow()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder {
         return LayoutInflater.from(parent.context)
             .let { inflater -> PageItemBinding.inflate(inflater, parent, false) }
             .let { binding ->
-                PageViewHolder(binding, imageLoader) { clicks.tryEmit(Unit) }
+                PageViewHolder(binding, imageLoader) {pair ->
+                    clicks.tryEmit(pair)
+                }
+
             }
     }
 

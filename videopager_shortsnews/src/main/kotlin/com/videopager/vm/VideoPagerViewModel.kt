@@ -3,6 +3,8 @@ package com.videopager.vm
 import android.graphics.drawable.Drawable
 import com.videopager.R
 import com.videopager.data.VideoDataRepository
+import com.player.players.AppPlayer
+import com.videopager.models.*
 import com.videopager.models.AnimationEffect
 import com.videopager.models.AttachPlayerToViewResult
 import com.videopager.models.CreatePlayerResult
@@ -23,8 +25,6 @@ import com.videopager.models.TearDownPlayerResult
 import com.videopager.models.ViewEffect
 import com.videopager.models.ViewEvent
 import com.videopager.models.ViewResult
-import com.videopager.models.ViewState
-import com.player.players.AppPlayer
 import com.videopager.ui.extensions.ViewState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -57,6 +57,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(requestType),
             filterIsInstance<PlayerLifecycleEvent>().toPlayerLifecycleResults(),
             filterIsInstance<TappedPlayerEvent>().toTappedPlayerResults(),
+//            filterIsInstance<ChannelEvent>().toChannelClickResults(),
             filterIsInstance<OnPageSettledEvent>().toPageSettledResults(),
             filterIsInstance<PauseVideoEvent>().toPauseVideoResults()
         )
@@ -154,6 +155,22 @@ internal class VideoPagerViewModel(
             TappedPlayerResult(drawable)
         }
     }
+
+    /*@OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<ChannelEvent>.toChannelClickResults(): Flow<ViewResult> {
+        return mapLatest {
+            val appPlayer = requireNotNull(states.value.appPlayer)
+            val drawable = if (appPlayer.currentPlayerState.isPlaying) {
+                appPlayer.pause()
+                R.drawable.pause
+            } else {
+                appPlayer.play()
+                R.drawable.play
+            }
+
+            TappedPlayerResult(drawable)
+        }
+    }*/
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<OnPageSettledEvent>.toPageSettledResults(): Flow<ViewResult> {

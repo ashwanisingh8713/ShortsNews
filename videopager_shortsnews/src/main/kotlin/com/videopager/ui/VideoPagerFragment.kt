@@ -24,9 +24,8 @@ import com.videopager.models.PageEffect
 import com.videopager.models.PauseVideoEvent
 import com.videopager.models.PlayerErrorEffect
 import com.videopager.models.PlayerLifecycleEvent
-import com.videopager.models.TappedPlayerEvent
-import com.videopager.models.TappedPlayerResult
 import com.videopager.models.ViewEvent
+import com.videopager.ui.extensions.*
 import com.videopager.ui.extensions.awaitList
 import com.videopager.ui.extensions.events
 import com.videopager.ui.extensions.isIdle
@@ -57,7 +56,9 @@ class VideoPagerFragment(
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
         binding.viewPager.isUserInputEnabled = false
 
+        // Start point of Events, Flow, States
         viewModel.initApi(shortsType)
+
         val states = viewModel.states
             .onEach { state ->
                 // Await the list submission so that the adapter list is in sync with state.videoData
@@ -110,14 +111,13 @@ class VideoPagerFragment(
         val events = merge(
             viewLifecycleOwner.lifecycle.viewEvents(),
             binding.viewPager.viewEvents(),
-            adapter.viewEvents()
+            adapter.playPauseEvent(),
         )
             .onEach(viewModel::processEvent)
 
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        listenApiRequest()
     }
 
     private fun Lifecycle.viewEvents(): Flow<ViewEvent> {
@@ -139,103 +139,44 @@ class VideoPagerFragment(
     private fun ViewPager2.viewEvents(): Flow<ViewEvent> {
         return merge(
             // Idling on a page after a scroll is a signal to try and change player playlist positions
-            pageIdlings().map { OnPageSettledEvent(currentItem) },
+            pageIdlings().map {
+                OnPageSettledEvent(currentItem)
+                              },
             // A page change (which can happen before a page is idled upon) is a signal to pause media. This
             // is useful for when a user is quickly swiping thru pages and the idle state isn't getting reached.
             // It doesn't make sense for a video on a previous page to continue playing while the user is
             // swiping quickly thru pages.
             pageChanges().map {
+                Toast.makeText(requireContext(), "$currentItem", Toast.LENGTH_SHORT).show()
                 PauseVideoEvent
             }
         )
     }
 
-    private fun PagerAdapter.viewEvents(): Flow<ViewEvent> {
+    private fun PagerAdapter.playPauseEvent(): Flow<ViewEvent> {
         return clicks().map {
-            TappedPlayerEvent
-        }
-    }
-
-    private fun listenApiRequest() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            sharedEventViewModel.requestedApi.collect {
-                Toast.makeText(requireContext(), "Item $it Clicked", Toast.LENGTH_SHORT).show()
-//                val appPlayer = requireNotNull(viewModel.states.value.appPlayer)
-//                val drawable = if (appPlayer.currentPlayerState.isPlaying) {
-//                    appPlayer.pause()
-//                    R.drawable.pause
-//                } else {
-//                    appPlayer.play()
-//                    R.drawable.play
-//                }
-//                TappedPlayerResult(drawable)
-//                viewModel.resetPlayerData
-                viewModel.initApi(it)
-                val appPlayerView = appPlayerViewFactory.create(requireContext())
-                val adapter = PagerAdapter(imageLoader)
-                val states = viewModel.states
-                    .onEach { state ->
-                        // Await the list submission so that the adapter list is in sync with state.videoData
-                        adapter.awaitList(state.videoData)
-
-                        // Attach the player to the View whenever it's ready. Note that attachPlayer can
-                        // be false while appPlayer is non-null during configuration changes and, conversely,
-                        // attachPlayer can be true while appPlayer is null when the appPlayer hasn't been
-                        // set up but the view is ready for it. That is why both are checked here.
-                        if (state.attachPlayer && state.appPlayer != null) {
-                            appPlayerView.attach(state.appPlayer)
-                        } else {
-                            appPlayerView.detachPlayer()
-                        }
-
-                        // Restore any saved page state from process recreation and configuration changes.
-                        // Guarded by an isIdle check so that state emissions mid-swipe or during page change
-                        // animations are ignored. There would have a jarring page-change effect without that.
-                        if (binding.viewPager.isIdle) {
-                            binding.viewPager.setCurrentItem(state.page, false)
-                        }
-
-                        // Can't query any ViewHolders if the adapter has no pages
-                        if (adapter.currentList.isNotEmpty()) {
-                            // Set the player view on the active page. Note that ExoPlayer won't render
-                            // any frames until the output view (here, appPlayerView) is on-screen
-                            adapter.attachPlayerView(appPlayerView, state.page)
-
-                            // If the player media is rendering frames, then show the player
-                            if (state.showPlayer) {
-                                adapter.showPlayerFor(state.page)
-                                binding.viewPager.isUserInputEnabled = true
-                                binding.progressBarVideoShorts.visibility = View.GONE
-                            }
-                        }
-                    }
-                val effects = viewModel.effects
-                    .onEach { effect ->
-                        when (effect) {
-                            is PageEffect -> adapter.renderEffect(
-                                binding.viewPager.currentItem,
-                                effect
-                            )
-                            is PlayerErrorEffect -> Snackbar.make(
-                                binding.root,
-                                effect.throwable.message ?: "Error",
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                        }
-                    }
-
-                val events = merge(
-                    viewLifecycleOwner.lifecycle.viewEvents(),
-                    binding.viewPager.viewEvents(),
-                    adapter.viewEvents()
-                )
-                    .onEach(viewModel::processEvent)
-
-                merge(states, effects, events).launchIn(viewLifecycleOwner.lifecycleScope)
-
+            when(it.second) {
+                PlayPauseClick -> TappedPlayerEvent
+                FollowClick -> {
+                    Toast.makeText(requireContext(), "Client", Toast.LENGTH_SHORT).show()
+                    NoFurtherEvent
+                }
+                ChannelClick -> NoFurtherEvent
+                SaveClick -> NoFurtherEvent
+                ShareClick -> NoFurtherEvent
+                CommentClick -> NoFurtherEvent
+                LikeClick -> NoFurtherEvent
+                else -> TappedPlayerEvent
 
             }
+
         }
     }
+
+
+
+
+
+
 
 }
