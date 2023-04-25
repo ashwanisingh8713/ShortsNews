@@ -1,5 +1,6 @@
 package com.ns.shortsnews.user.ui.activity
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.ns.shortsnews.R
@@ -13,6 +14,8 @@ class ContainerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityContainerBinding.inflate(layoutInflater)
         val view = binding.root
+        window.statusBarColor = Color.parseColor("#1E1E1E")
+        window.navigationBarColor = Color.parseColor("#1E1E1E")
         val data = intent.getStringExtra("to")
         when(data){
              "per" -> {

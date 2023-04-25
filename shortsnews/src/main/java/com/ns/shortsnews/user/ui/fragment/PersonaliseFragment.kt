@@ -15,6 +15,9 @@ class PersonaliseFragment : Fragment(R.layout.fragment_personalise) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentPersonaliseBinding.bind(view)
+        binding.backButtonUser.setOnClickListener {
+            activity?.finish()
+        }
 
     }
 }

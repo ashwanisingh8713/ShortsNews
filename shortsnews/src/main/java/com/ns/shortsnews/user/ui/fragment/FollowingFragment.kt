@@ -15,6 +15,11 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentFollowingBinding.bind(view)
-    }
+
+        binding.backButtonUser.setOnClickListener {
+            activity?.finish()
+        }
 
     }
+
+}
