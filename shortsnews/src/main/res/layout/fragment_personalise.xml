@@ -1,14 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".user.ui.fragment.PersonaliseFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".user.ui.fragment.PersonaliseFragment"
+    android:background="@color/screen_background">
 
-    <!-- TODO: Update blank fragment layout -->
+
+
+    <ImageView
+        android:id="@+id/back_button_user"
+        android:layout_width="25dp"
+        android:layout_height="29dp"
+        android:src="@drawable/back_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="50dp"
+        android:padding="5dp"
+        android:contentDescription="back button otp"
+        tools:ignore="HardcodedText" />
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/user_name_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Welcome Soni"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:fontFamily="@font/roboto_bold"
+        android:textStyle="bold"
+        android:textSize="26sp"
+        android:layout_marginStart="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/back_button_user"
+        app:layout_constraintBottom_toBottomOf="@id/back_button_user"
+        tools:ignore="HardcodedText" />
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/profile_image_view"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/profile_image_background"
+        android:src="@drawable/profile_image"
+        app:layout_constraintTop_toBottomOf="@id/user_name_txt"
+        android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:id="@+id/choice_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Personalise your choice"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:fontFamily="@font/roboto_bold"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_image_view"
+        tools:ignore="HardcodedText" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/choice_chip_group"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="5dp"
+        app:singleSelection="false"
+        app:singleLine="false"
+        app:chipSpacing="14dp"
+        app:chipSpacingVertical="20dp"
+        app:chipSpacingHorizontal="10dp"
+        app:layout_constraintTop_toBottomOf="@id/choice_txt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/selected_txt"
+        />
+
+    <TextView
+        android:id="@+id/selected_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected 3/6 languages"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:fontFamily="@font/roboto_regular"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/submit_button_pers"
+        tools:ignore="HardcodedText" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/submit_button_pers"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/_50sdp"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_30sdp"
+        android:backgroundTint="@color/button_background"
+        android:text="@string/submit_btn_text"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12ssp"
+        android:textAllCaps="false"
+        android:fontFamily="@font/roboto_regular"
+        app:cornerRadius="@dimen/_5sdp"/>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

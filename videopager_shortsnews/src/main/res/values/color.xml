@@ -4,5 +4,7 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="red">#c7090f</color>
+    <color name="screen_background">#1E1E1E</color>
+
 
 </resources>

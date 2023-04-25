@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="MissingDefaultResource">
+    <solid android:color="@color/screen_background"/>
+
+    <corners android:topLeftRadius="30dp" android:topRightRadius="30dp" />
+</shape>

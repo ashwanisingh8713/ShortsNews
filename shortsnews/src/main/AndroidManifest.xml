@@ -10,8 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.News">
         <activity
-            android:name=".ContainerActivity"
-            android:exported="false" />
+            android:name=".user.ui.activity.ContainerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ProfileActivity"
             android:exported="false"

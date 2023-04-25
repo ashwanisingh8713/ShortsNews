@@ -1,0 +1,66 @@
+Index: shortsnews/src/main/java/com/ns/shortsnews/user/data/source/UserApiService.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/shortsnews/src/main/java/com/ns/shortsnews/user/data/source/UserApiService.kt b/shortsnews/src/main/java/com/ns/shortsnews/user/data/source/UserApiService.kt
+--- a/shortsnews/src/main/java/com/ns/shortsnews/user/data/source/UserApiService.kt	(revision e4dec3c8b1018043071c7f091d0c273687c37e2a)
++++ b/shortsnews/src/main/java/com/ns/shortsnews/user/data/source/UserApiService.kt	(date 1682315634340)
+@@ -11,13 +11,13 @@
+  */
+ interface UserApiService {
+ 
+-    @GET("/send-email-otp")
++    @POST("send-email-otp")
+     suspend fun getRegistration(): RegistrationResult
+ 
+-    @GET("/verify-email-otp")
++    @POST("verify-email-otp")
+     suspend fun getValidateOtp(): OTPResult
+ 
+-    @GET("/explore-home")
++    @GET("explore-home")
+     suspend fun getUserProfile(): ProfileResult
+ 
+ }
+\ No newline at end of file
+Index: shortsnews/src/main/java/com/ns/shortsnews/user/data/models/Result.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/shortsnews/src/main/java/com/ns/shortsnews/user/data/models/Result.kt b/shortsnews/src/main/java/com/ns/shortsnews/user/data/models/Result.kt
+--- a/shortsnews/src/main/java/com/ns/shortsnews/user/data/models/Result.kt	(revision e4dec3c8b1018043071c7f091d0c273687c37e2a)
++++ b/shortsnews/src/main/java/com/ns/shortsnews/user/data/models/Result.kt	(date 1682315856929)
+@@ -1,5 +1,6 @@
+ package com.ns.shortsnews.user.data.models
+ 
++import com.squareup.moshi.Json
+ import com.squareup.moshi.JsonClass
+ 
+ /**
+@@ -24,6 +25,7 @@
+ data class ProfileResult(val name: String)
+ @JsonClass(generateAdapter = true)
+ data class RegistrationResult(
++    @Json(name = "data")
+     val data: RegistrationData,
+     val status: Boolean,
+     val msg: String
+Index: shortsnews/src/main/java/com/ns/shortsnews/user/data/network/NetService.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/shortsnews/src/main/java/com/ns/shortsnews/user/data/network/NetService.kt b/shortsnews/src/main/java/com/ns/shortsnews/user/data/network/NetService.kt
+--- a/shortsnews/src/main/java/com/ns/shortsnews/user/data/network/NetService.kt	(revision e4dec3c8b1018043071c7f091d0c273687c37e2a)
++++ b/shortsnews/src/main/java/com/ns/shortsnews/user/data/network/NetService.kt	(date 1682315634335)
+@@ -10,7 +10,7 @@
+ class NetService {
+     companion object{
+         private const val TIME_OUT = 30L
+-        private const val BASE_URL = "https://newsdx.io/"
++        private const val BASE_URL = "https://shorts.newsdx.io/ci/api/public/"
+     }
+ 
+ 

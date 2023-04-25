@@ -56,8 +56,8 @@ class ProfileActivity : AppCompatActivity() {
         lifecycleScope.launch() {
             userViewModel.fragmentStateFlow.collectLatest {
                 when(it) {
-                    UserViewModel.PROFILE-> ""
-                    UserViewModel.OTP->""
+                    UserViewModel.PROFILE-> profileFragment()
+                    UserViewModel.OTP-> otpFragment()
                     UserViewModel.LOGIN-> loginFragment()
                 }
             }
