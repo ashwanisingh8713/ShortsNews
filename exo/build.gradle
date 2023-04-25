@@ -41,7 +41,7 @@ dependencies {
     implementation "io.github.java-diff-utils:java-diff-utils:4.11"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC3"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
-    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.core:core-ktx:1.10.0'
 
 
 }
