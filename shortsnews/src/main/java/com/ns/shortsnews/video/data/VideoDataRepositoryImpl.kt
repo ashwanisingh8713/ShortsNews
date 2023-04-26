@@ -58,13 +58,17 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     }
 
     override fun follow(videoId: String): Flow<String> = flow {
-//        api.like(videoId)
+//        api.follow(videoId)
         emit("Follow Response")
     }
 
     override fun comment(videoId: String): Flow<String> = flow {
 //        api.comment(videoId)
         emit("Comment Response")
+    }
+
+    override fun getVideoInfo(videoId: String): Flow<String> = flow {
+        emit("Video Info Response")
     }
 
     private interface VideoDataService {
@@ -74,9 +78,10 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         suspend fun like(videoId: String): String
         @GET("videos")
         suspend fun follow(videoId: String): String
-
         @GET("comment")
         suspend fun comment(videoId: String): String
+        @GET("info")
+        suspend fun getVideoInfo(videoId: String): String
     }
 
     @JsonClass(generateAdapter = true)

@@ -10,6 +10,7 @@ internal object NoOpResult : ViewResult()
 internal data class FollowClickResult(val position: Int) : ViewResult()
 internal data class CommentClickResult(val position: Int) : ViewResult()
 internal data class LikeClickResult(val position: Int): ViewResult()
+internal data class GetVideoInfoResult(val position: Int, val response: String): ViewResult()
 
 internal data class LoadVideoDataResult(val videoData: List<VideoData>, val currentMediaItemIndex: Int) : ViewResult()
 

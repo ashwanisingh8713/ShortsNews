@@ -107,6 +107,7 @@ class VideoPagerFragment(
                         effect.throwable.message ?: "Error",
                         Snackbar.LENGTH_LONG
                     ).show()
+                    is GetVideoInfoEffect -> { adapter.refreshUI() }
                 }
             }
 

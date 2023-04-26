@@ -192,7 +192,6 @@ internal class VideoPagerViewModel(
         return mapLatest { event ->
             val appPlayer = requireNotNull(states.value.appPlayer)
             appPlayer.playMediaAt(event.page)
-
             OnNewPageSettledResult(page = event.page)
         }
     }
@@ -202,7 +201,10 @@ internal class VideoPagerViewModel(
         return mapLatest {
             val appPlayer = requireNotNull(states.value.appPlayer)
             appPlayer.pause()
-            NoOpResult
+        }.flatMapLatest {
+            repository.getVideoInfo("")
+        }.mapLatest {
+            GetVideoInfoResult(0, "")
         }
     }
 
@@ -225,7 +227,8 @@ internal class VideoPagerViewModel(
             filterIsInstance<OnNewPageSettledResult>().toNewPageSettledEffects(),
             filterIsInstance<PlayerErrorResult>().toPlayerErrorEffects(),
             filterIsInstance<FollowClickResult>().toFollowViewEffect(),
-            filterIsInstance<CommentClickResult>().toCommentViewEffect()
+            filterIsInstance<CommentClickResult>().toCommentViewEffect(),
+            filterIsInstance<GetVideoInfoResult>().toGetVideoInfoEffect()
         )
     }
 
@@ -248,6 +251,12 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<CommentClickResult>.toCommentViewEffect(): Flow<ViewEffect> {
         return mapLatest { CommentEffect }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<GetVideoInfoResult>.toGetVideoInfoEffect(): Flow<ViewEffect> {
+        return mapLatest {
+            GetVideoInfoEffect }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

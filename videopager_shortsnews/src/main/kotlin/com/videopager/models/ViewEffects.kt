@@ -11,6 +11,7 @@ internal object SaveEffect : ViewEffect()
 internal object CommentEffect : ViewEffect()
 internal object LikeEffect : ViewEffect()
 internal object FollowEffect : ViewEffect()
+internal object GetVideoInfoEffect : ViewEffect()
 
 internal object ResetAnimationsEffect : PageEffect()
 

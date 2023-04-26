@@ -9,4 +9,5 @@ interface VideoDataRepository {
     fun like(videoId: String):Flow<String>
     fun follow(videoId: String):Flow<String>
     fun comment(videoId: String):Flow<String>
+    fun getVideoInfo(videoId: String):Flow<String>
 }
