@@ -1,6 +1,7 @@
 package com.ns.shortsnews.user.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
@@ -16,6 +17,7 @@ import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.Validation
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
@@ -52,25 +54,33 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
-            userViewModel.errorState.collectLatest {
-              if(!it.equals("NA")){
+            userViewModel.errorState.filterNotNull().collectLatest {
+              if(it != "NA"){
                 Toast.makeText(requireActivity(),"$it",Toast.LENGTH_LONG).show()
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
-            userViewModel.registrationSuccessState.collectLatest {
+            userViewModel.registrationSuccessState.filterNotNull().collectLatest {
                 it.let {
+                    Log.i("kamlesh","Registration Response ::: $it")
                     binding.progressBarLogin.visibility = View.GONE
+                    val bundle = Bundle()
+                    bundle.putString("email", it.email)
+                    bundle.putString("otp_id", it.OTP_id.toString())
+                    userViewModel.updateFragment(UserViewModel.OTP,bundle )
                 }
 
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
-            userViewModel.loadingState.collectLatest {
-              binding.progressBarLogin.visibility = View.VISIBLE
+            userViewModel.loadingState.filterNotNull().collectLatest {
+                Log.i("kamlesh","data :: $it")
+                if (it) {
+                    binding.progressBarLogin.visibility = View.VISIBLE
+                }
             }
         }
 

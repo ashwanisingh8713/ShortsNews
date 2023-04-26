@@ -6,7 +6,7 @@ import com.ns.shortsnews.user.domain.models.RegistrationResult
 
 
 interface UserDataRepository {
-    suspend fun getUserRegistration(emailId:String): RegistrationResult
-    suspend fun getValidateOtpData(otp:String): OTPResult
+    suspend fun getUserRegistration(data:Map<String, String>): RegistrationResult
+    suspend fun getValidateOtpData(otp:Map<String, String>): OTPResult
     suspend fun getUserChoiceData(): UserChoiceResult
 }

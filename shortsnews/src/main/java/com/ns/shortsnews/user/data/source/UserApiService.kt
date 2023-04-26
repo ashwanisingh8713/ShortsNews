@@ -12,10 +12,10 @@ import retrofit2.http.*
 interface UserApiService {
 
     @POST("send-email-otp")
-    suspend fun getRegistration(): RegistrationResult
+    suspend fun getRegistration(@Body registrationData:Map<String, String>): RegistrationResult
 
     @POST("verify-email-otp")
-    suspend fun getValidateOtp(): OTPResult
+    suspend fun getValidateOtp(@Body otpData:Map<String, String>): OTPResult
 
     @GET("explore-home")
     suspend fun getUserChoice(): UserChoiceResult

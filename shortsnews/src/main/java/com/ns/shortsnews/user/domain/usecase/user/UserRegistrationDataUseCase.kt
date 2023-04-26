@@ -6,6 +6,6 @@ import com.ns.shortsnews.user.domain.repository.UserDataRepository
 
 class UserRegistrationDataUseCase(private val userDataRepository: UserDataRepository): UseCase<RegistrationResult, Any>() {
     override suspend fun run(params: Any?): RegistrationResult {
-        return userDataRepository.getUserRegistration(params.toString())
+        return userDataRepository.getUserRegistration(params as Map<String, String>)
     }
 }
