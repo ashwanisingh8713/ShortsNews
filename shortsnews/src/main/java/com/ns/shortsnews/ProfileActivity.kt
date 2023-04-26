@@ -15,7 +15,10 @@ import com.ns.shortsnews.user.ui.fragment.OtpFragment
 import com.ns.shortsnews.user.ui.fragment.UserChoiceFragment
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
+import com.ns.shortsnews.utils.PrefUtils
+import com.ns.shortsnews.utils.Validation
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
@@ -37,17 +40,23 @@ class ProfileActivity : AppCompatActivity() {
         window.statusBarColor = Color.parseColor("#1E1E1E")
         window.navigationBarColor = Color.parseColor("#1E1E1E")
 
-//        loginFragment()
-        choiceFragment()
+        if (PrefUtils.with(this).getBoolean(Validation.PREF_IS_USER_LOGGED_IN, false)){
+            choiceFragment()
+        } else{
+            loginFragment()
+        }
         listenFragmentUpdate()
+
+
     }
 
     private fun listenFragmentUpdate() {
         lifecycleScope.launch() {
-            sharedUserViewModel.fragmentStateFlow.collectLatest {
-                when(it) {
+            sharedUserViewModel.fragmentStateFlow.filterNotNull().collectLatest {
+                val bundle = it
+                when(bundle.getString("fragmentType")) {
                     UserViewModel.PROFILE-> choiceFragment()
-                    UserViewModel.OTP-> otpFragment()
+                    UserViewModel.OTP-> otpFragment(bundle)
                     UserViewModel.LOGIN-> loginFragment()
                 }
             }
@@ -60,8 +69,9 @@ class ProfileActivity : AppCompatActivity() {
     }
 
 
-    private fun otpFragment() {
+    private fun otpFragment(bundle: Bundle) {
         val fragment = OtpFragment()
+        fragment.arguments = bundle
         supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fragment).commit()
     }
 

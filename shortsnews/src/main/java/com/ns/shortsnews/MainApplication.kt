@@ -3,6 +3,7 @@ package com.ns.shortsnews
 import android.app.Application
 import com.ns.shortsnews.user.data.di.AppModule
 import com.ns.shortsnews.user.data.di.NetworkModule
+import com.ns.shortsnews.utils.PrefUtils
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

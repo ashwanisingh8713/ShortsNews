@@ -1,5 +1,6 @@
 package com.ns.shortsnews.user.domain.models
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
@@ -8,7 +9,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class OTPResult(
-    val `data`: OtpValidationData,
+    @Json(name = "data")
+    val `data`: OtpValidationData? = null,
     val status: Boolean,
     val msg: String
 )

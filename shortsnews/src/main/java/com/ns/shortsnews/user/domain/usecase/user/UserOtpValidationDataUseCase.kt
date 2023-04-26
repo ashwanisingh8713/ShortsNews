@@ -6,6 +6,6 @@ import com.ns.shortsnews.user.domain.repository.UserDataRepository
 
 class UserOtpValidationDataUseCase(private val userDataRepository: UserDataRepository): UseCase<OTPResult, Any>() {
     override suspend fun run(params: Any?): OTPResult {
-        return userDataRepository.getValidateOtpData(params as String)
+        return userDataRepository.getValidateOtpData(params as Map<String, String>)
     }
 }

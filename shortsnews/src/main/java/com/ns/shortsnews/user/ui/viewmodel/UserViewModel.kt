@@ -1,5 +1,6 @@
 package com.ns.shortsnews.user.ui.viewmodel
 
+import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ns.shortsnews.user.data.mapper.UserOtp
@@ -30,8 +31,8 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
     private val _shareValueFlow = MutableSharedFlow<String?>()
     val sharedValueFlow: SharedFlow<String?> get() = _shareValueFlow
 
-    private val _fragmentStateFlow = MutableSharedFlow<String?>()
-    val fragmentStateFlow: SharedFlow<String?> get() = _fragmentStateFlow
+    private val _fragmentStateFlow = MutableSharedFlow<Bundle?>()
+    val fragmentStateFlow: SharedFlow<Bundle?> get() = _fragmentStateFlow
     // Registration
     private val _registrationSuccessState = MutableStateFlow<UserRegistration?>(null)
     val registrationSuccessState: StateFlow<UserRegistration?> get() = _registrationSuccessState
@@ -43,12 +44,13 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
     private val _errorState = MutableStateFlow<String?>("NA")
     val errorState: StateFlow<String?> get() = _errorState
 
-    private val _loadingState = MutableStateFlow(true)
+    private val _loadingState = MutableStateFlow(false)
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
-    fun updateFragment(fragmentType:String) {
+    fun updateFragment(fragmentType:String, bundle: Bundle) {
         viewModelScope.launch{
-            _fragmentStateFlow.emit(fragmentType)
+            bundle.putString("fragmentType", fragmentType)
+            _fragmentStateFlow.emit(bundle)
         }
     }
 
@@ -81,7 +83,7 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
             object : UseCaseResponse<OTPResult> {
                 override fun onSuccess(result: OTPResult) {
                     val otpValidation = UserOtp().mapper(status = result.status, msg = result.msg,
-                        email = result.data.email, access_token = result.data.access_token,
+                        email = result.data!!.email, access_token = result.data.access_token,
                         name = result.data.name, first_time_user = result.data.first_time_user )
                     _otpSuccessState.value = otpValidation
                     _loadingState.value = false

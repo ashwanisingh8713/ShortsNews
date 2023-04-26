@@ -8,12 +8,12 @@ import com.ns.shortsnews.user.domain.repository.UserDataRepository
 import org.koin.core.Koin
 
 class UserDataRepositoryImpl constructor(private val apiService: UserApiService): UserDataRepository {
-    override suspend fun getUserRegistration(emailId: String): RegistrationResult {
-        return apiService.getRegistration()
+    override suspend fun getUserRegistration(data:Map<String, String>): RegistrationResult {
+        return apiService.getRegistration(data)
     }
 
-    override suspend fun getValidateOtpData(otp: String): OTPResult {
-        return apiService.getValidateOtp()
+    override suspend fun getValidateOtpData(otpData:Map<String, String>): OTPResult {
+        return apiService.getValidateOtp(otpData)
     }
 
     override suspend fun getUserChoiceData(): UserChoiceResult {
