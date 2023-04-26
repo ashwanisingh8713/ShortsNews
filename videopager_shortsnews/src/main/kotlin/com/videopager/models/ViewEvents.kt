@@ -11,6 +11,12 @@ internal sealed class PlayerLifecycleEvent : ViewEvent() {
 }
 
 internal object TappedPlayerEvent : ViewEvent()
+internal object ChannelClickEvent : ViewEvent()
+internal object FollowClickEvent : ViewEvent()
+internal object SaveClickEvent : ViewEvent()
+internal object ShareClickEvent : ViewEvent()
+internal object CommentClickEvent : ViewEvent()
+internal object LikeClickEvent : ViewEvent()
 internal object NoFurtherEvent : ViewEvent()
 
 internal data class OnPageSettledEvent(val page: Int) : ViewEvent()
