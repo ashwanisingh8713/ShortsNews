@@ -4,7 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import coil.imageLoader
-import com.ns.shortsnews.video.data.VideoDataRepository
+import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
 import com.videopager.ui.VideoPagerFragment
@@ -17,7 +17,7 @@ import com.videopager.vm.VideoPagerViewModelFactory
                 VideoPagerFragment::class.java -> VideoPagerFragment(
                     viewModelFactory = { owner ->
                         VideoPagerViewModelFactory(
-                            repository = VideoDataRepository(),
+                            repository = VideoDataRepositoryImpl(),
                             appPlayerFactory = ExoAppPlayerFactory(
                                 context = activity.applicationContext
                             )

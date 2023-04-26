@@ -42,13 +42,14 @@ class VideoPagerFragment(
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
     private val sharedEventViewModel: SharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
     lateinit var binding: VideoPagerFragmentBinding
+    private lateinit var adapter: PagerAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = VideoPagerFragmentBinding.bind(view)
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
         val appPlayerView = appPlayerViewFactory.create(view.context)
-        val adapter = PagerAdapter(imageLoader)
+        adapter = PagerAdapter(imageLoader)
         binding.viewPager.adapter = adapter
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
         binding.viewPager.isUserInputEnabled = false
@@ -96,6 +97,10 @@ class VideoPagerFragment(
         val effects = viewModel.effects
             .onEach { effect ->
                 when (effect) {
+                    is SaveEffect -> adapter.refreshUI()
+                    is CommentEffect -> adapter.refreshUI()
+                    is LikeEffect -> adapter.refreshUI()
+                    is FollowEffect -> adapter.refreshUI()
                     is PageEffect -> adapter.renderEffect(binding.viewPager.currentItem, effect)
                     is PlayerErrorEffect -> Snackbar.make(
                         binding.root,
@@ -109,8 +114,7 @@ class VideoPagerFragment(
             viewLifecycleOwner.lifecycle.viewEvents(),
             binding.viewPager.viewEvents(),
             adapter.clicksEvent(),
-        )
-            .onEach(viewModel::processEvent)
+        ).onEach(viewModel::processEvent)
 
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
@@ -156,33 +160,36 @@ class VideoPagerFragment(
                 PlayPauseClick -> TappedPlayerEvent
                 FollowClick -> {
                     // TODO, make api request to follow/unfollow the channel
-                    Toast.makeText(requireContext(), "Follow", Toast.LENGTH_SHORT).show()
-                    NoFurtherEvent
+                    val currentItem = binding.viewPager.currentItem
+                    val videoData = adapter.getVideoData(currentItem)
+                    FollowClickEvent(videoData.id, currentItem)
                 }
                 ChannelClick -> {
+                    val currentItem = binding.viewPager.currentItem
+                    val videoData = adapter.getVideoData(currentItem)
                     // TODO, Redirect in Channel page
-                    Toast.makeText(requireContext(), "Channel", Toast.LENGTH_SHORT).show()
                     ChannelClickEvent
                 }
                 SaveClick -> {
                     // TODO, Not applicable for Phase-1, as discussed on 24th April
-                    Toast.makeText(requireContext(), "Save", Toast.LENGTH_SHORT).show()
-                    SaveClickEvent
+                    Toast.makeText(requireContext(), "In Phase - 2", Toast.LENGTH_SHORT).show()
+                    SaveClickEvent("", 101010)
                 }
                 ShareClick -> {
                     // TODO, Sharing
-                    Toast.makeText(requireContext(), "Share", Toast.LENGTH_SHORT).show()
                     ShareClickEvent
                 }
                 CommentClick -> {
                     // TODO, Open BottomSheet dialog, inside BottomSheet dialog make api request and show the content.
-                    Toast.makeText(requireContext(), "Comment", Toast.LENGTH_SHORT).show()
-                    CommentClickEvent
+                    val currentItem = binding.viewPager.currentItem
+                    val videoData = adapter.getVideoData(currentItem)
+                    CommentClickEvent(videoData.id, currentItem)
                 }
                 LikeClick -> {
                     // TODO, make api request to like/unlike the channel
-                    Toast.makeText(requireContext(), "Like", Toast.LENGTH_SHORT).show()
-                    LikeClickEvent
+                    val currentItem = binding.viewPager.currentItem
+                    val videoData = adapter.getVideoData(currentItem)
+                    LikeClickEvent(videoData.id, currentItem)
                 }
                 else -> NoFurtherEvent
 

@@ -13,13 +13,13 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import java.util.concurrent.CancellationException
 
-class VideoDataRepository : VideoDataRepository {
+class VideoDataRepositoryImpl : VideoDataRepository {
     // Kamlesh(Changed Base Url)
     private val api = Retrofit.Builder()
         .addConverterFactory(MoshiConverterFactory.create())
         .baseUrl("https://shorts.newsdx.io/ci/api/public/")
         .build()
-        .create(RedditService::class.java)
+        .create(VideoDataService::class.java)
 
     override fun videoData(requestType: String): Flow<List<VideoData>> = flow {
         try {
@@ -52,13 +52,35 @@ class VideoDataRepository : VideoDataRepository {
         }
     }
 
-    private interface RedditService {
+    override fun like(videoId: String): Flow<String> = flow {
+//        api.like(videoId)
+        emit("Like Response")
+    }
+
+    override fun follow(videoId: String): Flow<String> = flow {
+//        api.like(videoId)
+        emit("Follow Response")
+    }
+
+    override fun comment(videoId: String): Flow<String> = flow {
+//        api.comment(videoId)
+        emit("Comment Response")
+    }
+
+    private interface VideoDataService {
         @GET("videos")
-        suspend fun getShortsVideos(@Query("category") category: String): RedditResponse
+        suspend fun getShortsVideos(@Query("category") category: String): VideoDataResponse
+        @GET("videos")
+        suspend fun like(videoId: String): String
+        @GET("videos")
+        suspend fun follow(videoId: String): String
+
+        @GET("comment")
+        suspend fun comment(videoId: String): String
     }
 
     @JsonClass(generateAdapter = true)
-data class RedditResponse(
+data class VideoDataResponse(
     @Json(name = "data")
     val `data`: List<Data>,
     @Json(name = "status")

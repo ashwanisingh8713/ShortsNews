@@ -2,6 +2,7 @@ package com.videopager.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -43,6 +44,7 @@ internal class PagerAdapter(
             .let { binding ->
                 PageViewHolder(binding, imageLoader) {pair ->
                     clicks.tryEmit(pair)
+                    getItem(0)
                 }
 
             }
@@ -50,6 +52,10 @@ internal class PagerAdapter(
 
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
         getItem(position).let(holder::bind)
+    }
+
+    fun getVideoData(position: Int):VideoData {
+        return getItem(position)
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -75,6 +81,14 @@ internal class PagerAdapter(
 
     suspend fun renderEffect(position: Int, effect: PageEffect) {
         awaitViewHolder(position).renderEffect(effect)
+    }
+
+    suspend fun refreshUI() {
+        val position = 0
+        Toast.makeText(recyclerView?.context, "refreshUI()", Toast.LENGTH_SHORT).show()
+        val holder = awaitViewHolder(position)
+        holder.binding.msgCount.text = getItem(position).comment_count
+        holder.binding.thumsUpCount.text = getItem(position).like_count
     }
 
     /**

@@ -15,7 +15,7 @@ import com.videopager.ui.extensions.*
 import com.videopager.ui.extensions.findParentById
 
 internal class PageViewHolder(
-    private val binding: PageItemBinding,
+    val binding: PageItemBinding,
     private val imageLoader: ImageLoader,
     private val click: (pair: Pair<String, ClickEvent>) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
@@ -47,6 +47,10 @@ internal class PageViewHolder(
         binding.like.setOnClickListener{
             click(Pair(videoData.id, LikeClick))
         }
+
+        binding.msgCount.text = videoData.comment_count
+        binding.thumsUpCount.text = videoData.like_count
+
         ConstraintSet().apply {
             clone(binding.root)
             // Optimize video preview / container size if aspect ratio is available. This can avoid

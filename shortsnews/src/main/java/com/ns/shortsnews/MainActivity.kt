@@ -18,7 +18,7 @@ import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
-import com.ns.shortsnews.video.data.VideoDataRepository
+import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.videopager.ui.VideoPagerFragment
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         val vpf =  VideoPagerFragment(
             viewModelFactory = { owner ->
                 VideoPagerViewModelFactory(
-                    repository = VideoDataRepository(),
+                    repository = VideoDataRepositoryImpl(),
                     appPlayerFactory = ExoAppPlayerFactory(
                         context = this@MainActivity
                     )

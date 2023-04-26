@@ -7,6 +7,9 @@ import com.player.players.AppPlayer
 internal sealed class ViewResult
 
 internal object NoOpResult : ViewResult()
+internal data class FollowClickResult(val position: Int) : ViewResult()
+internal data class CommentClickResult(val position: Int) : ViewResult()
+internal data class LikeClickResult(val position: Int): ViewResult()
 
 internal data class LoadVideoDataResult(val videoData: List<VideoData>, val currentMediaItemIndex: Int) : ViewResult()
 

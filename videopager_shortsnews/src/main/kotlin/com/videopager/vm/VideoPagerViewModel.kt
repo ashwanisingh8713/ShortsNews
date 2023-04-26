@@ -1,6 +1,5 @@
 package com.videopager.vm
 
-import android.graphics.drawable.Drawable
 import com.videopager.R
 import com.videopager.data.VideoDataRepository
 import com.player.players.AppPlayer
@@ -51,15 +50,17 @@ internal class VideoPagerViewModel(
         processEvent(LoadVideoDataEvent)
     }
 
-    override fun Flow<ViewEvent>.toResults(requestType: String): Flow<ViewResult> {
+    override fun Flow<ViewEvent>.toResults(requestType: String, ): Flow<ViewResult> {
         // MVI boilerplate
         return merge(
             filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(requestType),
             filterIsInstance<PlayerLifecycleEvent>().toPlayerLifecycleResults(),
             filterIsInstance<TappedPlayerEvent>().toTappedPlayerResults(),
-//            filterIsInstance<ChannelEvent>().toChannelClickResults(),
             filterIsInstance<OnPageSettledEvent>().toPageSettledResults(),
-            filterIsInstance<PauseVideoEvent>().toPauseVideoResults()
+            filterIsInstance<PauseVideoEvent>().toPauseVideoResults(),
+            filterIsInstance<FollowClickEvent>().toFollowClickResults(),
+            filterIsInstance<CommentClickEvent>().toCommentClickResults(),
+            filterIsInstance<LikeClickEvent>().toLikeClickResults()
         )
     }
 
@@ -156,21 +157,35 @@ internal class VideoPagerViewModel(
         }
     }
 
-    /*@OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<ChannelEvent>.toChannelClickResults(): Flow<ViewResult> {
-        return mapLatest {
-            val appPlayer = requireNotNull(states.value.appPlayer)
-            val drawable = if (appPlayer.currentPlayerState.isPlaying) {
-                appPlayer.pause()
-                R.drawable.pause
-            } else {
-                appPlayer.play()
-                R.drawable.play
-            }
-
-            TappedPlayerResult(drawable)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<FollowClickEvent>.toFollowClickResults(): Flow<ViewResult> {
+        return flatMapLatest{ event ->
+            states.value.videoData?.get(0)?.comment_count  = "dfdf"
+            repository.follow(event.videoId)
+        }.mapLatest { followResponse ->
+            FollowClickResult(0)
         }
-    }*/
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<CommentClickEvent>.toCommentClickResults(): Flow<ViewResult> {
+        return flatMapLatest{ event ->
+            states.value.videoData?.get(0)?.comment_count  = "200k"
+            repository.comment(event.videoId)
+        }.mapLatest { commentResponse ->
+            CommentClickResult(0)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<LikeClickEvent>.toLikeClickResults(): Flow<ViewResult> {
+        return flatMapLatest{ event ->
+            states.value.videoData?.get(0)?.like_count  = "100k"
+            repository.like(event.videoId)
+        }.mapLatest { likeResponse ->
+            LikeClickResult(0)
+        }
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<OnPageSettledEvent>.toPageSettledResults(): Flow<ViewResult> {
@@ -208,7 +223,9 @@ internal class VideoPagerViewModel(
         return merge(
             filterIsInstance<TappedPlayerResult>().toTappedPlayerEffects(),
             filterIsInstance<OnNewPageSettledResult>().toNewPageSettledEffects(),
-            filterIsInstance<PlayerErrorResult>().toPlayerErrorEffects()
+            filterIsInstance<PlayerErrorResult>().toPlayerErrorEffects(),
+            filterIsInstance<FollowClickResult>().toFollowViewEffect(),
+            filterIsInstance<CommentClickResult>().toCommentViewEffect()
         )
     }
 
@@ -222,6 +239,15 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<OnNewPageSettledResult>.toNewPageSettledEffects(): Flow<ViewEffect> {
         return mapLatest { ResetAnimationsEffect }
+    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<FollowClickResult>.toFollowViewEffect(): Flow<ViewEffect> {
+        return mapLatest { FollowEffect }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<CommentClickResult>.toCommentViewEffect(): Flow<ViewEffect> {
+        return mapLatest { CommentEffect }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
