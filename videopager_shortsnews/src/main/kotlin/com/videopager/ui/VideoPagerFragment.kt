@@ -1,7 +1,6 @@
 package com.videopager.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -9,7 +8,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.viewpager2.widget.ViewPager2
@@ -35,7 +33,6 @@ import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
@@ -111,7 +108,7 @@ class VideoPagerFragment(
         val events = merge(
             viewLifecycleOwner.lifecycle.viewEvents(),
             binding.viewPager.viewEvents(),
-            adapter.playPauseEvent(),
+            adapter.clicksEvent(),
         )
             .onEach(viewModel::processEvent)
 
@@ -153,20 +150,41 @@ class VideoPagerFragment(
         )
     }
 
-    private fun PagerAdapter.playPauseEvent(): Flow<ViewEvent> {
+    private fun PagerAdapter.clicksEvent(): Flow<ViewEvent> {
         return clicks().map {
             when(it.second) {
                 PlayPauseClick -> TappedPlayerEvent
                 FollowClick -> {
-                    Toast.makeText(requireContext(), "Client", Toast.LENGTH_SHORT).show()
+                    // TODO, make api request to follow/unfollow the channel
+                    Toast.makeText(requireContext(), "Follow", Toast.LENGTH_SHORT).show()
                     NoFurtherEvent
                 }
-                ChannelClick -> NoFurtherEvent
-                SaveClick -> NoFurtherEvent
-                ShareClick -> NoFurtherEvent
-                CommentClick -> NoFurtherEvent
-                LikeClick -> NoFurtherEvent
-                else -> TappedPlayerEvent
+                ChannelClick -> {
+                    // TODO, Redirect in Channel page
+                    Toast.makeText(requireContext(), "Channel", Toast.LENGTH_SHORT).show()
+                    ChannelClickEvent
+                }
+                SaveClick -> {
+                    // TODO, Not applicable for Phase-1, as discussed on 24th April
+                    Toast.makeText(requireContext(), "Save", Toast.LENGTH_SHORT).show()
+                    SaveClickEvent
+                }
+                ShareClick -> {
+                    // TODO, Sharing
+                    Toast.makeText(requireContext(), "Share", Toast.LENGTH_SHORT).show()
+                    ShareClickEvent
+                }
+                CommentClick -> {
+                    // TODO, Open BottomSheet dialog, inside BottomSheet dialog make api request and show the content.
+                    Toast.makeText(requireContext(), "Comment", Toast.LENGTH_SHORT).show()
+                    CommentClickEvent
+                }
+                LikeClick -> {
+                    // TODO, make api request to like/unlike the channel
+                    Toast.makeText(requireContext(), "Like", Toast.LENGTH_SHORT).show()
+                    LikeClickEvent
+                }
+                else -> NoFurtherEvent
 
             }
 

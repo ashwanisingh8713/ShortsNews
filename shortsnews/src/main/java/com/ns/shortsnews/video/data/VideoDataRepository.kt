@@ -38,9 +38,10 @@ class VideoDataRepository : VideoDataRepository {
                 }
                     /*(Kamlesh)Video id and preview image is not available so commented*/
                 ?.filter { videoData ->
-                    videoData.id.isNotBlank()
+                    /*videoData.id.isNotBlank()
                         && videoData.mediaUri.isNotBlank()
-                        && videoData.previewImageUri.isNotBlank()
+                        && videoData.previewImageUri.isNotBlank()*/
+                    videoData.mediaUri.isNotBlank()
                 }
                 .orEmpty()
 
