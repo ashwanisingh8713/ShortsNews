@@ -7,37 +7,27 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 
 import com.ns.shortsnews.databinding.ActivityProfileBinding
-import com.ns.shortsnews.user.data.network.NetService
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
-import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.fragment.LoginFragment
 import com.ns.shortsnews.user.ui.fragment.OtpFragment
-import com.ns.shortsnews.user.ui.fragment.UserFragment
+import com.ns.shortsnews.user.ui.fragment.UserChoiceFragment
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
-    companion object {
-        private val netService = NetService()
-        private val userDataRepository = UserDataRepositoryImpl(netService.createRetrofit())
-        private val userRegistrationDataUseCases = UserRegistrationDataUseCase(userDataRepository)
-        private val userOtpValidationDataUseCases = UserOtpValidationDataUseCase(userDataRepository)
-        private val userProfileDataUseCases = UserProfileDataUseCase(userDataRepository)
 
-        val userViewModelFactory = UserViewModelFactory().apply {
-            inject(
-                userRegistrationDataUseCases,
-                userOtpValidationDataUseCases,
-                userProfileDataUseCases
-            )
-        }
-    }
-    val userViewModel: UserViewModel by viewModels {userViewModelFactory}
+    private val sharedUserViewModel: UserViewModel by viewModels {UserViewModelFactory().apply {
+        inject(
+            UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
+            UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
+        )
+    }}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,15 +38,15 @@ class ProfileActivity : AppCompatActivity() {
         window.navigationBarColor = Color.parseColor("#1E1E1E")
 
 //        loginFragment()
-        profileFragment()
+        choiceFragment()
         listenFragmentUpdate()
     }
 
     private fun listenFragmentUpdate() {
         lifecycleScope.launch() {
-            userViewModel.fragmentStateFlow.collectLatest {
+            sharedUserViewModel.fragmentStateFlow.collectLatest {
                 when(it) {
-                    UserViewModel.PROFILE-> profileFragment()
+                    UserViewModel.PROFILE-> choiceFragment()
                     UserViewModel.OTP-> otpFragment()
                     UserViewModel.LOGIN-> loginFragment()
                 }
@@ -76,11 +66,8 @@ class ProfileActivity : AppCompatActivity() {
     }
 
 
-    private fun profileFragment() {
-        val fragment = UserFragment()
+    private fun choiceFragment() {
+        val fragment = UserChoiceFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment).commit()
     }
-
-
-
 }

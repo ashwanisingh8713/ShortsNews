@@ -15,15 +15,25 @@ import com.ns.shortsnews.ProfileActivity
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentOtpBinding
 import com.ns.shortsnews.databinding.FragmentUserBinding
+import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
+import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
+import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 
 
 class OtpFragment : Fragment(R.layout.fragment_otp) {
     lateinit var binding: FragmentOtpBinding
 
-    private val userViewModel: UserViewModel by activityViewModels { ProfileActivity.userViewModelFactory }
+    private val userViewModel: UserViewModel by activityViewModels  { UserViewModelFactory().apply {
+        inject(
+            UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
+            UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
+        )
+    }}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -1,13 +1,13 @@
 package com.ns.shortsnews.user.data.repository
 
-import com.ns.shortsnews.user.domain.models.OTPResult
-import com.ns.shortsnews.user.domain.models.ProfileResult
-import com.ns.shortsnews.user.domain.models.RegistrationResult
 import com.ns.shortsnews.user.data.source.UserApiService
+import com.ns.shortsnews.user.domain.models.OTPResult
+import com.ns.shortsnews.user.domain.models.UserChoiceResult
+import com.ns.shortsnews.user.domain.models.RegistrationResult
 import com.ns.shortsnews.user.domain.repository.UserDataRepository
-import com.squareup.moshi.Json
+import org.koin.core.Koin
 
-class UserDataRepositoryImpl(private val apiService: UserApiService): UserDataRepository {
+class UserDataRepositoryImpl constructor(private val apiService: UserApiService): UserDataRepository {
     override suspend fun getUserRegistration(emailId: String): RegistrationResult {
         return apiService.getRegistration()
     }
@@ -16,7 +16,7 @@ class UserDataRepositoryImpl(private val apiService: UserApiService): UserDataRe
         return apiService.getValidateOtp()
     }
 
-    override suspend fun getProfileData(): ProfileResult {
-       return apiService.getUserProfile()
+    override suspend fun getUserChoiceData(): UserChoiceResult {
+       return apiService.getUserChoice()
     }
 }

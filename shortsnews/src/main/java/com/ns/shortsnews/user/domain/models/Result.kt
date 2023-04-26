@@ -1,6 +1,5 @@
 package com.ns.shortsnews.user.domain.models
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
@@ -22,7 +21,7 @@ data class OtpValidationData(
 )
 
 @JsonClass(generateAdapter = true)
-data class ProfileResult(val name: String)
+data class UserChoiceResult(val name: String)
 @JsonClass(generateAdapter = true)
 data class RegistrationResult(
     val `data`: RegistrationData? = null,

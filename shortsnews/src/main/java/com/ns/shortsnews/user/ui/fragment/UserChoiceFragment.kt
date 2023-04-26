@@ -9,7 +9,7 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentUserBinding
 import com.ns.shortsnews.user.ui.activity.ContainerActivity
 
-class UserFragment : Fragment(R.layout.fragment_user) {
+class UserChoiceFragment : Fragment(R.layout.fragment_user) {
     lateinit var binding:FragmentUserBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -23,6 +23,9 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
         binding.followConLayout.setOnClickListener {
             launchContainerActivity(to = "fol")
+        }
+        binding.backButtonUser.setOnClickListener {
+            activity?.finish()
         }
     }
 

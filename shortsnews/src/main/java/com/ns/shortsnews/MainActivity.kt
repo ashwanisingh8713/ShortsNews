@@ -13,7 +13,6 @@ import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
 import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.databinding.ActivityMainBinding
-import com.ns.shortsnews.user.data.network.NetService
 import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
@@ -26,6 +25,7 @@ import com.videopager.vm.VideoPagerViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 
 
 class MainActivity : AppCompatActivity(), onProfileItemClick{
@@ -34,8 +34,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
 
     private val sharedEventViewModel: SharedEventViewModel by viewModels { SharedEventViewModelFactory }
 
-    private val netService = NetService()
-    private val videoRepository = VideoCategoryRepositoryImp(netService.createRetrofit())
+    private val videoRepository = VideoCategoryRepositoryImp(get())
     private val videoCategoryUseCase = VideoCategoryUseCase(videoRepository)
 
     private val userViewModelFactory = VideoCategoryViewModelFactory().apply {

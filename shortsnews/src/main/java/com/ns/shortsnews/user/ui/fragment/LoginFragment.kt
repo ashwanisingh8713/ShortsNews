@@ -9,15 +9,25 @@ import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.ProfileActivity
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentLoginBinding
+import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
+import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
+import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.Validation
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
     private lateinit var binding: FragmentLoginBinding
 
-    private val userViewModel: UserViewModel by activityViewModels { ProfileActivity.userViewModelFactory }
+    private val userViewModel: UserViewModel by activityViewModels { UserViewModelFactory().apply {
+        inject(
+            UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
+            UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
+        )
+    }}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
