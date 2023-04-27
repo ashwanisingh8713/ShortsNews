@@ -12,6 +12,7 @@ internal object CommentEffect : ViewEffect()
 internal object LikeEffect : ViewEffect()
 internal object FollowEffect : ViewEffect()
 internal object GetVideoInfoEffect : ViewEffect()
+internal object YoutubeUriErrorEffect : ViewEffect()
 
 internal object ResetAnimationsEffect : PageEffect()
 

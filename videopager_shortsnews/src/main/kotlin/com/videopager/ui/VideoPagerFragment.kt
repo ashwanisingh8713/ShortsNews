@@ -56,6 +56,7 @@ class VideoPagerFragment(
 
         // Start point of Events, Flow, States
         viewModel.initApi(shortsType)
+        viewModel.youtubeExtractor("vjsnZHhI2Z0")
 
         val states = viewModel.states
             .onEach { state ->
@@ -86,9 +87,13 @@ class VideoPagerFragment(
                     adapter.attachPlayerView(appPlayerView, state.page)
 
                     // If the player media is rendering frames, then show the player
-                    if (state.showPlayer) {
-                        adapter.showPlayerFor(state.page)
+                    if (state.showPlayer && state.youtubeUriError) {
                         binding.viewPager.isUserInputEnabled = true
+                        adapter.showPlayerFor(state.page)
+                        binding.progressBarVideoShorts.visibility = View.VISIBLE
+                    } else if (state.showPlayer) {
+                        binding.viewPager.isUserInputEnabled = true
+                        adapter.showPlayerFor(state.page)
                         binding.progressBarVideoShorts.visibility = View.GONE
                     }
                 }
@@ -108,6 +113,9 @@ class VideoPagerFragment(
                         Snackbar.LENGTH_LONG
                     ).show()
                     is GetVideoInfoEffect -> { adapter.refreshUI() }
+                    is YoutubeUriErrorEffect -> {
+
+                    }
                 }
             }
 

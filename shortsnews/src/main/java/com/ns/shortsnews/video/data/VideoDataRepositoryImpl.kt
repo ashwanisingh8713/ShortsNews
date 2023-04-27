@@ -26,8 +26,12 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             var rt = requestType
             Log.i("", "$rt")
             val response = api.getShortsVideos(rt)
-            val videoData = response
-                .data
+            val youtubeUrl = Data(id = "y01", preview = "",
+                videoUrl = "https://www.youtube.com/watch?v=01omBMDKkDs", title="", )
+
+            response.data.add(0, youtubeUrl)
+
+            val videoData = response.data
                 .map { post ->
                     VideoData(
                         id = post.id.orEmpty(),
@@ -87,7 +91,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     @JsonClass(generateAdapter = true)
 data class VideoDataResponse(
     @Json(name = "data")
-    val `data`: List<Data>,
+    val `data`: MutableList<Data>,
     @Json(name = "status")
     val status: Boolean
 )

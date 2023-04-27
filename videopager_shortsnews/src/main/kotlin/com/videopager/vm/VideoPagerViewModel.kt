@@ -1,39 +1,23 @@
 package com.videopager.vm
 
+import android.util.Log
+import androidx.lifecycle.viewModelScope
+import com.github.kotvertolet.youtubejextractor.JExtractorCallback
+import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor
+import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
+import com.github.kotvertolet.youtubejextractor.models.newModels.VideoPlayerConfig
+import com.github.kotvertolet.youtubejextractor.models.youtube.videoData.YoutubeVideoData
+import com.player.players.AppPlayer
 import com.videopager.R
 import com.videopager.data.VideoDataRepository
-import com.player.players.AppPlayer
 import com.videopager.models.*
-import com.videopager.models.AnimationEffect
-import com.videopager.models.AttachPlayerToViewResult
-import com.videopager.models.CreatePlayerResult
-import com.videopager.models.LoadVideoDataEvent
-import com.videopager.models.LoadVideoDataResult
-import com.videopager.models.NoOpResult
-import com.videopager.models.OnNewPageSettledResult
-import com.videopager.models.OnPageSettledEvent
-import com.videopager.models.OnPlayerRenderingResult
-import com.videopager.models.PauseVideoEvent
-import com.videopager.models.PlayerErrorEffect
-import com.videopager.models.PlayerErrorResult
-import com.videopager.models.PlayerLifecycleEvent
-import com.videopager.models.ResetAnimationsEffect
-import com.videopager.models.TappedPlayerEvent
-import com.videopager.models.TappedPlayerResult
-import com.videopager.models.TearDownPlayerResult
-import com.videopager.models.ViewEffect
-import com.videopager.models.ViewEvent
-import com.videopager.models.ViewResult
 import com.videopager.ui.extensions.ViewState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+
 
 /**
  * Owns a stateful [ViewState.appPlayer] instance that will get created and torn down in parallel
@@ -50,7 +34,7 @@ internal class VideoPagerViewModel(
         processEvent(LoadVideoDataEvent)
     }
 
-    override fun Flow<ViewEvent>.toResults(requestType: String, ): Flow<ViewResult> {
+    override fun Flow<ViewEvent>.toResults(requestType: String): Flow<ViewResult> {
         // MVI boilerplate
         return merge(
             filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(requestType),
@@ -118,7 +102,14 @@ internal class VideoPagerViewModel(
         return merge(
             flowOf(CreatePlayerResult(appPlayer)),
             appPlayer.onPlayerRendering().map { OnPlayerRenderingResult },
-            appPlayer.errors().map(::PlayerErrorResult)
+            appPlayer.errors().mapLatest {
+                if(it.message == "Source error") {
+                    OnYoutubeUriErrorResult
+//                    OnPlayerRenderingResult
+                } else {
+                    PlayerErrorResult(it)
+                }
+            }
         )
     }
 
@@ -215,7 +206,8 @@ internal class VideoPagerViewModel(
             is CreatePlayerResult -> state.copy(appPlayer = appPlayer)
             is TearDownPlayerResult -> state.copy(appPlayer = null)
             is OnNewPageSettledResult -> state.copy(page = page, showPlayer = false)
-            is OnPlayerRenderingResult -> state.copy(showPlayer = true)
+            is OnPlayerRenderingResult -> state.copy(showPlayer = true, youtubeUriError = false)
+            is OnYoutubeUriErrorResult -> state.copy(showPlayer = true, youtubeUriError = true)
             is AttachPlayerToViewResult -> state.copy(attachPlayer = doAttach)
             else -> state
         }
@@ -226,6 +218,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<TappedPlayerResult>().toTappedPlayerEffects(),
             filterIsInstance<OnNewPageSettledResult>().toNewPageSettledEffects(),
             filterIsInstance<PlayerErrorResult>().toPlayerErrorEffects(),
+            filterIsInstance<OnYoutubeUriErrorResult>().toYoutubeUriEffects(),
             filterIsInstance<FollowClickResult>().toFollowViewEffect(),
             filterIsInstance<CommentClickResult>().toCommentViewEffect(),
             filterIsInstance<GetVideoInfoResult>().toGetVideoInfoEffect()
@@ -263,4 +256,54 @@ internal class VideoPagerViewModel(
     private fun Flow<PlayerErrorResult>.toPlayerErrorEffects(): Flow<ViewEffect> {
         return mapLatest { result -> PlayerErrorEffect(result.throwable) }
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<OnYoutubeUriErrorResult>.toYoutubeUriEffects(): Flow<ViewEffect> {
+        return mapLatest {YoutubeUriErrorEffect }
+    }
+
+    fun youtubeExtractor(videoId: String) {
+        CoroutineScope(viewModelScope.coroutineContext).launch(Dispatchers.IO) {
+        val youtubeJExtractor = YoutubeJExtractor()
+        youtubeJExtractor.extract(videoId, object : JExtractorCallback {
+
+            override fun onSuccess(videoData: VideoPlayerConfig?) {
+                // videoData.streamingData.muxedStreams[0].url   // iTag = 18
+                Log.i("", "")
+            }
+
+            override fun onNetworkException(e: YoutubeRequestException) {
+                // may be a connection problem, ask user to check his internet connection
+                Log.i("", "")
+            }
+
+            override fun onError(exception: Exception) {
+                // some serious problem occured, just show some error message
+                Log.i("", "")
+            }
+        })
+        }
+
+    }
+
+
+    fun yoo() {
+        val youtubeJExtractor = YoutubeJExtractor()
+        youtubeJExtractor.extract("", object : JExtractorCallback {
+
+            override fun onSuccess(videoData: VideoPlayerConfig?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onNetworkException(e: YoutubeRequestException) {
+                // may be a connection problem, ask user to check his internet connection
+            }
+
+            override fun onError(exception: Exception) {
+                // some serious problem occured, just show some error message
+            }
+        })
+    }
+
+
 }

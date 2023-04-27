@@ -58,10 +58,14 @@ dependencies {
     implementation "io.coil-kt:coil:2.2.2"
     implementation "androidx.fragment:fragment-ktx:1.5.6"
     implementation 'androidx.core:core-ktx:1.10.0'
+
     debugImplementation "androidx.fragment:fragment-testing:1.5.6"
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1"
+
+    // Youtube uri extractor
+    implementation project(path: ':youtubejextractor')
 
     androidTestImplementation "androidx.test:core-ktx:1.5.0"
     androidTestImplementation "androidx.test.ext:junit-ktx:1.1.5"

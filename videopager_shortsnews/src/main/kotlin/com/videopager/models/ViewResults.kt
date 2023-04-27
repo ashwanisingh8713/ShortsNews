@@ -23,6 +23,7 @@ internal data class TappedPlayerResult(@DrawableRes val drawable: Int) : ViewRes
 internal data class OnNewPageSettledResult(val page: Int) : ViewResult()
 
 internal object OnPlayerRenderingResult : ViewResult()
+internal object OnYoutubeUriErrorResult : ViewResult()
 
 internal data class AttachPlayerToViewResult(val doAttach: Boolean) : ViewResult()
 

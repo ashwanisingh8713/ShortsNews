@@ -1,0 +1,71 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+}
+
+allprojects {
+    repositories {
+//        maven { url 'https://jitpack.io' }
+    }
+}
+
+android {
+    compileSdkVersion 33
+    defaultConfig {
+        minSdkVersion 27
+        targetSdkVersion 33
+        versionCode 6
+        versionName "0.3.4"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+        debug {
+            testCoverageEnabled true
+            minifyEnabled false
+        }
+    }
+    buildToolsVersion = '29.0.3'
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation 'com.hannesdorfmann.parcelableplease:annotation:1.0.2'
+    annotationProcessor 'com.hannesdorfmann.parcelableplease:processor:1.0.2'
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2'
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    // Regex with named groups for pre Java 7
+    implementation 'com.github.tony19:named-regexp:0.2.5'
+
+    // JS interpreter (versions newer than 1.7.10 requires API 26)
+    implementation 'org.mozilla:rhino:1.7.10'
+
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+

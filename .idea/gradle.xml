@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/player" />
             <option value="$PROJECT_DIR$/shortsnews" />
             <option value="$PROJECT_DIR$/videopager_shortsnews" />
+            <option value="$PROJECT_DIR$/youtubejextractor" />
           </set>
         </option>
       </GradleProjectSettings>
