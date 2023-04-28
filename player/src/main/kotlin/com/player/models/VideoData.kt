@@ -10,6 +10,7 @@ data class VideoData(
     var like_count:String = "",
     var comment_count:String = "",
     var following:Boolean = false,
+    var liking:Boolean = false,
     var channel_image:String = "",
 
     )

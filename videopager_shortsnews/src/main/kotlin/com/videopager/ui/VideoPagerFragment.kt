@@ -15,6 +15,7 @@ import androidx.viewpager2.widget.ViewPager2
 import coil.ImageLoader
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
+import com.videopager.ui.fragment.CommentsFragment
 import com.videopager.R
 import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
@@ -44,6 +45,7 @@ class VideoPagerFragment(
     private val sharedEventViewModel: SharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
     lateinit var binding: VideoPagerFragmentBinding
     private lateinit var pagerAdapter: PagerAdapter
+    private lateinit var commentFragment: CommentsFragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -57,16 +59,10 @@ class VideoPagerFragment(
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
         binding.viewPager.isUserInputEnabled = false
+        commentFragment =  CommentsFragment()
 
         // Start point of Events, Flow, States
         viewModel.initApi(shortsType)
-        /*lifecycleScope.launch{
-            viewModel.youtubeExtractorr("vjsnZHhI2Z0").collectLatest {
-                var ll = it
-                Log.i("", "$it")
-            }
-        }*/
-
 
         val states = viewModel.states
             .onEach { state ->
@@ -112,20 +108,34 @@ class VideoPagerFragment(
         val effects = viewModel.effects
             .onEach { effect ->
                 when (effect) {
-                    is SaveEffect -> pagerAdapter.refreshUI()
-                    is CommentEffect -> pagerAdapter.refreshUI()
-                    is LikeEffect -> pagerAdapter.refreshUI()
-                    is FollowEffect -> pagerAdapter.refreshUI()
+                    is SaveEffect -> pagerAdapter.refreshUI(0)
+                    is CommentEffect -> {
+                        //adapter.refreshUI(0)
+                        // Pass Data to Bottom sheet dialog fragment
+                        commentFragment.setRecyclerData(effect.videoId,effect.comments, effect.position)
+                    }
+                    is LikeEffect -> {
+                        pagerAdapter.refreshUI(effect.position)
+                    }
+                    is FollowEffect -> pagerAdapter.refreshUI(effect.position)
                     is PageEffect -> pagerAdapter.renderEffect(binding.viewPager.currentItem, effect)
                     is PlayerErrorEffect -> Snackbar.make(
                         binding.root,
                         effect.throwable.message ?: "Error",
                         Snackbar.LENGTH_LONG
                     ).show()
-                    is GetVideoInfoEffect -> { pagerAdapter.refreshUI() }
-                    is YoutubeUriErrorEffect -> {
-                            Log.i("", "")
+                    is GetVideoInfoEffect -> {pagerAdapter.refreshUI(0) }
+
+                    is PostCommentEffect -> {
+                        Log.i("","")
+                        pagerAdapter.refreshUI(effect.position)
+                        commentFragment.updateCommentAdapter(effect.data)
+                        // TODO, Update
                     }
+                    is YoutubeUriErrorEffect -> {
+                        Log.i("", "")
+                    }
+                    else->{}
                 }
             }
 
@@ -133,6 +143,8 @@ class VideoPagerFragment(
             viewLifecycleOwner.lifecycle.viewEvents(),
             binding.viewPager.viewEvents(),
             pagerAdapter.clicksEvent(),
+            commentFragment.postClickComment()
+
         ).onEach(viewModel::processEvent)
 
         merge(states, effects, events)
@@ -167,11 +179,16 @@ class VideoPagerFragment(
             // It doesn't make sense for a video on a previous page to continue playing while the user is
             // swiping quickly thru pages.
             pageChanges().map {
-
-                Toast.makeText(requireContext(), "${pagerAdapter.getVideoData(currentItem).mediaUri}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "$currentItem", Toast.LENGTH_SHORT).show()
                 PauseVideoEvent
             }
         )
+    }
+
+    private fun CommentsFragment.postClickComment():Flow<ViewEvent> {
+        return clicks().map {
+            PostClickCommentEvent(it.first, it.second, it.third)
+        }
     }
 
     private fun PagerAdapter.clicksEvent(): Flow<ViewEvent> {
@@ -201,6 +218,9 @@ class VideoPagerFragment(
                 }
                 CommentClick -> {
                     // TODO, Open BottomSheet dialog, inside BottomSheet dialog make api request and show the content.
+
+                    commentFragment.show(childFragmentManager,"comments")
+
                     val currentItem = binding.viewPager.currentItem
                     val videoData = pagerAdapter.getVideoData(currentItem)
                     CommentClickEvent(videoData.id, currentItem)
@@ -217,11 +237,4 @@ class VideoPagerFragment(
 
         }
     }
-
-
-
-
-
-
-
 }

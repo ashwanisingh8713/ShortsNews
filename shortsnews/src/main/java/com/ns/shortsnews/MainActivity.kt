@@ -2,13 +2,9 @@ package com.ns.shortsnews
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.SparseArray
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import at.huber.youtubeExtractor.VideoMeta
-import at.huber.youtubeExtractor.YouTubeExtractor
-import at.huber.youtubeExtractor.YtFile
 import coil.imageLoader
 import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
@@ -109,27 +105,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
                 loadHomeFragment(defaultCate.id)
             }
         }
-    }
-
-    private fun youtubeExtractor() {
-        object : YouTubeExtractor(this) {
-            override fun onExtractionComplete(
-                sparseArray: SparseArray<YtFile>?,
-                videoMeta: VideoMeta?
-            ) {
-                if (sparseArray != null) {
-                    // 18	mp4	audio/video	360p
-                    // 22	mp4	audio/video	720p
-                    // 134	mp4	video	360p
-                    // 140	m4a	audio	128k
-                    val itag = 18
-                    if(sparseArray.get(itag) != null) {
-                        loadHomeFragment(sparseArray.get(itag).getUrl())
-                    }
-                }
-            }
-
-        }.extract("https://www.youtube.com/watch?v=01omBMDKkDs")
     }
 
 

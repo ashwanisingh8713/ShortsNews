@@ -4,7 +4,7 @@ import android.util.Patterns
 import java.util.regex.Pattern
 
 object Validation {
-
+    const val PREFERENCE_NAME = "NewsDxShorts"
     const val PREF_USERNAME = "userName"
     const val PREF_USER_EMAIL = "userEmail"
     const val PREF_USER_TOKEN = "userToken"

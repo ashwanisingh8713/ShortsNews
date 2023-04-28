@@ -4,20 +4,33 @@ import android.util.Log
 import com.player.models.VideoData
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.videopager.data.Comments
+import com.videopager.data.PostComment
 import com.videopager.data.VideoDataRepository
+import com.videopager.data.VideoInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 import java.util.concurrent.CancellationException
 
 class VideoDataRepositoryImpl : VideoDataRepository {
     // Kamlesh(Changed Base Url)
+    private val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0LCJ0aW1lIjoxNjgyNTc4MzI3fQ.hRPaXQa1L-LFMrS2TnPZKbW2kxVHYdoJR6PgTaGrZFM"
+
     private val api = Retrofit.Builder()
         .addConverterFactory(MoshiConverterFactory.create())
         .baseUrl("https://shorts.newsdx.io/ci/api/public/")
+        .client(OkHttpClient.Builder().addInterceptor{ chain ->
+            val request = chain.request().newBuilder().addHeader("Authorization", "Bearer ${token}").build()
+            chain.proceed(request)
+        }.build())
         .build()
         .create(VideoDataService::class.java)
 
@@ -64,9 +77,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         }
     }
 
-    override fun like(videoId: String): Flow<String> = flow {
-//        api.like(videoId)
-        emit("Like Response")
+    override fun like(videoId: String, position: Int): Flow<Triple<String, Boolean, Int>> = flow {
+        val res = api.like(videoId)
+        emit(Triple(res.data.like_count, res.data.liked, position))
     }
 
     override fun follow(videoId: String): Flow<String> = flow {
@@ -74,26 +87,38 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         emit("Follow Response")
     }
 
-    override fun comment(videoId: String): Flow<String> = flow {
-//        api.comment(videoId)
-        emit("Comment Response")
+    override fun comment(videoId: String, position: Int): Flow<Triple<String, Comments, Int>> = flow {
+       val data =  api.comment(videoId)
+        emit(Triple(videoId, data, position))
     }
 
-    override fun getVideoInfo(videoId: String): Flow<String> = flow {
-        emit("Video Info Response")
+    override fun getVideoInfo(videoId: String, position: Int): Flow<Pair<VideoInfo,Int>> = flow {
+//        val data = api.getVideoInfo(videoId)
+//        emit(Pair(data, position))
+    }
+
+    override fun getPostComment(videoId: String, comment: String, position: Int): Flow<Pair<PostComment, Int>> = flow {
+        val body = mutableMapOf<String, String>()
+        body["comment"] = comment
+        val data = api.getPostComment(videoId, body)
+        emit(Pair(data,position))
+
     }
 
     private interface VideoDataService {
         @GET("videos")
         suspend fun getShortsVideos(@Query("category") category: String): VideoDataResponse
+        @GET("like-unlike-video/{video_id}")
+        suspend fun like(@Path("video_id")videoId: String): LikeUnlike
         @GET("videos")
-        suspend fun like(videoId: String): String
-        @GET("videos")
-        suspend fun follow(videoId: String): String
-        @GET("comment")
-        suspend fun comment(videoId: String): String
-        @GET("info")
-        suspend fun getVideoInfo(videoId: String): String
+        suspend fun follow(videoId: String): FollowUnfollow
+        @GET("get-comments/{video_id}")
+        suspend fun comment(@Path("video_id") videoId: String): Comments
+        @GET("video-info/{video_id}")
+        suspend fun getVideoInfo(@Path("video_id")videoId: String): VideoInfo
+
+        @POST("comment-video/{video_id}")
+        suspend fun getPostComment(@Path("video_id") videoId:String, @Body comment:Map<String, String>): PostComment
     }
 
     @JsonClass(generateAdapter = true)
@@ -116,5 +141,37 @@ data class Data(
     @Json(name = "videoPreviewUrl")
     val preview:String?= ""
 )
+    /*Kamlesh(Data class for like/unlike)*/
+
+    @JsonClass(generateAdapter = true)
+    data class LikeUnlike(
+        @Json(name = "data")
+        val `data` : LikeUnlikeData,
+        val status:Boolean,
+        val msg:String
+    )
+
+    @JsonClass(generateAdapter = true)
+    data class LikeUnlikeData(
+        val liked:Boolean,
+        val like_count:String
+
+    )
+
+
+    @JsonClass(generateAdapter = true)
+    data class FollowUnfollow(
+        @Json(name = "data")
+        val data:FollowUnfollowData,
+        val status:Boolean,
+        val msg:String
+    )
+
+    @JsonClass(generateAdapter = true)
+    data class FollowUnfollowData(
+        val following:Boolean,
+        val channel_id:String
+    )
+
 
 }

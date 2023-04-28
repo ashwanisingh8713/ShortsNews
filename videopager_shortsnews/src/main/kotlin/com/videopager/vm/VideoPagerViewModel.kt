@@ -14,7 +14,28 @@ import com.player.players.AppPlayer
 import com.videopager.R
 import com.videopager.data.VideoDataRepository
 import com.videopager.models.*
+import com.videopager.models.AnimationEffect
+import com.videopager.models.AttachPlayerToViewResult
+import com.videopager.models.CreatePlayerResult
+import com.videopager.models.LoadVideoDataEvent
+import com.videopager.models.LoadVideoDataResult
+import com.videopager.models.OnNewPageSettledResult
+import com.videopager.models.OnPageSettledEvent
+import com.videopager.models.OnPlayerRenderingResult
+import com.videopager.models.PauseVideoEvent
+import com.videopager.models.PlayerErrorEffect
+import com.videopager.models.PlayerErrorResult
+import com.videopager.models.PlayerLifecycleEvent
+import com.videopager.models.ResetAnimationsEffect
+import com.videopager.models.TappedPlayerEvent
+import com.videopager.models.TappedPlayerResult
+import com.videopager.models.TearDownPlayerResult
+import com.videopager.models.ViewEffect
+import com.videopager.models.ViewEvent
+import com.videopager.models.ViewResult
 import com.videopager.ui.extensions.ViewState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
@@ -50,7 +71,8 @@ internal class VideoPagerViewModel(
             filterIsInstance<PauseVideoEvent>().toPauseVideoResults(),
             filterIsInstance<FollowClickEvent>().toFollowClickResults(),
             filterIsInstance<CommentClickEvent>().toCommentClickResults(),
-            filterIsInstance<LikeClickEvent>().toLikeClickResults()
+            filterIsInstance<LikeClickEvent>().toLikeClickResults(),
+            filterIsInstance<PostClickCommentEvent>().toPostCommentResults()
         )
     }
 
@@ -168,19 +190,35 @@ internal class VideoPagerViewModel(
     private fun Flow<CommentClickEvent>.toCommentClickResults(): Flow<ViewResult> {
         return flatMapLatest{ event ->
             states.value.videoData?.get(0)?.comment_count  = "200k"
-            repository.comment(event.videoId)
+            repository.comment(event.videoId, event.position)
         }.mapLatest { commentResponse ->
-            CommentClickResult(0)
+            Triple(commentResponse.first, commentResponse.second, commentResponse.third)
+        }.map {
+            CommentClickResult(it.first, it.second, it.third)
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LikeClickEvent>.toLikeClickResults(): Flow<ViewResult> {
         return flatMapLatest{ event ->
-            states.value.videoData?.get(0)?.like_count  = "100k"
-            repository.like(event.videoId)
-        }.mapLatest { likeResponse ->
-            LikeClickResult(0)
+           repository.like(event.videoId, event.position)
+        }.mapLatest { triple ->
+            states.value.videoData?.get(triple.third)?.like_count  = triple.first
+            states.value.videoData?.get(triple.third)?.liking  = triple.second
+            triple.third
+        }.map {
+            LikeClickResult(it)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<PostClickCommentEvent>.toPostCommentResults():Flow<PostCommentResult>{
+        return flatMapLatest { event ->
+               repository.getPostComment(event.videoId, event.comment, event.position)
+        }.mapLatest {
+            Pair(it.first, it.second)
+        }.map {
+            PostCommentResult(it.first.data, it.second)
         }
     }
 
@@ -199,7 +237,7 @@ internal class VideoPagerViewModel(
             val appPlayer = requireNotNull(states.value.appPlayer)
             appPlayer.pause()
         }.flatMapLatest {
-            repository.getVideoInfo("")
+            repository.getVideoInfo("",0)
         }.mapLatest {
             GetVideoInfoResult(0, "")
         }
@@ -226,8 +264,11 @@ internal class VideoPagerViewModel(
             filterIsInstance<PlayerErrorResult>().toPlayerErrorEffects(),
             filterIsInstance<OnYoutubeUriErrorResult>().toYoutubeUriEffects(),
             filterIsInstance<FollowClickResult>().toFollowViewEffect(),
+            filterIsInstance<LikeClickResult>().toLikeViewEffect(),
             filterIsInstance<CommentClickResult>().toCommentViewEffect(),
-            filterIsInstance<GetVideoInfoResult>().toGetVideoInfoEffect()
+            filterIsInstance<GetVideoInfoResult>().toGetVideoInfoEffect(),
+            filterIsInstance<PostCommentResult>().toPostCommentEffect(),
+
         )
     }
 
@@ -243,13 +284,26 @@ internal class VideoPagerViewModel(
         return mapLatest { ResetAnimationsEffect }
     }
     @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<LikeClickResult>.toLikeViewEffect(): Flow<ViewEffect> {
+        return mapLatest { result -> LikeEffect(result.position) }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<FollowClickResult>.toFollowViewEffect(): Flow<ViewEffect> {
-        return mapLatest { FollowEffect }
+        return mapLatest { result-> FollowEffect(result.position) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<CommentClickResult>.toCommentViewEffect(): Flow<ViewEffect> {
-        return mapLatest { CommentEffect }
+        return mapLatest { result ->  CommentEffect(result.videoId, result.comments.data, result.position) }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<PostCommentResult>.toPostCommentEffect(): Flow<ViewEffect>{
+        return mapLatest { result ->
+            states.value.videoData?.get(states.value.page)?.comment_count = result.response.comment_count
+            PostCommentEffect(result.response, result.position)
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

@@ -1,2 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.videopager" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.videopager">
+
+    <application>
+        <activity
+            android:name=".BottomSheetActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

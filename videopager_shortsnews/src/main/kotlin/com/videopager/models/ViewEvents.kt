@@ -1,5 +1,7 @@
 package com.videopager.models
 
+import android.os.Bundle
+
 internal sealed class ViewEvent
 
 internal object LoadVideoDataEvent : ViewEvent()
@@ -17,6 +19,8 @@ internal data class SaveClickEvent(val videoId: String, val position: Int) : Vie
 internal object ShareClickEvent : ViewEvent()
 internal data class CommentClickEvent(val videoId: String, val position: Int) : ViewEvent()
 internal data class LikeClickEvent(val videoId: String, val position: Int) : ViewEvent()
+
+internal data class PostClickCommentEvent(val videoId: String, val comment: String, val position:Int): ViewEvent()
 internal object NoFurtherEvent : ViewEvent()
 
 internal data class OnPageSettledEvent(val page: Int) : ViewEvent()

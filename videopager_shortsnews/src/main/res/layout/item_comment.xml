@@ -24,7 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/profile" />
+            android:src="@drawable/profile_image"
+            android:contentDescription="profileImage" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -33,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:fontFamily="@font/roboto_bold"
+        android:fontFamily="sans-serif"
         android:textColor="@color/white"
         tools:text="Pramodh"
         app:layout_constraintTop_toTopOf="@id/card_view_for_image"
@@ -45,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:fontFamily="@font/roboto_regular"
+        android:fontFamily="sans-serif"
         android:textColor="@color/white"
         tools:text="20min ago"
         app:layout_constraintTop_toTopOf="@id/card_view_for_image"
@@ -57,7 +58,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:fontFamily="@font/roboto_regular"
+        android:fontFamily="sans-serif"
         android:textColor="@color/white"
         android:layout_marginTop="10dp"
         tools:text="The new AI is changing the world rapidly and it is also effecting the environment which is very danger for our future "

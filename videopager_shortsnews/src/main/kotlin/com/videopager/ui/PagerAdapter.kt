@@ -3,12 +3,14 @@ package com.videopager.ui
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.player.models.VideoData
 import com.player.ui.AppPlayerView
+import com.videopager.R
 import com.videopager.databinding.PageItemBinding
 import com.videopager.models.PageEffect
 import com.videopager.ui.extensions.ClickEvent
@@ -82,12 +84,16 @@ internal class PagerAdapter(
         awaitViewHolder(position).renderEffect(effect)
     }
 
-    suspend fun refreshUI() {
-        val position = 0
+    suspend fun refreshUI(position: Int) {
         Toast.makeText(recyclerView?.context, "refreshUI()", Toast.LENGTH_SHORT).show()
         val holder = awaitViewHolder(position)
         holder.binding.msgCount.text = getItem(position).comment_count
         holder.binding.thumsUpCount.text = getItem(position).like_count
+        if (getItem(position).liking){
+            holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.red))
+        } else {
+            holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.white))
+        }
     }
 
     /**
