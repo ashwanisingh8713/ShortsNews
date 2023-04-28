@@ -1,6 +1,7 @@
 package com.videopager.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -32,7 +33,9 @@ import com.videopager.ui.extensions.pageIdlings
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
@@ -56,7 +59,13 @@ class VideoPagerFragment(
 
         // Start point of Events, Flow, States
         viewModel.initApi(shortsType)
-        viewModel.youtubeExtractor("vjsnZHhI2Z0")
+        lifecycleScope.launch{
+            viewModel.youtubeExtractorr("vjsnZHhI2Z0").collectLatest {
+                var ll = it
+                Log.i("", "$it")
+            }
+        }
+
 
         val states = viewModel.states
             .onEach { state ->

@@ -12,11 +12,9 @@ import com.videopager.R
 import com.videopager.data.VideoDataRepository
 import com.videopager.models.*
 import com.videopager.ui.extensions.ViewState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 
 /**
@@ -287,23 +285,38 @@ internal class VideoPagerViewModel(
     }
 
 
-    fun yoo() {
-        val youtubeJExtractor = YoutubeJExtractor()
-        youtubeJExtractor.extract("", object : JExtractorCallback {
+    suspend fun youtubeExtractorr(videoId: String):Flow<String> = callbackFlow {
+        GlobalScope.launch(Dispatchers.IO) {
+            val youtubeJExtractor = YoutubeJExtractor()
+            var listener = object : JExtractorCallback {
 
-            override fun onSuccess(videoData: VideoPlayerConfig?) {
-                TODO("Not yet implemented")
+                override fun onSuccess(videoData: VideoPlayerConfig?) {
+                    // videoData.streamingData.muxedStreams[0].url   // iTag = 18
+                    Log.i("", "")
+                    trySend("Hello")
+                }
+
+                override fun onNetworkException(e: YoutubeRequestException) {
+                    // may be a connection problem, ask user to check his internet connection
+                    Log.i("", "")
+                }
+
+                override fun onError(exception: Exception) {
+                    // some serious problem occured, just show some error message
+                    Log.i("", "")
+                }
             }
 
-            override fun onNetworkException(e: YoutubeRequestException) {
-                // may be a connection problem, ask user to check his internet connection
-            }
+            youtubeJExtractor.extract(videoId, listener)
 
-            override fun onError(exception: Exception) {
-                // some serious problem occured, just show some error message
-            }
-        })
+
+        }
+        awaitClose {  }
+
     }
+
+
+
 
 
 }
