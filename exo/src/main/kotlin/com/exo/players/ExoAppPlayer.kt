@@ -73,7 +73,6 @@ internal class ExoAppPlayer(
     override fun errors(): Flow<Throwable> = callbackFlow {
         val listener = object : Player.Listener {
             override fun onPlayerError(error: PlaybackException) {
-                var uri = (error.cause as UnrecognizedInputFormatException).uri
                 trySend(error)
             }
         }
@@ -83,26 +82,6 @@ internal class ExoAppPlayer(
         awaitClose { player.removeListener(listener) }
     }
 
-//    private fun youtubeExtractor() {
-//        object : YouTubeExtractor(this) {
-//            override fun onExtractionComplete(
-//                sparseArray: SparseArray<YtFile>?,
-//                videoMeta: VideoMeta?
-//            ) {
-//                if (sparseArray != null) {
-//                    // 18	mp4	audio/video	360p
-//                    // 22	mp4	audio/video	720p
-//                    // 134	mp4	video	360p
-//                    // 140	m4a	audio	128k
-//                    val itag = 18
-//                    if(sparseArray.get(itag) != null) {
-//                        loadHomeFragment(sparseArray.get(itag).getUrl())
-//                    }
-//                }
-//            }
-//
-//        }.extract("https://www.youtube.com/watch?v=01omBMDKkDs")
-//    }
 
     private fun Player.toPlayerState(): PlayerState {
         return PlayerState(

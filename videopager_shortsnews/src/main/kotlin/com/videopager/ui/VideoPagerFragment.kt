@@ -33,9 +33,7 @@ import com.videopager.ui.extensions.pageIdlings
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
@@ -45,32 +43,35 @@ class VideoPagerFragment(
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
     private val sharedEventViewModel: SharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
     lateinit var binding: VideoPagerFragmentBinding
-    private lateinit var adapter: PagerAdapter
+    private lateinit var pagerAdapter: PagerAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.setVMContext(requireContext())
+
         binding = VideoPagerFragmentBinding.bind(view)
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
         val appPlayerView = appPlayerViewFactory.create(view.context)
-        adapter = PagerAdapter(imageLoader)
-        binding.viewPager.adapter = adapter
+        pagerAdapter = PagerAdapter(imageLoader)
+        binding.viewPager.adapter = pagerAdapter
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
         binding.viewPager.isUserInputEnabled = false
 
         // Start point of Events, Flow, States
         viewModel.initApi(shortsType)
-        lifecycleScope.launch{
+        /*lifecycleScope.launch{
             viewModel.youtubeExtractorr("vjsnZHhI2Z0").collectLatest {
                 var ll = it
                 Log.i("", "$it")
             }
-        }
+        }*/
 
 
         val states = viewModel.states
             .onEach { state ->
                 // Await the list submission so that the adapter list is in sync with state.videoData
-                adapter.awaitList(state.videoData)
+                pagerAdapter.awaitList(state.videoData)
 
                 // Attach the player to the View whenever it's ready. Note that attachPlayer can
                 // be false while appPlayer is non-null during configuration changes and, conversely,
@@ -90,19 +91,19 @@ class VideoPagerFragment(
                 }
 
                 // Can't query any ViewHolders if the adapter has no pages
-                if (adapter.currentList.isNotEmpty()) {
+                if (pagerAdapter.currentList.isNotEmpty()) {
                     // Set the player view on the active page. Note that ExoPlayer won't render
                     // any frames until the output view (here, appPlayerView) is on-screen
-                    adapter.attachPlayerView(appPlayerView, state.page)
+                    pagerAdapter.attachPlayerView(appPlayerView, state.page)
 
                     // If the player media is rendering frames, then show the player
                     if (state.showPlayer && state.youtubeUriError) {
                         binding.viewPager.isUserInputEnabled = true
-                        adapter.showPlayerFor(state.page)
+                        pagerAdapter.showPlayerFor(state.page)
                         binding.progressBarVideoShorts.visibility = View.VISIBLE
                     } else if (state.showPlayer) {
                         binding.viewPager.isUserInputEnabled = true
-                        adapter.showPlayerFor(state.page)
+                        pagerAdapter.showPlayerFor(state.page)
                         binding.progressBarVideoShorts.visibility = View.GONE
                     }
                 }
@@ -111,19 +112,19 @@ class VideoPagerFragment(
         val effects = viewModel.effects
             .onEach { effect ->
                 when (effect) {
-                    is SaveEffect -> adapter.refreshUI()
-                    is CommentEffect -> adapter.refreshUI()
-                    is LikeEffect -> adapter.refreshUI()
-                    is FollowEffect -> adapter.refreshUI()
-                    is PageEffect -> adapter.renderEffect(binding.viewPager.currentItem, effect)
+                    is SaveEffect -> pagerAdapter.refreshUI()
+                    is CommentEffect -> pagerAdapter.refreshUI()
+                    is LikeEffect -> pagerAdapter.refreshUI()
+                    is FollowEffect -> pagerAdapter.refreshUI()
+                    is PageEffect -> pagerAdapter.renderEffect(binding.viewPager.currentItem, effect)
                     is PlayerErrorEffect -> Snackbar.make(
                         binding.root,
                         effect.throwable.message ?: "Error",
                         Snackbar.LENGTH_LONG
                     ).show()
-                    is GetVideoInfoEffect -> { adapter.refreshUI() }
+                    is GetVideoInfoEffect -> { pagerAdapter.refreshUI() }
                     is YoutubeUriErrorEffect -> {
-
+                            Log.i("", "")
                     }
                 }
             }
@@ -131,7 +132,7 @@ class VideoPagerFragment(
         val events = merge(
             viewLifecycleOwner.lifecycle.viewEvents(),
             binding.viewPager.viewEvents(),
-            adapter.clicksEvent(),
+            pagerAdapter.clicksEvent(),
         ).onEach(viewModel::processEvent)
 
         merge(states, effects, events)
@@ -166,7 +167,8 @@ class VideoPagerFragment(
             // It doesn't make sense for a video on a previous page to continue playing while the user is
             // swiping quickly thru pages.
             pageChanges().map {
-                Toast.makeText(requireContext(), "$currentItem", Toast.LENGTH_SHORT).show()
+
+                Toast.makeText(requireContext(), "${pagerAdapter.getVideoData(currentItem).mediaUri}", Toast.LENGTH_SHORT).show()
                 PauseVideoEvent
             }
         )
@@ -179,12 +181,12 @@ class VideoPagerFragment(
                 FollowClick -> {
                     // TODO, make api request to follow/unfollow the channel
                     val currentItem = binding.viewPager.currentItem
-                    val videoData = adapter.getVideoData(currentItem)
+                    val videoData = pagerAdapter.getVideoData(currentItem)
                     FollowClickEvent(videoData.id, currentItem)
                 }
                 ChannelClick -> {
                     val currentItem = binding.viewPager.currentItem
-                    val videoData = adapter.getVideoData(currentItem)
+                    val videoData = pagerAdapter.getVideoData(currentItem)
                     // TODO, Redirect in Channel page
                     ChannelClickEvent
                 }
@@ -200,13 +202,13 @@ class VideoPagerFragment(
                 CommentClick -> {
                     // TODO, Open BottomSheet dialog, inside BottomSheet dialog make api request and show the content.
                     val currentItem = binding.viewPager.currentItem
-                    val videoData = adapter.getVideoData(currentItem)
+                    val videoData = pagerAdapter.getVideoData(currentItem)
                     CommentClickEvent(videoData.id, currentItem)
                 }
                 LikeClick -> {
                     // TODO, make api request to like/unlike the channel
                     val currentItem = binding.viewPager.currentItem
-                    val videoData = adapter.getVideoData(currentItem)
+                    val videoData = pagerAdapter.getVideoData(currentItem)
                     LikeClickEvent(videoData.id, currentItem)
                 }
                 else -> NoFurtherEvent

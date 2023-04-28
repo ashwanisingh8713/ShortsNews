@@ -44,7 +44,6 @@ internal class PagerAdapter(
             .let { binding ->
                 PageViewHolder(binding, imageLoader) {pair ->
                     clicks.tryEmit(pair)
-                    getItem(0)
                 }
 
             }

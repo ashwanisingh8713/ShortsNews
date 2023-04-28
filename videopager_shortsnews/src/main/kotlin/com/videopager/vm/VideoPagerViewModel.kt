@@ -1,12 +1,15 @@
 package com.videopager.vm
 
+import android.content.Context
 import android.util.Log
-import androidx.lifecycle.viewModelScope
+import android.util.SparseArray
+import at.huber.youtubeExtractor.VideoMeta
+import at.huber.youtubeExtractor.YouTubeExtractor
+import at.huber.youtubeExtractor.YtFile
 import com.github.kotvertolet.youtubejextractor.JExtractorCallback
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor
 import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
 import com.github.kotvertolet.youtubejextractor.models.newModels.VideoPlayerConfig
-import com.github.kotvertolet.youtubejextractor.models.youtube.videoData.YoutubeVideoData
 import com.player.players.AppPlayer
 import com.videopager.R
 import com.videopager.data.VideoDataRepository
@@ -27,6 +30,11 @@ internal class VideoPagerViewModel(
     private val handle: PlayerSavedStateHandle,
     initialState: ViewState
 ) : MviViewModel<ViewEvent, ViewResult, ViewState, ViewEffect>(initialState) {
+
+    var context: Context? = null
+    fun setVMContext(context: Context) {
+        this.context = context
+    }
 
     override fun onStart() {
         processEvent(LoadVideoDataEvent)
@@ -257,43 +265,33 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<OnYoutubeUriErrorResult>.toYoutubeUriEffects(): Flow<ViewEffect> {
-        return mapLatest {YoutubeUriErrorEffect }
-    }
-
-    fun youtubeExtractor(videoId: String) {
-        CoroutineScope(viewModelScope.coroutineContext).launch(Dispatchers.IO) {
-        val youtubeJExtractor = YoutubeJExtractor()
-        youtubeJExtractor.extract(videoId, object : JExtractorCallback {
-
-            override fun onSuccess(videoData: VideoPlayerConfig?) {
-                // videoData.streamingData.muxedStreams[0].url   // iTag = 18
-                Log.i("", "")
+//        return mapLatest {YoutubeUriErrorEffect }
+        return youtubeExtractor_().mapLatest {
+            val appPlayer = states.value.appPlayer
+            // If the player exists, it should be updated with the latest video data that came in
+            states.value.videoData?.let {
+                appPlayer?.setUpWith(it, handle.get())
             }
-
-            override fun onNetworkException(e: YoutubeRequestException) {
-                // may be a connection problem, ask user to check his internet connection
-                Log.i("", "")
-            }
-
-            override fun onError(exception: Exception) {
-                // some serious problem occured, just show some error message
-                Log.i("", "")
-            }
-        })
+            // Capture any updated index so UI page state can stay in sync. For example, a video
+            // may have been added to the page before the currently active one. That means the
+            // the current video/page index will have changed
+//            val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
+//            states.value.videoData?.let { LoadVideoDataResult(it, index) }
+            YoutubeUriErrorEffect
         }
-
     }
 
-
-    suspend fun youtubeExtractorr(videoId: String):Flow<String> = callbackFlow {
+    private fun youtubeExtractor():Flow<String> = callbackFlow {
         GlobalScope.launch(Dispatchers.IO) {
+            delay(3000)
             val youtubeJExtractor = YoutubeJExtractor()
             var listener = object : JExtractorCallback {
 
                 override fun onSuccess(videoData: VideoPlayerConfig?) {
-                    // videoData.streamingData.muxedStreams[0].url   // iTag = 18
-                    Log.i("", "")
-                    trySend("Hello")
+                    val finalUri = videoData?.streamingData?.muxedStreams?.get(0)?.url!!
+                    val indexx = states.value.page
+                    states.value.videoData?.get(indexx)?.mediaUri = finalUri
+                    trySend("")
                 }
 
                 override fun onNetworkException(e: YoutubeRequestException) {
@@ -306,8 +304,9 @@ internal class VideoPagerViewModel(
                     Log.i("", "")
                 }
             }
+//            val youtubeUri = states.value.videoData?.get(states.value.page)?.mediaUri
 
-            youtubeJExtractor.extract(videoId, listener)
+            youtubeJExtractor.extract("CuhoU0pmip8", listener)
 
 
         }
@@ -316,6 +315,27 @@ internal class VideoPagerViewModel(
     }
 
 
+    fun youtubeExtractor_():Flow<String> = callbackFlow {
+        GlobalScope.launch(Dispatchers.IO) {
+            delay(3000)
+            val listener = object : YouTubeExtractor(context!!) {
+                override fun onExtractionComplete(
+                    ytFiles: SparseArray<YtFile>?,
+                    vMeta: VideoMeta?
+                ) {
+                    if (ytFiles != null) {
+                        val itag = 18
+                        val finalUri = ytFiles[itag].url
+
+                        val indexx = states.value.page
+                        states.value.videoData?.get(indexx)?.mediaUri = finalUri
+                        trySend("")
+                    }
+                }
+            }.extract(states.value.videoData?.get(states.value.page)?.mediaUri)
+        }
+        awaitClose {  }
+    }
 
 
 

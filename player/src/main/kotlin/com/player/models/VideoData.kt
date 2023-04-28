@@ -2,7 +2,7 @@ package com.player.models
 
 data class VideoData(
     val id: String,
-    val mediaUri: String,
+    var mediaUri: String,
     val previewImageUri: String,
     val aspectRatio: Float? = null,
     var channel_id: String = "",
@@ -12,4 +12,4 @@ data class VideoData(
     var following:Boolean = false,
     var channel_image:String = "",
 
-)
+    )

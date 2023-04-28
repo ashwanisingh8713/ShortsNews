@@ -66,6 +66,7 @@ dependencies {
 
     // Youtube uri extractor
     implementation project(path: ':youtubejextractor')
+    implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
 
     androidTestImplementation "androidx.test:core-ktx:1.5.0"
     androidTestImplementation "androidx.test.ext:junit-ktx:1.1.5"
