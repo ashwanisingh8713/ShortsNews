@@ -8,8 +8,9 @@ interface VideoDataRepository {
     fun videoData(requestType: String): Flow<List<VideoData>>
 
     fun like(videoId: String, position: Int):Flow<Triple<String, Boolean, Int>>
-    fun follow(videoId: String):Flow<String>
+    fun follow(channel_id: String, position: Int):Flow<Pair<Following, Int>>
     fun comment(videoId: String, position: Int):Flow<Triple<String,Comments, Int>>
     fun getVideoInfo(videoId: String, position: Int):Flow<Pair<VideoInfo, Int>>
     fun getPostComment(videoId:String, comment:String, position:Int): Flow<Pair<PostComment, Int>>
+
 }

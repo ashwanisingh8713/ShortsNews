@@ -148,19 +148,13 @@
                 app:layout_constraintBottom_toTopOf="@id/share"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
-
-
-
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/client_image"
         android:layout_width="50dp"
-        android:layout_height="24dp"
+        android:layout_height="30dp"
         android:layout_marginBottom="20dp"
-        android:src="@drawable/toi"
         app:layout_constraintBottom_toTopOf="@id/title"
         app:layout_constraintStart_toStartOf="@id/title" />
 
@@ -175,7 +169,7 @@
         android:paddingTop="4dp"
         android:paddingEnd="10dp"
         android:paddingBottom="4dp"
-        android:text="follow"
+        android:text="@string/follow"
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@id/client_image"
@@ -197,8 +191,8 @@
         app:layout_constraintBottom_toBottomOf="@id/social_view"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp"
-        android:text="It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout." />
-
+        android:visibility="visible"
+/>
 
 
 

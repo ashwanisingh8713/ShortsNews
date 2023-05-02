@@ -14,7 +14,7 @@ allprojects {
 android {
     compileSdkVersion 33
     defaultConfig {
-        minSdkVersion 27
+        minSdkVersion 28
         targetSdkVersion 33
         versionCode 6
         versionName "0.3.4"
@@ -35,7 +35,7 @@ android {
             minifyEnabled false
         }
     }
-    buildToolsVersion = '29.0.3'
+    buildToolsVersion = '30.0.3'
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
@@ -44,7 +44,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 

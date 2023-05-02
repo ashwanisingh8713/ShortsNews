@@ -4,10 +4,7 @@ import android.util.Log
 import com.player.models.VideoData
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import com.videopager.data.Comments
-import com.videopager.data.PostComment
-import com.videopager.data.VideoDataRepository
-import com.videopager.data.VideoInfo
+import com.videopager.data.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.OkHttpClient
@@ -50,7 +47,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                 title="", )
 
 //            response.data.add(0, youtubeUrl)
-            response.data.add(0, youtubeUrl)
+//            response.data.add(0, youtubeUrl)
 
             val videoData = response.data
                 .map { post ->
@@ -82,9 +79,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         emit(Triple(res.data.like_count, res.data.liked, position))
     }
 
-    override fun follow(videoId: String): Flow<String> = flow {
-//        api.follow(videoId)
-        emit("Follow Response")
+    override fun follow(channel_id: String, position: Int): Flow<Pair<Following, Int>> = flow {
+       val data =  api.follow(channel_id)
+        emit(Pair(data, position))
     }
 
     override fun comment(videoId: String, position: Int): Flow<Triple<String, Comments, Int>> = flow {
@@ -93,8 +90,8 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     }
 
     override fun getVideoInfo(videoId: String, position: Int): Flow<Pair<VideoInfo,Int>> = flow {
-//        val data = api.getVideoInfo(videoId)
-//        emit(Pair(data, position))
+        val data = api.getVideoInfo(videoId)
+        emit(Pair(data, position))
     }
 
     override fun getPostComment(videoId: String, comment: String, position: Int): Flow<Pair<PostComment, Int>> = flow {
@@ -102,16 +99,16 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         body["comment"] = comment
         val data = api.getPostComment(videoId, body)
         emit(Pair(data,position))
-
     }
+
 
     private interface VideoDataService {
         @GET("videos")
         suspend fun getShortsVideos(@Query("category") category: String): VideoDataResponse
         @GET("like-unlike-video/{video_id}")
         suspend fun like(@Path("video_id")videoId: String): LikeUnlike
-        @GET("videos")
-        suspend fun follow(videoId: String): FollowUnfollow
+        @GET("follow-unfollow-channel/{channel_id}")
+        suspend fun follow(@Path("channel_id")channel_id: String): Following
         @GET("get-comments/{video_id}")
         suspend fun comment(@Path("video_id") videoId: String): Comments
         @GET("video-info/{video_id}")
@@ -157,21 +154,5 @@ data class Data(
         val like_count:String
 
     )
-
-
-    @JsonClass(generateAdapter = true)
-    data class FollowUnfollow(
-        @Json(name = "data")
-        val data:FollowUnfollowData,
-        val status:Boolean,
-        val msg:String
-    )
-
-    @JsonClass(generateAdapter = true)
-    data class FollowUnfollowData(
-        val following:Boolean,
-        val channel_id:String
-    )
-
 
 }

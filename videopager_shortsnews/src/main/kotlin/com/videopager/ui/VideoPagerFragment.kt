@@ -59,7 +59,7 @@ class VideoPagerFragment(
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
         binding.viewPager.isUserInputEnabled = false
-        commentFragment =  CommentsFragment()
+        commentFragment = CommentsFragment()
 
         // Start point of Events, Flow, States
         viewModel.initApi(shortsType)
@@ -112,22 +112,32 @@ class VideoPagerFragment(
                     is CommentEffect -> {
                         //adapter.refreshUI(0)
                         // Pass Data to Bottom sheet dialog fragment
-                        commentFragment.setRecyclerData(effect.videoId,effect.comments, effect.position)
+                        commentFragment.setRecyclerData(
+                            effect.videoId,
+                            effect.comments,
+                            effect.position
+                        )
                     }
                     is LikeEffect -> {
                         pagerAdapter.refreshUI(effect.position)
                     }
                     is FollowEffect -> pagerAdapter.refreshUI(effect.position)
-                    is PageEffect -> pagerAdapter.renderEffect(binding.viewPager.currentItem, effect)
+                    is PageEffect -> pagerAdapter.renderEffect(
+                        binding.viewPager.currentItem,
+                        effect
+                    )
                     is PlayerErrorEffect -> Snackbar.make(
                         binding.root,
                         effect.throwable.message ?: "Error",
                         Snackbar.LENGTH_LONG
                     ).show()
-                    is GetVideoInfoEffect -> {pagerAdapter.refreshUI(0) }
+                    is GetVideoInfoEffect -> {
+                        Log.i("kamlesh", "information adapter update")
+                        pagerAdapter.refreshUI(effect.position)
+                    }
 
                     is PostCommentEffect -> {
-                        Log.i("","")
+                        Log.i("", "")
                         pagerAdapter.refreshUI(effect.position)
                         commentFragment.updateCommentAdapter(effect.data)
                         // TODO, Update
@@ -135,7 +145,7 @@ class VideoPagerFragment(
                     is YoutubeUriErrorEffect -> {
                         Log.i("", "")
                     }
-                    else->{}
+                    else -> {}
                 }
             }
 
@@ -150,12 +160,15 @@ class VideoPagerFragment(
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+
     }
 
     private fun Lifecycle.viewEvents(): Flow<ViewEvent> {
         return events()
-            .filter { event -> event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_STOP
-                    || event == Lifecycle.Event.ON_DESTROY}
+            .filter { event ->
+                event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_STOP
+                        || event == Lifecycle.Event.ON_DESTROY
+            }
             .map { event ->
                 // Fragment starting or stopping is a signal to create or tear down the player, respectively.
                 // The player should not be torn down across config changes, however.
@@ -173,19 +186,24 @@ class VideoPagerFragment(
             // Idling on a page after a scroll is a signal to try and change player playlist positions
             pageIdlings().map {
                 OnPageSettledEvent(currentItem)
-                              },
+            },
+
+
             // A page change (which can happen before a page is idled upon) is a signal to pause media. This
             // is useful for when a user is quickly swiping thru pages and the idle state isn't getting reached.
             // It doesn't make sense for a video on a previous page to continue playing while the user is
             // swiping quickly thru pages.
             pageChanges().map {
                 Toast.makeText(requireContext(), "$currentItem", Toast.LENGTH_SHORT).show()
-                PauseVideoEvent
+//                PauseVideoEvent
+                val data = pagerAdapter.getVideoData(currentItem)
+                Log.i("kamlesh", "video information triggerd")
+                VideoInfoEvent(data.id,currentItem)
             }
         )
     }
 
-    private fun CommentsFragment.postClickComment():Flow<ViewEvent> {
+    private fun CommentsFragment.postClickComment(): Flow<ViewEvent> {
         return clicks().map {
             PostClickCommentEvent(it.first, it.second, it.third)
         }
@@ -193,7 +211,7 @@ class VideoPagerFragment(
 
     private fun PagerAdapter.clicksEvent(): Flow<ViewEvent> {
         return clicks().map {
-            when(it.second) {
+            when (it.second) {
                 PlayPauseClick -> TappedPlayerEvent
                 FollowClick -> {
                     // TODO, make api request to follow/unfollow the channel
@@ -219,7 +237,7 @@ class VideoPagerFragment(
                 CommentClick -> {
                     // TODO, Open BottomSheet dialog, inside BottomSheet dialog make api request and show the content.
 
-                    commentFragment.show(childFragmentManager,"comments")
+                    commentFragment.show(childFragmentManager, "comments")
 
                     val currentItem = binding.viewPager.currentItem
                     val videoData = pagerAdapter.getVideoData(currentItem)

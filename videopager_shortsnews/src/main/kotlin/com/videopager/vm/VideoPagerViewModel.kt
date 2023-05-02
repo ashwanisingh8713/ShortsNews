@@ -72,7 +72,9 @@ internal class VideoPagerViewModel(
             filterIsInstance<FollowClickEvent>().toFollowClickResults(),
             filterIsInstance<CommentClickEvent>().toCommentClickResults(),
             filterIsInstance<LikeClickEvent>().toLikeClickResults(),
-            filterIsInstance<PostClickCommentEvent>().toPostCommentResults()
+            filterIsInstance<PostClickCommentEvent>().toPostCommentResults(),
+            filterIsInstance<VideoInfoEvent>().toVideoInfoResults(),
+
         )
     }
 
@@ -120,6 +122,7 @@ internal class VideoPagerViewModel(
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun createPlayer(): Flow<ViewResult> {
         check(states.value.appPlayer == null) { "Tried to create a player when one already exists" }
         val config = AppPlayer.Factory.Config(loopVideos = true)
@@ -179,10 +182,10 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<FollowClickEvent>.toFollowClickResults(): Flow<ViewResult> {
         return flatMapLatest{ event ->
-            states.value.videoData?.get(0)?.comment_count  = "dfdf"
-            repository.follow(event.videoId)
+            repository.follow(event.channelId, event.position)
         }.mapLatest { followResponse ->
-            FollowClickResult(0)
+            states.value.videoData?.get(followResponse.second)?.following  = followResponse.first.data.following
+            FollowClickResult(followResponse.second, following = followResponse.first)
         }
     }
 
@@ -222,6 +225,9 @@ internal class VideoPagerViewModel(
         }
     }
 
+
+
+
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<OnPageSettledEvent>.toPageSettledResults(): Flow<ViewResult> {
         return mapLatest { event ->
@@ -239,7 +245,19 @@ internal class VideoPagerViewModel(
         }.flatMapLatest {
             repository.getVideoInfo("",0)
         }.mapLatest {
-            GetVideoInfoResult(0, "")
+            NoOpResult
+        }
+    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<VideoInfoEvent>.toVideoInfoResults():Flow<GetVideoInfoResult>{
+        return flatMapLatest { event ->
+            Log.i("kamlesh", "Api video information triggerd")
+            repository.getVideoInfo(event.videoId, event.position)
+        }.mapLatest {
+            Pair(it.first, it.second)
+        }.map {
+            Log.i("kamlesh","data${it.first}")
+            GetVideoInfoResult(it.second, it.first)
         }
     }
 
@@ -290,7 +308,7 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<FollowClickResult>.toFollowViewEffect(): Flow<ViewEffect> {
-        return mapLatest { result-> FollowEffect(result.position) }
+        return mapLatest { result-> FollowEffect(result.position, result.following) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -308,8 +326,21 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<GetVideoInfoResult>.toGetVideoInfoEffect(): Flow<ViewEffect> {
-        return mapLatest {
-            GetVideoInfoEffect }
+        return mapLatest { result ->
+           Log.i("kamlesh","Video info data $result")
+            states.value.videoData?.get(result.position)?.apply {
+                this.comment_count = result.response.data.comment_count
+                this.like_count = result.response.data.like_count
+                this.following = result.response.data.following
+                this.channel_image = result.response.data.channel_image
+                this.channel_id = result.response.data.channel_id
+                this.mediaUri = result.response.data.video_url
+                this.title = result.response.data.title
+                this.previewImageUri = result.response.data.videoPreviewUrl
+                this.id = result.response.data.id
+            }
+            GetVideoInfoEffect(result.response, result.position)
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -386,7 +417,7 @@ internal class VideoPagerViewModel(
                         trySend("")
                     }
                 }
-            }.extract(states.value.videoData?.get(states.value.page)?.mediaUri)
+            }.extract(states.value.videoData?.get(states.value.page)?.mediaUri, false, false)
         }
         awaitClose {  }
     }

@@ -57,7 +57,8 @@ dependencies {
     implementation "androidx.viewpager2:viewpager2:1.1.0-beta01"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     implementation "androidx.activity:activity-ktx:1.7.0"
-    implementation "io.coil-kt:coil:2.2.2"
+    implementation "io.coil-kt:coil:2.3.0"
+    implementation("io.coil-kt:coil-svg:2.3.0")
     implementation "androidx.fragment:fragment-ktx:1.5.6"
     implementation 'androidx.core:core-ktx:1.10.0'
 
@@ -71,7 +72,7 @@ dependencies {
 
     // Youtube uri extractor
     implementation project(path: ':youtubejextractor')
-    implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
+    implementation 'com.github.HaarigerHarald:android-youtubeExtractor:v2.1.0'
 
     androidTestImplementation "androidx.test:core-ktx:1.5.0"
     androidTestImplementation "androidx.test.ext:junit-ktx:1.1.5"

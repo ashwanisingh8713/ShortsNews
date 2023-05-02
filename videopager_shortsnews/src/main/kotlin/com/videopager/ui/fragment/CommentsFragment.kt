@@ -14,6 +14,7 @@ import com.videopager.adapers.CommentAdapter
 import com.videopager.data.CommentData
 import com.videopager.data.PostCommentData
 import com.videopager.databinding.FragmentCommentsBinding
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -33,6 +34,7 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCommentsBinding.bind(view)
         recyclerView = binding.commentRecyclerview
+//        commentAdapter = CommentAdapter(commentList)
 
         binding.sendImage.setOnClickListener {
             val msg = binding.msgEditText.text
@@ -69,18 +71,26 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
         recyclerView.adapter = commentAdapter
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("NotifyDataSetChanged")
-    fun updateCommentAdapter(data: PostCommentData) {
+   suspend fun updateCommentAdapter(data: PostCommentData) {
         val commentData = CommentData(
             data.user_name,
             data.comment, data.created_at, data.user_image
         )
         commentList.add(0, commentData)
-        commentAdapter.notifyDataSetChanged()
+       withContext(Dispatchers.Main){
+           setUpAdapter(commentList)
+           commentAdapter.notifyDataSetChanged()
+       }
+
+
+
     }
 
-    fun View.hideKeyBoard(){
-        val inputManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    private fun View.hideKeyBoard() {
+        val inputManager =
+            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 

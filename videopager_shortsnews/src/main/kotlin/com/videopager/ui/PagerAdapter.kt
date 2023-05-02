@@ -1,16 +1,23 @@
 package com.videopager.ui
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.ComponentRegistry
 import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.load
+import coil.request.ImageRequest
 import com.player.models.VideoData
 import com.player.ui.AppPlayerView
 import com.videopager.R
+import com.videopager.data.VideoInfo
 import com.videopager.databinding.PageItemBinding
 import com.videopager.models.PageEffect
 import com.videopager.ui.extensions.ClickEvent
@@ -59,6 +66,7 @@ internal class PagerAdapter(
         return getItem(position)
     }
 
+
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         this.recyclerView = recyclerView
     }
@@ -87,13 +95,24 @@ internal class PagerAdapter(
     suspend fun refreshUI(position: Int) {
         Toast.makeText(recyclerView?.context, "refreshUI()", Toast.LENGTH_SHORT).show()
         val holder = awaitViewHolder(position)
-        holder.binding.msgCount.text = getItem(position).comment_count
-        holder.binding.thumsUpCount.text = getItem(position).like_count
-        if (getItem(position).liking){
+        val data  = getItem(position)
+        holder.binding.msgCount.text = data.comment_count
+        holder.binding.thumsUpCount.text = data.like_count
+        holder.binding.title.text = data.title
+        if (data.liking){
             holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.red))
         } else {
             holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.white))
         }
+        if (data.following){
+            holder.binding.following.text = "Following"
+        } else{
+            holder.binding.following.text = "Follow"
+        }
+        if (data.channel_image.isNotEmpty()) {
+            holder.binding.clientImage.loadSvg(data.channel_image, holder.binding.clientImage.context)
+        }
+
     }
 
     /**
@@ -120,6 +139,26 @@ internal class PagerAdapter(
         override fun areContentsTheSame(oldItem: VideoData, newItem: VideoData): Boolean {
             return oldItem == newItem
         }
+    }
+
+    private fun ImageView.loadSvg(url: String, context:Context) {
+
+        val imageLoader = ImageLoader.Builder(context)
+            .components {
+                add(SvgDecoder.Factory())
+            }
+            .build()
+
+        val request = ImageRequest.Builder(this.context)
+            .crossfade(true)
+            .crossfade(500)
+            .placeholder(R.drawable.toi)
+            .error(R.drawable.toi)
+            .data(url)
+            .target(this)
+            .build()
+
+        imageLoader.enqueue(request)
     }
 
 
