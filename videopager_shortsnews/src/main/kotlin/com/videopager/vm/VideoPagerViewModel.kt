@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import android.util.SparseArray
 import androidx.lifecycle.viewModelScope
+import at.huber.me.TestYou
+import at.huber.me.YouTubeUri
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
@@ -76,24 +78,30 @@ internal class VideoPagerViewModel(
         )
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    /*@OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String): Flow<ViewResult> {
-        return flatMapLatest { repository.videoData(requestType) }
+        return flatMapLatest { repository.videoData(requestType, context!!) }
             .map { videoData ->
                 videoData
             }
             .onEach {
-                uriExtraction(it)
+                val tt = TestYou()
+                *//*val youTubeUri = YouTubeUri(context)
+                val ytFiles = youTubeUri.getStreamUrls("01omBMDKkDs")
+                val videoMeta = youTubeUri.videoMeta
+
+                Log.i("", "")*//*
+
             }
             .map {
 
                 Log.i("AshwaniSingh", "${it.size}")
 
                 val appPlayer = states.value.appPlayer
-//                val videoData = emptyList<VideoData>()
-                appPlayer?.setUpWith(it, handle.get())
+                val videoData = emptyList<VideoData>()
+                appPlayer?.setUpWith(videoData, handle.get())
                 val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
-                LoadVideoDataResult(it, index)
+                LoadVideoDataResult(videoData, index)
             }
     }
 
@@ -121,14 +129,11 @@ internal class VideoPagerViewModel(
            messagesListener.extract(element.mediaUri)
            awaitClose()
        }
+    }*/
 
-
-
-    }
-
-    /*@OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String): Flow<ViewResult> {
-        return flatMapLatest { repository.videoData(requestType) }
+        return flatMapLatest { repository.videoData(requestType, context!!) }
             .map { videoData ->
                 val appPlayer = states.value.appPlayer
                 // If the player exists, it should be updated with the latest video data that came in
@@ -139,7 +144,7 @@ internal class VideoPagerViewModel(
                 val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
                 LoadVideoDataResult(videoData, index)
             }
-    }*/
+    }
 
 
     /**

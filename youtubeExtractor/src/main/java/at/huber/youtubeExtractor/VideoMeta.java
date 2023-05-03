@@ -17,8 +17,8 @@ public class VideoMeta {
 
     private final boolean isLiveStream;
 
-    protected VideoMeta(String videoId, String title, String author, String channelId,
-                        long videoLength, long viewCount, boolean isLiveStream, String shortDescript) {
+    public VideoMeta(String videoId, String title, String author, String channelId,
+                     long videoLength, long viewCount, boolean isLiveStream, String shortDescript) {
         this.videoId = videoId;
         this.title = title;
         this.author = author;

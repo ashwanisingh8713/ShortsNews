@@ -1,10 +1,11 @@
 package com.videopager.data
 
+import android.content.Context
 import com.player.models.VideoData
 import kotlinx.coroutines.flow.Flow
 
 interface VideoDataRepository {
-    fun videoData(requestType: String): Flow<List<VideoData>>
+    suspend fun videoData(requestType: String, context: Context): Flow<List<VideoData>>
 
     fun like(videoId: String, position: Int):Flow<Triple<String, Boolean, Int>>
     fun follow(channel_id: String, position: Int):Flow<Pair<Following, Int>>

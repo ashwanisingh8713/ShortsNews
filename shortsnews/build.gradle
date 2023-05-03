@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'kotlin-android'
 }
 
 android {
@@ -97,4 +98,7 @@ dependencies {
 
     //Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    // Youtube uri extractor
+    implementation project(path: ':youtubeExtractor')
 }

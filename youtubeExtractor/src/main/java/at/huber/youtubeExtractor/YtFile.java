@@ -6,7 +6,7 @@ public class YtFile {
     private final Format format;
     private final String url;
 
-    YtFile(Format format, String url) {
+    public YtFile(Format format, String url) {
         this.format = format;
         this.url = url;
     }

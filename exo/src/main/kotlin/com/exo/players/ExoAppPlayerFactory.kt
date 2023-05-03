@@ -14,6 +14,7 @@ class ExoAppPlayerFactory(context: Context) : AppPlayer.Factory {
     private val appContext = context.applicationContext
 
     override fun create(config: AppPlayer.Factory.Config): AppPlayer {
+//        cachingInit()
         val exoPlayer = ExoPlayer.Builder(appContext)
             .build()
             .apply {
