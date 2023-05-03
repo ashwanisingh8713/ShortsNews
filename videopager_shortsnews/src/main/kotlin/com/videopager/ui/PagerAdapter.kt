@@ -93,7 +93,7 @@ internal class PagerAdapter(
     }
 
     suspend fun refreshUI(position: Int) {
-        Toast.makeText(recyclerView?.context, "refreshUI()", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(recyclerView?.context, "refreshUI()", Toast.LENGTH_SHORT).show()
         val holder = awaitViewHolder(position)
         val data  = getItem(position)
         holder.binding.msgCount.text = data.comment_count
@@ -151,9 +151,9 @@ internal class PagerAdapter(
 
         val request = ImageRequest.Builder(this.context)
             .crossfade(true)
-            .crossfade(500)
-            .placeholder(R.drawable.toi)
-            .error(R.drawable.toi)
+//            .crossfade(500)
+//            .placeholder(R.drawable.toi)
+//            .error(R.drawable.toi)
             .data(url)
             .target(this)
             .build()

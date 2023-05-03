@@ -194,7 +194,7 @@ class VideoPagerFragment(
             // It doesn't make sense for a video on a previous page to continue playing while the user is
             // swiping quickly thru pages.
             pageChanges().map {
-                Toast.makeText(requireContext(), "$currentItem", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "$currentItem", Toast.LENGTH_SHORT).show()
 //                PauseVideoEvent
                 val data = pagerAdapter.getVideoData(currentItem)
                 Log.i("kamlesh", "video information triggerd")
