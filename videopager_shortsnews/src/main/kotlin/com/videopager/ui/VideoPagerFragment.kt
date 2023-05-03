@@ -1,5 +1,6 @@
 package com.videopager.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -232,6 +233,13 @@ class VideoPagerFragment(
                 }
                 ShareClick -> {
                     // TODO, Sharing
+                    val intent = Intent(Intent.ACTION_SEND)
+                    intent.type = "text/plain"
+                    intent.putExtra(Intent.EXTRA_STREAM, "NewsDx Shorts")
+                    var sAux = "\n Let me recommend you this application\n\n"
+                    sAux += "https://play.google.com/store/apps/details?id=in.newsdx.preview \n\n"
+                    intent.putExtra(Intent.EXTRA_TEXT, sAux)
+                    startActivity(intent)
                     ShareClickEvent
                 }
                 CommentClick -> {
