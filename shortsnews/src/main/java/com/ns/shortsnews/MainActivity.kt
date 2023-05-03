@@ -1,9 +1,12 @@
 package com.ns.shortsnews
 
 import android.content.Intent
+import android.content.res.Resources.Theme
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import coil.imageLoader
 import com.exo.players.ExoAppPlayerFactory
@@ -43,10 +46,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
     private val videoCategoryViewModel: VideoCategoryViewModel by viewModels { userViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.screen_background)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.screen_background)
 
         binding.profileIcon.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)

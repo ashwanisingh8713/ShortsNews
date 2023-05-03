@@ -94,4 +94,7 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
         inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 
+    override fun getTheme(): Int {
+        return R.style.AppBottomSheetDialogTheme
+    }
 }

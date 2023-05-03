@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.videopager.data.CommentData
 import com.videopager.databinding.ItemCommentBinding
+import com.videopager.utils.CommentPostTime
 
 class CommentAdapter (private val commentsList: List<CommentData>): RecyclerView.Adapter<CommentAdapter.MyViewHolder>(){
    inner class MyViewHolder(val binding: ItemCommentBinding): RecyclerView.ViewHolder(binding.root) {

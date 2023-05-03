@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.ns.shortsnews"
-        minSdk 28
+        minSdk 31
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -81,8 +81,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
 
     //Coil - to load SVG files
-    implementation("io.coil-kt:coil:2.2.2")
-    implementation("io.coil-kt:coil-svg:2.2.2")
+    implementation("io.coil-kt:coil:2.3.0")
+    implementation("io.coil-kt:coil-svg:2.3.0")
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
@@ -95,7 +95,6 @@ dependencies {
     implementation "io.insert-koin:koin-core:3.3.2"
     implementation "io.insert-koin:koin-android:3.3.2"
 
-    // Youtube uri extractor
-    implementation project(path: ':youtubeExtractor')
-
+    //Splash Screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }

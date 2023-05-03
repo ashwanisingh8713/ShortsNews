@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<!--    <style name="Theme.CustomSplashScreenTheme" parent="S">-->
+<!--        <item name="android:windowSplashScreenBackground">@color/white</item>-->
+<!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/bottom_sheet_background</item>-->
+<!--        <item name="android:windowSplashScreenAnimationDuration">300</item>-->
+<!--    </style>-->
+</resources>

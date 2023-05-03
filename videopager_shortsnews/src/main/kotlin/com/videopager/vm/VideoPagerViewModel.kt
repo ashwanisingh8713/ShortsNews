@@ -141,6 +141,7 @@ internal class VideoPagerViewModel(
             }
     }*/
 
+
     /**
      * This is a single flow instead of two distinct ones (e.g. one for starting, one for stopping)
      * so that when the PlayerLifecycleEvent type changes from upstream, the flow initiated by the
