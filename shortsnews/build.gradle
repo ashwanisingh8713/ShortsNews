@@ -95,4 +95,7 @@ dependencies {
     implementation "io.insert-koin:koin-core:3.3.2"
     implementation "io.insert-koin:koin-android:3.3.2"
 
+    // Youtube uri extractor
+    implementation project(path: ':youtubeExtractor')
+
 }

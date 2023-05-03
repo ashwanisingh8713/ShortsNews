@@ -1,7 +1,6 @@
 package com.videopager.data
 
 import com.player.models.VideoData
-import com.videopager.vm.VideoPagerViewModel
 import kotlinx.coroutines.flow.Flow
 
 interface VideoDataRepository {

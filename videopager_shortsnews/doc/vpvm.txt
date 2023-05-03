@@ -36,7 +36,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
 
 
 /**
@@ -76,59 +75,54 @@ internal class VideoPagerViewModel(
         )
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String): Flow<ViewResult> {
-        return flatMapLatest { repository.videoData(requestType) }
-            .map { videoData ->
-                videoData
-            }
-            .onEach {
-                uriExtraction(it)
-            }
-            .map {
-
-                Log.i("AshwaniSingh", "${it.size}")
-
-                val appPlayer = states.value.appPlayer
-//                val videoData = emptyList<VideoData>()
-                appPlayer?.setUpWith(it, handle.get())
-                val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
-                LoadVideoDataResult(it, index)
-            }
-    }
-
-    private fun uriExtraction(videoData: List<VideoData>) = callbackFlow<List<VideoData>> {
-        var videos = mutableListOf<VideoData>()
-       videoData.forEachIndexed{index, element->
-           val messagesListener = object : YouTubeExtractor(context) {
-               override fun onExtractionComplete(
-                   ytFiles: SparseArray<YtFile>?,
-                   vMeta: VideoMeta?
-               ) {
-                   if (ytFiles != null) {
-                       val iTag = 18
-                       val finalUri = ytFiles[iTag].url
-                       element.mediaUri = finalUri
-                       videos.add(element)
-                       Log.i("AshwaniSingh", "$finalUri")
-
-                   }
-                   if(index == videoData.size) {
-                       trySend(videos)
-                   }
-               }
-           }
-           messagesListener.extract(element.mediaUri)
-           awaitClose()
-       }
-
-
-
-    }
-
     /*@OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String): Flow<ViewResult> {
-        return flatMapLatest { repository.videoData(requestType) }
+        return flatMapLatest { repository.videoData(requestType, context!!) }
+            .map { videoData ->
+                videoData.asFlow().map { it }
+            }.map {
+                it.first()
+            }
+            .map {
+                uriExtraction(it)
+            }.map { it.first() }
+            .map {
+                val appPlayer = states.value.appPlayer
+                appPlayer?.isPlayerSetUp = false
+                val videoData = states.value.videoData
+                videoData.add(it)
+                appPlayer?.setUpWith(videoData, handle.get())
+                val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
+                LoadVideoDataResult(videoData, index)
+            }
+    }
+
+    private fun uriExtraction(videoData: VideoData) = callbackFlow<VideoData> {
+        val messagesListener = object : YouTubeExtractor(context) {
+            override fun onExtractionComplete(
+                ytFiles: SparseArray<YtFile>?,
+                vMeta: VideoMeta?
+            ) {
+                if (ytFiles != null) {
+                    val iTag = 18
+                    val finalUri = ytFiles[iTag].url
+                    videoData.mediaUri = finalUri
+
+                }
+                trySend(videoData)
+            }
+        }
+        messagesListener.extract(videoData.mediaUri)
+        awaitClose()
+
+    }*/
+
+
+
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String): Flow<ViewResult> {
+        return flatMapLatest { repository.videoData(requestType, context!!) }
             .map { videoData ->
                 val appPlayer = states.value.appPlayer
                 // If the player exists, it should be updated with the latest video data that came in
@@ -139,7 +133,7 @@ internal class VideoPagerViewModel(
                 val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
                 LoadVideoDataResult(videoData, index)
             }
-    }*/
+    }
 
     /**
      * This is a single flow instead of two distinct ones (e.g. one for starting, one for stopping)
@@ -316,8 +310,12 @@ internal class VideoPagerViewModel(
             is CreatePlayerResult -> state.copy(appPlayer = appPlayer)
             is TearDownPlayerResult -> state.copy(appPlayer = null)
             is OnNewPageSettledResult -> state.copy(page = page, showPlayer = false)
-            is OnPlayerRenderingResult -> state.copy(showPlayer = true, youtubeUriError = false)
-            is OnYoutubeUriErrorResult -> state.copy(showPlayer = true, youtubeUriError = true)
+            is OnPlayerRenderingResult -> {
+                state.copy(showPlayer = true, youtubeUriError = false)
+            }
+            is OnYoutubeUriErrorResult -> {
+                state.copy(showPlayer = true, youtubeUriError = true)
+            }
             is AttachPlayerToViewResult -> state.copy(attachPlayer = doAttach)
             else -> state
         }
@@ -417,10 +415,10 @@ internal class VideoPagerViewModel(
 
 
 
-    fun youtubeExtractor_():Flow<String> = callbackFlow {
+    private fun youtubeExtractor_():Flow<String> = callbackFlow {
         GlobalScope.launch(Dispatchers.IO) {
             delay(3000)
-            val listener = object : YouTubeExtractor(context!!) {
+            val listener = object : YouTubeExtractor(context) {
                 override fun onExtractionComplete(
                     ytFiles: SparseArray<YtFile>?,
                     vMeta: VideoMeta?
@@ -434,7 +432,8 @@ internal class VideoPagerViewModel(
                         trySend("")
                     }
                 }
-            }.extract(states.value.videoData?.get(states.value.page)?.mediaUri, false, false)
+//            }.extract(states.value.videoData?.get(states.value.page)?.mediaUri)
+            }.extract("https://www.youtube.com/watch?v=01omBMDKkDs")
         }
         awaitClose {  }
     }
