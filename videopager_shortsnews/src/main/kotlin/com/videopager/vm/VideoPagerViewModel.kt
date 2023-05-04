@@ -1,8 +1,10 @@
 package com.videopager.vm
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.util.SparseArray
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import at.huber.me.TestYou
 import at.huber.me.YouTubeUri
@@ -78,58 +80,6 @@ internal class VideoPagerViewModel(
         )
     }
 
-    /*@OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String): Flow<ViewResult> {
-        return flatMapLatest { repository.videoData(requestType, context!!) }
-            .map { videoData ->
-                videoData
-            }
-            .onEach {
-                val tt = TestYou()
-                *//*val youTubeUri = YouTubeUri(context)
-                val ytFiles = youTubeUri.getStreamUrls("01omBMDKkDs")
-                val videoMeta = youTubeUri.videoMeta
-
-                Log.i("", "")*//*
-
-            }
-            .map {
-
-                Log.i("AshwaniSingh", "${it.size}")
-
-                val appPlayer = states.value.appPlayer
-                val videoData = emptyList<VideoData>()
-                appPlayer?.setUpWith(videoData, handle.get())
-                val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
-                LoadVideoDataResult(videoData, index)
-            }
-    }
-
-    private fun uriExtraction(videoData: List<VideoData>) = callbackFlow<List<VideoData>> {
-        var videos = mutableListOf<VideoData>()
-       videoData.forEachIndexed{index, element->
-           val messagesListener = object : YouTubeExtractor(context) {
-               override fun onExtractionComplete(
-                   ytFiles: SparseArray<YtFile>?,
-                   vMeta: VideoMeta?
-               ) {
-                   if (ytFiles != null) {
-                       val iTag = 18
-                       val finalUri = ytFiles[iTag].url
-                       element.mediaUri = finalUri
-                       videos.add(element)
-                       Log.i("AshwaniSingh", "$finalUri")
-
-                   }
-                   if(index == videoData.size) {
-                       trySend(videos)
-                   }
-               }
-           }
-           messagesListener.extract(element.mediaUri)
-           awaitClose()
-       }
-    }*/
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String): Flow<ViewResult> {
@@ -296,8 +246,6 @@ internal class VideoPagerViewModel(
         return mapLatest {
             val appPlayer = requireNotNull(states.value.appPlayer)
             appPlayer.pause()
-        }.flatMapLatest {
-            repository.getVideoInfo("",0)
         }.mapLatest {
             NoOpResult
         }
@@ -305,13 +253,39 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<VideoInfoEvent>.toVideoInfoResults():Flow<GetVideoInfoResult>{
         return flatMapLatest { event ->
-            Log.i("kamlesh", "Api video information triggerd")
+            val appPlayer = requireNotNull(states.value.appPlayer)
+            appPlayer.pause()
             repository.getVideoInfo(event.videoId, event.position)
         }.mapLatest {
+            var index = it.second+1
+            getYoutubeUri(index)
             Pair(it.first, it.second)
         }.map {
-            Log.i("kamlesh","data${it.first}")
             GetVideoInfoResult(it.second, it.first)
+        }
+    }
+
+    private suspend fun getYoutubeUri(index: Int) {
+        withContext(Dispatchers.IO) {
+            var videoData = states.value.videoData?.get(index)!!
+            if (videoData.type=="yt") {
+                val youTubeUri = YouTubeUri(context)
+                var ytFiles = youTubeUri.getStreamUrls(videoData.mediaUri)
+                val iTag = 18
+                var finalUri18 = ""
+                if (ytFiles != null && ytFiles.indexOfKey(iTag) >=0) {
+                    finalUri18 = ytFiles[iTag].url
+                    videoData.mediaUri = finalUri18
+                    videoData.type = ""
+
+                    GlobalScope.launch(Dispatchers.Main) {
+                        val appPlayer = states.value.appPlayer
+                        // If the player exists, it should be updated with the latest video data that came in
+                        appPlayer?.setUpWith(states.value.videoData!!, handle.get())
+                        Log.i("Conv_TIME", "$finalUri18")
+                    }
+                }
+            }
         }
     }
 

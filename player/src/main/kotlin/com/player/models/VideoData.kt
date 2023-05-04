@@ -12,5 +12,6 @@ data class VideoData(
     var following:Boolean = false,
     var liking:Boolean = false,
     var channel_image:String = "",
+    var type:String = "",
 
     )
