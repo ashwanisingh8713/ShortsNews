@@ -8,7 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import coil.imageLoader
+import com.exo.cache.VideoPreloadWorker
 import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
 import com.ns.shortsnews.adapters.CategoryAdapter
@@ -111,6 +114,16 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
                 loadHomeFragment(defaultCate.id)
             }
         }
+    }
+
+    private fun schedulePreloadWork(videoUrl: String) {
+        val workManager = WorkManager.getInstance(this)
+        val videoPreloadWorker = VideoPreloadWorker.buildWorkRequest(videoUrl)
+        workManager.enqueueUniqueWork(
+            "VideoPreloadWorker",
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            videoPreloadWorker
+        )
     }
 
 

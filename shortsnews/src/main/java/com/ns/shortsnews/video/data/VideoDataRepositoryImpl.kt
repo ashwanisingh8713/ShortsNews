@@ -54,7 +54,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             val youtubeUrl1 = Data(
                 id = "16",
                 preview = "https://ndxv3.s3.ap-south-1.amazonaws.com/video-preview.png",
-                videoUrl = "m1EvCw123HM",
+                videoUrl = "https://youtube.com/watch?v=m1EvCw123HM",
                 title = "",
                 type = "yt"
             )
@@ -62,18 +62,15 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             val youtubeUrl2 = Data(
                 id = "16",
                 preview = "https://ndxv3.s3.ap-south-1.amazonaws.com/video-preview.png",
-                videoUrl = "jnPzy3BX-GA",
+                videoUrl = "https://youtube.com/watch?v=jnPzy3BX-GA",
                 title = "",
                 type = "yt"
             )
 
-            response.data.add(0, youtubeUrl1)
-            response.data.add(2, youtubeUrl2)
+//            response.data.add(0, youtubeUrl1)
+//            response.data.add(2, youtubeUrl2)
 
-            /*for (i in 1..20) {
-                response.data.add(0, youtubeUrl1)
-                response.data.add(0, youtubeUrl2)
-            }*/
+
             Log.i("Conv_TIME", "StartTime:: ${System.currentTimeMillis()}")
 
             val allowedConversionCount = 1
@@ -83,7 +80,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                 .map { post ->
                     if (post.type!="yt" || allowedConversionCount <= conversionCount) {
                         VideoData(
-                            id = post.id.orEmpty(),
+                            id = post.id,
                             mediaUri = post.videoUrl,
                             previewImageUri = post.preview!!,
                             aspectRatio = null,
@@ -100,7 +97,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                             conversionCount++
                         }
                         VideoData(
-                            id = post.id.orEmpty(),
+                            id = post.id,
                             mediaUri = finalUri18,
                             previewImageUri = post.preview!!,
                             aspectRatio = null,
@@ -181,7 +178,7 @@ data class Data(
     @Json(name = "video_url")
     val videoUrl: String,
     @Json(name = "id")
-    val id:String?= "",
+    val id:String= "",
     @Json(name = "videoPreviewUrl")
     val preview:String?= "",
     val type: String = ""

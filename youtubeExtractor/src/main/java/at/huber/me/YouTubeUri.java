@@ -151,7 +151,7 @@ public class YouTubeUri {
         this.context = con;
     }
 
-    public SparseArray<YtFile> getStreamUrls(String videoID) throws IOException, InterruptedException, JSONException {
+    public SparseArray<YtFile> getStreamUrls(String youtubeUri) throws IOException, InterruptedException, JSONException {
 
         String pageHtml;
         SparseArray<String> encSignatures = new SparseArray<>();
@@ -159,7 +159,7 @@ public class YouTubeUri {
 
         BufferedReader reader = null;
         HttpURLConnection urlConnection = null;
-        URL getUrl = new URL("https://youtube.com/watch?v=" + videoID);
+        URL getUrl = new URL(youtubeUri);
         try {
             urlConnection = (HttpURLConnection) getUrl.openConnection();
             urlConnection.setRequestProperty("User-Agent", USER_AGENT);

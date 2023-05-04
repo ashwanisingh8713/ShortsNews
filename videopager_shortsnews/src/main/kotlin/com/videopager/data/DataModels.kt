@@ -44,15 +44,15 @@ data class VideoInfo(
 
 @JsonClass(generateAdapter = true)
 data class VideoInfoData(
-    val video_url:String,
-    val title:String,
-    val like_count:String,
-    val comment_count:String,
-    val following:Boolean,
-    val videoPreviewUrl:String,
-    val id:String,
-    val channel_id:String,
-    val channel_image:String
+    val video_url:String = "",
+    val title:String = "",
+    val like_count:String = "",
+    val comment_count:String = "",
+    val following:Boolean = false,
+    val videoPreviewUrl:String = "",
+    val id:String = "",
+    val channel_id:String = "",
+    val channel_image:String = ""
 )
 @JsonClass(generateAdapter = true)
 data class Following(

@@ -376,48 +376,9 @@ internal class VideoPagerViewModel(
         return mapLatest { result -> PlayerErrorEffect(result.throwable) }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<OnYoutubeUriErrorResult>.toYoutubeUriEffects(): Flow<ViewEffect> {
-//        return mapLatest {YoutubeUriErrorEffect }
-        return youtubeExtractor_().mapLatest {
-            val appPlayer = states.value.appPlayer
-            // If the player exists, it should be updated with the latest video data that came in
-            states.value.videoData?.let {
-                appPlayer?.setUpWith(it, handle.get())
-            }
-            // Capture any updated index so UI page state can stay in sync. For example, a video
-            // may have been added to the page before the currently active one. That means the
-            // the current video/page index will have changed
-//            val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
-//            states.value.videoData?.let { LoadVideoDataResult(it, index) }
-            YoutubeUriErrorEffect
-        }
-    }
 
 
 
-
-    fun youtubeExtractor_():Flow<String> = callbackFlow {
-        GlobalScope.launch(Dispatchers.IO) {
-            delay(3000)
-            val listener = object : YouTubeExtractor(context!!) {
-                override fun onExtractionComplete(
-                    ytFiles: SparseArray<YtFile>?,
-                    vMeta: VideoMeta?
-                ) {
-                    if (ytFiles != null) {
-                        val itag = 18
-                        val finalUri = ytFiles[itag].url
-
-                        val indexx = states.value.page
-                        states.value.videoData?.get(indexx)?.mediaUri = finalUri
-                        trySend("")
-                    }
-                }
-            }.extract(states.value.videoData?.get(states.value.page)?.mediaUri, false, false)
-        }
-        awaitClose {  }
-    }
 
 
 
