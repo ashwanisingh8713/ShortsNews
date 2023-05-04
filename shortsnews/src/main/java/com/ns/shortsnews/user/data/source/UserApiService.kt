@@ -17,6 +17,9 @@ interface UserApiService {
     @GET("my-profile")
     suspend fun getUserProfile(): ProfileResult
 
+    @GET("my-channels")
+    suspend fun getChannelData():ChannelsDataResult
+
     @GET("categories")
     suspend fun getVideoCategory(): VideoCategoryResult
 

@@ -75,18 +75,33 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     }
 
     override fun like(videoId: String, position: Int): Flow<Triple<String, Boolean, Int>> = flow {
-        val res = api.like(videoId)
-        emit(Triple(res.data.like_count, res.data.liked, position))
+        try {
+            val res = api.like(videoId)
+            emit(Triple(res.data.like_count, res.data.liked, position))
+        }  catch (ec :java.lang.Exception) {
+            Log.i("kamels","$ec")
+        }
+
     }
 
     override fun follow(channel_id: String, position: Int): Flow<Pair<Following, Int>> = flow {
-       val data =  api.follow(channel_id)
-        emit(Pair(data, position))
+        try {
+            val data =  api.follow(channel_id)
+            emit(Pair(data, position))
+        } catch (ec :java.lang.Exception) {
+            Log.i("kamels","$ec")
+        }
+
     }
 
     override fun comment(videoId: String, position: Int): Flow<Triple<String, Comments, Int>> = flow {
-       val data =  api.comment(videoId)
-        emit(Triple(videoId, data, position))
+        try {
+            val data =  api.comment(videoId)
+            emit(Triple(videoId, data, position))
+        }  catch (ec :java.lang.Exception) {
+            Log.i("kamels","$ec")
+        }
+
     }
 
     override fun getVideoInfo(videoId: String, position: Int): Flow<Pair<VideoInfo,Int>> = flow {
@@ -101,10 +116,14 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     }
 
     override fun getPostComment(videoId: String, comment: String, position: Int): Flow<Pair<PostComment, Int>> = flow {
-        val body = mutableMapOf<String, String>()
-        body["comment"] = comment
-        val data = api.getPostComment(videoId, body)
-        emit(Pair(data,position))
+        try {
+            val body = mutableMapOf<String, String>()
+            body["comment"] = comment
+            val data = api.getPostComment(videoId, body)
+            emit(Pair(data,position))
+        } catch (ec :java.lang.Exception) {
+            Log.i("kamels","$ec")
+        }
     }
 
 

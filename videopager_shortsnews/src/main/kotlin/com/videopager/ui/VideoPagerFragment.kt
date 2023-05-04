@@ -232,12 +232,17 @@ class VideoPagerFragment(
                     SaveClickEvent("", 101010)
                 }
                 ShareClick -> {
-                    // TODO, Sharing
+                    val currentItem = binding.viewPager.currentItem
+                    val videoData = pagerAdapter.getVideoData(currentItem)
+
                     val intent = Intent(Intent.ACTION_SEND)
                     intent.type = "text/plain"
                     intent.putExtra(Intent.EXTRA_STREAM, "NewsDx Shorts")
-                    var sAux = "\n Let me recommend you this application\n\n"
-                    sAux += "https://play.google.com/store/apps/details?id=in.newsdx.preview \n\n"
+//                    var sAux = "\n Let me recommend you this application\n\n"
+//                    sAux += "https://play.google.com/store/apps/details?id=in.newsdx.preview \n\n"
+
+                    var sAux = "Vid :: ${videoData.id} \nUrl ::  ${videoData.mediaUri}"
+
                     intent.putExtra(Intent.EXTRA_TEXT, sAux)
                     startActivity(intent)
                     ShareClickEvent
