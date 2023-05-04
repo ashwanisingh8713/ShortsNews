@@ -7,6 +7,21 @@ import com.squareup.moshi.JsonClass
  * Created by Ashwani Kumar Singh on 21,April,2023.
  */
 
+
+@JsonClass(generateAdapter = true)
+data class ProfileResult(
+    val data: ProfileData,
+    val status:Boolean
+)
+
+@JsonClass(generateAdapter = true)
+data class ProfileData(
+    val user_id:String,
+    val email:String,
+    val name:String,
+    val last_logged_in:String,
+    val image:String
+)
 @JsonClass(generateAdapter = true)
 data class OTPResult(
     @Json(name = "data")
@@ -47,4 +62,5 @@ data class VideoCategory(
     val id: String,
     val name: String,
     val selected:Boolean = false,
+    val optionSelected:Boolean = false,
 )

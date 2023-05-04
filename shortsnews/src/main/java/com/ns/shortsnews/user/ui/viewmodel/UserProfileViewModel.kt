@@ -3,17 +3,17 @@ package com.ns.shortsnews.user.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ns.shortsnews.user.domain.exception.ApiError
-import com.ns.shortsnews.user.domain.models.UserChoiceResult
+import com.ns.shortsnews.user.domain.models.ProfileResult
 import com.ns.shortsnews.user.domain.usecase.base.UseCaseResponse
-import com.ns.shortsnews.user.domain.usecase.user.UserChoiceDataUseCase
+import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class UserChoiceViewModel(private val userChoiceDataUseCase: UserChoiceDataUseCase): ViewModel() {
+class UserProfileViewModel(private val userChoiceDataUseCase: UserProfileDataUseCase): ViewModel() {
 
     // Profile
-    private val _userChoiceSuccessState = MutableStateFlow<UserChoiceResult?>(null)
-    val UserChoiceSuccessState: StateFlow<UserChoiceResult?> get() = _userChoiceSuccessState
+    private val _userProfileSuccessState = MutableStateFlow<ProfileResult?>(null)
+    val UserProfileSuccessState: StateFlow<ProfileResult?> get() = _userProfileSuccessState
 
     private val _errorState = MutableStateFlow<String?>("NA")
     val errorState: StateFlow<String?> get() = _errorState
@@ -22,11 +22,11 @@ class UserChoiceViewModel(private val userChoiceDataUseCase: UserChoiceDataUseCa
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
 
-    fun requestChoiceApi(requestBody: Map<String, String>) {
-        userChoiceDataUseCase.invoke(viewModelScope, requestBody,
-            object : UseCaseResponse<UserChoiceResult> {
-                override fun onSuccess(type: UserChoiceResult) {
-                    _userChoiceSuccessState.value = type
+    fun requestProfileApi() {
+        userChoiceDataUseCase.invoke(viewModelScope, null,
+            object : UseCaseResponse<ProfileResult> {
+                override fun onSuccess(type: ProfileResult) {
+                    _userProfileSuccessState.value = type
                     _loadingState.value = false
                 }
 

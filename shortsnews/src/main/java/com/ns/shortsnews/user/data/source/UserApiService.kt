@@ -1,9 +1,6 @@
 package com.ns.shortsnews.user.data.source
 
-import com.ns.shortsnews.user.domain.models.OTPResult
-import com.ns.shortsnews.user.domain.models.UserChoiceResult
-import com.ns.shortsnews.user.domain.models.RegistrationResult
-import com.ns.shortsnews.user.domain.models.VideoCategoryResult
+import com.ns.shortsnews.user.domain.models.*
 import retrofit2.http.*
 
 /**
@@ -17,8 +14,8 @@ interface UserApiService {
     @POST("verify-email-otp")
     suspend fun getValidateOtp(@Body otpData:Map<String, String>): OTPResult
 
-    @GET("explore-home")
-    suspend fun getUserChoice(): UserChoiceResult
+    @GET("my-profile")
+    suspend fun getUserProfile(): ProfileResult
 
     @GET("categories")
     suspend fun getVideoCategory(): VideoCategoryResult

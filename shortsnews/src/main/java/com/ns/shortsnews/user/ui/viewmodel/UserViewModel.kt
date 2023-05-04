@@ -101,5 +101,9 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
         )
     }
 
+    fun requestProfileApi(){
+
+    }
+
 
 }
