@@ -7,7 +7,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import coil.imageLoader
@@ -106,12 +108,17 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
 
     private fun showCategory() {
         lifecycleScope.launch() {
-            videoCategoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
-                // Setup recyclerView
-                caAdapter = CategoryAdapter(itemList = it.videoCategories, itemListener = this@MainActivity)
-                binding.recyclerView.adapter = caAdapter
-                val defaultCate = it.videoCategories[0]
-                loadHomeFragment(defaultCate.id)
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                videoCategoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
+                    // Setup recyclerView
+                    caAdapter = CategoryAdapter(
+                        itemList = it.videoCategories,
+                        itemListener = this@MainActivity
+                    )
+                    binding.recyclerView.adapter = caAdapter
+                    val defaultCate = it.videoCategories[0]
+                    loadHomeFragment(defaultCate.id)
+                }
             }
         }
     }

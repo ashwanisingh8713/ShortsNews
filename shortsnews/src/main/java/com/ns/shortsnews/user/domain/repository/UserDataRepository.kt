@@ -1,12 +1,12 @@
 package com.ns.shortsnews.user.domain.repository
 
 import com.ns.shortsnews.user.domain.models.OTPResult
-import com.ns.shortsnews.user.domain.models.UserChoiceResult
+import com.ns.shortsnews.user.domain.models.ProfileResult
 import com.ns.shortsnews.user.domain.models.RegistrationResult
 
 
 interface UserDataRepository {
     suspend fun getUserRegistration(data:Map<String, String>): RegistrationResult
     suspend fun getValidateOtpData(otp:Map<String, String>): OTPResult
-    suspend fun getUserChoiceData(): UserChoiceResult
+    suspend fun getUserProfileData(): ProfileResult
 }

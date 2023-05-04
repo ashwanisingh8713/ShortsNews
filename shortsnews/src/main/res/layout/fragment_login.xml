@@ -8,27 +8,27 @@
     android:background="@color/screen_background">
 
     <ImageView
-        android:id="@+id/app_logo_login"
-        android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_60sdp"
-        android:src="@drawable/app_icon"
+        android:id="@+id/back_button_login"
+        android:layout_width="12dp"
+        android:layout_height="20dp"
+        android:src="@drawable/back_button"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="@dimen/_30sdp"
-        android:layout_marginStart="@dimen/_30sdp"
-        android:contentDescription="@string/app_logo"/>
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="30dp"
+        android:contentDescription="@string/back_button_des"/>
 
     <TextView
         android:id="@+id/login_signup_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login_signup"
-        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginStart="30dp"
         android:textColor="@color/white"
         android:fontFamily="@font/roboto_bold"
-        android:layout_marginBottom="@dimen/_50sdp"
+        android:layout_marginBottom="50dp"
         android:textStyle="bold"
-        android:textSize="@dimen/_14ssp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/name_text_input"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -37,20 +37,20 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_background"
-        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginStart="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="@dimen/_30sdp"
+        android:layout_marginEnd="30dp"
         app:layout_constraintBottom_toTopOf="@id/email_text_input"
-        android:layout_marginBottom="@dimen/_20sdp"
+        android:layout_marginBottom="20dp"
         android:hint="@string/name_hint"
         android:textColor="@color/white"
         android:autofillHints="name"
         android:inputType="textPersonName"
         android:textColorHint="@color/white"
-        android:textSize="@dimen/_12ssp"
+        android:textSize="12sp"
         android:fontFamily="@font/roboto_regular"
-        android:paddingStart="@dimen/_12sdp"
+        android:paddingStart="12dp"
         tools:ignore="RtlSymmetry"/>
 
     <EditText
@@ -58,20 +58,20 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_background"
-        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginStart="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="@dimen/_30sdp"
+        android:layout_marginEnd="30dp"
         app:layout_constraintBottom_toTopOf="@id/submit_button"
         android:hint="@string/email_hint"
         android:textColor="@color/white"
         android:autofillHints="emailAddress"
         android:inputType="textEmailAddress"
         android:textColorHint="@color/white"
-        android:textSize="@dimen/_12ssp"
+        android:textSize="12sp"
         android:fontFamily="@font/roboto_regular"
-        android:layout_marginBottom="@dimen/_80sdp"
-        android:paddingStart="@dimen/_12sdp"
+        android:layout_marginBottom="80dp"
+        android:paddingStart="12dp"
         tools:ignore="RtlSymmetry"/>
 
     <com.google.android.material.button.MaterialButton
@@ -81,16 +81,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="@dimen/_50sdp"
-        android:layout_marginStart="@dimen/_30sdp"
-        android:layout_marginEnd="@dimen/_30sdp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:backgroundTint="@color/button_background"
         android:text="@string/submit_btn_text"
         android:textColor="@color/white"
-        android:textSize="@dimen/_12ssp"
+        android:textSize="12sp"
         android:textAllCaps="false"
         android:fontFamily="@font/roboto_regular"
-        app:cornerRadius="@dimen/_5sdp"/>
+        app:cornerRadius="5dp"/>
     
     <ProgressBar
         android:id="@+id/progress_bar_login"
@@ -103,7 +103,5 @@
         android:backgroundTint="@color/white"
         android:visibility="gone"
         />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

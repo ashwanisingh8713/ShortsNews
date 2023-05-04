@@ -14,4 +14,5 @@
     <string name="resend_text">Resend OTP</string>
     <string name="otp_sent_text">email@email.com</string>
     <string name="title_otp_sent_text">OTP sent to</string>
+    <string name="back_button_des">back button_login</string>
 </resources>
