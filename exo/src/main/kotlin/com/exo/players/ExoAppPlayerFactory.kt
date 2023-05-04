@@ -25,8 +25,9 @@ class ExoAppPlayerFactory(context: Context) : AppPlayer.Factory {
     // Use application context to avoid leaking Activity.
     private val appContext = context.applicationContext
 
+
     override fun create(config: AppPlayer.Factory.Config): AppPlayer {
-        cachingInit()
+
         val exoPlayer = ExoPlayer.Builder(appContext)
             .build()
             .apply {
@@ -38,38 +39,7 @@ class ExoAppPlayerFactory(context: Context) : AppPlayer.Factory {
         return ExoAppPlayer(exoPlayer, updater)
     }
 
-    companion object {
-        lateinit var simpleCache: SimpleCache
-        const val exoPlayerCacheSize: Long = 90 * 1024 * 1024
-        lateinit var leastRecentlyUsedCacheEvictor: LeastRecentlyUsedCacheEvictor
-        lateinit var exoDatabaseProvider: ExoDatabaseProvider
-    }
 
-    private lateinit var httpDataSourceFactory: HttpDataSource.Factory
-    private lateinit var defaultDataSourceFactory: DefaultDataSourceFactory
-    private lateinit var cacheDataSourceFactory: CacheDataSource
-
-
-    private fun cachingInit() {
-        leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
-        exoDatabaseProvider = ExoDatabaseProvider(appContext)
-        simpleCache = SimpleCache(appContext.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
-
-        httpDataSourceFactory = DefaultHttpDataSource.Factory()
-            .setAllowCrossProtocolRedirects(true)
-
-        defaultDataSourceFactory = DefaultDataSourceFactory(
-            appContext, httpDataSourceFactory
-        )
-
-        cacheDataSourceFactory = CacheDataSource.Factory()
-            .setCache(simpleCache)
-            .setUpstreamDataSourceFactory(httpDataSourceFactory)
-            .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-            .createDataSource()
-
-
-    }
 
 
 

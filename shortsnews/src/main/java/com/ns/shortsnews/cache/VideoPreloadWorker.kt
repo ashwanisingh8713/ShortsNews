@@ -1,9 +1,9 @@
-package com.exo.cache
+package com.ns.shortsnews.cache
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.work.*
-import com.exo.players.ExoAppPlayerFactory
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheWriter
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.ns.shortsnews.MainApplication
 import kotlinx.coroutines.*
 
 class VideoPreloadWorker(private val context: Context, workerParameters: WorkerParameters) :
@@ -20,7 +21,7 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
     private lateinit var mHttpDataSourceFactory: HttpDataSource.Factory
     private lateinit var mDefaultDataSourceFactory: DefaultDataSourceFactory
     private lateinit var mCacheDataSource: CacheDataSource
-    private val cache: SimpleCache = ExoAppPlayerFactory.simpleCache
+    private val cache: SimpleCache = MainApplication.cache
 
     companion object {
         const val VIDEO_URL = "video_url"
@@ -64,7 +65,8 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
         val dataSpec = DataSpec(videoUri)
 
         val progressListener = CacheWriter.ProgressListener { requestLength, bytesCached, _ ->
-            val downloadPercentage: Double = (bytesCached * 100.0 / requestLength)
+            var downloadPercentage: Double = (bytesCached * 100.0 / requestLength)
+            Log.i("CacheDownload", "$downloadPercentage")
             // Do Something
         }
 

@@ -257,32 +257,38 @@ internal class VideoPagerViewModel(
             appPlayer.pause()
             repository.getVideoInfo(event.videoId, event.position)
         }.mapLatest {
-            var index = it.second+1
-            getYoutubeUri(index)
+            getYoutubeUri(it.second)
             Pair(it.first, it.second)
         }.map {
             GetVideoInfoResult(it.second, it.first)
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private suspend fun getYoutubeUri(index: Int) {
-        withContext(Dispatchers.IO) {
-            var videoData = states.value.videoData?.get(index)!!
-            if (videoData.type=="yt") {
-                val youTubeUri = YouTubeUri(context)
-                var ytFiles = youTubeUri.getStreamUrls(videoData.mediaUri)
-                val iTag = 18
-                var finalUri18 = ""
-                if (ytFiles != null && ytFiles.indexOfKey(iTag) >=0) {
-                    finalUri18 = ytFiles[iTag].url
-                    videoData.mediaUri = finalUri18
-                    videoData.type = ""
+            withContext(Dispatchers.IO) {
+                var requestedIndex = index+1
+                var total = states.value.videoData?.size!!
+                if(total <= requestedIndex) {
+                    return@withContext
+                }
 
-                    GlobalScope.launch(Dispatchers.Main) {
-                        val appPlayer = states.value.appPlayer
-                        // If the player exists, it should be updated with the latest video data that came in
-                        appPlayer?.setUpWith(states.value.videoData!!, handle.get())
-                        Log.i("Conv_TIME", "$finalUri18")
+                var videoData = states.value.videoData?.get(requestedIndex)
+                if (videoData?.type == "yt") {
+                    val youTubeUri = YouTubeUri(context)
+                    var ytFiles = youTubeUri.getStreamUrls(videoData.mediaUri)
+                    val iTag = 18
+                    var finalUri18 = ""
+                    if (ytFiles != null && ytFiles.indexOfKey(iTag) >= 0) {
+                        finalUri18 = ytFiles[iTag].url
+                        videoData.mediaUri = finalUri18
+                        videoData.type = "converted"
+
+                        GlobalScope.launch(Dispatchers.Main) {
+                            val appPlayer = states.value.appPlayer
+                            // If the player exists, it should be updated with the latest video data that came in
+                            appPlayer?.setUpWith(states.value.videoData!!, handle.get())
+                            Log.i("Conv_TIME", "$finalUri18")
                     }
                 }
             }

@@ -5,8 +5,13 @@ import com.github.difflib.DiffUtils
 import com.github.difflib.patch.AbstractDelta
 import com.github.difflib.patch.DeltaType
 import com.github.difflib.patch.Patch
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.player.models.VideoData
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
@@ -20,9 +25,10 @@ import kotlin.coroutines.CoroutineContext
 internal class DiffingVideoDataUpdater(
     private val diffingContext: CoroutineContext
 ) : VideoDataUpdater {
-    override suspend fun update(player: Player, incoming: List<VideoData>) {
+    override suspend fun update(player: ExoPlayer, incoming: List<VideoData>) {
         val oldMediaItems = player.currentMediaItems
         val newMediaItems = incoming.toMediaItems()
+
 
         val patch: Patch<MediaItem> = withContext(diffingContext) {
             DiffUtils.diff(oldMediaItems, newMediaItems)
@@ -46,15 +52,26 @@ internal class DiffingVideoDataUpdater(
     }
 
     private fun AbstractDelta<MediaItem>.insert(player: Player) {
+
         player.addMediaItems(target.position, target.lines)
     }
 
     private fun List<VideoData>.toMediaItems(): List<MediaItem> {
         return map { videoData ->
-            MediaItem.Builder()
+            val mediaItem = MediaItem.Builder()
                 .setMediaId(videoData.id)
                 .setUri(videoData.mediaUri)
                 .build()
+
+            /*var mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
+                .setAllowCrossProtocolRedirects(true)
+            var mCacheDataSourceFactory  = CacheDataSource.Factory()
+//                .setCache(cache)
+                .setUpstreamDataSourceFactory(mHttpDataSourceFactory)
+                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+            val mediaSource = ProgressiveMediaSource.Factory(mCacheDataSourceFactory).createMediaSource(mediaItem)*/
+
+            mediaItem
         }
     }
 }

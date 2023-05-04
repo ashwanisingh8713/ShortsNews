@@ -13,7 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import coil.imageLoader
-import com.exo.cache.VideoPreloadWorker
+import com.ns.shortsnews.cache.VideoPreloadWorker
 import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
 import com.ns.shortsnews.adapters.CategoryAdapter
@@ -23,6 +23,7 @@ import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
+import com.player.models.VideoData
 import com.videopager.ui.VideoPagerFragment
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
@@ -66,7 +67,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
 
         videoCategoryViewModel.loadVideoCategory()
         showCategory()
-//        youtubeExtractor()
+        registerVideoCache()
     }
 
     /**
@@ -107,7 +108,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
     }
 
     private fun showCategory() {
-        lifecycleScope.launch() {
+        lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 videoCategoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
                     // Setup recyclerView
@@ -123,12 +124,20 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         }
     }
 
-    private fun schedulePreloadWork(videoUrl: String) {
+    private fun registerVideoCache() {
+        lifecycleScope.launch {
+            sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
+                schedulePreloadWork(it)
+            }
+        }
+    }
+
+    private fun schedulePreloadWork(videoData: VideoData) {
         val workManager = WorkManager.getInstance(this)
-        val videoPreloadWorker = VideoPreloadWorker.buildWorkRequest(videoUrl)
+        val videoPreloadWorker = VideoPreloadWorker.buildWorkRequest(videoData.mediaUri)
         workManager.enqueueUniqueWork(
-            "VideoPreloadWorker",
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            videoData.id,
+            ExistingWorkPolicy.KEEP,
             videoPreloadWorker
         )
     }

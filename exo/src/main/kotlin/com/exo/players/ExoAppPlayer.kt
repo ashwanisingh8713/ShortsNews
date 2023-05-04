@@ -2,6 +2,7 @@ package com.exo.players
 
 import android.util.Log
 import com.exo.data.VideoDataUpdater
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.UnrecognizedInputFormatException
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 internal class ExoAppPlayer(
-    internal val player: Player,
+    internal val player: ExoPlayer,
     private val updater: VideoDataUpdater
 ) : AppPlayer {
     override val currentPlayerState: PlayerState get() = player.toPlayerState()

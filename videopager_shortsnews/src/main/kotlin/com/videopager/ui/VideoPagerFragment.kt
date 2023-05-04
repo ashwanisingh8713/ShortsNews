@@ -22,7 +22,6 @@ import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.models.OnPageSettledEvent
 import com.videopager.models.PageEffect
-import com.videopager.models.PauseVideoEvent
 import com.videopager.models.PlayerErrorEffect
 import com.videopager.models.PlayerLifecycleEvent
 import com.videopager.models.ViewEvent
@@ -133,15 +132,13 @@ class VideoPagerFragment(
                         Snackbar.LENGTH_LONG
                     ).show()
                     is GetVideoInfoEffect -> {
-                        Log.i("kamlesh", "information adapter update")
                         pagerAdapter.refreshUI(effect.position)
+                        sharedEventViewModel.cacheVideoData(pagerAdapter.getVideoData(effect.position+1))
                     }
 
                     is PostCommentEffect -> {
-                        Log.i("", "")
                         pagerAdapter.refreshUI(effect.position)
                         commentFragment.updateCommentAdapter(effect.data)
-                        // TODO, Update
                     }
                     is YoutubeUriErrorEffect -> {
                         Log.i("", "")
