@@ -64,7 +64,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                 type = "yt"
             )
 
-            response.data.add(0, youtubeUrl1)
+//            response.data.add(0, youtubeUrl1)
             /*response.data.add(0, youtubeUrl1)
             response.data.add(2, youtubeUrl2)
             response.data.add(2, youtubeUrl2)
