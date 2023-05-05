@@ -239,7 +239,7 @@ class VideoPagerFragment(
 //                    var sAux = "\n Let me recommend you this application\n\n"
 //                    sAux += "https://play.google.com/store/apps/details?id=in.newsdx.preview \n\n"
 
-                    var sAux = "Vid :: ${videoData.id} \nUrl ::  ${videoData.mediaUri}"
+                    var sAux = videoData.mediaUri
 
                     chooserIntent.putExtra(Intent.EXTRA_TEXT, sAux)
                     activity?.startActivity(Intent.createChooser(chooserIntent,"Share Via"))
