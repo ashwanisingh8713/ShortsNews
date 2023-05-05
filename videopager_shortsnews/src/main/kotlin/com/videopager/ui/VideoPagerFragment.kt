@@ -1,6 +1,8 @@
 package com.videopager.ui
 
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -231,17 +233,16 @@ class VideoPagerFragment(
                 ShareClick -> {
                     val currentItem = binding.viewPager.currentItem
                     val videoData = pagerAdapter.getVideoData(currentItem)
-
-                    val intent = Intent(Intent.ACTION_SEND)
-                    intent.type = "text/plain"
-                    intent.putExtra(Intent.EXTRA_STREAM, "NewsDx Shorts")
+                    val chooserIntent = Intent(Intent.ACTION_SEND)
+                    chooserIntent.type = "text/plain"
+                    chooserIntent.putExtra(Intent.EXTRA_TEXT, "NewsDx Shorts")
 //                    var sAux = "\n Let me recommend you this application\n\n"
 //                    sAux += "https://play.google.com/store/apps/details?id=in.newsdx.preview \n\n"
 
                     var sAux = "Vid :: ${videoData.id} \nUrl ::  ${videoData.mediaUri}"
 
-                    intent.putExtra(Intent.EXTRA_TEXT, sAux)
-                    startActivity(intent)
+                    chooserIntent.putExtra(Intent.EXTRA_TEXT, sAux)
+                    activity?.startActivity(Intent.createChooser(chooserIntent,"Share Via"))
                     ShareClickEvent
                 }
                 CommentClick -> {

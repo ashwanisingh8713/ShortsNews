@@ -3,24 +3,17 @@ package com.ns.shortsnews.user.ui.fragment
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import coil.load
 import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.ChannelsAdapter
 import com.ns.shortsnews.databinding.FragmentFollowingBinding
-import com.ns.shortsnews.databinding.FragmentPersonaliseBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.channel.ChannelsDataUseCase
-import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.ChannelsViewModel
 import com.ns.shortsnews.user.ui.viewmodel.ChannelsViewModelFactory
-import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModel
-import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -41,6 +34,7 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
         binding.backButtonUser.setOnClickListener {
             activity?.finish()
         }
+        channelsViewModel.requestChannelListApi()
 
 
         viewLifecycleOwner.lifecycleScope.launch(){

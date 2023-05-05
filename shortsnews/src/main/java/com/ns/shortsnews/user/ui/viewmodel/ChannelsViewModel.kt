@@ -4,10 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ns.shortsnews.user.domain.exception.ApiError
 import com.ns.shortsnews.user.domain.models.ChannelsDataResult
-import com.ns.shortsnews.user.domain.models.ProfileResult
 import com.ns.shortsnews.user.domain.usecase.base.UseCaseResponse
 import com.ns.shortsnews.user.domain.usecase.channel.ChannelsDataUseCase
-import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -24,7 +22,7 @@ class ChannelsViewModel(private val channelsDataUseCase: ChannelsDataUseCase): V
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
 
-    fun requestProfileApi() {
+    fun requestChannelListApi() {
         channelsDataUseCase.invoke(viewModelScope, null,
             object : UseCaseResponse<ChannelsDataResult> {
                 override fun onSuccess(type: ChannelsDataResult) {

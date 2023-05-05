@@ -108,8 +108,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
     }
 
     private fun showCategory() {
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+        lifecycleScope.launch() {
                 videoCategoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
                     // Setup recyclerView
                     caAdapter = CategoryAdapter(
@@ -120,7 +119,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
                     val defaultCate = it.videoCategories[0]
                     loadHomeFragment(defaultCate.id)
                 }
-            }
+
         }
     }
 
