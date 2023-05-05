@@ -64,3 +64,19 @@ data class VideoCategory(
     val selected:Boolean = false,
     val optionSelected:Boolean = false,
 )
+
+@JsonClass(generateAdapter = true)
+data class ChannelsDataResult(
+    val data:List<ChannelListData>,
+    val status:Boolean,
+    val total:Int,
+    val page:Int,
+    val perPage:Int
+)
+
+@JsonClass(generateAdapter = true)
+data class ChannelListData(
+   val channel_id:String,
+   val channel_image:String,
+   val channelTitle:String
+)
