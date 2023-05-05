@@ -42,8 +42,8 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         .create(VideoDataService::class.java)
 
 
-    override suspend fun videoData(requestType: String, context: Context): Flow<List<VideoData>> {
-        var ll = mutableListOf<List<VideoData>>()
+    override suspend fun videoData(requestType: String, context: Context): Flow<MutableList<VideoData>> {
+        var ll = mutableListOf<MutableList<VideoData>>()
 
         val llVid = withContext(Dispatchers.IO) {
 
@@ -64,13 +64,25 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                 type = "yt"
             )
 
-//            response.data.add(0, youtubeUrl1)
-//            response.data.add(2, youtubeUrl2)
+            response.data.add(0, youtubeUrl1)
+            /*response.data.add(0, youtubeUrl1)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)
+            response.data.add(2, youtubeUrl2)*/
 
 
-            Log.i("Conv_TIME", "StartTime:: ${System.currentTimeMillis()}")
 
-            val allowedConversionCount = 1
+            val allowedConversionCount = 100
             var conversionCount = 0
 
             val videoData = response.data
@@ -90,7 +102,6 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                         var finalUri18 = ""
                         if (ytFiles != null && ytFiles.contains(iTag)) {
                             finalUri18 = ytFiles[iTag].url
-                            Log.i("Conv_TIME", "$finalUri18")
                             conversionCount++
                         }
                         VideoData(
@@ -98,15 +109,16 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                             mediaUri = finalUri18,
                             previewImageUri = post.preview!!,
                             aspectRatio = null,
-                            type = post.type
+                            type = "yt"
                         )
                     }
                 }.filter {
                     it.mediaUri.isNotBlank()
                 }
-            Log.i("Conv_TIME", "EndTime :: ${System.currentTimeMillis()}")
 
-            ll.add(videoData)
+            Log.i("Conv_TIME", "VideoDataRepositoryImpl")
+
+            ll.add(videoData as MutableList)
             ll
         }
 

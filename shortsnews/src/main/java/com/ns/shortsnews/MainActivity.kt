@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
     private fun registerVideoCache() {
         lifecycleScope.launch {
             sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
-                schedulePreloadWork(it)
+//                schedulePreloadWork(it)
             }
         }
     }

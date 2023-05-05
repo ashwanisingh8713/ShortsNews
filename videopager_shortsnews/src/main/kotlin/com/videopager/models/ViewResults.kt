@@ -18,7 +18,7 @@ internal data class GetVideoInfoResult(val position: Int, val response: VideoInf
 
 internal data class PostCommentResult(val response:PostCommentData , val position:Int):ViewResult()
 
-internal data class LoadVideoDataResult(val videoData: List<VideoData>, val currentMediaItemIndex: Int) : ViewResult()
+internal data class LoadVideoDataResult(val videoData: MutableList<VideoData>, val currentMediaItemIndex: Int) : ViewResult()
 
 internal data class CreatePlayerResult(val appPlayer: AppPlayer) : ViewResult()
 

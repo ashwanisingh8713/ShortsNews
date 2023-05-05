@@ -135,7 +135,7 @@ class VideoPagerFragment(
                     ).show()
                     is GetVideoInfoEffect -> {
                         pagerAdapter.refreshUI(effect.position)
-                        sharedEventViewModel.cacheVideoData(pagerAdapter.getVideoData(effect.position+1))
+//                        sharedEventViewModel.cacheVideoData(pagerAdapter.getVideoData(effect.position))
                     }
 
                     is PostCommentEffect -> {

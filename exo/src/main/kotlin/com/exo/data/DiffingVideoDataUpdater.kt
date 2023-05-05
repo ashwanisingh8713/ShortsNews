@@ -1,5 +1,6 @@
 package com.exo.data
 
+import android.util.Log
 import com.exo.players.currentMediaItems
 import com.github.difflib.DiffUtils
 import com.github.difflib.patch.AbstractDelta
@@ -42,17 +43,20 @@ internal class DiffingVideoDataUpdater(
                 }
                 DeltaType.DELETE -> delta.delete(player)
                 DeltaType.INSERT -> delta.insert(player)
-                DeltaType.EQUAL -> {} // Nothing to do here
+                DeltaType.EQUAL -> {
+
+                } // Nothing to do here
             }
         }
     }
 
     private fun AbstractDelta<MediaItem>.delete(player: Player) {
+        Log.i("Conv_TIME", "Diffing - delete : ${target.position}")
         player.removeMediaItems(target.position, target.position + source.lines.size)
     }
 
     private fun AbstractDelta<MediaItem>.insert(player: Player) {
-
+        Log.i("Conv_TIME", "Diffing - insert : ${target.position}")
         player.addMediaItems(target.position, target.lines)
     }
 

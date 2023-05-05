@@ -2,6 +2,7 @@ package com.exo.players
 
 import android.util.Log
 import com.exo.data.VideoDataUpdater
+import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
@@ -74,6 +75,10 @@ internal class ExoAppPlayer(
     override fun errors(): Flow<Throwable> = callbackFlow {
         val listener = object : Player.Listener {
             override fun onPlayerError(error: PlaybackException) {
+
+                var err = error
+                var sourceException = (err as ExoPlaybackException).sourceException
+                Log.i("", "$err")
                 trySend(error)
             }
         }

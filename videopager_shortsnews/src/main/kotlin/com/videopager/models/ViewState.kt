@@ -9,5 +9,5 @@ data class ViewState(
     val page: Int = 0,
     val showPlayer: Boolean = false,
     val youtubeUriError: Boolean = false,
-    val videoData: List<VideoData>? = null
+    val videoData: MutableList<VideoData>? = null
 )

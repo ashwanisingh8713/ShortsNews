@@ -5,7 +5,7 @@ import com.player.models.VideoData
 import kotlinx.coroutines.flow.Flow
 
 interface VideoDataRepository {
-    suspend fun videoData(requestType: String, context: Context): Flow<List<VideoData>>
+    suspend fun videoData(requestType: String, context: Context): Flow<MutableList<VideoData>>
 
     fun like(videoId: String, position: Int):Flow<Triple<String, Boolean, Int>>
     fun follow(channel_id: String, position: Int):Flow<Pair<Following, Int>>
