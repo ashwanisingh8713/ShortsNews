@@ -59,6 +59,7 @@ class VideoPagerFragment(
         val appPlayerView = appPlayerViewFactory.create(view.context)
         pagerAdapter = PagerAdapter(imageLoader)
         binding.viewPager.adapter = pagerAdapter
+        binding.viewPager.isUserInputEnabled = false
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
         commentFragment = CommentsFragment()
 
@@ -104,6 +105,7 @@ class VideoPagerFragment(
                         pagerAdapter.showPlayerFor(state.page)
                         binding.progressBarVideoShorts.visibility = View.GONE
                     }
+                    binding.viewPager.isUserInputEnabled = true
                 }
             }
 
