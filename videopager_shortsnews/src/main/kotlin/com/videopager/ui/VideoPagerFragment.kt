@@ -60,7 +60,6 @@ class VideoPagerFragment(
         pagerAdapter = PagerAdapter(imageLoader)
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
-        binding.viewPager.isUserInputEnabled = false
         commentFragment = CommentsFragment()
 
         // Start point of Events, Flow, States
@@ -95,12 +94,13 @@ class VideoPagerFragment(
                     pagerAdapter.attachPlayerView(appPlayerView, state.page)
 
                     // If the player media is rendering frames, then show the player
+                    /*if (state.showPlayer) {
+                        pagerAdapter.showPlayerFor(state.page)
+                    }*/
                     if (state.showPlayer && state.youtubeUriError) {
-                        binding.viewPager.isUserInputEnabled = true
                         pagerAdapter.showPlayerFor(state.page)
                         binding.progressBarVideoShorts.visibility = View.VISIBLE
                     } else if (state.showPlayer) {
-                        binding.viewPager.isUserInputEnabled = true
                         pagerAdapter.showPlayerFor(state.page)
                         binding.progressBarVideoShorts.visibility = View.GONE
                     }
@@ -165,17 +165,13 @@ class VideoPagerFragment(
 
     private fun Lifecycle.viewEvents(): Flow<ViewEvent> {
         return events()
-            .filter { event ->
-                event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_STOP
-                        || event == Lifecycle.Event.ON_DESTROY
-            }
+            .filter { event -> event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_STOP }
             .map { event ->
                 // Fragment starting or stopping is a signal to create or tear down the player, respectively.
                 // The player should not be torn down across config changes, however.
                 when (event) {
                     Lifecycle.Event.ON_START -> PlayerLifecycleEvent.Start
                     Lifecycle.Event.ON_STOP -> PlayerLifecycleEvent.Stop(requireActivity().isChangingConfigurations)
-                    Lifecycle.Event.ON_DESTROY -> PlayerLifecycleEvent.Destroy(requireActivity().isChangingConfigurations)
                     else -> error("Unhandled event: $event")
                 }
             }

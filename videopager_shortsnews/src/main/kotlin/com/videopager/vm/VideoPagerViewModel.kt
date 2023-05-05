@@ -115,7 +115,7 @@ internal class VideoPagerViewModel(
         }.flatMapLatest { event ->
             when (event) {
                 is PlayerLifecycleEvent.Start -> createPlayer()
-                is PlayerLifecycleEvent.Stop -> pausePlayer()
+                is PlayerLifecycleEvent.Stop -> tearDownPlayer()
                 is PlayerLifecycleEvent.Destroy -> tearDownPlayer()
             }
         }
