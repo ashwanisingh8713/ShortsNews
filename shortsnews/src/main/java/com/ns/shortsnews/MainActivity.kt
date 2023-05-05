@@ -3,6 +3,7 @@ package com.ns.shortsnews
 import android.content.Intent
 import android.content.res.Resources.Theme
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val view = binding.root
         setContentView(view)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.screen_background)

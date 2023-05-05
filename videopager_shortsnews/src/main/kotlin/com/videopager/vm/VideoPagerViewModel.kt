@@ -264,7 +264,6 @@ internal class VideoPagerViewModel(
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private suspend fun getYoutubeUri(index: Int) {
             withContext(Dispatchers.IO) {
                 var requestedIndex = index+1
@@ -284,14 +283,18 @@ internal class VideoPagerViewModel(
                         videoData.mediaUri = finalUri18
                         videoData.type = "converted"
 
-                        GlobalScope.launch(Dispatchers.Main) {
-                            val appPlayer = states.value.appPlayer
-                            // If the player exists, it should be updated with the latest video data that came in
-                            appPlayer?.setUpWith(states.value.videoData!!, handle.get())
-                            Log.i("Conv_TIME", "$finalUri18")
-                    }
+                        setUpWithPlayer()
                 }
             }
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun setUpWithPlayer() {
+        GlobalScope.launch(Dispatchers.Main) {
+            val appPlayer = states.value.appPlayer
+            // If the player exists, it should be updated with the latest video data that came in
+            appPlayer?.setUpWith(states.value.videoData!!, handle.get())
         }
     }
 
@@ -368,7 +371,7 @@ internal class VideoPagerViewModel(
                 this.following = result.response.data.following
                 this.channel_image = result.response.data.channel_image
                 this.channel_id = result.response.data.channel_id
-                this.mediaUri = result.response.data.video_url
+//                this.mediaUri = result.response.data.video_url
                 this.title = result.response.data.title
                 this.previewImageUri = result.response.data.videoPreviewUrl
                 this.id = result.response.data.id

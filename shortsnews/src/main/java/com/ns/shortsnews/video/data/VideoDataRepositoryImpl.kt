@@ -82,7 +82,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 
 
 
-            val allowedConversionCount = 100
+            val allowedConversionCount = 2
             var conversionCount = 0
 
             val videoData = response.data
