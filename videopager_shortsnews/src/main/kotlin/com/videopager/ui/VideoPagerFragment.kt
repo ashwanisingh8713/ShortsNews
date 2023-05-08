@@ -182,6 +182,24 @@ class VideoPagerFragment(
 
     private fun ViewPager2.viewEvents(): Flow<ViewEvent> {
         return merge(
+
+            // Idling on a page after a scroll is a signal to try and change player playlist positions
+            pageIdlings().map {
+                OnPageSettledEvent(currentItem)
+            },
+            // A page change (which can happen before a page is idled upon) is a signal to pause media. This
+            // is useful for when a user is quickly swiping thru pages and the idle state isn't getting reached.
+            // It doesn't make sense for a video on a previous page to continue playing while the user is
+            // swiping quickly thru pages.
+            pageChanges().map {
+                PauseVideoEvent
+            },
+
+            getPageInfo().map {
+                val data = pagerAdapter.getVideoData(currentItem)
+                VideoInfoEvent(data.id, currentItem)
+            },
+
             getYoutubeUri().map {
                 var nextYoutubeUriPage = 0
                 nextYoutubeUriPage = if(currentItem < pagerAdapter.itemCount-1)  {
@@ -191,24 +209,6 @@ class VideoPagerFragment(
                 }
                 val data = pagerAdapter.getVideoData(nextYoutubeUriPage)
                 GetYoutubeUriEvent(data.type, nextYoutubeUriPage)
-            },
-
-            // Idling on a page after a scroll is a signal to try and change player playlist positions
-            pageIdlings().map {
-                OnPageSettledEvent(currentItem)
-            },
-
-            getPageInfo().map {
-                val data = pagerAdapter.getVideoData(currentItem)
-                VideoInfoEvent(data.id, currentItem)
-            },
-
-            // A page change (which can happen before a page is idled upon) is a signal to pause media. This
-            // is useful for when a user is quickly swiping thru pages and the idle state isn't getting reached.
-            // It doesn't make sense for a video on a previous page to continue playing while the user is
-            // swiping quickly thru pages.
-            pageChanges().map {
-                PauseVideoEvent
             },
             getYoutubeUri_2().map {
                 var nextYoutubeUriPage = 0
