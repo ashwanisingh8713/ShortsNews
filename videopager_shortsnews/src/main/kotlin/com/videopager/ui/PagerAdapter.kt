@@ -151,9 +151,6 @@ internal class PagerAdapter(
 
         val request = ImageRequest.Builder(this.context)
             .crossfade(true)
-//            .crossfade(500)
-//            .placeholder(R.drawable.toi)
-//            .error(R.drawable.toi)
             .data(url)
             .target(this)
             .build()

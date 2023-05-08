@@ -34,7 +34,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
-        binding.backButtonLogin.setOnClickListener {
+        binding.backConsLogin.setOnClickListener {
             activity?.finish()
         }
         binding.submitButton.setOnClickListener{

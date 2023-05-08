@@ -7,16 +7,27 @@
     tools:context=".user.ui.fragment.LoginFragment"
     android:background="@color/screen_background">
 
-    <ImageView
-        android:id="@+id/back_button_login"
-        android:layout_width="12dp"
-        android:layout_height="20dp"
-        android:src="@drawable/back_button"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/back_cons_login"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="30dp"
-        android:layout_marginStart="30dp"
-        android:contentDescription="@string/back_button_des"/>
+        android:layout_marginStart="30dp">
+
+        <ImageView
+            android:id="@+id/back_button_login"
+            android:layout_width="12dp"
+            android:layout_height="20dp"
+            android:src="@drawable/back_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="@string/back_button_des"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     <TextView
         android:id="@+id/login_signup_txt"
