@@ -131,17 +131,17 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         lifecycleScope.launch {
             sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
                 Log.i("", "")
-                Toast.makeText(this@MainActivity, "${it.id}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "${it.second}", Toast.LENGTH_SHORT).show()
 //                schedulePreloadWork(it)
             }
         }
     }
 
-    private fun schedulePreloadWork(videoData: VideoData) {
+    private fun schedulePreloadWork(videoData: Pair<String, String>) {
         val workManager = WorkManager.getInstance(this)
-        val videoPreloadWorker = VideoPreloadWorker.buildWorkRequest(videoData.mediaUri)
+        val videoPreloadWorker = VideoPreloadWorker.buildWorkRequest(videoData.first)
         workManager.enqueueUniqueWork(
-            videoData.id,
+            videoData.second,
             ExistingWorkPolicy.KEEP,
             videoPreloadWorker
         )

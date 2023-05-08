@@ -12,6 +12,7 @@ internal data class FollowClickResult(val position: Int, val following: Followin
 internal data class CommentClickResult( val videoId:String, val comments: Comments, val position: Int) : ViewResult()
 internal data class LikeClickResult(val position: Int): ViewResult()
 internal data class GetVideoInfoResult(val position: Int, val response: VideoInfoData): ViewResult()
+internal data class GetYoutubeUriResult(val uri: String, val id: String): ViewResult()
 
 internal data class PostCommentResult(val response:PostCommentData , val position:Int):ViewResult()
 

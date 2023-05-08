@@ -16,7 +16,8 @@ internal data class LikeEffect(val position: Int) : ViewEffect()
 internal data class FollowEffect(val position: Int, val channelId: Following) : ViewEffect()
 internal data class GetVideoInfoEffect(val videoInfo: VideoInfoData, val position: Int) : ViewEffect()
 internal object YoutubeUriErrorEffect : ViewEffect()
-//internal data class YoutubeUriErrorEffect(val position: String) : ViewEffect()
+
+internal data class GetYoutubeUriEffect(val uri: String, val id: String) : ViewEffect()
 
 internal data class PostCommentEffect(val data:PostCommentData, val position: Int): ViewEffect()
 

@@ -9,12 +9,12 @@ import kotlinx.coroutines.launch
 
 class SharedEventViewModel:ViewModel() {
 
-    private var _cacheVideoUrl= MutableSharedFlow<VideoData>()
+    private var _cacheVideoUrl= MutableSharedFlow<Pair<String, String>>()
     val cacheVideoUrl = _cacheVideoUrl.asSharedFlow()
 
-    fun cacheVideoData(videoData: VideoData) {
+    fun cacheVideoData(uri: String, id: String) {
         viewModelScope.launch {
-            _cacheVideoUrl.emit(videoData)
+            _cacheVideoUrl.emit(Pair(uri, id))
         }
     }
 

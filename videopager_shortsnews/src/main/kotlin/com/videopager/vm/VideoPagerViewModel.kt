@@ -251,44 +251,35 @@ internal class VideoPagerViewModel(
         }
     }
 
-    private fun Flow<GetYoutubeUriEvent>.toYoutubeUriResults():Flow<ViewResult>{
-        return map { event ->
-            /*if(event.uri.contains("www.youtube.com")) {
-                getYoutubeUri(event.position)
-            }*/
-//            getYoutubeUri(event.position)
-            if(event.type=="yt") {
-                getYoutubeUri(event.position)
-            }
+    private fun Flow<GetYoutubeUriEvent>.toYoutubeUriResults():Flow<GetYoutubeUriResult>{
+        return mapLatest { event ->
+            getYoutubeUri(event.position)
         }.map {
-            NoOpResult
+            GetYoutubeUriResult(it.first, it.second)
         }
     }
 
-    private suspend fun getYoutubeUri(index: Int) {
-            withContext(Dispatchers.IO) {
-//                var requestedIndex = index+1
-                var requestedIndex = index
-                var total = states.value.videoData?.size!!
-                if(total <= requestedIndex) {
-                    return@withContext
-                }
-
-                var videoData = states.value.videoData?.get(requestedIndex)
-                if (videoData?.type == "yt") {
-                    val youTubeUri = YouTubeUri(context)
-                    var ytFiles = youTubeUri.getStreamUrls(videoData.mediaUri)
-                    val iTag = 18
-                    var finalUri18 = ""
-                    if (ytFiles != null && ytFiles.indexOfKey(iTag) >= 0) {
-                        finalUri18 = ytFiles[iTag].url
-                        videoData.mediaUri = finalUri18
-                        videoData.type = "converted"
-
-                        setUpWithPlayer()
+    private suspend fun getYoutubeUri(index: Int): Pair<String, String> = withContext(Dispatchers.IO) {
+            var uri = ""
+            var videoId = ""
+            var requestedIndex = index
+            var videoData = states.value.videoData?.get(requestedIndex)!!
+            videoId = videoData.id
+            uri = videoData.mediaUri
+            if (videoData.type == "yt") {
+                val youTubeUri = YouTubeUri(context)
+                var ytFiles = youTubeUri.getStreamUrls(videoData.mediaUri)
+                val iTag = 18
+                if (ytFiles != null && ytFiles.indexOfKey(iTag) >= 0) {
+                    uri = ytFiles[iTag].url
+                    videoData.mediaUri = uri
+                    videoData.type = "converted"
+                    setUpWithPlayer()
                 }
             }
-        }
+            return@withContext Pair(uri, videoId)
+
+
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -325,6 +316,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<CommentClickResult>().toCommentViewEffect(),
             filterIsInstance<GetVideoInfoResult>().toGetVideoInfoEffect(),
             filterIsInstance<PostCommentResult>().toPostCommentEffect(),
+            filterIsInstance<GetYoutubeUriResult>().toGetYoutubeUriEffect(),
 
         )
     }
@@ -360,6 +352,13 @@ internal class VideoPagerViewModel(
         return mapLatest { result ->
             states.value.videoData?.get(states.value.page)?.comment_count = result.response.comment_count
             PostCommentEffect(result.response, result.position)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<GetYoutubeUriResult>.toGetYoutubeUriEffect(): Flow<GetYoutubeUriEffect>{
+        return mapLatest {
+            GetYoutubeUriEffect(it.uri, it.id)
         }
     }
 

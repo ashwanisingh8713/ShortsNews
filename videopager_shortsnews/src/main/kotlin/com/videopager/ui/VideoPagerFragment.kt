@@ -136,7 +136,9 @@ class VideoPagerFragment(
                     ).show()
                     is GetVideoInfoEffect -> {
                         pagerAdapter.refreshUI(effect.position)
-                        sharedEventViewModel.cacheVideoData(pagerAdapter.getVideoData(effect.position))
+                    }
+                    is GetYoutubeUriEffect ->{
+                        sharedEventViewModel.cacheVideoData(effect.uri, effect.id)
                     }
 
                     is PostCommentEffect -> {
@@ -199,9 +201,6 @@ class VideoPagerFragment(
                 val data = pagerAdapter.getVideoData(currentItem)
                 VideoInfoEvent(data.id, currentItem)
             },
-
-
-
 
             // A page change (which can happen before a page is idled upon) is a signal to pause media. This
             // is useful for when a user is quickly swiping thru pages and the idle state isn't getting reached.
