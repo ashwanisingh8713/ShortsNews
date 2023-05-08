@@ -40,6 +40,17 @@ internal fun ViewPager2.getYoutubeUri(): Flow<Unit> = callbackFlow {
     awaitClose { unregisterOnPageChangeCallback(callback) }
 }
 
+internal fun ViewPager2.getYoutubeUri_2(): Flow<Unit> = callbackFlow {
+    val callback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(state: Int) {
+            if (scrollState == ViewPager2.SCROLL_STATE_IDLE) return
+            trySend(Unit)
+        }
+    }
+    registerOnPageChangeCallback(callback)
+    awaitClose { unregisterOnPageChangeCallback(callback) }
+}
+
 internal fun ViewPager2.pageChanges(): Flow<Unit> = callbackFlow {
     val callback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {

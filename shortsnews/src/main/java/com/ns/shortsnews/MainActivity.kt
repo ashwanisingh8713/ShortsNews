@@ -131,7 +131,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         lifecycleScope.launch {
             sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
                 Log.i("", "")
-                Toast.makeText(this@MainActivity, "${it.second}", Toast.LENGTH_SHORT).show()
 //                schedulePreloadWork(it)
             }
         }

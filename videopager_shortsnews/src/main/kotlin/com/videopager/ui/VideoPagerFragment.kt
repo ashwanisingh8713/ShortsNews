@@ -184,14 +184,15 @@ class VideoPagerFragment(
         return merge(
             getYoutubeUri().map {
                 var nextYoutubeUriPage = 0
-                if(currentItem < pagerAdapter.itemCount-1)  {
-                    nextYoutubeUriPage = currentItem+1
+                nextYoutubeUriPage = if(currentItem < pagerAdapter.itemCount-1)  {
+                    currentItem+1
                 } else {
-                    nextYoutubeUriPage = currentItem
+                    currentItem
                 }
                 val data = pagerAdapter.getVideoData(nextYoutubeUriPage)
                 GetYoutubeUriEvent(data.type, nextYoutubeUriPage)
             },
+
             // Idling on a page after a scroll is a signal to try and change player playlist positions
             pageIdlings().map {
                 OnPageSettledEvent(currentItem)
@@ -208,7 +209,18 @@ class VideoPagerFragment(
             // swiping quickly thru pages.
             pageChanges().map {
                 PauseVideoEvent
-            }
+            },
+            getYoutubeUri_2().map {
+                var nextYoutubeUriPage = 0
+                nextYoutubeUriPage = if(currentItem < pagerAdapter.itemCount-2)  {
+                    currentItem+2
+                } else {
+                    currentItem
+                }
+                val data = pagerAdapter.getVideoData(nextYoutubeUriPage)
+                GetYoutubeUriEvent_2(data.type, nextYoutubeUriPage)
+            },
+
         )
     }
 

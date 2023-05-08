@@ -66,6 +66,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<PostClickCommentEvent>().toPostCommentResults(),
             filterIsInstance<VideoInfoEvent>().toVideoInfoResults(),
             filterIsInstance<GetYoutubeUriEvent>().toYoutubeUriResults(),
+            filterIsInstance<GetYoutubeUriEvent_2>().toYoutubeUriResults_2(),
 
         )
     }
@@ -259,6 +260,14 @@ internal class VideoPagerViewModel(
         }
     }
 
+    private fun Flow<GetYoutubeUriEvent_2>.toYoutubeUriResults_2():Flow<GetYoutubeUriResult_2>{
+        return mapLatest { event ->
+            getYoutubeUri(event.position)
+        }.map {
+            GetYoutubeUriResult_2(it.first, it.second)
+        }
+    }
+
     private suspend fun getYoutubeUri(index: Int): Pair<String, String> = withContext(Dispatchers.IO) {
             var uri = ""
             var videoId = ""
@@ -317,6 +326,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<GetVideoInfoResult>().toGetVideoInfoEffect(),
             filterIsInstance<PostCommentResult>().toPostCommentEffect(),
             filterIsInstance<GetYoutubeUriResult>().toGetYoutubeUriEffect(),
+            filterIsInstance<GetYoutubeUriResult_2>().toGetYoutubeUriEffect_2(),
 
         )
     }
@@ -357,6 +367,13 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<GetYoutubeUriResult>.toGetYoutubeUriEffect(): Flow<GetYoutubeUriEffect>{
+        return mapLatest {
+            GetYoutubeUriEffect(it.uri, it.id)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<GetYoutubeUriResult_2>.toGetYoutubeUriEffect_2(): Flow<GetYoutubeUriEffect>{
         return mapLatest {
             GetYoutubeUriEffect(it.uri, it.id)
         }
