@@ -371,10 +371,7 @@ internal class VideoPagerViewModel(
                 this.following = result.response.data.following
                 this.channel_image = result.response.data.channel_image
                 this.channel_id = result.response.data.channel_id
-//                this.mediaUri = result.response.data.video_url
                 this.title = result.response.data.title
-                this.previewImageUri = result.response.data.videoPreviewUrl
-                this.id = result.response.data.id
             }
             GetVideoInfoEffect(result.response, result.position)
         }

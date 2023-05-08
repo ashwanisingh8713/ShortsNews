@@ -67,13 +67,13 @@ internal class DiffingVideoDataUpdater(
                 .setUri(videoData.mediaUri)
                 .build()
 
-            /*var mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
+            var mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
                 .setAllowCrossProtocolRedirects(true)
             var mCacheDataSourceFactory  = CacheDataSource.Factory()
 //                .setCache(cache)
                 .setUpstreamDataSourceFactory(mHttpDataSourceFactory)
                 .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-            val mediaSource = ProgressiveMediaSource.Factory(mCacheDataSourceFactory).createMediaSource(mediaItem)*/
+            val mediaSource = ProgressiveMediaSource.Factory(mCacheDataSourceFactory).createMediaSource(mediaItem)
 
             mediaItem
         }

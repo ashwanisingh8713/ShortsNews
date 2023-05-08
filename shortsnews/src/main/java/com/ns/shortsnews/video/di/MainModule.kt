@@ -7,6 +7,7 @@ import coil.imageLoader
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
+import com.ns.shortsnews.MainApplication
 import com.videopager.ui.VideoPagerFragment
 import com.videopager.vm.VideoPagerViewModelFactory
 
@@ -19,7 +20,7 @@ import com.videopager.vm.VideoPagerViewModelFactory
                         VideoPagerViewModelFactory(
                             repository = VideoDataRepositoryImpl(),
                             appPlayerFactory = ExoAppPlayerFactory(
-                                context = activity.applicationContext
+                                context = activity.applicationContext, cache = MainApplication.cache
                             )
                         ).create(owner)
                     },

@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
                 VideoPagerViewModelFactory(
                     repository = VideoDataRepositoryImpl(),
                     appPlayerFactory = ExoAppPlayerFactory(
-                        context = this@MainActivity
+                        context = this@MainActivity, cache = MainApplication.cache
                     )
                 ).create(owner)
             },

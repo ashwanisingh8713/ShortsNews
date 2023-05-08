@@ -5,7 +5,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
 import androidx.preference.Preference
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.ns.shortsnews.user.data.di.AppModule
 import com.ns.shortsnews.user.data.di.NetworkModule
@@ -20,8 +22,6 @@ class MainApplication:Application() {
 
 
     private val cacheSize: Long = 90 * 1024 * 1024
-    private lateinit var cacheEvictor: LeastRecentlyUsedCacheEvictor
-    private lateinit var exoplayerDatabaseProvider: ExoDatabaseProvider
 
     init {
         instance = this
@@ -48,9 +48,8 @@ class MainApplication:Application() {
             androidLogger(Level.DEBUG)
         }
 
-        cacheEvictor = LeastRecentlyUsedCacheEvictor(cacheSize)
-        exoplayerDatabaseProvider = ExoDatabaseProvider(this)
-        cache = SimpleCache(cacheDir, cacheEvictor, exoplayerDatabaseProvider)
+        cache = SimpleCache(cacheDir, LeastRecentlyUsedCacheEvictor(cacheSize), StandaloneDatabaseProvider(this))
+//        cache = SimpleCache(cacheDir, NoOpCacheEvictor(), StandaloneDatabaseProvider(this))
 
     }
 

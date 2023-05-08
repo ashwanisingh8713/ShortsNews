@@ -153,7 +153,7 @@ public class YouTubeUri {
 
     public SparseArray<YtFile> getStreamUrls(String youtubeUri) throws IOException, InterruptedException, JSONException {
 
-        String pageHtml;
+        String pageHtml = null;
         SparseArray<String> encSignatures = new SparseArray<>();
         SparseArray<YtFile> ytFiles = new SparseArray<>();
 
@@ -170,7 +170,10 @@ public class YouTubeUri {
                 sbPageHtml.append(line);
             }
             pageHtml = sbPageHtml.toString();
-        } finally {
+        } catch (Exception e) {
+            Log.i("", "");
+        }
+        finally {
             if (reader != null) {
                 reader.close();
             }
