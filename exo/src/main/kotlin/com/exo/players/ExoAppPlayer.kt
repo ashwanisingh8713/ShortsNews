@@ -76,9 +76,9 @@ internal class ExoAppPlayer(
         val listener = object : Player.Listener {
             override fun onPlayerError(error: PlaybackException) {
 
-                var err = error
-                var sourceException = (err as ExoPlaybackException).sourceException
-                Log.i("", "$err")
+//                var err = error
+//                var sourceException = (err as ExoPlaybackException).sourceException
+//                Log.i("", "$err")
                 trySend(error)
             }
         }

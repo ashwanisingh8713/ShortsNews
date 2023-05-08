@@ -1,17 +1,8 @@
 package com.videopager.vm
 
 import android.content.Context
-import android.os.Build
 import android.util.Log
-import android.util.SparseArray
-import androidx.annotation.RequiresApi
-import androidx.lifecycle.viewModelScope
-import at.huber.me.TestYou
 import at.huber.me.YouTubeUri
-import at.huber.youtubeExtractor.VideoMeta
-import at.huber.youtubeExtractor.YouTubeExtractor
-import at.huber.youtubeExtractor.YtFile
-import com.player.models.VideoData
 import com.player.players.AppPlayer
 import com.videopager.R
 import com.videopager.data.VideoDataRepository
@@ -39,8 +30,6 @@ import com.videopager.ui.extensions.ViewState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
 
 
 /**
@@ -76,6 +65,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<LikeClickEvent>().toLikeClickResults(),
             filterIsInstance<PostClickCommentEvent>().toPostCommentResults(),
             filterIsInstance<VideoInfoEvent>().toVideoInfoResults(),
+            filterIsInstance<GetYoutubeUriEvent>().toYoutubeUriResults(),
 
         )
     }
@@ -253,20 +243,32 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<VideoInfoEvent>.toVideoInfoResults():Flow<GetVideoInfoResult>{
         return flatMapLatest { event ->
-            val appPlayer = requireNotNull(states.value.appPlayer)
-            appPlayer.pause()
             repository.getVideoInfo(event.videoId, event.position)
         }.mapLatest {
-            getYoutubeUri(it.second)
             Pair(it.first, it.second)
         }.map {
             GetVideoInfoResult(it.second, it.first)
         }
     }
 
+    private fun Flow<GetYoutubeUriEvent>.toYoutubeUriResults():Flow<ViewResult>{
+        return map { event ->
+            /*if(event.uri.contains("www.youtube.com")) {
+                getYoutubeUri(event.position)
+            }*/
+//            getYoutubeUri(event.position)
+            if(event.type=="yt") {
+                getYoutubeUri(event.position)
+            }
+        }.map {
+            NoOpResult
+        }
+    }
+
     private suspend fun getYoutubeUri(index: Int) {
             withContext(Dispatchers.IO) {
-                var requestedIndex = index+1
+//                var requestedIndex = index+1
+                var requestedIndex = index
                 var total = states.value.videoData?.size!!
                 if(total <= requestedIndex) {
                     return@withContext

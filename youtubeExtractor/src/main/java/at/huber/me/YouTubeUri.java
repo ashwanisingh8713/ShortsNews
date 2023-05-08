@@ -182,6 +182,10 @@ public class YouTubeUri {
             }
         }
 
+        if(patPlayerResponse == null || pageHtml == null) {
+            return ytFiles;
+        }
+
         Matcher mat = patPlayerResponse.matcher(pageHtml);
         if (mat.find()) {
             JSONObject ytPlayerResponse = new JSONObject(mat.group(1));

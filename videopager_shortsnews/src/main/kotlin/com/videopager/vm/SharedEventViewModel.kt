@@ -14,9 +14,7 @@ class SharedEventViewModel:ViewModel() {
 
     fun cacheVideoData(videoData: VideoData) {
         viewModelScope.launch {
-            if(videoData.type == "converted" || videoData.type != "yt") {
-                _cacheVideoUrl.emit(videoData)
-            }
+            _cacheVideoUrl.emit(videoData)
         }
     }
 

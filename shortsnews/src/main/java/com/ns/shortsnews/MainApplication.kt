@@ -49,7 +49,6 @@ class MainApplication:Application() {
         }
 
         cache = SimpleCache(cacheDir, LeastRecentlyUsedCacheEvictor(cacheSize), StandaloneDatabaseProvider(this))
-//        cache = SimpleCache(cacheDir, NoOpCacheEvictor(), StandaloneDatabaseProvider(this))
 
     }
 

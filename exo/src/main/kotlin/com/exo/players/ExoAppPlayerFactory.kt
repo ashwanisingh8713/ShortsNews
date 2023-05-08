@@ -28,7 +28,7 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
             .setUpstreamDataSourceFactory(mHttpDataSourceFactory)
 
         val mediaSourceFactory: MediaSource.Factory = DefaultMediaSourceFactory(appContext)
-            .setDataSourceFactory(cacheDataSourceFactory)
+//            .setDataSourceFactory(cacheDataSourceFactory)
 //            .setLocalAdInsertionComponents(
 //                adsLoaderProvider,  /* adViewProvider= */playerView
 //            )

@@ -1,8 +1,6 @@
 package com.videopager.ui
 
-import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -36,10 +34,7 @@ import com.videopager.ui.extensions.pageIdlings
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
@@ -141,7 +136,7 @@ class VideoPagerFragment(
                     ).show()
                     is GetVideoInfoEffect -> {
                         pagerAdapter.refreshUI(effect.position)
-//                        sharedEventViewModel.cacheVideoData(pagerAdapter.getVideoData(effect.position))
+                        sharedEventViewModel.cacheVideoData(pagerAdapter.getVideoData(effect.position))
                     }
 
                     is PostCommentEffect -> {
@@ -185,10 +180,27 @@ class VideoPagerFragment(
 
     private fun ViewPager2.viewEvents(): Flow<ViewEvent> {
         return merge(
+            getYoutubeUri().map {
+                var nextYoutubeUriPage = 0
+                if(currentItem < pagerAdapter.itemCount-1)  {
+                    nextYoutubeUriPage = currentItem+1
+                } else {
+                    nextYoutubeUriPage = currentItem
+                }
+                val data = pagerAdapter.getVideoData(nextYoutubeUriPage)
+                GetYoutubeUriEvent(data.type, nextYoutubeUriPage)
+            },
             // Idling on a page after a scroll is a signal to try and change player playlist positions
             pageIdlings().map {
                 OnPageSettledEvent(currentItem)
             },
+
+            getPageInfo().map {
+                val data = pagerAdapter.getVideoData(currentItem)
+                VideoInfoEvent(data.id, currentItem)
+            },
+
+
 
 
             // A page change (which can happen before a page is idled upon) is a signal to pause media. This
@@ -196,11 +208,7 @@ class VideoPagerFragment(
             // It doesn't make sense for a video on a previous page to continue playing while the user is
             // swiping quickly thru pages.
             pageChanges().map {
-//                Toast.makeText(requireContext(), "$currentItem", Toast.LENGTH_SHORT).show()
-//                PauseVideoEvent
-                val data = pagerAdapter.getVideoData(currentItem)
-                Log.i("kamlesh", "video information triggerd")
-                VideoInfoEvent(data.id,currentItem)
+                PauseVideoEvent
             }
         )
     }

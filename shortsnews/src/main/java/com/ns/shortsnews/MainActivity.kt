@@ -3,7 +3,9 @@ package com.ns.shortsnews
 import android.content.Intent
 import android.content.res.Resources.Theme
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -128,6 +130,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
     private fun registerVideoCache() {
         lifecycleScope.launch {
             sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
+                Log.i("", "")
+                Toast.makeText(this@MainActivity, "${it.id}", Toast.LENGTH_SHORT).show()
 //                schedulePreloadWork(it)
             }
         }
