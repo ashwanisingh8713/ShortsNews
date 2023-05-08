@@ -157,13 +157,19 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 
     }
 
-    override fun getVideoInfo(videoId: String, position: Int): Flow<Pair<VideoInfo,Int>> = flow {
+    override fun getVideoInfo(videoId: String, position: Int): Flow<Pair<VideoInfoData,Int>> = flow {
 
         try {
             val data = api.getVideoInfo(videoId)
-            emit(Pair(data, position))
+            if(data.status) {
+                emit(Pair(data.data, position))
+            } else {
+                emit(Pair(VideoInfoData(), position))
+            }
+
         } catch (ec :java.lang.Exception) {
             Log.i("kamels","$ec")
+            emit(Pair(VideoInfoData(), position))
         }
 
     }

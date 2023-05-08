@@ -366,12 +366,12 @@ internal class VideoPagerViewModel(
         return mapLatest { result ->
            Log.i("kamlesh","Video info data $result")
             states.value.videoData?.get(result.position)?.apply {
-                this.comment_count = result.response.data.comment_count
-                this.like_count = result.response.data.like_count
-                this.following = result.response.data.following
-                this.channel_image = result.response.data.channel_image
-                this.channel_id = result.response.data.channel_id
-                this.title = result.response.data.title
+                this.comment_count = result.response.comment_count
+                this.like_count = result.response.like_count
+                this.following = result.response.following
+                this.channel_image = result.response.channel_image
+                this.channel_id = result.response.channel_id
+                this.title = result.response.title
             }
             GetVideoInfoEffect(result.response, result.position)
         }

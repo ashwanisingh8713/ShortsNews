@@ -14,7 +14,7 @@ internal object SaveEffect : ViewEffect()
 internal data class CommentEffect(val videoId:String, val comments:List<CommentData>, val position: Int) : ViewEffect()
 internal data class LikeEffect(val position: Int) : ViewEffect()
 internal data class FollowEffect(val position: Int, val channelId: Following) : ViewEffect()
-internal data class GetVideoInfoEffect(val videoInfo: VideoInfo, val position: Int) : ViewEffect()
+internal data class GetVideoInfoEffect(val videoInfo: VideoInfoData, val position: Int) : ViewEffect()
 internal object YoutubeUriErrorEffect : ViewEffect()
 //internal data class YoutubeUriErrorEffect(val position: String) : ViewEffect()
 

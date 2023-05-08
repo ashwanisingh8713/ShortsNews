@@ -69,6 +69,7 @@ class VideoPagerFragment(
         // Start point of Events, Flow, States
         viewModel.initApi(shortsType)
 
+
         val states = viewModel.states
             .onEach { state ->
                 // Await the list submission so that the adapter list is in sync with state.videoData
