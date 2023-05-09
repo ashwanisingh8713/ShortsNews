@@ -48,7 +48,6 @@ internal class PagerAdapter(
                 PageViewHolder(binding, imageLoader) {pair ->
                     clicks.tryEmit(pair)
                 }
-
             }
     }
 
@@ -87,7 +86,6 @@ internal class PagerAdapter(
     }
 
     suspend fun refreshUI(position: Int) {
-//        Toast.makeText(recyclerView?.context, "refreshUI()", Toast.LENGTH_SHORT).show()
         val holder = awaitViewHolder(position)
         var isTextViewClicked = false
         var data  = getItem(position)
