@@ -47,6 +47,8 @@ class VideoPagerFragment(
     private lateinit var pagerAdapter: PagerAdapter
     private lateinit var commentFragment: CommentsFragment
 
+    private var isFirstVideoInfoLoaded = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -64,7 +66,6 @@ class VideoPagerFragment(
 
         // Start point of Events, Flow, States
         viewModel.initApi(shortsType)
-
 
         val states = viewModel.states
             .onEach { state ->
@@ -106,6 +107,12 @@ class VideoPagerFragment(
                         binding.progressBarVideoShorts.visibility = View.GONE
                     }
                     binding.viewPager.isUserInputEnabled = true
+
+                    if(!isFirstVideoInfoLoaded) {
+                        val data = pagerAdapter.getVideoData(0)
+                        viewModel.processEvent(VideoInfoEvent(data.id, 0))
+                        isFirstVideoInfoLoaded = true
+                    }
                 }
             }
 
@@ -123,9 +130,9 @@ class VideoPagerFragment(
                         )
                     }
                     is LikeEffect -> {
-                        pagerAdapter.refreshUI(effect.position)
+                        pagerAdapter.refreshLikeUI(effect.position)
                     }
-                    is FollowEffect -> pagerAdapter.refreshUI(effect.position)
+                    is FollowEffect -> pagerAdapter.refreshFollowUI(effect.position)
                     is PageEffect -> pagerAdapter.renderEffect(
                         binding.viewPager.currentItem,
                         effect

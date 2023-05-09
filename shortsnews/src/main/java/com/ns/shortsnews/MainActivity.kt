@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         val isUserLoggedIn = PrefUtils.with(this@MainActivity).getBoolean(Validation.PREF_IS_USER_LOGGED_IN, false)
         if(isUserLoggedIn){
             val profileImage = PrefUtils.with(this@MainActivity).getString(Validation.PREF_USER_IMAGE, "")
-//            binding.profileIcon.load(profileImage)
+            binding.profileIcon.load(profileImage)
         }
 
         binding.profileIcon.setOnClickListener {
@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
 
         videoCategoryViewModel.loadVideoCategory()
         showCategory()
-        registerVideoCache()
     }
 
     /**
@@ -135,24 +134,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         }
     }
 
-    private fun registerVideoCache() {
-        lifecycleScope.launch {
-            sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
-                Log.i("", "")
-//                schedulePreloadWork(it)
-            }
-        }
-    }
 
-    private fun schedulePreloadWork(videoData: Pair<String, String>) {
-        val workManager = WorkManager.getInstance(this)
-        val videoPreloadWorker = VideoPreloadWorker.buildWorkRequest(videoData.first)
-        workManager.enqueueUniqueWork(
-            videoData.second,
-            ExistingWorkPolicy.KEEP,
-            videoPreloadWorker
-        )
-    }
 
 
 

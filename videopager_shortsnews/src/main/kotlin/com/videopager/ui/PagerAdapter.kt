@@ -2,6 +2,7 @@ package com.videopager.ui
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -85,6 +86,26 @@ internal class PagerAdapter(
         awaitViewHolder(position).renderEffect(effect)
     }
 
+    suspend fun refreshLikeUI(position: Int) {
+        val holder = awaitViewHolder(position)
+        var data  = getItem(position)
+        if (data.liking){
+            holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.red))
+        } else {
+            holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.white))
+        }
+    }
+
+    suspend fun refreshFollowUI(position: Int) {
+        val holder = awaitViewHolder(position)
+        var data  = getItem(position)
+        if (data.following) {
+            holder.binding.following.text = "Following"
+        } else{
+            holder.binding.following.text = "Follow"
+        }
+    }
+
     suspend fun refreshUI(position: Int) {
         val holder = awaitViewHolder(position)
         var isTextViewClicked = false
@@ -104,7 +125,11 @@ internal class PagerAdapter(
         }
         if (data.channel_image.isNotEmpty()) {
             holder.binding.clientImage.loadSvg(data.channel_image, holder.binding.clientImage.context)
+            holder.binding.cardViewClientImage.visibility = View.VISIBLE
+        } else {
+            holder.binding.cardViewClientImage.visibility = View.INVISIBLE
         }
+
         holder.binding.title.setOnClickListener {
             if (isTextViewClicked){
                 holder.binding.title.maxLines = 3

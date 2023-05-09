@@ -47,7 +47,7 @@
         tools:srcCompat="@drawable/play" />
     <!-- End - It holds Play/Pause Icon of Player -->
 
-    <!-- Start - Chanel, Title, Following -->
+    <!-- Start Left Part - Chanel, Title, Following -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/leftPart"
         android:layout_width="0dp"
@@ -76,6 +76,8 @@
             android:textSize="@dimen/video_page_text_size_large"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingEnd="4dp"
             app:layout_constraintStart_toStartOf="parent" />
         <!-- End - Title -->
 
@@ -97,7 +99,6 @@
                 android:id="@+id/client_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@null"
                 android:scaleType="centerCrop" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -126,14 +127,14 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <!-- End - Chanel, Title, Following -->
+    <!-- End Left Part  - Chanel, Title, Following -->
 
     <!-- Start - It holds Like, Comment, Share, Save -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/rightPart"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
