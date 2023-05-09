@@ -64,12 +64,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val view = binding.root
         setContentView(view)
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.screen_background)
-        window.statusBarColor = ContextCompat.getColor(this, R.color.screen_background)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         val isUserLoggedIn = PrefUtils.with(this@MainActivity).getBoolean(Validation.PREF_IS_USER_LOGGED_IN, false)
         if(isUserLoggedIn){
             val profileImage = PrefUtils.with(this@MainActivity).getString(Validation.PREF_USER_IMAGE, "")
-            binding.profileIcon.load(profileImage)
+//            binding.profileIcon.load(profileImage)
         }
 
         binding.profileIcon.setOnClickListener {

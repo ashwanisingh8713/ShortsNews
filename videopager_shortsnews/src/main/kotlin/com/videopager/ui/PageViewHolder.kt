@@ -51,7 +51,7 @@ internal class PageViewHolder(
         }
 
         binding.msgCount.text = videoData.comment_count
-        binding.thumsUpCount.text = videoData.like_count
+        binding.likeTitle.text = videoData.like_count
 
         ConstraintSet().apply {
             clone(binding.root)

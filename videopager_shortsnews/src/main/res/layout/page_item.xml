@@ -6,79 +6,153 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Start - It holds PlayerView -->
     <FrameLayout
         android:id="@+id/player_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:foreground="@drawable/page_item_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <!-- End - It holds PlayerView -->
 
+    <!-- Start - It holds PreviewImage on Top of PlayerView -->
     <ImageView
         android:id="@+id/preview_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:foreground="@drawable/page_item_background"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription"
-        android:scaleType="centerCrop"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
+    <!-- End - It holds PreviewImage on Top of PlayerView -->
 
+    <!-- Start - It holds Play/Pause Icon of Player -->
     <ImageView
         android:id="@+id/play_pause"
         android:layout_width="@dimen/play_pause_start_side_length"
         android:layout_height="@dimen/play_pause_start_side_length"
+        android:contentDescription="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@null"
         app:tint="#B3FFFFFF"
         tools:srcCompat="@drawable/play" />
+    <!-- End - It holds Play/Pause Icon of Player -->
 
+    <!-- Start - Chanel, Title, Following -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/leftPart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightPart"
+        >
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/social_view"
-            android:layout_width="40dp"
+        <!-- Start - Title -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="85dp"
+            android:paddingTop="10dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:lineHeight="17dp"
+            android:maxLines="3"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/video_page_text_size_large"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="70dp"
-            >
+            app:layout_constraintStart_toStartOf="parent" />
+        <!-- End - Title -->
+
+
+        <!-- Start - Channel Image -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_view_client_image"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:layout_margin="2dp"
+            android:layout_marginStart="-5dp"
+            android:layout_marginBottom="20dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="50dp"
+            app:layout_constraintBottom_toTopOf="@id/title"
+            app:layout_constraintStart_toStartOf="@id/title">
 
             <ImageView
-                android:id="@+id/like"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:src="@drawable/like"
-                app:layout_constraintBottom_toTopOf="@id/thumsUpCount"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:id="@+id/client_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:scaleType="centerCrop" />
 
-            <TextView
-                android:id="@+id/thumsUpCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:fontFamily="sans-serif"
-                android:text="200k"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+        </com.google.android.material.card.MaterialCardView>
+        <!-- End - Channel Image -->
+
+        <!-- Start - Following -->
+        <TextView
+            android:id="@+id/following"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/follow_background"
+            android:fontFamily="sans-serif"
+            android:paddingStart="16dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="6dp"
+            android:text="@string/follow"
+            android:textColor="@color/white"
+            android:textSize="@dimen/video_page_text_size_medium"
+            app:layout_constraintBottom_toBottomOf="@id/card_view_client_image"
+            app:layout_constraintStart_toEndOf="@id/card_view_client_image"
+            app:layout_constraintTop_toTopOf="@id/card_view_client_image" />
+        <!-- End - Following -->
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- End - Chanel, Title, Following -->
+
+    <!-- Start - It holds Like, Comment, Share, Save -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rightPart"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Start - Comment -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/const_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
 
             <ImageView
                 android:id="@+id/comment"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
-                android:contentDescription="Comment"
-                android:src="@drawable/comment"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_comment"
                 app:layout_constraintBottom_toTopOf="@id/msgCount"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -89,21 +163,31 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="3dp"
-                android:layout_marginBottom="20dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily=""
                 android:text="120k"
                 android:textColor="@color/white"
                 android:textSize="10sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@id/like"
+                app:layout_constraintBottom_toTopOf="@id/comment"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- End - Comment -->
+
+        <!-- Start - Share -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/const_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
 
             <ImageView
                 android:id="@+id/share"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
+                android:scaleType="centerInside"
                 android:src="@drawable/share"
                 app:layout_constraintBottom_toTopOf="@id/shareTitle"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -114,23 +198,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginBottom="20dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/share"
                 android:textColor="@color/white"
                 android:textSize="10sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@id/comment"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/share" />
 
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- End - Share -->
+
+        <!-- Start - Save -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/const_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
 
             <ImageView
                 android:id="@+id/save"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
-                android:src="@drawable/save"
                 android:layout_marginBottom="5dp"
+                android:src="@drawable/save"
                 app:layout_constraintBottom_toTopOf="@id/saveTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -144,70 +237,72 @@
                 android:textColor="@color/white"
                 android:textSize="10sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="20dp"
-                app:layout_constraintBottom_toTopOf="@id/share"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/save" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- End - Save -->
+
+        <!-- Start - Like New -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/const_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
+            <ImageView
+                android:id="@+id/like"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/ic_like"
+                app:layout_constraintBottom_toTopOf="@id/likeTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/likeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@string/save"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/like" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- End - Like New -->
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_view_client_image"
-        android:layout_margin="2dp"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:cardCornerRadius="100dp"
-        app:cardBackgroundColor="@android:color/transparent"
-        app:layout_constraintBottom_toTopOf="@id/title"
-        app:layout_constraintStart_toStartOf="@id/title"
-        android:layout_marginBottom="20dp">
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/flow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="const_save,const_share,const_comment,const_like"
+            app:flow_horizontalAlign="start"
+            app:flow_horizontalStyle="packed"
+            app:flow_maxElementsWrap="1"
+            app:flow_verticalAlign="top"
+            app:flow_verticalGap="30dp"
+            app:flow_verticalStyle="packed"
+            app:flow_wrapMode="chain"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/client_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:background="@null"
-            />
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <TextView
-        android:id="@+id/following"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:background="@drawable/round_corner_background"
-        android:fontFamily="sans-serif"
-        android:paddingStart="16dp"
-        android:paddingTop="6dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="6dp"
-        android:text="@string/follow"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@id/card_view_client_image"
-        app:layout_constraintStart_toEndOf="@id/card_view_client_image"
-        app:layout_constraintTop_toTopOf="@id/card_view_client_image" />
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:ellipsize="end"
-        android:fontFamily="sans-serif"
-        android:lineHeight="17dp"
-        android:maxLines="1"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@id/social_view"
-        app:layout_constraintBottom_toBottomOf="@id/social_view"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:visibility="visible"
-/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- End - It holds Like, Comment, Share, Save -->
 
 
+
+    <!--    <FrameLayout-->
+    <!--        android:id="@+id/rerejgygy"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:background="@color/white"-->
+    <!--        android:foreground="@drawable/page_item_background"/>-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

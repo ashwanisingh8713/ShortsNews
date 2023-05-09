@@ -10,6 +10,6 @@
     android:paddingBottom="10dp"
     android:clickable="true"
     android:textColor="@color/white"
-    android:background="@drawable/round_corner_background"
+    android:background="@drawable/follow_background"
     app:chipBackgroundColor="@color/screen_background"
     />

@@ -90,7 +90,7 @@ internal class PagerAdapter(
         var isTextViewClicked = false
         var data  = getItem(position)
         holder.binding.msgCount.text = data.comment_count
-        holder.binding.thumsUpCount.text = data.like_count
+        holder.binding.likeTitle.text = data.like_count
         holder.binding.title.text = data.title
         if (data.liking){
             holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.red))
@@ -107,7 +107,7 @@ internal class PagerAdapter(
         }
         holder.binding.title.setOnClickListener {
             if (isTextViewClicked){
-                holder.binding.title.maxLines = 1
+                holder.binding.title.maxLines = 3
                 isTextViewClicked = false
             } else{
                 holder.binding.title.maxLines  = Int.MAX_VALUE
