@@ -53,6 +53,7 @@ class VideoPagerFragment(
         viewModel.setVMContext(requireContext())
 
         binding = VideoPagerFragmentBinding.bind(view)
+        binding.toolbar.title = "News Reels"
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
         val appPlayerView = appPlayerViewFactory.create(view.context)
         pagerAdapter = PagerAdapter(imageLoader)

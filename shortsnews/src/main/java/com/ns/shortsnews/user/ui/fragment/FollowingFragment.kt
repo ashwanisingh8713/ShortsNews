@@ -16,6 +16,7 @@ import com.ns.shortsnews.user.ui.viewmodel.ChannelsViewModel
 import com.ns.shortsnews.user.ui.viewmodel.ChannelsViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
@@ -53,6 +54,7 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
                 it.let {
                     binding.progressBarChannels.visibility = View.GONE
                     adapter = ChannelsAdapter(it.data)
+                    adapter.clicksEvent()
                     binding.recyclerviewFollowing.adapter = adapter
                 }
             }
@@ -67,6 +69,23 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
         }
 
 
+
+
     }
+
+    private fun ChannelsAdapter.clicksEvent() {
+        viewLifecycleOwner.lifecycleScope.launch() {
+            clicks().collectLatest {
+                var channelVideosFragment = ChannelVideosFragment().apply {
+                    arguments?.putString("channelId", it.first)
+                    arguments?.putString("channelTitle", it.second)
+                }
+                requireActivity().supportFragmentManager.beginTransaction().add(R.id.fc, channelVideosFragment).commit()
+            }
+        }
+
+    }
+
+
 
 }

@@ -8,6 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:shutter_background_color="@android:color/transparent"
+    app:resize_mode="fill"
     app:use_controller="false"
     />
 </FrameLayout>

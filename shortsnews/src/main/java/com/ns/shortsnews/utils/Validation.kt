@@ -9,6 +9,7 @@ object Validation {
     const val PREF_USER_EMAIL = "userEmail"
     const val PREF_USER_TOKEN = "userToken"
     const val PREF_IS_USER_LOGGED_IN = "isLogged"
+    const val PREF_USER_IMAGE = "user_image"
     fun validateEmail(email:String):Boolean{
         if (email.isEmpty()){
             return false

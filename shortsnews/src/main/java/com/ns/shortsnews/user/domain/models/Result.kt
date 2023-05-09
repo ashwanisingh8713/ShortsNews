@@ -80,3 +80,22 @@ data class ChannelListData(
    val channel_image:String,
    val channelTitle:String
 )
+
+
+@JsonClass(generateAdapter = true)
+data class ChannelVideoDataResult(
+    val data:List<ChannelVideoData>,
+    val status:Boolean,
+    val total:Int,
+    val page:Int,
+    val perPage:Int
+)
+@JsonClass(generateAdapter = true)
+data class ChannelVideoData(
+    val id:String,
+    val video_url:String,
+    val type:String,
+    val title:String,
+    val videoPreviewUrl:String,
+    val channelTitle:String,
+)
