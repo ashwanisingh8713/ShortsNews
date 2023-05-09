@@ -54,6 +54,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
                     binding.nestedParentView.visibility = View.VISIBLE
                     binding.profileImageView.load(it.data.image)
                     binding.userNameTxt.text = it.data.name
+                    PrefUtils.with(requireContext()).save(Validation.PREF_USER_IMAGE,it.data.image)
                 }
             }
         }

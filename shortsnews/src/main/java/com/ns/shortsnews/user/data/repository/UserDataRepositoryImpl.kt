@@ -1,10 +1,7 @@
 package com.ns.shortsnews.user.data.repository
 
 import com.ns.shortsnews.user.data.source.UserApiService
-import com.ns.shortsnews.user.domain.models.ChannelsDataResult
-import com.ns.shortsnews.user.domain.models.OTPResult
-import com.ns.shortsnews.user.domain.models.ProfileResult
-import com.ns.shortsnews.user.domain.models.RegistrationResult
+import com.ns.shortsnews.user.domain.models.*
 import com.ns.shortsnews.user.domain.repository.UserDataRepository
 
 class UserDataRepositoryImpl constructor(private val apiService: UserApiService): UserDataRepository {
@@ -22,6 +19,10 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
 
     override suspend fun getChannelsData(): ChannelsDataResult {
         return apiService.getChannelData()
+    }
+
+    override suspend fun geChannelVideoData(channelId: String): ChannelVideoDataResult {
+        return apiService.getChannelVideoData(channelId)
     }
 
 

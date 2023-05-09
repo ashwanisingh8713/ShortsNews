@@ -1,9 +1,6 @@
 package com.ns.shortsnews.user.domain.repository
 
-import com.ns.shortsnews.user.domain.models.ChannelsDataResult
-import com.ns.shortsnews.user.domain.models.OTPResult
-import com.ns.shortsnews.user.domain.models.ProfileResult
-import com.ns.shortsnews.user.domain.models.RegistrationResult
+import com.ns.shortsnews.user.domain.models.*
 
 
 interface UserDataRepository {
@@ -12,4 +9,6 @@ interface UserDataRepository {
     suspend fun getUserProfileData(): ProfileResult
 
     suspend fun getChannelsData():ChannelsDataResult
+
+    suspend fun geChannelVideoData(channelId:String): ChannelVideoDataResult
 }

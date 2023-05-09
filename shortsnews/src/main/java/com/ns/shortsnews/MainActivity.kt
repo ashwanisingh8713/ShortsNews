@@ -16,6 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import coil.imageLoader
+import coil.load
 import com.ns.shortsnews.cache.VideoPreloadWorker
 import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
@@ -25,6 +26,8 @@ import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
+import com.ns.shortsnews.utils.PrefUtils
+import com.ns.shortsnews.utils.Validation
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.player.models.VideoData
 import com.videopager.ui.VideoPagerFragment
@@ -63,6 +66,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         setContentView(view)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.screen_background)
         window.statusBarColor = ContextCompat.getColor(this, R.color.screen_background)
+        val isUserLoggedIn = PrefUtils.with(this@MainActivity).getBoolean(Validation.PREF_IS_USER_LOGGED_IN, false)
+        if(isUserLoggedIn){
+            val profileImage = PrefUtils.with(this@MainActivity).getString(Validation.PREF_USER_IMAGE, "")
+            binding.profileIcon.load(profileImage)
+        }
 
         binding.profileIcon.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)

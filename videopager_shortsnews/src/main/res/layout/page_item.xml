@@ -184,7 +184,7 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif"
         android:lineHeight="17dp"
-        android:maxLines="2"
+        android:maxLines="1"
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@id/social_view"

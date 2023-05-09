@@ -4,30 +4,24 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.ComponentRegistry
 import coil.ImageLoader
 import coil.decode.SvgDecoder
-import coil.load
 import coil.request.ImageRequest
 import com.player.models.VideoData
 import com.player.ui.AppPlayerView
 import com.videopager.R
-import com.videopager.data.VideoInfo
 import com.videopager.databinding.PageItemBinding
 import com.videopager.models.PageEffect
 import com.videopager.ui.extensions.ClickEvent
 import com.videopager.ui.extensions.awaitNextLayout
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
 
 /**
@@ -95,6 +89,7 @@ internal class PagerAdapter(
     suspend fun refreshUI(position: Int) {
 //        Toast.makeText(recyclerView?.context, "refreshUI()", Toast.LENGTH_SHORT).show()
         val holder = awaitViewHolder(position)
+        var isTextViewClicked = false
         var data  = getItem(position)
         holder.binding.msgCount.text = data.comment_count
         holder.binding.thumsUpCount.text = data.like_count
@@ -111,6 +106,15 @@ internal class PagerAdapter(
         }
         if (data.channel_image.isNotEmpty()) {
             holder.binding.clientImage.loadSvg(data.channel_image, holder.binding.clientImage.context)
+        }
+        holder.binding.title.setOnClickListener {
+            if (isTextViewClicked){
+                holder.binding.title.maxLines = 1
+                isTextViewClicked = false
+            } else{
+                holder.binding.title.maxLines  = Int.MAX_VALUE
+                isTextViewClicked = true
+            }
         }
 
     }
