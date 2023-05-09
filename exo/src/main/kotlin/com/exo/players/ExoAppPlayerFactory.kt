@@ -17,7 +17,6 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
     // Use application context to avoid leaking Activity.
     private val appContext = context.applicationContext
 
-
     override fun create(config: AppPlayer.Factory.Config): AppPlayer {
 
         var mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
@@ -28,13 +27,10 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
             .setUpstreamDataSourceFactory(mHttpDataSourceFactory)
 
         val mediaSourceFactory: MediaSource.Factory = DefaultMediaSourceFactory(appContext)
-//            .setDataSourceFactory(cacheDataSourceFactory)
-//            .setLocalAdInsertionComponents(
-//                adsLoaderProvider,  /* adViewProvider= */playerView
-//            )
+            .setDataSourceFactory(cacheDataSourceFactory)
 
         val exoPlayer = ExoPlayer.Builder(appContext)
-            .setMediaSourceFactory(mediaSourceFactory)
+//            .setMediaSourceFactory(mediaSourceFactory)
             .build()
             .apply {
                 if (config.loopVideos) {

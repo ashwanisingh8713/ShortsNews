@@ -145,6 +145,8 @@ public class YouTubeUri {
 
     private Context context;
 
+    public static int iTag = 18;
+
 
     public YouTubeUri(Context con) {
         cacheDirPath = con.getCacheDir().getAbsolutePath();

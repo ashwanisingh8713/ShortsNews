@@ -135,6 +135,7 @@ class VideoPagerFragment(
                         Snackbar.LENGTH_LONG
                     ).show()
                     is GetVideoInfoEffect -> {
+                        Toast.makeText(requireContext(), "VideoInfo :: ${effect.position}", Toast.LENGTH_SHORT).show()
                         pagerAdapter.refreshUI(effect.position)
                     }
                     is GetYoutubeUriEffect ->{

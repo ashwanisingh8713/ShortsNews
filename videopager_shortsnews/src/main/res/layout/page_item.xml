@@ -67,7 +67,7 @@
                 android:fontFamily="sans-serif"
                 android:text="200k"
                 android:textColor="@color/white"
-                android:textSize="12sp"
+                android:textSize="@dimen/video_page_text_size_large"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -93,7 +93,7 @@
                 android:fontFamily="sans-serif"
                 android:text="120k"
                 android:textColor="@color/white"
-                android:textSize="10sp"
+                android:textSize="@dimen/video_page_text_size_medium"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/like"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -118,7 +118,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/share"
                 android:textColor="@color/white"
-                android:textSize="10sp"
+                android:textSize="@dimen/video_page_text_size_medium"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/comment"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -142,7 +142,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/save"
                 android:textColor="@color/white"
-                android:textSize="10sp"
+                android:textSize="@dimen/video_page_text_size_medium"
                 android:textStyle="bold"
                 android:layout_marginBottom="20dp"
                 app:layout_constraintBottom_toTopOf="@id/share"
@@ -150,13 +150,27 @@
                 app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/client_image"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:layout_marginBottom="20dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_view_client_image"
+        android:layout_margin="2dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:cardCornerRadius="100dp"
+        app:cardBackgroundColor="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@id/title"
-        app:layout_constraintStart_toStartOf="@id/title" />
+        app:layout_constraintStart_toStartOf="@id/title"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/client_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:background="@null"
+            />
+
+    </com.google.android.material.card.MaterialCardView>
+
 
     <TextView
         android:id="@+id/following"
@@ -171,10 +185,10 @@
         android:paddingBottom="4dp"
         android:text="@string/follow"
         android:textColor="@color/white"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@id/client_image"
-        app:layout_constraintStart_toEndOf="@id/client_image"
-        app:layout_constraintTop_toTopOf="@id/client_image" />
+        android:textSize="@dimen/video_page_text_size_large"
+        app:layout_constraintBottom_toBottomOf="@id/card_view_client_image"
+        app:layout_constraintStart_toEndOf="@id/card_view_client_image"
+        app:layout_constraintTop_toTopOf="@id/card_view_client_image" />
 
     <TextView
         android:id="@+id/title"
@@ -186,7 +200,7 @@
         android:lineHeight="17dp"
         android:maxLines="2"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="@dimen/video_page_text_size_xxlarge"
         app:layout_constraintEnd_toStartOf="@id/social_view"
         app:layout_constraintBottom_toBottomOf="@id/social_view"
         app:layout_constraintStart_toStartOf="parent"

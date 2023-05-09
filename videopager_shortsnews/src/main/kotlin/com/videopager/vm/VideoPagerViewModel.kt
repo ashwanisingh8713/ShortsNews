@@ -43,6 +43,7 @@ internal class VideoPagerViewModel(
     initialState: ViewState
 ) : MviViewModel<ViewEvent, ViewResult, ViewState, ViewEffect>(initialState) {
 
+
     var context: Context? = null
     fun setVMContext(context: Context) {
         this.context = context
@@ -131,7 +132,6 @@ internal class VideoPagerViewModel(
             appPlayer.errors().mapLatest {
                 if(it.message == "Source error") {
                     OnYoutubeUriErrorResult
-//                    OnPlayerRenderingResult
                 } else {
                     PlayerErrorResult(it)
                 }
@@ -139,7 +139,7 @@ internal class VideoPagerViewModel(
         )
     }
 
-     fun tearDownPlayer(): Flow<ViewResult> {
+     private fun tearDownPlayer(): Flow<ViewResult> {
         val appPlayer = requireNotNull(states.value.appPlayer)
         // Keep track of player state so that it can be restored across player recreations.
         handle.set(appPlayer.currentPlayerState)
@@ -278,9 +278,9 @@ internal class VideoPagerViewModel(
             if (videoData.type == "yt") {
                 val youTubeUri = YouTubeUri(context)
                 var ytFiles = youTubeUri.getStreamUrls(videoData.mediaUri)
-                val iTag = 18
-                if (ytFiles != null && ytFiles.indexOfKey(iTag) >= 0) {
-                    uri = ytFiles[iTag].url
+
+                if (ytFiles != null && ytFiles.indexOfKey(YouTubeUri.iTag) >= 0) {
+                    uri = ytFiles[YouTubeUri.iTag].url
                     videoData.mediaUri = uri
                     videoData.type = "converted"
                     setUpWithPlayer()

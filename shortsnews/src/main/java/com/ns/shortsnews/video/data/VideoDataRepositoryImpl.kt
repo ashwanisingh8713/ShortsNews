@@ -7,6 +7,7 @@ import at.huber.me.YouTubeUri
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
+import com.exo.players.ExoAppPlayerFactory
 import com.player.models.VideoData
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -28,6 +29,9 @@ import retrofit2.http.Query
 import java.util.concurrent.CancellationException
 
 class VideoDataRepositoryImpl : VideoDataRepository {
+
+
+
     // Kamlesh(Changed Base Url)
     private val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0LCJ0aW1lIjoxNjgyNTc4MzI3fQ.hRPaXQa1L-LFMrS2TnPZKbW2kxVHYdoJR6PgTaGrZFM"
 
@@ -98,10 +102,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                     } else {
                         val youTubeUri = YouTubeUri(context)
                         var ytFiles = youTubeUri.getStreamUrls(post.videoUrl)
-                        val iTag = 18
                         var finalUri18 = ""
-                        if (ytFiles != null && ytFiles.contains(iTag)) {
-                            finalUri18 = ytFiles[iTag].url
+                        if (ytFiles != null && ytFiles.contains(YouTubeUri.iTag)) {
+                            finalUri18 = ytFiles[YouTubeUri.iTag].url
                             conversionCount++
                         }
                         VideoData(
