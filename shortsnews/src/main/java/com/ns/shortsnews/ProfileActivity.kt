@@ -37,8 +37,8 @@ class ProfileActivity : AppCompatActivity() {
        binding = ActivityProfileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        window.statusBarColor = Color.parseColor("#1E1E1E")
-        window.navigationBarColor = Color.parseColor("#1E1E1E")
+        window.statusBarColor = Color.parseColor("#000000")
+        window.navigationBarColor = Color.parseColor("#000000")
 
         if (PrefUtils.with(this).getBoolean(Validation.PREF_IS_USER_LOGGED_IN, false)){
             choiceFragment()
@@ -58,6 +58,7 @@ class ProfileActivity : AppCompatActivity() {
                     UserViewModel.PROFILE-> choiceFragment()
                     UserViewModel.OTP-> otpFragment(bundle)
                     UserViewModel.LOGIN-> loginFragment()
+                    UserViewModel.OTP_POP-> popOtpFragment()
                 }
             }
         }
@@ -65,14 +66,20 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun loginFragment() {
         val fra = LoginFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fra).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fra).addToBackStack("login").commit()
+    }
+
+    private fun popOtpFragment() {
+        supportFragmentManager.popBackStack()
+//        val fra = LoginFragment()
+//        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fra).commit()
     }
 
 
     private fun otpFragment(bundle: Bundle) {
         val fragment = OtpFragment()
         fragment.arguments = bundle
-        supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fragment).addToBackStack("opt").commit()
     }
 
 

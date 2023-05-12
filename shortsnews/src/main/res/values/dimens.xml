@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <dimen name="margin_start" tools:ignore="MissingDefaultResource">16dp</dimen>
+    <dimen name="margin_end" tools:ignore="MissingDefaultResource">16dp</dimen>
+    <dimen name="logout_margin_end" tools:ignore="MissingDefaultResource">26dp</dimen>
+    <dimen name="margin_top_back_button" tools:ignore="MissingDefaultResource">50dp</dimen>
+    <dimen name="login_screen_edit_text_margin_between" tools:ignore="MissingDefaultResource">20dp</dimen>
+    <dimen name="edit_text_size" tools:ignore="MissingDefaultResource">12sp</dimen>
+    <dimen name="send_otp_text_size" tools:ignore="MissingDefaultResource">12sp</dimen>
+    <dimen name="button_text_size" tools:ignore="MissingDefaultResource">12sp</dimen>
+    <dimen name="button_height" tools:ignore="MissingDefaultResource">50dp</dimen>
+    <dimen name="edit_text_height" tools:ignore="MissingDefaultResource">50dp</dimen>
+    <dimen name="back_button_height" tools:ignore="MissingDefaultResource">30dp</dimen>
+    <dimen name="back_button_width" tools:ignore="MissingDefaultResource">30dp</dimen>
+    <dimen name="back_button_padding" tools:ignore="MissingDefaultResource">5dp</dimen>
+    <dimen name="button_corner_radius" tools:ignore="MissingDefaultResource">10dp</dimen>
+    <dimen name="forword_button_width" tools:ignore="MissingDefaultResource">12dp</dimen>
+    <dimen name="forword_button_height" tools:ignore="MissingDefaultResource">20dp</dimen>
+
+    <dimen name="profile_items_width" tools:ignore="MissingDefaultResource">22dp</dimen>
+    <dimen name="profile_item_height" tools:ignore="MissingDefaultResource">22dp</dimen>
+    <dimen name="profile_item_margin" tools:ignore="MissingDefaultResource">30dp</dimen>
+
+
+</resources>

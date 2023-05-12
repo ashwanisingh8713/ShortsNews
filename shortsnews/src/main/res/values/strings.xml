@@ -15,4 +15,9 @@
     <string name="otp_sent_text">email@email.com</string>
     <string name="title_otp_sent_text">OTP sent to</string>
     <string name="back_button_des">back button_login</string>
+    <string name="version_1_0_1">Version 1.0.1</string>
+    <string name="logout">Logout</string>
+    <string name="disappearing_favourite">Disappearing favourite</string>
+    <string name="personalise_my_choice">Personalise my choice</string>
+    <string name="edit_profile">Edit Profile</string>
 </resources>

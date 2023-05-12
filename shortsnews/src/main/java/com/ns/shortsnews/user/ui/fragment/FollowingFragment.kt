@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.ChannelsAdapter
 import com.ns.shortsnews.databinding.FragmentFollowingBinding
+import com.ns.shortsnews.user.callbacks.onFollowingItemClick
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.channel.ChannelsDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.ChannelsViewModel
@@ -85,7 +86,4 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
         }
 
     }
-
-
-
 }

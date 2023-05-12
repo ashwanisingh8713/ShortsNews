@@ -33,16 +33,17 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             app:cardCornerRadius="12dp"
+            app:strokeColor="@color/white"
+            app:strokeWidth="4dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            >
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageView
                 android:id="@+id/profile_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerInside"
-                android:src="@drawable/demo_profile_icon"
+                android:src="@drawable/profile_new"
                 />
 
         </com.google.android.material.card.MaterialCardView>

@@ -18,14 +18,15 @@
 
     <ImageView
         android:id="@+id/back_button_user"
-        android:layout_width="25dp"
-        android:layout_height="29dp"
+        android:layout_width="@dimen/back_button_width"
+        android:layout_height="@dimen/back_button_height"
         android:src="@drawable/back_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="50dp"
+        android:scaleType="centerInside"
         android:padding="5dp"
+        android:layout_marginStart="@dimen/margin_start"
+        android:layout_marginTop="@dimen/margin_top_back_button"
         android:contentDescription="back button otp"
         tools:ignore="HardcodedText" />
 
@@ -38,8 +39,7 @@
         android:textColor="@color/white"
         android:fontFamily="@font/roboto_bold"
         android:textStyle="bold"
-        android:textSize="26sp"
-        android:layout_marginStart="30dp"
+        android:textSize="@dimen/video_page_text_size_xxxxlarge"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/back_button_user"

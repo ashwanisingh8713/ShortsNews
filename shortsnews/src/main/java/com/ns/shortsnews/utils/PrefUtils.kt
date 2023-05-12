@@ -10,6 +10,8 @@ class PrefUtils {
         private lateinit var preferences: SharedPreferences
         private lateinit var editor: SharedPreferences.Editor
 
+        var USER_TOKEN: String = ""
+
         fun with(context: Context): PrefUtils {
             if (null == singleton)
                 singleton = Builder(context, null, -1).build()
@@ -36,6 +38,10 @@ class PrefUtils {
     constructor(context: Context, name: String, mode: Int) {
         preferences = context.getSharedPreferences(name, mode)
         editor = preferences.edit()
+    }
+
+    fun getUserToken(): String? {
+       return preferences.getString(Validation.PREF_USER_TOKEN, "")
     }
 
     fun save(key: String, value: Boolean) {

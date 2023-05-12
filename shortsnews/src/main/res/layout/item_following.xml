@@ -21,8 +21,8 @@
             android:layout_width="60dp"
             android:layout_height="43dp"
             android:src="@drawable/toi"
-            android:layout_marginStart="56dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toStartOf="@id/view2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -38,44 +38,44 @@
             app:layout_constraintEnd_toStartOf="@id/forword_icon"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="10dp"
-            android:textSize="14sp"
+            android:textSize="@dimen/video_page_text_size_large"
             android:fontFamily="@font/roboto_regular"
             android:textStyle="normal"/>
 
 
         <ImageView
             android:id="@+id/forword_icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/forword_button_width"
+            android:layout_height="@dimen/forword_button_height"
             android:src="@drawable/forword_icon"
-            android:layout_marginEnd="44dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toEndOf="@id/view2"
             app:layout_constraintTop_toTopOf="@id/client_icon"
             app:layout_constraintBottom_toBottomOf="@id/client_icon"/>
 
 
-        <View
-            android:id="@+id/view1"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/white"
-            app:layout_constraintTop_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="38dp"
-            android:layout_marginEnd="38dp"
-            />
+<!--        <View-->
+<!--            android:id="@+id/view1"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:background="@color/white"-->
+<!--            app:layout_constraintTop_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            android:layout_marginStart="@dimen/margin_start"-->
+<!--            android:layout_marginEnd="@dimen/margin_end"-->
+<!--            />-->
 
         <View
             android:id="@+id/view2"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="1dp"
             android:background="@color/white"
-            app:layout_constraintBottom_toTopOf="@id/view1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="38dp"
-            android:layout_marginEnd="38dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="@dimen/margin_start"
+            android:layout_marginEnd="@dimen/margin_end"
             />
 
 

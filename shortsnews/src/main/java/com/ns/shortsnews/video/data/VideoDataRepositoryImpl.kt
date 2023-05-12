@@ -8,6 +8,8 @@ import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
 import com.exo.players.ExoAppPlayerFactory
+import com.ns.shortsnews.MainApplication
+import com.ns.shortsnews.utils.PrefUtils
 import com.player.models.VideoData
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -30,17 +32,18 @@ import java.util.concurrent.CancellationException
 
 class VideoDataRepositoryImpl : VideoDataRepository {
 
-
-
-    // Kamlesh(Changed Base Url)
-    private val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0LCJ0aW1lIjoxNjgyNTc4MzI3fQ.hRPaXQa1L-LFMrS2TnPZKbW2kxVHYdoJR6PgTaGrZFM"
-
     private val api = Retrofit.Builder()
         .addConverterFactory(MoshiConverterFactory.create())
         .baseUrl("https://shorts.newsdx.io/ci/api/public/")
         .client(OkHttpClient.Builder().addInterceptor{ chain ->
-            val request = chain.request().newBuilder().addHeader("Authorization", "Bearer ${token}").build()
+            Log.i("auth", PrefUtils.USER_TOKEN)
+           if( PrefUtils.USER_TOKEN.isNotEmpty()){
+            val request = chain.request().newBuilder().addHeader("Authorization", "Bearer ${PrefUtils.USER_TOKEN}").build()
             chain.proceed(request)
+               } else {
+               val request = chain.request().newBuilder().build()
+               chain.proceed(request)
+           }
         }.build())
         .build()
         .create(VideoDataService::class.java)
@@ -143,6 +146,8 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     override fun follow(channel_id: String, position: Int): Flow<Pair<Following, Int>> = flow {
         try {
             val data =  api.follow(channel_id)
+            Log.i("getVideoInfo", "follow :: ${data.data.following} ")
+            Log.i("getVideoInfo", "channel id :: ${data.data.channel_id} ")
             emit(Pair(data, position))
         } catch (ec :java.lang.Exception) {
             Log.i("kamels","$ec")
@@ -167,8 +172,12 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             val data = api.getVideoInfo(videoId)
             if(data.status) {
                 emit(Pair(data.data, position))
+                Log.i("getVideoInfo", "getVideoInfo_id :: ${data.data.id}")
+                Log.i("getVideoInfo", "getVideoInfo_following :: ${data.data.following}")
             } else {
                 emit(Pair(VideoInfoData(), position))
+                Log.i("getVideoInfo", "status :: ${data.status}")
+
             }
 
             Log.i("getVideoInfo", "Response :: ${data.status}")

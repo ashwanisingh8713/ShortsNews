@@ -3,19 +3,15 @@ package com.ns.shortsnews.user.ui.fragment
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
-import com.ns.shortsnews.ProfileActivity
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentOtpBinding
-import com.ns.shortsnews.databinding.FragmentUserBinding
 import com.ns.shortsnews.user.data.mapper.UserOtp
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
@@ -46,8 +42,15 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         val  otpId:String? = arguments?.getString("otp_id")
         val emailId = arguments?.getString("email")
         binding.emailOtpTxt.text = emailId
+        binding.backButtonOtp.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("name", "")
+            userViewModel.updateFragment(UserViewModel.OTP_POP,bundle )
+        }
 
         binding.loginButton.setOnClickListener {
+             val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
             val otpValue = binding.otpTextInput.text.toString()
             if (otpValue.isNotEmpty() && otpValue.length == 6){
                 val data:MutableMap<String, String> = mutableMapOf()
@@ -56,11 +59,14 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 userViewModel.requestOtpValidationApi(data)
             } else{
                 if (otpValue.isEmpty()){
-                    Toast.makeText(requireActivity(),"Please enter OTP",Toast.LENGTH_LONG).show()
+                    val toast =   Toast.makeText(requireActivity(),"Please enter OTP",Toast.LENGTH_LONG)
+                    toast.setGravity(Gravity.BOTTOM, 0, 0)
+                    toast.show()
 
                 } else {
-                    Toast.makeText(requireActivity(), "Please enter valid OTP", Toast.LENGTH_LONG)
-                        .show()
+                    val toast =   Toast.makeText(requireActivity(),"Please enter valid OTP",Toast.LENGTH_LONG)
+                    toast.setGravity(Gravity.BOTTOM, 0, 0)
+                    toast.show()
                 }
             }
         }
@@ -96,17 +102,12 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 }
             }
         }
-
     }
 
     private fun saveUserPreference(it: UserOtp){
-        PrefUtils.with(requireContext()).save(Validation.PREF_USERNAME,it.name)
-        PrefUtils.with(requireContext()).save(Validation.PREF_USER_EMAIL,it.email)
-        PrefUtils.with(requireContext()).save(Validation.PREF_USER_TOKEN,it.access_token)
-        PrefUtils.with(requireContext()).save(Validation.PREF_IS_USER_LOGGED_IN,true)
+        PrefUtils.with(requireContext()).save(Validation.PREF_USERNAME, it.name)
+        PrefUtils.with(requireContext()).save(Validation.PREF_USER_EMAIL, it.email)
+        PrefUtils.with(requireContext()).save(Validation.PREF_USER_TOKEN, it.access_token)
+        PrefUtils.with(requireContext()).save(Validation.PREF_IS_USER_LOGGED_IN, true)
     }
-
-
-
-
 }

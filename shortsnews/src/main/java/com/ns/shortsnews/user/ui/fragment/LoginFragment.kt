@@ -1,9 +1,13 @@
 package com.ns.shortsnews.user.ui.fragment
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -31,10 +35,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         )
     }}
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
-        binding.backConsLogin.setOnClickListener {
+        binding.backButtonLogin.setOnClickListener {
             activity?.finish()
         }
         binding.submitButton.setOnClickListener{
@@ -42,15 +47,21 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val email = binding.emailTextInput.text.toString()
             if (name.isNotEmpty() && email.isNotEmpty()) {
                 if (Validation.validateEmail(email)){
+                    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                    imm?.hideSoftInputFromWindow(view.windowToken, 0)
                     val bundle:MutableMap<String, String> = mutableMapOf()
                     bundle["email"] = email
                     bundle["name"] = name
                     userViewModel.requestRegistrationApi(bundle)
                 } else {
-                    Toast.makeText(requireActivity(),"Please enter valid Email id",Toast.LENGTH_LONG).show()
+                  val toast =   Toast.makeText(requireActivity(),"Please enter valid Email id",Toast.LENGTH_LONG)
+                    toast.setGravity(Gravity.BOTTOM, 0, 0)
+                    toast.show()
                 }
             } else{
-                Toast.makeText(requireActivity(),"Please fill all required field",Toast.LENGTH_LONG).show()
+                val toast =   Toast.makeText(requireActivity(),"Please fill all required field",Toast.LENGTH_LONG)
+                toast.setGravity(Gravity.BOTTOM, 0, 0)
+                toast.show()
             }
         }
 

@@ -1,23 +1,15 @@
 package com.ns.shortsnews
 
 import android.content.Intent
-import android.content.res.Resources.Theme
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.work.ExistingWorkPolicy
-import androidx.work.WorkManager
 import coil.imageLoader
 import coil.load
-import com.ns.shortsnews.cache.VideoPreloadWorker
 import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
 import com.ns.shortsnews.adapters.CategoryAdapter
@@ -29,7 +21,6 @@ import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.PrefUtils
 import com.ns.shortsnews.utils.Validation
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
-import com.player.models.VideoData
 import com.videopager.ui.VideoPagerFragment
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
@@ -72,13 +63,18 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
             binding.profileIcon.load(profileImage)
         }
 
+
         binding.profileIcon.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
 
+
+
         videoCategoryViewModel.loadVideoCategory()
         showCategory()
+        // To get status of should launch in login flow for non logged-in user
+        launchLoginStateFlow()
     }
 
     /**
@@ -96,7 +92,24 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.fragment_container, makeVideoPagerInstance(shortsType))
         ft.commit()
+         var isUserLoggedIn = PrefUtils.with(this@MainActivity).getBoolean(Validation.PREF_IS_USER_LOGGED_IN, false)
+        var userToken = PrefUtils.with(this@MainActivity).getUserToken()
+        if (userToken != null) {
+            PrefUtils.USER_TOKEN = userToken
+        }
+
+        sharedEventViewModel.sendUserPreferenceData(isUserLoggedIn,"" )
+
     }
+    private fun launchLoginStateFlow() {
+        lifecycleScope.launch {
+            sharedEventViewModel.getLoginEventStatus.collectLatest {
+                val intent = Intent(this@MainActivity, ProfileActivity::class.java)
+                startActivity(intent)
+            }
+        }
+    }
+
 
     /**
      * Creates VideoPagerFragment Instance

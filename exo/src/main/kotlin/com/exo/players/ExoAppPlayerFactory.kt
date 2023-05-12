@@ -19,18 +19,7 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
 
     override fun create(config: AppPlayer.Factory.Config): AppPlayer {
 
-        var mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
-            .setAllowCrossProtocolRedirects(true)
-
-        val cacheDataSourceFactory: DataSource.Factory = CacheDataSource.Factory()
-            .setCache(cache)
-            .setUpstreamDataSourceFactory(mHttpDataSourceFactory)
-
-        val mediaSourceFactory: MediaSource.Factory = DefaultMediaSourceFactory(appContext)
-            .setDataSourceFactory(cacheDataSourceFactory)
-
         val exoPlayer = ExoPlayer.Builder(appContext)
-//            .setMediaSourceFactory(mediaSourceFactory)
             .build()
             .apply {
                 if (config.loopVideos) {

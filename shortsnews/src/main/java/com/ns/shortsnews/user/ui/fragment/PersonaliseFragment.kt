@@ -3,6 +3,7 @@ package com.ns.shortsnews.user.ui.fragment
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.RadioGroup.OnCheckedChangeListener
@@ -38,6 +39,11 @@ class PersonaliseFragment : Fragment(com.ns.shortsnews.R.layout.fragment_persona
         binding = FragmentPersonaliseBinding.bind(view)
         binding.backButtonUser.setOnClickListener {
             activity?.finish()
+        }
+        binding.submitButtonPers.setOnClickListener {
+            val toast =   Toast.makeText(requireActivity(),"Coming in phase 3rd",Toast.LENGTH_LONG)
+            toast.setGravity(Gravity.BOTTOM, 0, 0)
+            toast.show()
         }
         binding.choiceChipGroup.setOnCheckedStateChangeListener(object : ChipGroup.OnCheckedStateChangeListener{
             override fun onCheckedChanged(group: ChipGroup, checkedIds: MutableList<Int>) {

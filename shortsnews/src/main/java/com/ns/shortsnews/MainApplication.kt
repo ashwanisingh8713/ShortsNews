@@ -30,6 +30,7 @@ class MainApplication:Application() {
         private var instance: MainApplication? = null
         lateinit var cache: SimpleCache
 
+
         fun applicationContext() : Context {
             return instance!!.applicationContext
         }

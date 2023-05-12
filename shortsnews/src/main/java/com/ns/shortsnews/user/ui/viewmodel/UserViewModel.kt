@@ -25,6 +25,7 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
         val LOGIN = "login"
         val OTP = "otp"
         val PROFILE = "profile"
+        val OTP_POP = "otp_pop"
     }
 
 

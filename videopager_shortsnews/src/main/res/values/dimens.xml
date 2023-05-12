@@ -7,5 +7,6 @@
     <dimen name="video_page_text_size_large">14sp</dimen>
     <dimen name="video_page_text_size_xlarge">16sp</dimen>
     <dimen name="video_page_text_size_xxlarge">18sp</dimen>
+    <dimen name="video_page_text_size_xxxxlarge">28sp</dimen>
     <dimen name="video_page_bottom_margin">20dp</dimen>
 </resources>

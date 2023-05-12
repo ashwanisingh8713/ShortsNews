@@ -3,6 +3,7 @@ package com.ns.shortsnews.user.ui.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
@@ -68,7 +69,14 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
         }
 
         binding.editConsLayout.setOnClickListener {
-            Toast.makeText(requireContext(),"Coming soon", Toast.LENGTH_SHORT).show()
+            val toast =   Toast.makeText(requireActivity(),"Coming in sprint 2nd",Toast.LENGTH_LONG)
+            toast.setGravity(Gravity.BOTTOM, 0, 0)
+            toast.show()
+        }
+        binding.disConLayout.setOnClickListener {
+            val toast =   Toast.makeText(requireActivity(),"Coming in sprint 2rd",Toast.LENGTH_LONG)
+            toast.setGravity(Gravity.BOTTOM, 0, 0)
+            toast.show()
         }
         binding.perConLayout.setOnClickListener {
             launchContainerActivity(to = "per")

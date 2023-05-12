@@ -6,32 +6,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Start - It holds PlayerView -->
     <FrameLayout
-        android:id="@+id/player_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:id="@+id/frame_parent_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:foreground="@drawable/page_item_background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    <!-- End - It holds PlayerView -->
-
-    <!-- Start - It holds PreviewImage on Top of PlayerView -->
-    <ImageView
-        android:id="@+id/preview_image"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:foreground="@drawable/page_item_background"
-        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
-    <!-- End - It holds PreviewImage on Top of PlayerView -->
+        >
+        <!-- Start - It holds PlayerView -->
+        <FrameLayout
+            android:id="@+id/player_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <!-- End - It holds PlayerView -->
+
+        <!-- Start - It holds PreviewImage on Top of PlayerView -->
+        <ImageView
+            android:id="@+id/preview_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:ignore="ContentDescription"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        <!-- End - It holds PreviewImage on Top of PlayerView -->
+
+    </FrameLayout>
+
 
     <!-- Start - It holds Play/Pause Icon of Player -->
     <ImageView
@@ -116,7 +120,7 @@
             android:paddingTop="6dp"
             android:paddingEnd="16dp"
             android:paddingBottom="6dp"
-            android:text="@string/follow"
+            tools:text="@string/follow"
             android:textColor="@color/white"
             android:textSize="@dimen/video_page_text_size_medium"
             app:layout_constraintBottom_toBottomOf="@id/card_view_client_image"

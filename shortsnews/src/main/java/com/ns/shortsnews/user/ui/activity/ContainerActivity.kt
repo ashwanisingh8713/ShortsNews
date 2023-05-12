@@ -14,8 +14,8 @@ class ContainerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityContainerBinding.inflate(layoutInflater)
         val view = binding.root
-        window.statusBarColor = Color.parseColor("#1E1E1E")
-        window.navigationBarColor = Color.parseColor("#1E1E1E")
+        window.statusBarColor = Color.parseColor("#000000")
+        window.navigationBarColor = Color.parseColor("#000000")
         val data = intent.getStringExtra("to")
         when(data){
              "per" -> {

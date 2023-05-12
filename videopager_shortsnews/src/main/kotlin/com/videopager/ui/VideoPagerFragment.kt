@@ -35,6 +35,7 @@ import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
@@ -46,6 +47,7 @@ class VideoPagerFragment(
     lateinit var binding: VideoPagerFragmentBinding
     private lateinit var pagerAdapter: PagerAdapter
     private lateinit var commentFragment: CommentsFragment
+    private var isUserLoggedIn = false
 
     private var isFirstVideoInfoLoaded = false
 
@@ -66,6 +68,9 @@ class VideoPagerFragment(
 
         // Start point of Events, Flow, States
         viewModel.initApi(shortsType)
+
+        // Listening user status via shared view Module from main activity preference utils
+        listenForUserStatus()
 
         val states = viewModel.states
             .onEach { state ->
@@ -108,7 +113,7 @@ class VideoPagerFragment(
                     }
                     binding.viewPager.isUserInputEnabled = true
 
-                    if(!isFirstVideoInfoLoaded) {
+                    if (!isFirstVideoInfoLoaded) {
                         val data = pagerAdapter.getVideoData(0)
                         viewModel.processEvent(VideoInfoEvent(data.id, 0))
                         isFirstVideoInfoLoaded = true
@@ -146,7 +151,7 @@ class VideoPagerFragment(
 //                        Toast.makeText(requireContext(), "VideoInfo :: ${effect.position}", Toast.LENGTH_SHORT).show()
                         pagerAdapter.refreshUI(effect.position)
                     }
-                    is GetYoutubeUriEffect ->{
+                    is GetYoutubeUriEffect -> {
                         sharedEventViewModel.cacheVideoData(effect.uri, effect.id)
                     }
 
@@ -211,8 +216,8 @@ class VideoPagerFragment(
 
             getYoutubeUri().map {
                 var nextYoutubeUriPage = 0
-                nextYoutubeUriPage = if(currentItem < pagerAdapter.itemCount-1)  {
-                    currentItem+1
+                nextYoutubeUriPage = if (currentItem < pagerAdapter.itemCount - 1) {
+                    currentItem + 1
                 } else {
                     currentItem
                 }
@@ -221,8 +226,8 @@ class VideoPagerFragment(
             },
             getYoutubeUri_2().map {
                 var nextYoutubeUriPage = 0
-                nextYoutubeUriPage = if(currentItem < pagerAdapter.itemCount-2)  {
-                    currentItem+2
+                nextYoutubeUriPage = if (currentItem < pagerAdapter.itemCount - 2) {
+                    currentItem + 2
                 } else {
                     currentItem
                 }
@@ -230,7 +235,7 @@ class VideoPagerFragment(
                 GetYoutubeUriEvent_2(data.type, nextYoutubeUriPage)
             },
 
-        )
+            )
     }
 
     private fun CommentsFragment.postClickComment(): Flow<ViewEvent> {
@@ -244,19 +249,21 @@ class VideoPagerFragment(
             when (it.second) {
                 PlayPauseClick -> TappedPlayerEvent
                 FollowClick -> {
-                    // TODO, make api request to follow/unfollow the channel
-                    val currentItem = binding.viewPager.currentItem
-                    val videoData = pagerAdapter.getVideoData(currentItem)
-                    FollowClickEvent(videoData.id, currentItem)
+                    if (!isUserLoggedIn) {
+                        sharedEventViewModel.launchLoginEvent(true)
+                        NoFurtherEvent
+                    } else {
+                        val currentItem = binding.viewPager.currentItem
+                        val videoData = pagerAdapter.getVideoData(currentItem)
+                        FollowClickEvent(videoData.channel_id, currentItem)
+                    }
                 }
                 ChannelClick -> {
                     val currentItem = binding.viewPager.currentItem
                     val videoData = pagerAdapter.getVideoData(currentItem)
-                    // TODO, Redirect in Channel page
                     ChannelClickEvent
                 }
                 SaveClick -> {
-                    // TODO, Not applicable for Phase-1, as discussed on 24th April
                     Toast.makeText(requireContext(), "In Phase - 2", Toast.LENGTH_SHORT).show()
                     SaveClickEvent("", 101010)
                 }
@@ -272,23 +279,30 @@ class VideoPagerFragment(
                     var sAux = videoData.mediaUri
 
                     chooserIntent.putExtra(Intent.EXTRA_TEXT, sAux)
-                    activity?.startActivity(Intent.createChooser(chooserIntent,"Share Via"))
+                    activity?.startActivity(Intent.createChooser(chooserIntent, "Share Via"))
                     ShareClickEvent
                 }
                 CommentClick -> {
-                    // TODO, Open BottomSheet dialog, inside BottomSheet dialog make api request and show the content.
 
-                    commentFragment.show(childFragmentManager, "comments")
-
-                    val currentItem = binding.viewPager.currentItem
-                    val videoData = pagerAdapter.getVideoData(currentItem)
-                    CommentClickEvent(videoData.id, currentItem)
+                    if (!isUserLoggedIn) {
+                        sharedEventViewModel.launchLoginEvent(true)
+                        NoFurtherEvent
+                    } else {
+                        commentFragment.show(childFragmentManager, "comments")
+                        val currentItem = binding.viewPager.currentItem
+                        val videoData = pagerAdapter.getVideoData(currentItem)
+                        CommentClickEvent(videoData.id, currentItem)
+                    }
                 }
                 LikeClick -> {
-                    // TODO, make api request to like/unlike the channel
-                    val currentItem = binding.viewPager.currentItem
-                    val videoData = pagerAdapter.getVideoData(currentItem)
-                    LikeClickEvent(videoData.id, currentItem)
+                    if (!isUserLoggedIn) {
+                        sharedEventViewModel.launchLoginEvent(true)
+                        NoFurtherEvent
+                    } else {
+                        val currentItem = binding.viewPager.currentItem
+                        val videoData = pagerAdapter.getVideoData(currentItem)
+                        LikeClickEvent(videoData.id, currentItem)
+                    }
                 }
                 else -> NoFurtherEvent
 
@@ -297,5 +311,12 @@ class VideoPagerFragment(
         }
     }
 
-
+    private fun listenForUserStatus() {
+        lifecycleScope.launch {
+            sharedEventViewModel.cacheUserStatus.collectLatest {
+                isUserLoggedIn = it.first
+                Log.i("newDataUser","User logged in status ${it.first}")
+            }
+        }
+    }
 }
