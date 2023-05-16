@@ -148,11 +148,10 @@ class VideoPagerFragment(
                         Snackbar.LENGTH_LONG
                     ).show()
                     is GetVideoInfoEffect -> {
-//                        Toast.makeText(requireContext(), "VideoInfo :: ${effect.position}", Toast.LENGTH_SHORT).show()
                         pagerAdapter.refreshUI(effect.position)
                     }
                     is GetYoutubeUriEffect -> {
-                        sharedEventViewModel.cacheVideoData(effect.uri, effect.id)
+                        // TODO, Nothing
                     }
 
                     is PostCommentEffect -> {
@@ -234,6 +233,18 @@ class VideoPagerFragment(
                 val data = pagerAdapter.getVideoData(nextYoutubeUriPage)
                 GetYoutubeUriEvent_2(data.type, nextYoutubeUriPage)
             },
+
+            videoCache().map {
+                var nextVideoCacheIndex = 0
+                nextVideoCacheIndex = if (currentItem < pagerAdapter.itemCount - 1) {
+                    currentItem + 1
+                } else {
+                    currentItem
+                }
+                val nextVideoCacheData = pagerAdapter.getVideoData(nextVideoCacheIndex)
+                sharedEventViewModel.cacheVideoData(nextVideoCacheData.mediaUri, nextVideoCacheData.id)
+                NoFurtherEvent
+            }
 
             )
     }

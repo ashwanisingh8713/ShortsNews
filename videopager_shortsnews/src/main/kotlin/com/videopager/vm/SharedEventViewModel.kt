@@ -38,4 +38,13 @@ class SharedEventViewModel:ViewModel() {
         }
     }
 
+    private var _cacheVideoUrl_2= MutableSharedFlow<Pair<String, String>>()
+    val cacheVideoUrl_2 = _cacheVideoUrl_2.asSharedFlow()
+
+    fun cacheVideoData_2(uri: String, id: String) {
+        viewModelScope.launch {
+            _cacheVideoUrl_2.emit(Pair(uri, id))
+        }
+    }
+
 }

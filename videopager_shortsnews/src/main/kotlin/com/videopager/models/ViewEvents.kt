@@ -28,4 +28,3 @@ internal object NoFurtherEvent : ViewEvent()
 internal data class OnPageSettledEvent(val page: Int) : ViewEvent()
 
 internal object PauseVideoEvent : ViewEvent()
-internal object YoutubeUriExtractionEvent : ViewEvent()

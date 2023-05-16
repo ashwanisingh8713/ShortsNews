@@ -2,13 +2,11 @@ package com.ns.shortsnews.video.data
 
 import android.content.Context
 import android.util.Log
-import android.util.SparseArray
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import at.huber.me.YouTubeUri
-import at.huber.youtubeExtractor.VideoMeta
-import at.huber.youtubeExtractor.YouTubeExtractor
-import at.huber.youtubeExtractor.YtFile
-import com.exo.players.ExoAppPlayerFactory
 import com.ns.shortsnews.MainApplication
+import com.ns.shortsnews.cache.VideoPreloadWorker
 import com.ns.shortsnews.utils.PrefUtils
 import com.player.models.VideoData
 import com.squareup.moshi.Json
@@ -17,7 +15,6 @@ import com.videopager.data.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -28,7 +25,6 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.util.concurrent.CancellationException
 
 class VideoDataRepositoryImpl : VideoDataRepository {
 
@@ -89,12 +85,19 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 
 
 
-            val allowedConversionCount = 2
+            val youtubeUriConversionCount = 2
+            val precachingAllowedCount = 3
             var conversionCount = 0
+            var videoUrls = Array(precachingAllowedCount){""}
+            var videoIds = Array(precachingAllowedCount){""}
 
             val videoData = response.data
-                .map { post ->
-                    if (post.type!="yt" || allowedConversionCount <= conversionCount) {
+                .mapIndexed {  index, post ->
+                    if (post.type!="yt" || youtubeUriConversionCount <= conversionCount) {
+                        if(index < precachingAllowedCount) {
+                            videoUrls[index]=post.videoUrl
+                            videoIds[index]=post.id
+                        }
                         VideoData(
                             id = post.id,
                             mediaUri = post.videoUrl,
@@ -121,6 +124,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                 }.filter {
                     it.mediaUri.isNotBlank()
                 }
+
+            // Preload mp4 urls
+            VideoPreloadWorker.schedulePreloadWork(videoUrls, videoIds)
 
             Log.i("Conv_TIME", "VideoDataRepositoryImpl")
 
@@ -254,5 +260,7 @@ data class Data(
         val like_count:String
 
     )
+
+
 
 }
