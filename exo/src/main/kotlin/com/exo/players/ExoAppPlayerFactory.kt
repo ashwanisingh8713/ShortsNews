@@ -36,7 +36,7 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
 
 
         val exoPlayer = ExoPlayer.Builder(appContext)
-            .setMediaSourceFactory(mediaSourceFactory)
+//            .setMediaSourceFactory(mediaSourceFactory)
 //            .setRenderersFactory(DefaultRendererFactory())
             .build()
             .apply {
