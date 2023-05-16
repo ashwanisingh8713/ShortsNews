@@ -20,4 +20,9 @@
     <string name="disappearing_favourite">Disappearing favourite</string>
     <string name="personalise_my_choice">Personalise my choice</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="log_in_with_email">Log-in with email</string>
+    <string name="submit_button_text">Submit</string>
+    <string name="select_nlanguage">Select\nLanguage</string>
+    <string name="upto_4">(Upto 4)</string>
+    <string name="scroll_down_button">scroll_down_button</string>
 </resources>

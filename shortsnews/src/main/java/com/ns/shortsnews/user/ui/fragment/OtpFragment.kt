@@ -3,11 +3,9 @@ package com.ns.shortsnews.user.ui.fragment
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
@@ -18,8 +16,9 @@ import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
-import com.ns.shortsnews.utils.PrefUtils
-import com.ns.shortsnews.utils.Validation
+import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.AppPreference
+import com.ns.shortsnews.utils.ShowToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -59,14 +58,9 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 userViewModel.requestOtpValidationApi(data)
             } else{
                 if (otpValue.isEmpty()){
-                    val toast =   Toast.makeText(requireActivity(),"Please enter OTP",Toast.LENGTH_LONG)
-                    toast.setGravity(Gravity.BOTTOM, 0, 0)
-                    toast.show()
-
+                    ShowToast.showGravityToast(requireActivity(),AppConstants.FILL_OTP)
                 } else {
-                    val toast =   Toast.makeText(requireActivity(),"Please enter valid OTP",Toast.LENGTH_LONG)
-                    toast.setGravity(Gravity.BOTTOM, 0, 0)
-                    toast.show()
+                    ShowToast.showGravityToast(requireActivity(), AppConstants.FILL_VALID_OTP)
                 }
             }
         }
@@ -75,9 +69,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarOtp.visibility = View.GONE
-                if(!it.equals("NA")){
+                if(it != "NA"){
                     Log.i("kamlesh","OTPFragment onError ::: $it")
-                    Toast.makeText(requireActivity(),"$it", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -105,9 +98,9 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
     }
 
     private fun saveUserPreference(it: UserOtp){
-        PrefUtils.with(requireContext()).save(Validation.PREF_USERNAME, it.name)
-        PrefUtils.with(requireContext()).save(Validation.PREF_USER_EMAIL, it.email)
-        PrefUtils.with(requireContext()).save(Validation.PREF_USER_TOKEN, it.access_token)
-        PrefUtils.with(requireContext()).save(Validation.PREF_IS_USER_LOGGED_IN, true)
+        AppPreference.userName = it.name
+        AppPreference.userEmail = it.email
+        AppPreference.userToken = it.access_token
+        AppPreference.isUserLoggedIn = true
     }
 }

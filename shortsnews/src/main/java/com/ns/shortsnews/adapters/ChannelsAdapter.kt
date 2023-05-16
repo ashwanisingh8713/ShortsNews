@@ -1,22 +1,14 @@
 package com.ns.shortsnews.adapters
 
 import android.annotation.SuppressLint
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.ns.shortsnews.R
-import com.ns.shortsnews.databinding.ItemCategoryBinding
 import com.ns.shortsnews.databinding.ItemFollowingBinding
-import com.ns.shortsnews.onProfileItemClick
-import com.ns.shortsnews.user.callbacks.onFollowingItemClick
 import com.ns.shortsnews.user.domain.models.ChannelListData
-import com.ns.shortsnews.user.domain.models.VideoCategory
-import com.ns.shortsnews.user.ui.callbacks.onChannelItemClick
-import com.videopager.ui.extensions.ClickEvent
+import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.ShowToast
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -49,9 +41,7 @@ class ChannelsAdapter(private var itemList: List<ChannelListData> = emptyList())
             }
         }
         holder.itemView.setOnClickListener {
-            val toast =   Toast.makeText(holder.itemView.context,"Coming in sprint 3rd",Toast.LENGTH_LONG)
-            toast.setGravity(Gravity.BOTTOM, 0, 0)
-            toast.show()
+            ShowToast.showGravityToast(holder.itemView.context, AppConstants.SPRINT_THREE)
         }
     }
 

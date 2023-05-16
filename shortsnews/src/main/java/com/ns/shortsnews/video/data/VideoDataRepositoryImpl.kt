@@ -7,7 +7,7 @@ import androidx.work.WorkManager
 import at.huber.me.YouTubeUri
 import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.cache.VideoPreloadWorker
-import com.ns.shortsnews.utils.PrefUtils
+import com.ns.shortsnews.utils.AppPreference
 import com.player.models.VideoData
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -32,9 +32,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         .addConverterFactory(MoshiConverterFactory.create())
         .baseUrl("https://shorts.newsdx.io/ci/api/public/")
         .client(OkHttpClient.Builder().addInterceptor{ chain ->
-            Log.i("auth", PrefUtils.USER_TOKEN)
-           if( PrefUtils.USER_TOKEN.isNotEmpty()){
-            val request = chain.request().newBuilder().addHeader("Authorization", "Bearer ${PrefUtils.USER_TOKEN}").build()
+            AppPreference.userToken?.let { Log.i("auth", it) }
+           if(AppPreference.userToken?.isNotEmpty() == true){
+            val request = chain.request().newBuilder().addHeader("Authorization", "Bearer ${AppPreference.userToken}").build()
             chain.proceed(request)
                } else {
                val request = chain.request().newBuilder().build()

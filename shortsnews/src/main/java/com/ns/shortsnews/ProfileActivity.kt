@@ -15,8 +15,7 @@ import com.ns.shortsnews.user.ui.fragment.OtpFragment
 import com.ns.shortsnews.user.ui.fragment.UserProfileFragment
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
-import com.ns.shortsnews.utils.PrefUtils
-import com.ns.shortsnews.utils.Validation
+import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -40,7 +39,7 @@ class ProfileActivity : AppCompatActivity() {
         window.statusBarColor = Color.parseColor("#000000")
         window.navigationBarColor = Color.parseColor("#000000")
 
-        if (PrefUtils.with(this).getBoolean(Validation.PREF_IS_USER_LOGGED_IN, false)){
+        if (AppPreference.isUserLoggedIn){
             choiceFragment()
         } else{
             loginFragment()
@@ -71,8 +70,6 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun popOtpFragment() {
         supportFragmentManager.popBackStack()
-//        val fra = LoginFragment()
-//        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fra).commit()
     }
 
 

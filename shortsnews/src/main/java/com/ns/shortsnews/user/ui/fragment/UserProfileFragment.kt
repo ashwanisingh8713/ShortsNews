@@ -3,10 +3,8 @@ package com.ns.shortsnews.user.ui.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
@@ -17,9 +15,9 @@ import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
 import com.ns.shortsnews.user.ui.activity.ContainerActivity
 import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModelFactory
-import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
-import com.ns.shortsnews.utils.PrefUtils
-import com.ns.shortsnews.utils.Validation
+import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.AppPreference
+import com.ns.shortsnews.utils.ShowToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -34,15 +32,12 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentUserBinding.bind(view)
         userProfileViewModel.requestProfileApi()
-//        binding.userNameTxt.text = PrefUtils.with(requireContext()).getString(Validation.PREF_USERNAME,"")
-
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userProfileViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarProfile.visibility = View.GONE
                 if(!it.equals("NA")){
                     Log.i("kamlesh","ProfileFragment onError ::: $it")
-                    Toast.makeText(requireActivity(),"$it", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -55,7 +50,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
                     binding.nestedParentView.visibility = View.VISIBLE
                     binding.profileImageView.load(it.data.image)
                     binding.userNameTxt.text = it.data.name
-                    PrefUtils.with(requireContext()).save(Validation.PREF_USER_IMAGE,it.data.image)
+                    AppPreference.userProfilePic = it.data.image
                 }
             }
         }
@@ -69,14 +64,10 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
         }
 
         binding.editConsLayout.setOnClickListener {
-            val toast =   Toast.makeText(requireActivity(),"Coming in sprint 2nd",Toast.LENGTH_LONG)
-            toast.setGravity(Gravity.BOTTOM, 0, 0)
-            toast.show()
+            ShowToast.showGravityToast(requireActivity(), AppConstants.SPRINT_TWO)
         }
         binding.disConLayout.setOnClickListener {
-            val toast =   Toast.makeText(requireActivity(),"Coming in sprint 2rd",Toast.LENGTH_LONG)
-            toast.setGravity(Gravity.BOTTOM, 0, 0)
-            toast.show()
+            ShowToast.showGravityToast(requireActivity(), AppConstants.SPRINT_TWO)
         }
         binding.perConLayout.setOnClickListener {
             launchContainerActivity(to = "per")
@@ -89,7 +80,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
             activity?.finish()
         }
         binding.logoutConLayout.setOnClickListener {
-            PrefUtils.with(requireContext()).clear()
+            AppPreference.clear()
             activity?.finish()
 
         }

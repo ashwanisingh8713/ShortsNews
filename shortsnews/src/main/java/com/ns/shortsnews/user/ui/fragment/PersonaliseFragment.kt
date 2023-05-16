@@ -1,13 +1,9 @@
 package com.ns.shortsnews.user.ui.fragment
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.widget.CompoundButton
-import android.widget.RadioGroup.OnCheckedChangeListener
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -21,6 +17,8 @@ import com.ns.shortsnews.user.domain.models.VideoCategory
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
+import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.ShowToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -41,9 +39,7 @@ class PersonaliseFragment : Fragment(com.ns.shortsnews.R.layout.fragment_persona
             activity?.finish()
         }
         binding.submitButtonPers.setOnClickListener {
-            val toast =   Toast.makeText(requireActivity(),"Coming in phase 3rd",Toast.LENGTH_LONG)
-            toast.setGravity(Gravity.BOTTOM, 0, 0)
-            toast.show()
+           ShowToast.showGravityToast(requireActivity(), AppConstants.SPRINT_THREE)
         }
         binding.choiceChipGroup.setOnCheckedStateChangeListener(object : ChipGroup.OnCheckedStateChangeListener{
             override fun onCheckedChanged(group: ChipGroup, checkedIds: MutableList<Int>) {
@@ -55,7 +51,6 @@ class PersonaliseFragment : Fragment(com.ns.shortsnews.R.layout.fragment_persona
         viewLifecycleOwner.lifecycleScope.launch(){
             categoryViewModel.errorState.filterNotNull().collectLatest {
                 if(it != "NA"){
-                    Toast.makeText(requireActivity(),"$it",Toast.LENGTH_LONG).show()
                     binding.progressBarPer.visibility = View.GONE
                 }
             }

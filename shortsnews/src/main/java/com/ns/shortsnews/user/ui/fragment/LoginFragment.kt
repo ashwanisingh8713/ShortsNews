@@ -4,14 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.ns.shortsnews.ProfileActivity
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentLoginBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
@@ -19,6 +16,8 @@ import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
+import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.ShowToast
 import com.ns.shortsnews.utils.Validation
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -54,21 +53,17 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     bundle["name"] = name
                     userViewModel.requestRegistrationApi(bundle)
                 } else {
-                  val toast =   Toast.makeText(requireActivity(),"Please enter valid Email id",Toast.LENGTH_LONG)
-                    toast.setGravity(Gravity.BOTTOM, 0, 0)
-                    toast.show()
+                    ShowToast.showGravityToast(requireActivity(), AppConstants.FILL_VALID_EMAIL)
                 }
             } else{
-                val toast =   Toast.makeText(requireActivity(),"Please fill all required field",Toast.LENGTH_LONG)
-                toast.setGravity(Gravity.BOTTOM, 0, 0)
-                toast.show()
+                ShowToast.showGravityToast(requireActivity(),AppConstants.FILL_REQUIRED_FIELD)
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
               if(it != "NA"){
-                Toast.makeText(requireActivity(),"$it",Toast.LENGTH_LONG).show()
+                  Log.i("kamlesh","$it")
                 }
             }
         }

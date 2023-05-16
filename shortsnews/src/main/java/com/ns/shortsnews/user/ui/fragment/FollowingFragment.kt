@@ -4,20 +4,17 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.ChannelsAdapter
 import com.ns.shortsnews.databinding.FragmentFollowingBinding
-import com.ns.shortsnews.user.callbacks.onFollowingItemClick
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.channel.ChannelsDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.ChannelsViewModel
 import com.ns.shortsnews.user.ui.viewmodel.ChannelsViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
@@ -44,7 +41,6 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
                 binding.progressBarChannels.visibility = View.GONE
                 if(!it.equals("NA")){
                     Log.i("kamlesh","ProfileFragment onError ::: $it")
-                    Toast.makeText(requireActivity(),"$it", Toast.LENGTH_LONG).show()
                 }
             }
         }

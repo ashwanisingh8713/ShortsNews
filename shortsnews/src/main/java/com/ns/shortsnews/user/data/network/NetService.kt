@@ -1,10 +1,7 @@
 package com.ns.shortsnews.user.data.network
 
-import com.ns.shortsnews.MainActivity
-import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.user.data.source.UserApiService
-import com.ns.shortsnews.utils.PrefUtils
-import com.ns.shortsnews.utils.Validation
+import com.ns.shortsnews.utils.AppPreference
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -30,9 +27,8 @@ fun createOkHttpClient(): OkHttpClient {
             chain.proceed(
                 chain.request()
                     .newBuilder().also {
-                        val context = MainApplication.applicationContext()
-                        if (PrefUtils.with(context = context).getBoolean(Validation.PREF_IS_USER_LOGGED_IN, false) ){
-                            val token = "Bearer ${PrefUtils.with(context).getString(Validation.PREF_USER_TOKEN,"")}"
+                        if (AppPreference.isUserLoggedIn){
+                            val token = "Bearer ${AppPreference.userToken}"
                             if (token.isNotEmpty()){
                                 it.addHeader("Authorization", token)
                             }

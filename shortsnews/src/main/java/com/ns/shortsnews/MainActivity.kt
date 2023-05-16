@@ -22,8 +22,7 @@ import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
-import com.ns.shortsnews.utils.PrefUtils
-import com.ns.shortsnews.utils.Validation
+import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.videopager.ui.VideoPagerFragment
 import com.videopager.vm.SharedEventViewModel
@@ -35,25 +34,18 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
 
-class MainActivity : AppCompatActivity(), onProfileItemClick{
+class MainActivity : AppCompatActivity(), onProfileItemClick {
     private lateinit var binding: ActivityMainBinding
     private lateinit var caAdapter: CategoryAdapter
-
     private val sharedEventViewModel: SharedEventViewModel by viewModels { SharedEventViewModelFactory }
-
-    private val videoRepository = VideoCategoryRepositoryImp(get())
-    private val videoCategoryUseCase = VideoCategoryUseCase(videoRepository)
-
-    private val userViewModelFactory = VideoCategoryViewModelFactory().apply {
+    private val videoCategoryViewModel: VideoCategoryViewModel by viewModels { VideoCategoryViewModelFactory().apply {
         inject(
-            videoCategoryUseCase
+            VideoCategoryUseCase(VideoCategoryRepositoryImp(get()))
         )
-    }
-
-    private val videoCategoryViewModel: VideoCategoryViewModel by viewModels { userViewModelFactory }
+    } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -61,20 +53,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         setContentView(view)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-        val isUserLoggedIn = PrefUtils.with(this@MainActivity).getBoolean(Validation.PREF_IS_USER_LOGGED_IN, false)
-        if(isUserLoggedIn){
-            val profileImage = PrefUtils.with(this@MainActivity).getString(Validation.PREF_USER_IMAGE, "")
-            binding.profileIcon.load(profileImage)
+        if (AppPreference.isUserLoggedIn) {
+            binding.profileIcon.load(AppPreference.userProfilePic)
         }
-
 
         binding.profileIcon.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
+            launchProfileIntent()
         }
-
-
-
         videoCategoryViewModel.loadVideoCategory()
         showCategory()
         // To get status of should launch in login flow for non logged-in user
@@ -84,8 +69,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
     /**
      * It listens category item click
      */
-    override fun itemclick(shortsType: String, position:Int, size:Int) {
+    override fun itemclick(shortsType: String, position: Int, size: Int) {
         loadHomeFragment(shortsType)
+    }
+
+    private fun launchProfileIntent(){
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
     }
 
 
@@ -96,22 +86,21 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.fragment_container, makeVideoPagerInstance(shortsType))
         ft.commit()
-         var isUserLoggedIn = PrefUtils.with(this@MainActivity).getBoolean(Validation.PREF_IS_USER_LOGGED_IN, false)
-        var userToken = PrefUtils.with(this@MainActivity).getUserToken()
-        if (userToken != null) {
-            PrefUtils.USER_TOKEN = userToken
+        AppPreference.userToken?.let {
+            sharedEventViewModel.sendUserPreferenceData(
+                AppPreference.isUserLoggedIn,
+                it
+            )
         }
-
-        sharedEventViewModel.sendUserPreferenceData(isUserLoggedIn,"" )
 
 //        registerVideoCache()
 
     }
+
     private fun launchLoginStateFlow() {
         lifecycleScope.launch {
             sharedEventViewModel.getLoginEventStatus.collectLatest {
-                val intent = Intent(this@MainActivity, ProfileActivity::class.java)
-                startActivity(intent)
+                launchProfileIntent()
             }
         }
     }
@@ -121,7 +110,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
      * Creates VideoPagerFragment Instance
      */
     private fun makeVideoPagerInstance(shortsType: String): VideoPagerFragment {
-        val vpf =  VideoPagerFragment(
+        val vpf = VideoPagerFragment(
             viewModelFactory = { owner ->
                 VideoPagerViewModelFactory(
                     repository = VideoDataRepositoryImpl(),
@@ -139,17 +128,16 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
 
     private fun showCategory() {
         lifecycleScope.launch {
-                videoCategoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
-                    // Setup recyclerView
-                    caAdapter = CategoryAdapter(
-                        itemList = it.videoCategories,
-                        itemListener = this@MainActivity
-                    )
-                    binding.recyclerView.adapter = caAdapter
-                    val defaultCate = it.videoCategories[0]
-                    loadHomeFragment(defaultCate.id)
-                }
-
+            videoCategoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
+                // Setup recyclerView
+                caAdapter = CategoryAdapter(
+                    itemList = it.videoCategories,
+                    itemListener = this@MainActivity
+                )
+                binding.recyclerView.adapter = caAdapter
+                val defaultCate = it.videoCategories[0]
+                loadHomeFragment(defaultCate.id)
+            }
         }
     }
 
@@ -176,9 +164,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
         }
     }
 
-
-
-
-
-
+    override fun onResume() {
+        super.onResume()
+        if (!AppPreference.isUserLoggedIn) {
+            sharedEventViewModel.sendUserPreferenceData(false,"")
+        } else {
+            sharedEventViewModel.sendUserPreferenceData(AppPreference.isUserLoggedIn,AppPreference.userToken!!)
+        }
+    }
 }

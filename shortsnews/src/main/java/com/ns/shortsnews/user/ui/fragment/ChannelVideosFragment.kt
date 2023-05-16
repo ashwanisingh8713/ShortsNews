@@ -6,13 +6,14 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
-import com.ns.shortsnews.adapters.ChannelsAdapter
 import com.ns.shortsnews.adapters.ChannelsVideosAdapter
 import com.ns.shortsnews.databinding.FragmentChannelVideosBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.channel.ChannelVideosDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.ChannelsVideoDataViewModel
 import com.ns.shortsnews.user.ui.viewmodel.ChannelsVideosViewModelFactory
+import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.ShowToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -44,7 +45,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             channelsVideosViewModel.errorState.collectLatest {
-
+               ShowToast.showGravityToast(requireActivity(), AppConstants.NO_CHANNEL_DATA)
             }
         }
     }
