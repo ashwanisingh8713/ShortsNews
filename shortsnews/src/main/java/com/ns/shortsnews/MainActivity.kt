@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
 
         sharedEventViewModel.sendUserPreferenceData(isUserLoggedIn,"" )
 
-        registerVideoCache()
+//        registerVideoCache()
 
     }
     private fun launchLoginStateFlow() {

@@ -60,6 +60,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/rightPart"
+        android:visibility="invisible"
         >
 
         <!-- Start - Title -->
@@ -141,7 +142,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="invisible">
 
         <!-- Start - Comment -->
         <androidx.constraintlayout.widget.ConstraintLayout

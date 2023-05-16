@@ -34,6 +34,7 @@ import com.videopager.ui.extensions.pageIdlings
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -124,7 +125,9 @@ class VideoPagerFragment(
         val effects = viewModel.effects
             .onEach { effect ->
                 when (effect) {
-                    is SaveEffect -> pagerAdapter.refreshUI(0)
+                    is SaveEffect -> {
+                        // TODO, It has to be covered in Phase-2, If supported APIs are done.
+                    }
                     is CommentEffect -> {
                         //adapter.refreshUI(0)
                         // Pass Data to Bottom sheet dialog fragment
@@ -137,25 +140,32 @@ class VideoPagerFragment(
                     is LikeEffect -> {
                         pagerAdapter.refreshLikeUI(effect.position)
                     }
-                    is FollowEffect -> pagerAdapter.refreshFollowUI(effect.position)
-                    is PageEffect -> pagerAdapter.renderEffect(
-                        binding.viewPager.currentItem,
-                        effect
-                    )
-                    is PlayerErrorEffect -> Snackbar.make(
-                        binding.root,
-                        effect.throwable.message ?: "Error",
-                        Snackbar.LENGTH_LONG
-                    ).show()
+                    is FollowEffect -> {
+                        pagerAdapter.refreshFollowUI(effect.position)
+                    }
+                    is PageEffect -> {
+                        pagerAdapter.renderEffect(
+                            binding.viewPager.currentItem,
+                            effect
+                        )
+                    }
+                    is PlayerErrorEffect -> {
+                        Snackbar.make(
+                            binding.root,
+                            effect.throwable.message ?: "Error",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
                     is GetVideoInfoEffect -> {
-                        pagerAdapter.refreshUI(effect.position)
+                        if(effect.videoInfo.id.isNotEmpty())
+                        pagerAdapter.getInfoRefreshUI(effect.position)
                     }
                     is GetYoutubeUriEffect -> {
-                        // TODO, Nothing
+                        // TODO, Nothing,
                     }
 
                     is PostCommentEffect -> {
-                        pagerAdapter.refreshUI(effect.position)
+                        pagerAdapter.getInfoRefreshUI(effect.position)
                         commentFragment.updateCommentAdapter(effect.data)
                     }
                     is YoutubeUriErrorEffect -> {

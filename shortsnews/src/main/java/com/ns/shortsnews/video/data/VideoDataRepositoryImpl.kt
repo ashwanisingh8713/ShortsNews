@@ -68,25 +68,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             )
 
 //            response.data.add(0, youtubeUrl1)
-            /*response.data.add(0, youtubeUrl1)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)
-            response.data.add(2, youtubeUrl2)*/
-
-
 
             val youtubeUriConversionCount = 2
-            val precachingAllowedCount = 3
+            val precachingAllowedCount = 1
             var conversionCount = 0
             var videoUrls = Array(precachingAllowedCount){""}
             var videoIds = Array(precachingAllowedCount){""}

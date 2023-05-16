@@ -106,7 +106,7 @@ internal class PagerAdapter(
         }
     }
 
-    suspend fun refreshUI(position: Int) {
+    suspend fun getInfoRefreshUI(position: Int) {
         val holder = awaitViewHolder(position)
         var isTextViewClicked = false
         var data  = getItem(position)
@@ -139,6 +139,9 @@ internal class PagerAdapter(
                 isTextViewClicked = true
             }
         }
+
+        holder.binding.leftPart.visibility = View.VISIBLE
+        holder.binding.rightPart.visibility = View.VISIBLE
 
     }
 
@@ -177,11 +180,10 @@ internal class PagerAdapter(
             .build()
 
         val request = ImageRequest.Builder(this.context)
-            .crossfade(true)
             .data(url)
             .target(this)
+            .placeholder(R.drawable.channel_placeholder)
             .build()
-
         imageLoader.enqueue(request)
     }
 
