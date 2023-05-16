@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
-    private val appPlayerViewFactory: AppPlayerView.Factory,
+    private val appPlayerView: AppPlayerView,
     private val imageLoader: ImageLoader, private val shortsType: String
 ) : Fragment(R.layout.video_pager_fragment) {
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
@@ -56,11 +56,12 @@ class VideoPagerFragment(
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.setVMContext(requireContext())
+        viewModel.setPlayerVieww(appPlayerView.getPlayerView())
 
         binding = VideoPagerFragmentBinding.bind(view)
         binding.toolbar.title = "News Reels"
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
-        val appPlayerView = appPlayerViewFactory.create(view.context)
+//        val appPlayerView = appPlayerViewFactory.create(view.context)
         pagerAdapter = PagerAdapter(imageLoader)
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.isUserInputEnabled = false

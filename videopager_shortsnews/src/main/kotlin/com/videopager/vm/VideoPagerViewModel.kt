@@ -3,6 +3,7 @@ package com.videopager.vm
 import android.content.Context
 import android.util.Log
 import at.huber.me.YouTubeUri
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.player.players.AppPlayer
 import com.videopager.R
 import com.videopager.data.VideoDataRepository
@@ -47,6 +48,11 @@ internal class VideoPagerViewModel(
     var context: Context? = null
     fun setVMContext(context: Context) {
         this.context = context
+    }
+
+    var playerView: StyledPlayerView? = null
+    fun setPlayerVieww(playerView: StyledPlayerView?) {
+        this.playerView = playerView
     }
 
     override fun onStart() {
@@ -121,8 +127,9 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun createPlayer(): Flow<ViewResult> {
         check(states.value.appPlayer == null) { "Tried to create a player when one already exists" }
+
         val config = AppPlayer.Factory.Config(loopVideos = true)
-        val appPlayer = appPlayerFactory.create(config)
+        val appPlayer = appPlayerFactory.create(config, playerView!!)
         // If video data already exists then the player should have that video data set on it. This
         // can happen because the player has a lifecycle tied to Activity starting/stopping.
         states.value.videoData?.let { videoData -> appPlayer.setUpWith(videoData, handle.get()) }

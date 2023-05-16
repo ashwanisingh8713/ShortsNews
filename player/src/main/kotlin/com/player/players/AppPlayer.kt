@@ -1,5 +1,6 @@
 package com.player.players
 
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.player.models.PlayerState
 import com.player.models.VideoData
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +18,7 @@ interface AppPlayer {
     fun release()
 
     interface Factory {
-        fun create(config: Config): AppPlayer
+        fun create(config: Config, playerView: StyledPlayerView): AppPlayer
 
         data class Config(
             val loopVideos: Boolean = false

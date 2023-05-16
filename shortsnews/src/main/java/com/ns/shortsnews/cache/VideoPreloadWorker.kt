@@ -50,7 +50,7 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
             ).enqueue()
         }
 
-        fun cancelRunningWorkRequest(context: Context) {
+        private fun cancelRunningWorkRequest(context: Context) {
             WorkManager.getInstance(context).cancelWorkById(WorkerRequestUid)
         }
 

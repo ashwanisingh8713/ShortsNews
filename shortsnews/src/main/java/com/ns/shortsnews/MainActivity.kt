@@ -121,6 +121,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
      * Creates VideoPagerFragment Instance
      */
     private fun makeVideoPagerInstance(shortsType: String): VideoPagerFragment {
+       val appPlayerView =  ExoAppPlayerViewFactory().create(this@MainActivity)
         val vpf =  VideoPagerFragment(
             viewModelFactory = { owner ->
                 VideoPagerViewModelFactory(
@@ -130,7 +131,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
                     )
                 ).create(owner)
             },
-            appPlayerViewFactory = ExoAppPlayerViewFactory(),
+            appPlayerView = appPlayerView,
             imageLoader = this@MainActivity.imageLoader,
             shortsType = shortsType
         )
