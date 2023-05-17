@@ -21,7 +21,7 @@
     <dimen name="profile_item_height" tools:ignore="MissingDefaultResource">22dp</dimen>
     <dimen name="profile_item_margin" tools:ignore="MissingDefaultResource">30dp</dimen>
     <dimen name="login_edit_text_margin_bottom" tools:ignore="MissingDefaultResource">50dp</dimen>
-    <dimen name="login_image_view_margin_bottom" tools:ignore="MissingDefaultResource">100dp</dimen>
+    <dimen name="login_image_view_margin_bottom" tools:ignore="MissingDefaultResource">60dp</dimen>
 
 
 </resources>

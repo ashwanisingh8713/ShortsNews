@@ -8,7 +8,7 @@ data class UserOtp(
     val msg: String = "",
     val access_token: String = "",
     val email: String = "",
-    val name: String = "",
+    val name: String? = "",
     val first_time_user: Boolean = false
 ) {
     fun mapper(
@@ -16,7 +16,7 @@ data class UserOtp(
         msg: String,
         access_token: String,
         email: String,
-        name: String,
+        name: String?,
         first_time_user: Boolean
     ): UserOtp {
         return UserOtp(

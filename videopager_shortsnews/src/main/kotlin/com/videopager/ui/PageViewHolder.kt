@@ -52,7 +52,7 @@ internal class PageViewHolder(
 
         binding.msgCount.text = videoData.comment_count
         binding.likeTitle.text = videoData.like_count
-
+        binding.videoIdText.text = videoData.id
         ConstraintSet().apply {
             clone(binding.root)
             // Optimize video preview / container size if aspect ratio is available. This can avoid

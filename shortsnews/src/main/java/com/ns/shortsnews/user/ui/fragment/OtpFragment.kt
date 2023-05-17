@@ -41,20 +41,22 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         val  otpId:String? = arguments?.getString("otp_id")
         val emailId = arguments?.getString("email")
         binding.emailOtpTxt.text = emailId
-        binding.backButtonOtp.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString("name", "")
-            userViewModel.updateFragment(UserViewModel.OTP_POP,bundle )
-        }
+//        binding.backButtonOtp.setOnClickListener {
+//            val bundle = Bundle()
+//            bundle.putString("name", "")
+//            userViewModel.updateFragment(UserViewModel.OTP_POP,bundle )
+//        }
+        binding.otpEditText.setText("12345")
+        binding.submitButton.setOnClickListener {
 
-        binding.loginButton.setOnClickListener {
              val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(view.windowToken, 0)
-            val otpValue = binding.otpTextInput.text.toString()
+            val otpValue = binding.otpEditText.text.toString()
             if (otpValue.isNotEmpty() && otpValue.length == 6){
                 val data:MutableMap<String, String> = mutableMapOf()
                 data["OTP"] = otpValue
                 data["OTP_id"] = otpId.toString()
+                data["name"] = "kamlesh"
                 userViewModel.requestOtpValidationApi(data)
             } else{
                 if (otpValue.isEmpty()){
@@ -68,9 +70,11 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
-                binding.progressBarOtp.visibility = View.GONE
+                binding.otpProgressBar.visibility = View.GONE
                 if(it != "NA"){
                     Log.i("kamlesh","OTPFragment onError ::: $it")
+                    ShowToast.showGravityToast(requireActivity(), AppConstants.OTP_VALIDATION_ERROR)
+
                 }
             }
         }
@@ -80,10 +84,10 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 Log.i("kamlesh","OTPFragment onSuccess ::: $it")
                 it.let {
                     saveUserPreference(it)
-                    binding.progressBarOtp.visibility = View.GONE
+                    binding.otpProgressBar.visibility = View.GONE
                     val bundle = Bundle()
-                    bundle.putString("name", it.name)
-                    userViewModel.updateFragment(UserViewModel.PROFILE,bundle )
+                    bundle.putString("name", /*it.name*/"kamlesh")
+                    userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY,bundle )
                 }
             }
         }
@@ -91,7 +95,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.loadingState.filterNotNull().collectLatest {
                 if (it) {
-                    binding.progressBarOtp.visibility = View.VISIBLE
+                    binding.otpProgressBar.visibility = View.VISIBLE
                 }
             }
         }

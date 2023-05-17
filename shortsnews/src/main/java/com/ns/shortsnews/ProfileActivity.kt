@@ -1,9 +1,11 @@
 package com.ns.shortsnews
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 
 import com.ns.shortsnews.databinding.ActivityProfileBinding
@@ -24,40 +26,47 @@ import org.koin.android.ext.android.get
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
 
-    private val sharedUserViewModel: UserViewModel by viewModels {UserViewModelFactory().apply {
-        inject(
-            UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
-            UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
-        )
-    }}
+    private val sharedUserViewModel: UserViewModel by viewModels {
+        UserViewModelFactory().apply {
+            inject(
+                UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
+                UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
+            )
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
-       binding = ActivityProfileBinding.inflate(layoutInflater)
+        binding = ActivityProfileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
         window.statusBarColor = Color.parseColor("#000000")
         window.navigationBarColor = Color.parseColor("#000000")
+        val from = intent.getStringExtra("fromActivity")
 
-        if (AppPreference.isUserLoggedIn){
-            choiceFragment()
-        } else{
+        if (AppPreference.isUserLoggedIn) {
+            if (from !=null && from == "MainActivity"){
+                choiceFragment()
+            } else{
+                launchMainActivityIntent()
+            }
+        } else {
             loginFragment()
         }
         listenFragmentUpdate()
-
-
     }
 
     private fun listenFragmentUpdate() {
         lifecycleScope.launch() {
             sharedUserViewModel.fragmentStateFlow.filterNotNull().collectLatest {
                 val bundle = it
-                when(bundle.getString("fragmentType")) {
-                    UserViewModel.PROFILE-> choiceFragment()
-                    UserViewModel.OTP-> otpFragment(bundle)
-                    UserViewModel.LOGIN-> loginFragment()
-                    UserViewModel.OTP_POP-> popOtpFragment()
+                when (bundle.getString("fragmentType")) {
+                    UserViewModel.PROFILE -> choiceFragment()
+                    UserViewModel.OTP -> otpFragment(bundle)
+                    UserViewModel.LOGIN -> loginFragment()
+                    UserViewModel.OTP_POP -> popOtpFragment()
+                    UserViewModel.MAIN_ACTIVITY -> launchMainActivityIntent()
                 }
             }
         }
@@ -65,7 +74,8 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun loginFragment() {
         val fra = LoginFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fra).addToBackStack("login").commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fra)
+            .addToBackStack("login").commit()
     }
 
     private fun popOtpFragment() {
@@ -76,12 +86,21 @@ class ProfileActivity : AppCompatActivity() {
     private fun otpFragment(bundle: Bundle) {
         val fragment = OtpFragment()
         fragment.arguments = bundle
-        supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fragment).addToBackStack("opt").commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fragment)
+            .addToBackStack("opt").commit()
     }
 
 
     private fun choiceFragment() {
         val fragment = UserProfileFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
+            .commit()
+    }
+
+
+    private fun launchMainActivityIntent() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        this.finish()
     }
 }

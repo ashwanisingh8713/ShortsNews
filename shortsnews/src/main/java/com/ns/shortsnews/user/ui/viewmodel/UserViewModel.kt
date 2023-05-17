@@ -7,7 +7,6 @@ import com.ns.shortsnews.user.data.mapper.UserOtp
 import com.ns.shortsnews.user.data.mapper.UserRegistration
 import com.ns.shortsnews.user.domain.exception.ApiError
 import com.ns.shortsnews.user.domain.models.OTPResult
-import com.ns.shortsnews.user.domain.models.UserChoiceResult
 import com.ns.shortsnews.user.domain.models.RegistrationResult
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.base.UseCaseResponse
@@ -26,6 +25,8 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
         val OTP = "otp"
         val PROFILE = "profile"
         val OTP_POP = "otp_pop"
+        val MAIN_ACTIVITY = "main_activity"
+        val LANGUAGES = "languages"
     }
 
 
@@ -101,10 +102,4 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
             }
         )
     }
-
-    fun requestProfileApi(){
-
-    }
-
-
 }

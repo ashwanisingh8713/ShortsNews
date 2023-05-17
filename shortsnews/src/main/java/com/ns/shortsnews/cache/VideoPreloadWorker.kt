@@ -28,6 +28,7 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
     private var onGoingCacheIndex = 0
     private var onGoingVideoId = ""
     private var onGoingVideoUrl = ""
+    private var startedTime:Long = 0L
 
 
     companion object {
@@ -35,6 +36,9 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
         const val VIDEO_URLs = "video_urls"
         const val VIDEO_IDs = "video_ids"
         private var WorkerRequestUid: UUID = UUID.randomUUID()
+
+        val bytes = CacheWriter.DEFAULT_BUFFER_SIZE_BYTES
+        var byteArray = ByteArray(bytes)
 
         fun schedulePreloadWork(videoUrls: Array<String>, ids: Array<String>) {
             if (ids.isEmpty() || videoUrls.isEmpty()) {
@@ -114,6 +118,8 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
 
     private fun preCacheVideo(videoUrl: String, videoId: String) {
         Log.i(TAG, "Started Caching of :: $videoId :: $videoUrl")
+        startedTime = System.currentTimeMillis()
+        Log.i(TAG, "Started Caching of :: $videoId :: ")
 
         val videoUri = Uri.parse(videoUrl)
         val dataSpec = DataSpec(videoUri)
@@ -140,6 +146,7 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
             // Do Something
         }
 
+
         videoCachingJob = GlobalScope.launch(Dispatchers.IO) {
             cacheVideo(videoId, dataSpec, progressListener)
         }
@@ -150,10 +157,6 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
         mDataSpec: DataSpec,
         mProgressListener: CacheWriter.ProgressListener
     ) {
-//        var byteArray = ByteArray(CacheWriter.DEFAULT_BUFFER_SIZE_BYTES)
-        val bytes = 64 * 1024
-        var byteArray = ByteArray(bytes)
-
         runCatching {
             CacheWriter(
                 mCacheDataSource,
@@ -167,6 +170,9 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
             nextVideoCaching()
         }.onSuccess {
             Log.i(TAG, "Download Completed :: VideoId :: $videoId")
+            var milliseconds = System.currentTimeMillis() - startedTime
+            val seconds = (milliseconds / 1000)
+            Log.i("kamlesh_time", "Video id $videoId Downloaded in secs $seconds using byteArray of $bytes")
             Log.i(TAG, " ")
             nextVideoCaching()
         }

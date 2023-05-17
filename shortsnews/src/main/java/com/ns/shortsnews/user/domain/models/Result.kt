@@ -33,7 +33,7 @@ data class OTPResult(
 data class OtpValidationData(
     val access_token: String,
     val email: String,
-    val name: String,
+    val name: String? = null,
     val first_time_user: Boolean
 )
 
@@ -98,4 +98,16 @@ data class ChannelVideoData(
     val title:String,
     val videoPreviewUrl:String,
     val channelTitle:String,
+)
+
+@JsonClass(generateAdapter = true)
+data class LanguagesResult(
+    val status: Boolean,
+    val data: List<LanguageData>
+)
+
+@JsonClass(generateAdapter = true)
+data class LanguageData(
+    val id:String,
+    val name:String
 )

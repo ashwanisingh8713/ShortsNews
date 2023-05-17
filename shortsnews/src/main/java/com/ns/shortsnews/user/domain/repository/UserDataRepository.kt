@@ -11,4 +11,6 @@ interface UserDataRepository {
     suspend fun getChannelsData():ChannelsDataResult
 
     suspend fun geChannelVideoData(channelId:String): ChannelVideoDataResult
+
+    suspend fun getLanguagesData():LanguagesResult
 }

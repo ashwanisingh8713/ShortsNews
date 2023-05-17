@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     private fun launchProfileIntent(){
         val intent = Intent(this, ProfileActivity::class.java)
+        intent.putExtra("fromActivity","MainActivity")
         startActivity(intent)
     }
 

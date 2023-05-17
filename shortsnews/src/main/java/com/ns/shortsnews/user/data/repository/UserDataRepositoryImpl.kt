@@ -25,5 +25,9 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
         return apiService.getChannelVideoData(channelId)
     }
 
+    override suspend fun getLanguagesData(): LanguagesResult {
+        return  apiService.getLanguagesData()
+    }
+
 
 }

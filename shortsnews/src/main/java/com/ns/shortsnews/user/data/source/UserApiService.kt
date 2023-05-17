@@ -26,4 +26,7 @@ interface UserApiService {
     @GET("videos")
     suspend fun getChannelVideoData(@Query("channel")channel:String):ChannelVideoDataResult
 
+    @GET("languages")
+    suspend fun getLanguagesData():LanguagesResult
+
 }
