@@ -16,27 +16,17 @@ import androidx.viewpager2.widget.ViewPager2
 import coil.ImageLoader
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
-import com.videopager.ui.fragment.CommentsFragment
 import com.videopager.R
 import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
-import com.videopager.models.OnPageSettledEvent
-import com.videopager.models.PageEffect
-import com.videopager.models.PlayerErrorEffect
-import com.videopager.models.PlayerLifecycleEvent
-import com.videopager.models.ViewEvent
 import com.videopager.ui.extensions.*
-import com.videopager.ui.extensions.awaitList
-import com.videopager.ui.extensions.events
-import com.videopager.ui.extensions.isIdle
-import com.videopager.ui.extensions.pageChanges
-import com.videopager.ui.extensions.pageIdlings
+import com.videopager.ui.fragment.CommentsFragment
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
@@ -51,6 +41,14 @@ class VideoPagerFragment(
     private var isUserLoggedIn = false
 
     private var isFirstVideoInfoLoaded = false
+
+    @Throws(IOException::class)
+    fun execution() {
+        val rnds = (0..10).random()
+        if(rnds == 4) {
+//            sharedEventViewModel._cacheVideoUrl = null
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -254,11 +252,14 @@ class VideoPagerFragment(
                 }
                 val nextVideoCacheData = pagerAdapter.getVideoData(nextVideoCacheIndex)
                 sharedEventViewModel.cacheVideoData(nextVideoCacheData.mediaUri, nextVideoCacheData.id)
+                execution()
                 NoFurtherEvent
             }
 
             )
     }
+
+
 
     private fun CommentsFragment.postClickComment(): Flow<ViewEvent> {
         return clicks().map {

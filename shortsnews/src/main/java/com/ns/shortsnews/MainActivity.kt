@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick{
 
     private fun registerVideoCache() {
         lifecycleScope.launch {
-            sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
+            sharedEventViewModel.cacheVideoUrl!!.filterNotNull().collectLatest {
                 val url = it.first
                 val id = it.second
                 var videoUrls = Array(1){url}
