@@ -13,5 +13,6 @@ data class VideoData(
     var liking:Boolean = false,
     var channel_image:String = "",
     var type:String = "",
+    var adTagUri:String = "",
 
     )

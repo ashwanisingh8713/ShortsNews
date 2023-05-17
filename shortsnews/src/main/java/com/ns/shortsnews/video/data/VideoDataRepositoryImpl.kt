@@ -70,7 +70,8 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 //            response.data.add(0, youtubeUrl1)
 
             val youtubeUriConversionCount = 2
-            val precachingAllowedCount = 1
+            val precachingAllowedCount = response.data.size
+//            val precachingAllowedCount = 2
             var conversionCount = 0
             var videoUrls = Array(precachingAllowedCount){""}
             var videoIds = Array(precachingAllowedCount){""}
@@ -97,6 +98,10 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                             finalUri18 = ytFiles[YouTubeUri.iTag].url
                             conversionCount++
                         }
+                        if(index < precachingAllowedCount) {
+                            videoUrls[index]=finalUri18
+                            videoIds[index]=post.id
+                        }
                         VideoData(
                             id = post.id,
                             mediaUri = finalUri18,
@@ -105,6 +110,8 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                             type = "yt"
                         )
                     }
+
+
                 }.filter {
                     it.mediaUri.isNotBlank()
                 }

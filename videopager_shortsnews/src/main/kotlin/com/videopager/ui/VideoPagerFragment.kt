@@ -16,31 +16,21 @@ import androidx.viewpager2.widget.ViewPager2
 import coil.ImageLoader
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
-import com.videopager.ui.fragment.CommentsFragment
 import com.videopager.R
 import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
-import com.videopager.models.OnPageSettledEvent
-import com.videopager.models.PageEffect
-import com.videopager.models.PlayerErrorEffect
-import com.videopager.models.PlayerLifecycleEvent
-import com.videopager.models.ViewEvent
 import com.videopager.ui.extensions.*
-import com.videopager.ui.extensions.awaitList
-import com.videopager.ui.extensions.events
-import com.videopager.ui.extensions.isIdle
-import com.videopager.ui.extensions.pageChanges
-import com.videopager.ui.extensions.pageIdlings
+import com.videopager.ui.fragment.CommentsFragment
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
-    private val appPlayerViewFactory: AppPlayerView.Factory,
+    private val appPlayerView: AppPlayerView,
     private val imageLoader: ImageLoader, private val shortsType: String
 ) : Fragment(R.layout.video_pager_fragment) {
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
@@ -52,15 +42,24 @@ class VideoPagerFragment(
 
     private var isFirstVideoInfoLoaded = false
 
+    @Throws(IOException::class)
+    fun execution() {
+        val rnds = (0..10).random()
+        if(rnds == 4) {
+//            sharedEventViewModel._cacheVideoUrl = null
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.setVMContext(requireContext())
+        viewModel.setPlayerVieww(appPlayerView.getPlayerView())
 
         binding = VideoPagerFragmentBinding.bind(view)
         binding.toolbar.title = "News Reels"
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
-        val appPlayerView = appPlayerViewFactory.create(view.context)
+//        val appPlayerView = appPlayerViewFactory.create(view.context)
         pagerAdapter = PagerAdapter(imageLoader)
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.isUserInputEnabled = false
@@ -253,11 +252,14 @@ class VideoPagerFragment(
                 }
                 val nextVideoCacheData = pagerAdapter.getVideoData(nextVideoCacheIndex)
                 sharedEventViewModel.cacheVideoData(nextVideoCacheData.mediaUri, nextVideoCacheData.id)
+                execution()
                 NoFurtherEvent
             }
 
             )
     }
+
+
 
     private fun CommentsFragment.postClickComment(): Flow<ViewEvent> {
         return clicks().map {

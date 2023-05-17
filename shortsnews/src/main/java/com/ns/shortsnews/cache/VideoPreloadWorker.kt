@@ -13,7 +13,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheWriter
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.ns.shortsnews.MainApplication
 import kotlinx.coroutines.*
-import java.util.UUID
+import java.util.*
 
 class VideoPreloadWorker(private val context: Context, workerParameters: WorkerParameters) :
     Worker(context, workerParameters) {
@@ -26,7 +26,8 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
     private lateinit var videoUrls: Array<String>
     private lateinit var videoIds: Array<String>
     private var onGoingCacheIndex = 0
-
+    private var onGoingVideoId = ""
+    private var onGoingVideoUrl = ""
 
 
     companion object {
@@ -36,10 +37,12 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
         private var WorkerRequestUid: UUID = UUID.randomUUID()
 
         fun schedulePreloadWork(videoUrls: Array<String>, ids: Array<String>) {
-            if(ids.isEmpty() || videoUrls.isEmpty()) {
+            if (ids.isEmpty() || videoUrls.isEmpty()) {
                 return
             }
+
             cancelRunningWorkRequest(MainApplication.applicationContext())
+
             val workManager = WorkManager.getInstance(MainApplication.applicationContext())
             val videoPreloadWorker = buildWorkRequest(videoUrls, ids)
             val uniqueWorkName = "workName_${ids[0]}"
@@ -50,23 +53,36 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
             ).enqueue()
         }
 
-        fun cancelRunningWorkRequest(context: Context) {
+        private fun cancelRunningWorkRequest(context: Context) {
             WorkManager.getInstance(context).cancelWorkById(WorkerRequestUid)
+            Log.i(TAG, "Cancelled Download request :: $WorkerRequestUid")
+            Log.i(TAG, "----------------------------------------------------")
         }
 
-        private fun buildWorkRequest(videoUrls: Array<String>, ids: Array<String>): OneTimeWorkRequest {
-            Log.i(TAG, "buildWorkRequest")
+        private fun buildWorkRequest(
+            videoUrls: Array<String>,
+            ids: Array<String>
+        ): OneTimeWorkRequest {
+
+            val constraintsBuilder: Constraints.Builder = Constraints.Builder()
+            constraintsBuilder.setRequiredNetworkType(NetworkType.CONNECTED)
+            val constraints = constraintsBuilder.build()
+
             val data = Data.Builder()
                 .putStringArray(VIDEO_IDs, ids)
                 .putStringArray(VIDEO_URLs, videoUrls)
                 .build()
-            val workRequest = OneTimeWorkRequestBuilder<VideoPreloadWorker>().apply { setInputData(data) }
+            val workRequest = OneTimeWorkRequestBuilder<VideoPreloadWorker>()
+                .apply {
+                    setInputData(data)
+                    setConstraints(constraints)
+                }
                 .build()
             WorkerRequestUid = workRequest.id
+            Log.i(TAG, "New Download Request is created :: $WorkerRequestUid")
             return workRequest
         }
     }
-
 
 
     override fun doWork(): Result {
@@ -91,24 +107,22 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
             return Result.success()
 
         } catch (e: Exception) {
-            Log.i(TAG, "doWork() :: Error :: videoId, ${videoIds[onGoingCacheIndex]} :: ${e.message}")
+            Log.i(TAG, "doWork() :: Error :: videoId, $onGoingVideoId :: ${e.message}")
             return Result.failure()
         }
     }
 
     private fun preCacheVideo(videoUrl: String, videoId: String) {
-        Log.i(TAG, "Started Caching of :: VideoId :: $videoId")
-        Log.i(TAG, "Started Caching of :: VideoUrl :: $videoUrl")
+        Log.i(TAG, "Started Caching of :: $videoId :: $videoUrl")
 
         val videoUri = Uri.parse(videoUrl)
         val dataSpec = DataSpec(videoUri)
 
         val progressListener = CacheWriter.ProgressListener { requestLength, bytesCached, _ ->
-            var downloadPercentage: Double = (bytesCached * 100.0 / requestLength)
-
+            /*var downloadPercentage: Double = (bytesCached * 100.0 / requestLength)
             when(downloadPercentage) {
                 100.0-> {
-                    nextVideoCaching()
+                    Log.i(TAG, "Download Completed VideoId :: $videoId")
                 }
                 10.0-> {
                     Log.i(TAG, "VideoId :: $videoId, downloadPercentage = $downloadPercentage")
@@ -122,10 +136,7 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
                 90.0-> {
                     Log.i(TAG, "VideoId :: $videoId, downloadPercentage = $downloadPercentage")
                 }
-            }
-
-
-
+            }*/
             // Do Something
         }
 
@@ -134,37 +145,45 @@ class VideoPreloadWorker(private val context: Context, workerParameters: WorkerP
         }
     }
 
-    private fun cacheVideo(videoId: String, mDataSpec: DataSpec, mProgressListener: CacheWriter.ProgressListener) {
-        Log.i(TAG, "cacheVideo() :: videoId, $videoId ")
+    private fun cacheVideo(
+        videoId: String,
+        mDataSpec: DataSpec,
+        mProgressListener: CacheWriter.ProgressListener
+    ) {
+//        var byteArray = ByteArray(CacheWriter.DEFAULT_BUFFER_SIZE_BYTES)
+        val bytes = 64 * 1024
+        var byteArray = ByteArray(bytes)
+
         runCatching {
             CacheWriter(
                 mCacheDataSource,
                 mDataSpec,
-                null,
+                byteArray,
                 mProgressListener,
             ).cache()
         }.onFailure {
-            it.printStackTrace()
-            Log.i(TAG, "cacheVideo() :: Error :: videoId = $videoId, ${it.message}")
+            Log.i(TAG, "Download Failed :: VideoId :: $videoId :: Error is- ${it.message}")
+            Log.i(TAG, " ")
             nextVideoCaching()
         }.onSuccess {
-
+            Log.i(TAG, "Download Completed :: VideoId :: $videoId")
+            Log.i(TAG, " ")
+            nextVideoCaching()
         }
     }
 
     private fun nextVideoCaching() {
         val size = videoUrls.size
-        if(size == 0) {
+        if (size == 0) {
             return
         }
-        if(onGoingCacheIndex<size-1) {
+        if (onGoingCacheIndex < size) {
+            onGoingVideoUrl = videoUrls[onGoingCacheIndex]
+            onGoingVideoId = videoIds[onGoingCacheIndex]
+            preCacheVideo(onGoingVideoUrl, onGoingVideoId)
             onGoingCacheIndex++
-            preCacheVideo(videoUrls[onGoingCacheIndex], videoIds[onGoingCacheIndex])
         }
     }
-
-
-
 
 
 }

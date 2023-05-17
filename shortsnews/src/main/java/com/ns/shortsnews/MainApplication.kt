@@ -15,8 +15,7 @@ import org.koin.core.logger.Level
 
 class MainApplication:Application() {
 
-
-    private val cacheSize: Long = 1024 * 1024 * 1024 // 1 Gb for cache
+    private val cacheSize: Long = 1*1024 * 1024 * 1024 //1 Gb for cache
 
     init {
         instance = this

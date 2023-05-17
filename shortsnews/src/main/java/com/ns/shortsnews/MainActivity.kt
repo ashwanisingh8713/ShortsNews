@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     /**
      * It listens category item click
      */
-    override fun itemclick(shortsType: String, position: Int, size: Int) {
+    override fun itemclick(shortsType: String, position:Int, size:Int) {
         loadHomeFragment(shortsType)
     }
 
@@ -110,7 +110,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      * Creates VideoPagerFragment Instance
      */
     private fun makeVideoPagerInstance(shortsType: String): VideoPagerFragment {
-        val vpf = VideoPagerFragment(
+       val appPlayerView =  ExoAppPlayerViewFactory().create(this@MainActivity)
+        val vpf =  VideoPagerFragment(
             viewModelFactory = { owner ->
                 VideoPagerViewModelFactory(
                     repository = VideoDataRepositoryImpl(),
@@ -119,7 +120,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     )
                 ).create(owner)
             },
-            appPlayerViewFactory = ExoAppPlayerViewFactory(),
+            appPlayerView = appPlayerView,
             imageLoader = this@MainActivity.imageLoader,
             shortsType = shortsType
         )
@@ -144,7 +145,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     private fun registerVideoCache() {
         lifecycleScope.launch {
-            sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
+            sharedEventViewModel.cacheVideoUrl!!.filterNotNull().collectLatest {
                 val url = it.first
                 val id = it.second
                 var videoUrls = Array(1){url}

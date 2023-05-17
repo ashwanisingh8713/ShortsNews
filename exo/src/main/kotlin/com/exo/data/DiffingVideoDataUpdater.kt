@@ -1,5 +1,6 @@
 package com.exo.data
 
+import android.net.Uri
 import android.util.Log
 import com.exo.players.currentMediaItems
 import com.github.difflib.DiffUtils
@@ -9,10 +10,6 @@ import com.github.difflib.patch.Patch
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.player.models.VideoData
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
@@ -26,10 +23,14 @@ import kotlin.coroutines.CoroutineContext
 internal class DiffingVideoDataUpdater(
     private val diffingContext: CoroutineContext
 ) : VideoDataUpdater {
+
+    companion object {
+        val adTagUri = "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator="
+    }
+
     override suspend fun update(player: ExoPlayer, incoming: List<VideoData>) {
         val oldMediaItems = player.currentMediaItems
         val newMediaItems = incoming.toMediaItems()
-
 
         val patch: Patch<MediaItem> = withContext(diffingContext) {
             DiffUtils.diff(oldMediaItems, newMediaItems)
@@ -62,19 +63,21 @@ internal class DiffingVideoDataUpdater(
 
     private fun List<VideoData>.toMediaItems(): List<MediaItem> {
         return map { videoData ->
-            val mediaItem = MediaItem.Builder()
+            val mediaItemBuilder = MediaItem.Builder()
                 .setMediaId(videoData.id)
                 .setUri(videoData.mediaUri)
-                .build()
+                /*.setAdsConfiguration(
+                    MediaItem.AdsConfiguration.Builder(Uri.parse(adTagUri)).setAdsId(videoData.id)
+                        .build()
+                )*/
 
-            var mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
-                .setAllowCrossProtocolRedirects(true)
-            var mCacheDataSourceFactory  = CacheDataSource.Factory()
-//                .setCache(cache)
-                .setUpstreamDataSourceFactory(mHttpDataSourceFactory)
-                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-            val mediaSource = ProgressiveMediaSource.Factory(mCacheDataSourceFactory).createMediaSource(mediaItem)
-
+            if(videoData.adTagUri.isNotEmpty()) {
+                mediaItemBuilder.setAdsConfiguration(
+                    MediaItem.AdsConfiguration.Builder(Uri.parse(videoData.adTagUri)).setAdsId(videoData.id)
+                        .build()
+                )
+            }
+            val mediaItem = mediaItemBuilder.build()
             mediaItem
         }
     }
