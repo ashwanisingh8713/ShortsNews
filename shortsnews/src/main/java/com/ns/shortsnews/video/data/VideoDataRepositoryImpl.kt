@@ -2,10 +2,7 @@ package com.ns.shortsnews.video.data
 
 import android.content.Context
 import android.util.Log
-import androidx.work.ExistingWorkPolicy
-import androidx.work.WorkManager
 import at.huber.me.YouTubeUri
-import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.cache.VideoPreloadWorker
 import com.ns.shortsnews.utils.AppPreference
 import com.player.models.VideoData
@@ -140,6 +137,16 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 
     }
 
+    override fun save(videoId: String, position: Int): Flow<Triple<String, Boolean, Int>>  = flow{
+        try {
+            val res = api.save(videoId)
+            emit(Triple(res.data.saved_count, res.data.saved, position))
+        } catch (ec :java.lang.Exception) {
+            Log.i("kamels","$ec")
+        }
+    }
+
+
     override fun follow(channel_id: String, position: Int): Flow<Pair<Following, Int>> = flow {
         try {
             val data =  api.follow(channel_id)
@@ -203,6 +210,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         suspend fun getShortsVideos(@Query("category") category: String): VideoDataResponse
         @GET("like-unlike-video/{video_id}")
         suspend fun like(@Path("video_id")videoId: String): LikeUnlike
+
+        @GET("bookmark-video/{video_id}")
+        suspend fun save(@Path("video_id")videoId: String): BookMarkResult
         @GET("follow-unfollow-channel/{channel_id}")
         suspend fun follow(@Path("channel_id")channel_id: String): Following
         @GET("get-comments/{video_id}")
@@ -251,7 +261,5 @@ data class Data(
         val like_count:String
 
     )
-
-
 
 }

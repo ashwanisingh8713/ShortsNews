@@ -12,6 +12,7 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentOtpBinding
 import com.ns.shortsnews.user.data.mapper.UserOtp
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.user.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
@@ -32,6 +33,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         inject(
             UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
             UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
+            LanguageDataUseCase(UserDataRepositoryImpl(get())),
         )
     }}
 
@@ -87,7 +89,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     binding.otpProgressBar.visibility = View.GONE
                     val bundle = Bundle()
                     bundle.putString("name", /*it.name*/"kamlesh")
-                    userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY,bundle )
+                    userViewModel.updateFragment(UserViewModel.LANGUAGES,bundle )
                 }
             }
         }

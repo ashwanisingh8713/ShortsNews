@@ -46,8 +46,11 @@ data class VideoInfo(
 data class VideoInfoData(
     val title:String = "",
     val like_count:String = "",
+    val saved_count:String = "",
     val comment_count:String = "",
     val following:Boolean = false,
+    val liked:Boolean = false,
+    val saved:Boolean = false,
     val id:String = "",
     val channel_id:String = "",
     val channel_image:String = ""
@@ -63,7 +66,20 @@ data class Following(
 data class FollowingData (
     val following:Boolean,
     val channel_id:String
-        )
+    )
+
+@JsonClass(generateAdapter = true)
+data class BookMarkResult(
+    val data:BookMarkData,
+    val status:Boolean,
+    val msg:String
+)
+
+@JsonClass(generateAdapter = true)
+data class BookMarkData(
+  val saved:Boolean,
+  val saved_count:String
+)
 
 
 

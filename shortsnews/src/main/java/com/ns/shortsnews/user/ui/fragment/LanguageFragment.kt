@@ -16,8 +16,11 @@ import com.ns.shortsnews.databinding.FragmentLanguageBinding
 import com.ns.shortsnews.databinding.FragmentPersonaliseBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
+import com.ns.shortsnews.user.domain.models.LanguageData
 import com.ns.shortsnews.user.domain.models.VideoCategory
 import com.ns.shortsnews.user.domain.usecase.language.LanguageDataUseCase
+import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
+import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppConstants
@@ -29,17 +32,21 @@ import org.koin.android.ext.android.get
 
 class LanguageFragment : Fragment(R.layout.fragment_language) {
     lateinit var binding:FragmentLanguageBinding
-    private val languagesDataViewModel: LanguagesDataViewModel by activityViewModels { LanguagesViewModelFactory().apply {
-        inject(LanguageDataUseCase(UserDataRepositoryImpl(get())))
-    } }
+    private val userViewModel: UserViewModel by activityViewModels { UserViewModelFactory().apply {
+        inject(
+            UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
+            UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
+            LanguageDataUseCase(UserDataRepositoryImpl(get())),
+        )
+    }}
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)
-        languagesDataViewModel.requestLanguagesApi()
+        userViewModel.requestLanguagesApi()
 
 
         viewLifecycleOwner.lifecycleScope.launch(){
-            languagesDataViewModel.errorState.filterNotNull().collectLatest {
+            userViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarLanguages.visibility = View.GONE
                 if(it != "NA"){
                     Log.i("kamlesh","OTPFragment onError ::: $it")
@@ -50,26 +57,30 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
-            languagesDataViewModel.LanguagesSuccessState.filterNotNull().collectLatest {
+            userViewModel.LanguagesSuccessState.filterNotNull().collectLatest {
                 Log.i("kamlesh","OTPFragment onSuccess ::: $it")
                 it.let {
                     binding.progressBarLanguages.visibility = View.GONE
-                    val bundle = Bundle()
-                    bundle.putString("name", /*it.name*/"kamlesh")
-//                    languagesDataViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY,bundle )
+                    setupChipGroup(it)
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
-            languagesDataViewModel.loadingState.filterNotNull().collectLatest {
+            userViewModel.loadingState.filterNotNull().collectLatest {
                 if (it) {
                     binding.progressBarLanguages.visibility = View.VISIBLE
                 }
             }
         }
+
+        binding.continueButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("name", /*it.name*/"kamlesh")
+            userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY,bundle )
+        }
     }
-    private fun setupChipGroup(optionList:MutableList<VideoCategory>){
+    private fun setupChipGroup(optionList:List<LanguageData>){
         var idList = mutableListOf<Int>()
         for (chipData in optionList){
             idList.clear()
@@ -89,9 +100,9 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
                     if (isChecked){
                         mChip.isCheckedIconVisible = true
-                        mChip.background = ContextCompat.getDrawable(requireContext(), R.drawable.roud_corner_background_chip)
+                        mChip.background = ContextCompat.getDrawable(requireContext(), com.videopager.R.drawable.follow_background)
                         mChip.checkedIcon = ContextCompat.getDrawable(requireContext(), R.drawable.right)
-                        mChip.setChipBackgroundColorResource(R.color.button_background)
+                        mChip.setChipBackgroundColorResource(com.videopager.R.color.transparent_color)
                         mChip.isChipIconVisible = false
 //                        selectedNumbers++
 //                        updateSelectedItems(selectedNumbers,countValue)

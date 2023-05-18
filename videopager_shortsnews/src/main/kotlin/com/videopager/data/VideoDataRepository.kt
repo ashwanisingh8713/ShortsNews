@@ -8,6 +8,7 @@ interface VideoDataRepository {
     suspend fun videoData(requestType: String, context: Context): Flow<MutableList<VideoData>>
 
     fun like(videoId: String, position: Int):Flow<Triple<String, Boolean, Int>>
+    fun save(videoId: String, position: Int):Flow<Triple<String, Boolean, Int>>
     fun follow(channel_id: String, position: Int):Flow<Pair<Following, Int>>
     fun comment(videoId: String, position: Int):Flow<Triple<String,Comments, Int>>
     fun getVideoInfo(videoId: String, position: Int):Flow<Pair<VideoInfoData, Int>>

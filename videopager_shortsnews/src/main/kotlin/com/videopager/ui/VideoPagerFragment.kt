@@ -125,7 +125,7 @@ class VideoPagerFragment(
             .onEach { effect ->
                 when (effect) {
                     is SaveEffect -> {
-                        // TODO, It has to be covered in Phase-2, If supported APIs are done.
+                        pagerAdapter.refreshSaveUI(effect.position)
                     }
                     is CommentEffect -> {
                         //adapter.refreshUI(0)
@@ -184,8 +184,6 @@ class VideoPagerFragment(
 
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
-
-
     }
 
     private fun Lifecycle.viewEvents(): Flow<ViewEvent> {
@@ -286,10 +284,6 @@ class VideoPagerFragment(
                     val videoData = pagerAdapter.getVideoData(currentItem)
                     ChannelClickEvent
                 }
-                SaveClick -> {
-                    Toast.makeText(requireContext(), "In Phase - 2", Toast.LENGTH_SHORT).show()
-                    SaveClickEvent("", 101010)
-                }
                 ShareClick -> {
                     val currentItem = binding.viewPager.currentItem
                     val videoData = pagerAdapter.getVideoData(currentItem)
@@ -325,6 +319,16 @@ class VideoPagerFragment(
                         val currentItem = binding.viewPager.currentItem
                         val videoData = pagerAdapter.getVideoData(currentItem)
                         LikeClickEvent(videoData.id, currentItem)
+                    }
+                }
+                SaveClick -> {
+                    if (!isUserLoggedIn) {
+                        sharedEventViewModel.launchLoginEvent(true)
+                        NoFurtherEvent
+                    } else {
+                        val currentItem = binding.viewPager.currentItem
+                        val videoData = pagerAdapter.getVideoData(currentItem)
+                        SaveClickEvent(videoId = videoData.id, currentItem)
                     }
                 }
                 else -> NoFurtherEvent

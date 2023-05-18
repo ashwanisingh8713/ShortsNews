@@ -10,8 +10,10 @@ import androidx.lifecycle.lifecycleScope
 
 import com.ns.shortsnews.databinding.ActivityProfileBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.user.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
+import com.ns.shortsnews.user.ui.fragment.LanguageFragment
 import com.ns.shortsnews.user.ui.fragment.LoginFragment
 import com.ns.shortsnews.user.ui.fragment.OtpFragment
 import com.ns.shortsnews.user.ui.fragment.UserProfileFragment
@@ -31,6 +33,7 @@ class ProfileActivity : AppCompatActivity() {
             inject(
                 UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
                 UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
+                LanguageDataUseCase(UserDataRepositoryImpl(get())),
             )
         }
     }
@@ -67,6 +70,7 @@ class ProfileActivity : AppCompatActivity() {
                     UserViewModel.LOGIN -> loginFragment()
                     UserViewModel.OTP_POP -> popOtpFragment()
                     UserViewModel.MAIN_ACTIVITY -> launchMainActivityIntent()
+                    UserViewModel.LANGUAGES -> languagesFragment()
                 }
             }
         }
@@ -93,6 +97,12 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun choiceFragment() {
         val fragment = UserProfileFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
+            .commit()
+    }
+
+    private fun languagesFragment() {
+        val fragment = LanguageFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
             .commit()
     }

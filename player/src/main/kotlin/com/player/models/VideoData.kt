@@ -14,5 +14,6 @@ data class VideoData(
     var channel_image:String = "",
     var type:String = "",
     var adTagUri:String = "",
-
-    )
+    var saveCount:String = "",
+    var saved:Boolean = false
+)

@@ -96,6 +96,18 @@ internal class PagerAdapter(
         }
     }
 
+    suspend fun refreshSaveUI(position: Int){
+        val holder = awaitViewHolder(position)
+        var data  = getItem(position)
+        if (data.saved){
+            holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.red))
+            holder.binding.saveTitle.text = data.saveCount
+        } else {
+            holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.white))
+            holder.binding.saveTitle.text = data.saveCount
+        }
+    }
+
     suspend fun refreshFollowUI(position: Int) {
         val holder = awaitViewHolder(position)
         var data  = getItem(position)
@@ -122,6 +134,13 @@ internal class PagerAdapter(
             holder.binding.following.text = "Following"
         } else{
             holder.binding.following.text = "Follow"
+        }
+        if (data.saved){
+            holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.red))
+            holder.binding.saveTitle.text = data.saveCount
+        } else {
+            holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.white))
+            holder.binding.saveTitle.text = data.saveCount
         }
         if (data.channel_image.isNotEmpty()) {
             holder.binding.clientImage.loadSvg(data.channel_image, holder.binding.clientImage.context)

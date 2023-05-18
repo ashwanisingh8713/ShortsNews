@@ -19,7 +19,7 @@
             android:theme="@style/Theme.Material3.DayNight.NoActionBar" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ProfileActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Material3.DayNight.NoActionBar">
@@ -30,12 +30,12 @@
             </intent-filter>
         </activity>
 
-<!--        <activity-->
-<!--            android:name=".MainActivity"-->
-<!--            android:exported="false"-->
-<!--            android:screenOrientation="portrait"-->
-<!--            android:theme="@style/Theme.Material3.DayNight.NoActionBar">-->
-<!--        </activity>-->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        </activity>
 
     </application>
 

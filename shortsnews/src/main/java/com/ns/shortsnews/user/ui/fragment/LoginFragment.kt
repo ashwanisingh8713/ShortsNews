@@ -9,10 +9,12 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.work.CoroutineWorker
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentLoginBinding
 import com.ns.shortsnews.databinding.NewLoginScreenLayoutBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.user.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
@@ -32,6 +34,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         inject(
             UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
             UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
+            LanguageDataUseCase(UserDataRepositoryImpl(get())),
         )
     }}
 
@@ -58,6 +61,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
+                binding.loginProgressBar.visibility = View.GONE
               if(it != "NA"){
                   Log.i("kamlesh","$it")
                 }

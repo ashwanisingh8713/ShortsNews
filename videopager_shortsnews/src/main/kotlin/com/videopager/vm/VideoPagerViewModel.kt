@@ -74,7 +74,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<VideoInfoEvent>().toVideoInfoResults(),
             filterIsInstance<GetYoutubeUriEvent>().toYoutubeUriResults(),
             filterIsInstance<GetYoutubeUriEvent_2>().toYoutubeUriResults_2(),
-
+            filterIsInstance<SaveClickEvent>().toSaveClickResult(),
         )
     }
 
@@ -215,6 +215,17 @@ internal class VideoPagerViewModel(
             LikeClickResult(it)
         }
     }
+    private fun Flow<SaveClickEvent>.toSaveClickResult(): Flow<ViewResult> {
+        return flatMapLatest { event ->
+            repository.save(event.videoId, event.position)
+        }.mapLatest { triple ->
+            states.value.videoData?.get(triple.third)?.saveCount = triple.first
+            states.value.videoData?.get(triple.third)?.saved  = triple.second
+            triple.third
+        }.map {
+            SaveClickResult(it)
+        }
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<PostClickCommentEvent>.toPostCommentResults():Flow<PostCommentResult>{
@@ -275,6 +286,8 @@ internal class VideoPagerViewModel(
         }
     }
 
+
+
     private suspend fun getYoutubeUri(index: Int): Pair<String, String> = withContext(Dispatchers.IO) {
             var uri = ""
             var videoId = ""
@@ -334,6 +347,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<PostCommentResult>().toPostCommentEffect(),
             filterIsInstance<GetYoutubeUriResult>().toGetYoutubeUriEffect(),
             filterIsInstance<GetYoutubeUriResult_2>().toGetYoutubeUriEffect_2(),
+            filterIsInstance<SaveClickResult>().toSaveViewEffect(),
 
         )
     }
@@ -352,6 +366,11 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LikeClickResult>.toLikeViewEffect(): Flow<ViewEffect> {
         return mapLatest { result -> LikeEffect(result.position) }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<SaveClickResult>.toSaveViewEffect(): Flow<ViewEffect> {
+        return mapLatest { result -> SaveEffect(result.position) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -393,7 +412,10 @@ internal class VideoPagerViewModel(
             states.value.videoData?.get(result.position)?.apply {
                 this.comment_count = result.response.comment_count
                 this.like_count = result.response.like_count
+                this.saveCount = result.response.saved_count
                 this.following = result.response.following
+                this.saved = result.response.saved
+                this.liking = result.response.liked
                 this.channel_image = result.response.channel_image
                 this.channel_id = result.response.channel_id
                 this.title = result.response.title
