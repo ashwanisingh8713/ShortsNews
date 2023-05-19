@@ -15,9 +15,9 @@ import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
 import com.ns.shortsnews.user.ui.activity.ContainerActivity
 import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModelFactory
+import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
-import com.ns.shortsnews.utils.ShowToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -64,10 +64,10 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
         }
 
         binding.editConsLayout.setOnClickListener {
-            ShowToast.showGravityToast(requireActivity(), AppConstants.SPRINT_TWO)
+            Alert().showGravityToast(requireActivity(), AppConstants.SPRINT_TWO)
         }
         binding.disConLayout.setOnClickListener {
-            ShowToast.showGravityToast(requireActivity(), AppConstants.SPRINT_TWO)
+            Alert().showGravityToast(requireActivity(), AppConstants.SPRINT_TWO)
         }
         binding.perConLayout.setOnClickListener {
             launchContainerActivity(to = "per")
@@ -82,7 +82,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
         binding.logoutConLayout.setOnClickListener {
             AppPreference.clear()
             activity?.finish()
-
         }
     }
 

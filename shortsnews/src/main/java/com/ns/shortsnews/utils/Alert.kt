@@ -1,11 +1,29 @@
 package com.ns.shortsnews.utils
 
 import android.content.Context
+import android.content.DialogInterface
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import android.view.Gravity
+import android.widget.Toast
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-object NetworkConnectionStatus {
+class Alert {
+
+    fun showErrorDialog(title:String, msg:String, context: Context){
+        val alertDialog = MaterialAlertDialogBuilder(context)
+        alertDialog.apply {
+            this.setTitle(title)
+            this.setMessage(msg)
+            this.setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, which ->
+                dialog.dismiss()
+            })
+            this.show()
+        }
+
+    }
+
     fun isOnline(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -26,5 +44,11 @@ object NetworkConnectionStatus {
             }
         }
         return false
+    }
+
+    fun showGravityToast(context: Context, msg:String){
+        val toast = Toast.makeText(context,msg, Toast.LENGTH_LONG)
+        toast.setGravity(Gravity.BOTTOM,0,0)
+        toast.show()
     }
 }

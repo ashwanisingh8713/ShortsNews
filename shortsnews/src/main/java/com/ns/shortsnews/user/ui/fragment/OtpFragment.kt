@@ -12,14 +12,13 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentOtpBinding
 import com.ns.shortsnews.user.data.mapper.UserOtp
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.user.domain.connectivity.ConnectionStatus
 import com.ns.shortsnews.user.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
-import com.ns.shortsnews.utils.AppConstants
-import com.ns.shortsnews.utils.AppPreference
-import com.ns.shortsnews.utils.ShowToast
+import com.ns.shortsnews.utils.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -42,7 +41,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         binding = FragmentOtpBinding.bind(view)
         val  otpId:String? = arguments?.getString("otp_id")
         val emailId = arguments?.getString("email")
-        binding.emailOtpTxt.text = emailId
+        binding.emailTxt.text = emailId
 //        binding.backButtonOtp.setOnClickListener {
 //            val bundle = Bundle()
 //            bundle.putString("name", "")
@@ -59,12 +58,20 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 data["OTP"] = otpValue
                 data["OTP_id"] = otpId.toString()
                 data["name"] = "kamlesh"
-                userViewModel.requestOtpValidationApi(data)
+                if (Alert().isOnline(requireActivity())) {
+                    userViewModel.requestOtpValidationApi(data)
+                } else {
+                    Alert().showErrorDialog(
+                        AppConstants.CONNECTIVITY_ERROR_TITLE,
+                        AppConstants.CONNECTIVITY_MSG,
+                        requireActivity()
+                    )
+                }
             } else{
                 if (otpValue.isEmpty()){
-                    ShowToast.showGravityToast(requireActivity(),AppConstants.FILL_OTP)
+                    Alert().showGravityToast(requireActivity(),AppConstants.FILL_OTP)
                 } else {
-                    ShowToast.showGravityToast(requireActivity(), AppConstants.FILL_VALID_OTP)
+                    Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_OTP)
                 }
             }
         }
@@ -76,7 +83,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 if(it != "NA"){
                     Log.i("kamlesh","OTPFragment onError ::: $it")
                     binding.submitButton.visibility = View.VISIBLE
-                    ShowToast.showGravityToast(requireActivity(), AppConstants.OTP_VALIDATION_ERROR)
+                    Alert().showGravityToast(requireActivity(), AppConstants.OTP_VALIDATION_ERROR)
 
                 }
             }
@@ -90,7 +97,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     binding.progressBarOtp.visibility = View.GONE
                     val bundle = Bundle()
                     bundle.putString("name", /*it.name*/"kamlesh")
-                    userViewModel.updateFragment(UserViewModel.LANGUAGES,bundle )
+                    userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY,bundle )
                 }
             }
         }

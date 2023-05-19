@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -44,30 +45,30 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         binding.sendImage.setOnClickListener{
             val email = binding.emailEditText.text.toString()
             if (email.isNotEmpty()) {
-                if (Validation.validateEmail(email)){
+                if (validateEmail(email)){
                     val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                     imm?.hideSoftInputFromWindow(view.windowToken, 0)
                     val bundle:MutableMap<String, String> = mutableMapOf()
                     bundle["email"] = email
-                    if (NetworkConnectionStatus.isOnline(requireActivity())) {
+                    if (Alert().isOnline(requireActivity())) {
                         userViewModel.requestRegistrationApi(bundle)
                     } else {
-                        AppDialog.showErrorDialog(AppConstants.CONNECTIVITY_ERROR_TITLE,AppConstants.CONNECTIVITY_MSG, requireActivity())
+                            Alert().showErrorDialog(AppConstants.CONNECTIVITY_ERROR_TITLE,AppConstants.CONNECTIVITY_MSG, requireActivity())
                     }
                 } else {
-                    ShowToast.showGravityToast(requireActivity(), AppConstants.FILL_VALID_EMAIL)
+                    Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_EMAIL)
                 }
             } else{
-                ShowToast.showGravityToast(requireActivity(),AppConstants.FILL_REQUIRED_FIELD)
+                Alert().showGravityToast(requireActivity(),AppConstants.FILL_REQUIRED_FIELD)
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
-                binding.progressBarLogin.visibility = View.GONE
-                binding.sendImage.visibility = View.VISIBLE
               if(it != "NA"){
-                  AppDialog.showErrorDialog(AppConstants.API_ERROR_TITLE, it, requireActivity())
+                  binding.progressBarLogin.visibility = View.GONE
+                  binding.sendImage.visibility = View.VISIBLE
+                      Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, it, requireActivity())
                   Log.i("kamlesh","$it")
                 }
             }
@@ -78,6 +79,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 it.let {
                     Log.i("kamlesh","Registration Response ::: $it")
                     binding.progressBarLogin.visibility = View.GONE
+                    binding.sendImage.visibility = View.VISIBLE
                     val bundle = Bundle()
                     bundle.putString("email", it.email)
                     bundle.putString("otp_id", it.OTP_id.toString())
@@ -97,4 +99,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
+    private fun validateEmail(email:String):Boolean{
+        return if (email.isEmpty()){
+            false
+        } else Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
 }
