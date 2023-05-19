@@ -21,10 +21,9 @@ import com.ns.shortsnews.user.domain.models.VideoCategory
 import com.ns.shortsnews.user.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
-import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.*
+import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
-import com.ns.shortsnews.utils.ShowToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -50,7 +49,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 binding.progressBarLanguages.visibility = View.GONE
                 if(it != "NA"){
                     Log.i("kamlesh","OTPFragment onError ::: $it")
-                    ShowToast.showGravityToast(requireActivity(), AppConstants.OTP_VALIDATION_ERROR)
+                    Alert().showGravityToast(requireActivity(), AppConstants.OTP_VALIDATION_ERROR)
 
                 }
             }

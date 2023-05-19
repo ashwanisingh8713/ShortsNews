@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.ns.shortsnews.databinding.ItemFollowingBinding
 import com.ns.shortsnews.user.domain.models.ChannelListData
+import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
-import com.ns.shortsnews.utils.ShowToast
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -41,7 +41,7 @@ class ChannelsAdapter(private var itemList: List<ChannelListData> = emptyList())
             }
         }
         holder.itemView.setOnClickListener {
-            ShowToast.showGravityToast(holder.itemView.context, AppConstants.SPRINT_THREE)
+            Alert().showGravityToast(holder.itemView.context, AppConstants.SPRINT_THREE)
         }
     }
 

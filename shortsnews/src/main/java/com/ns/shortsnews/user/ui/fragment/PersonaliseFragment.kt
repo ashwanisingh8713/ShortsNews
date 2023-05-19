@@ -17,8 +17,8 @@ import com.ns.shortsnews.user.domain.models.VideoCategory
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
+import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
-import com.ns.shortsnews.utils.ShowToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -39,7 +39,7 @@ class PersonaliseFragment : Fragment(com.ns.shortsnews.R.layout.fragment_persona
             activity?.finish()
         }
         binding.submitButtonPers.setOnClickListener {
-           ShowToast.showGravityToast(requireActivity(), AppConstants.SPRINT_THREE)
+            Alert().showGravityToast(requireActivity(), AppConstants.SPRINT_THREE)
         }
         binding.choiceChipGroup.setOnCheckedStateChangeListener(object : ChipGroup.OnCheckedStateChangeListener{
             override fun onCheckedChanged(group: ChipGroup, checkedIds: MutableList<Int>) {
