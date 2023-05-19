@@ -64,10 +64,6 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
                 }
             }
         }
-
-
-
-
     }
 
     private fun ChannelsAdapter.clicksEvent() {

@@ -15,5 +15,12 @@ class AppConstants {
         const val  OTP_VALIDATION_ERROR = "Error validating otp try again"
         const val  SPRINT_TWO = "Coming in sprint 2nd"
         const val  SPRINT_THREE = "Coming in phase 3rd"
+
+
+        // Toast MSG text
+        const val CONNECTIVITY_ERROR_TITLE = "Connectivity Error"
+        const val CONNECTIVITY_MSG = "Please ensure you have active internet connection."
+        const val API_ERROR_TITLE = "API error"
+
     }
 }

@@ -14,14 +14,13 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentLoginBinding
 import com.ns.shortsnews.databinding.NewLoginScreenLayoutBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.user.domain.connectivity.ConnectionStatus
 import com.ns.shortsnews.user.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
-import com.ns.shortsnews.utils.AppConstants
-import com.ns.shortsnews.utils.ShowToast
-import com.ns.shortsnews.utils.Validation
+import com.ns.shortsnews.utils.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -50,7 +49,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     imm?.hideSoftInputFromWindow(view.windowToken, 0)
                     val bundle:MutableMap<String, String> = mutableMapOf()
                     bundle["email"] = email
-                    userViewModel.requestRegistrationApi(bundle)
+                    if (NetworkConnectionStatus.isOnline(requireActivity())) {
+                        userViewModel.requestRegistrationApi(bundle)
+                    } else {
+                        AppDialog.showErrorDialog(AppConstants.CONNECTIVITY_ERROR_TITLE,AppConstants.CONNECTIVITY_MSG, requireActivity())
+                    }
                 } else {
                     ShowToast.showGravityToast(requireActivity(), AppConstants.FILL_VALID_EMAIL)
                 }
@@ -61,8 +64,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
-                binding.loginProgressBar.visibility = View.GONE
+                binding.progressBarLogin.visibility = View.GONE
+                binding.sendImage.visibility = View.VISIBLE
               if(it != "NA"){
+                  AppDialog.showErrorDialog(AppConstants.API_ERROR_TITLE, it, requireActivity())
                   Log.i("kamlesh","$it")
                 }
             }
@@ -72,13 +77,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             userViewModel.registrationSuccessState.filterNotNull().collectLatest {
                 it.let {
                     Log.i("kamlesh","Registration Response ::: $it")
-                    binding.loginProgressBar.visibility = View.GONE
+                    binding.progressBarLogin.visibility = View.GONE
                     val bundle = Bundle()
                     bundle.putString("email", it.email)
                     bundle.putString("otp_id", it.OTP_id.toString())
                     userViewModel.updateFragment(UserViewModel.OTP,bundle )
                 }
-
             }
         }
 
@@ -86,7 +90,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             userViewModel.loadingState.filterNotNull().collectLatest {
                 Log.i("kamlesh","data :: $it")
                 if (it) {
-                    binding.loginProgressBar.visibility = View.VISIBLE
+                    binding.sendImage.visibility = View.GONE
+                    binding.progressBarLogin.visibility = View.VISIBLE
                 }
             }
         }

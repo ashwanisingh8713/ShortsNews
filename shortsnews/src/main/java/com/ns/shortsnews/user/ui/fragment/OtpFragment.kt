@@ -72,9 +72,10 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
-                binding.otpProgressBar.visibility = View.GONE
+                binding.progressBarOtp.visibility = View.GONE
                 if(it != "NA"){
                     Log.i("kamlesh","OTPFragment onError ::: $it")
+                    binding.submitButton.visibility = View.VISIBLE
                     ShowToast.showGravityToast(requireActivity(), AppConstants.OTP_VALIDATION_ERROR)
 
                 }
@@ -86,7 +87,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 Log.i("kamlesh","OTPFragment onSuccess ::: $it")
                 it.let {
                     saveUserPreference(it)
-                    binding.otpProgressBar.visibility = View.GONE
+                    binding.progressBarOtp.visibility = View.GONE
                     val bundle = Bundle()
                     bundle.putString("name", /*it.name*/"kamlesh")
                     userViewModel.updateFragment(UserViewModel.LANGUAGES,bundle )
@@ -97,7 +98,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.loadingState.filterNotNull().collectLatest {
                 if (it) {
-                    binding.otpProgressBar.visibility = View.VISIBLE
+                    binding.submitButton.visibility = View.GONE
+                    binding.progressBarOtp.visibility = View.VISIBLE
                 }
             }
         }
