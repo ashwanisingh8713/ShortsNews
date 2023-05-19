@@ -3,6 +3,8 @@ package com.ns.shortsnews.video.data
 import android.content.Context
 import android.util.Log
 import at.huber.me.YouTubeUri
+import com.ns.shortsnews.MainApplication
+import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.cache.VideoPreloadWorker
 import com.ns.shortsnews.utils.AppPreference
 import com.player.models.VideoData
@@ -114,7 +116,8 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                 }
 
             // Preload mp4 urls
-            VideoPreloadWorker.schedulePreloadWork(videoUrls, videoIds)
+//            VideoPreloadWorker.schedulePreloadWork(videoUrls, videoIds)
+            VideoPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
 
             Log.i("Conv_TIME", "VideoDataRepositoryImpl")
 

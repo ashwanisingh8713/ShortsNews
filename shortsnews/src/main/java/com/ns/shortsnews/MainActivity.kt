@@ -16,6 +16,7 @@ import coil.load
 import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
 import com.ns.shortsnews.adapters.CategoryAdapter
+import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.cache.VideoPreloadWorker
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
@@ -94,7 +95,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             )
         }
 
-//        registerVideoCache()
+        registerVideoCache()
 
     }
 
@@ -146,12 +147,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     private fun registerVideoCache() {
         lifecycleScope.launch {
-            sharedEventViewModel.cacheVideoUrl!!.filterNotNull().collectLatest {
+            sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
                 val url = it.first
                 val id = it.second
                 var videoUrls = Array(1){url}
                 var videoIds = Array(1){id}
-                VideoPreloadWorker.schedulePreloadWork(videoUrls=videoUrls, ids=videoIds)
+//                VideoPreloadWorker.schedulePreloadWork(videoUrls=videoUrls, ids=videoIds)
+                VideoPreloadCoroutine.schedulePreloadWork(videoUrls=videoUrls, ids=videoIds)
             }
         }
 
@@ -161,7 +163,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 val id = it.second
                 var videoUrls = Array(1){url}
                 var videoIds = Array(1){id}
-                VideoPreloadWorker.schedulePreloadWork(videoUrls=videoUrls, ids=videoIds)
+//                VideoPreloadWorker.schedulePreloadWork(videoUrls=videoUrls, ids=videoIds)
+                VideoPreloadCoroutine.schedulePreloadWork(videoUrls=videoUrls, ids=videoIds)
             }
         }
     }
