@@ -15,7 +15,7 @@ class UserLikesViewModel(private val channelsDataUseCase: UserProfileLikesListUs
     private val _userLikesSuccessState = MutableStateFlow<LikesResult?>(null)
     val LikesSuccessState: StateFlow<LikesResult?> get() = _userLikesSuccessState
 
-    private val _errorState = MutableStateFlow<String?>("NA")
+    private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> get() = _errorState
 
     private val _loadingState = MutableStateFlow(true)

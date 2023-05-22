@@ -28,7 +28,7 @@ class LikesFragment : Fragment(R.layout.fragment_likes) {
 
     private val likesViewModel: UserLikesViewModel by activityViewModels { LikesViewModelFactory().apply {
         inject(UserProfileLikesListUseCase(UserDataRepositoryImpl(get())))
-    }  }
+    }}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

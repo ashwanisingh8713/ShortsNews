@@ -15,6 +15,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import coil.ImageLoader
 import coil.decode.SvgDecoder
@@ -25,10 +26,15 @@ import com.exo.players.ExoAppPlayerFactory
 import com.exo.ui.ExoAppPlayerViewFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.ns.shortsnews.adapters.CategoryAdapter
+import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityMainBinding
+import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
+import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileLikesListUseCase
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
+import com.ns.shortsnews.user.ui.viewmodel.LikesViewModelFactory
+import com.ns.shortsnews.user.ui.viewmodel.UserLikesViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
@@ -39,6 +45,7 @@ import com.videopager.utils.CategoryConstants
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModelFactory
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -103,9 +110,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     // It is having Bottom Sheet Implementation
     private fun bottomSheetDialog() {
         val standardBottomSheetBehavior = BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
-
         standardBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 Log.i("", "$slideOffset")
             }
@@ -123,8 +128,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                 standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
-                standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
+                binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
+                getChannelVideoData()
             }
+
         }
     }
 
@@ -152,8 +160,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         ft.commit()
         AppPreference.userToken?.let {
             sharedEventViewModel.sendUserPreferenceData(
-                AppPreference.isUserLoggedIn,
-                it
+                AppPreference.isUserLoggedIn, it
             )
         }
 
@@ -170,27 +177,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-    /**
-     * Creates VideoPagerFragment Instance
-     */
-    private fun makeVideoPagerInstancee(shortsType: String): VideoPagerFragment {
-       val appPlayerView =  ExoAppPlayerViewFactory().create(this@MainActivity)
-        val vpf =  VideoPagerFragment(
-            viewModelFactory = { owner ->
-                VideoPagerViewModelFactory(
-                    repository = VideoDataRepositoryImpl(),
-                    appPlayerFactory = ExoAppPlayerFactory(
-                        context = this@MainActivity, cache = MainApplication.cache
-                    ),
-                    categoryId = shortsType,
-                    videoFrom = ""
-                ).create(owner)
-            },
-            appPlayerView = appPlayerView,
-            imageLoader = this@MainActivity.imageLoader,
-        )
-        return vpf
-    }
 
     private fun showCategory() {
         lifecycleScope.launch {
@@ -262,6 +248,44 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     binding.persistentBottomsheet.following.text = "Follow"
                 }
 
+            }
+        }
+    }
+
+    private val likesViewModel: UserLikesViewModel by viewModels { LikesViewModelFactory().apply {
+        inject(UserProfileLikesListUseCase(UserDataRepositoryImpl(get())))
+    }}
+
+    // Get Channel Video Data
+    private fun getChannelVideoData() {
+
+        likesViewModel.requestLikesApi()
+        val adapter = GridAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA)
+
+        lifecycleScope.launch {
+            likesViewModel.errorState.filterNotNull().collectLatest {
+                binding.persistentBottomsheet.progressBar.visibility = View.GONE
+                binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
+
+            }
+        }
+
+        lifecycleScope.launch {
+            likesViewModel.LikesSuccessState.filterNotNull().collectLatest {
+                delay(1000)
+                binding.persistentBottomsheet.progressBar.visibility = View.GONE
+                binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
+                it.let {
+
+                    adapter.updateVideoData(it.data)
+                    binding.persistentBottomsheet.channelRecyclerview.adapter = adapter
+                    val standardBottomSheetBehavior = BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
+                    if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    } else {
+                        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    }
+                }
             }
         }
     }
