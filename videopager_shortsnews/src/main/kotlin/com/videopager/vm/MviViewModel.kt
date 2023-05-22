@@ -10,14 +10,14 @@ internal abstract class MviViewModel<Event, Result, State, Effect>(private val i
     var effects: Flow<Effect> = emptyFlow()
     private val events = MutableSharedFlow<Event>()
 
-    fun initApi(requestType: String) {
+    init {
         events
             .onSubscription {
                 check(events.subscriptionCount.value == 1)
                 onStart()
             }
             .share() // Share emissions to individual Flows within toResults()
-            .toResults(requestType)
+            .toResults()
             .share() // Share emissions to states and effects
             .also { results ->
                 states = results.toStates(initialState)
@@ -44,7 +44,7 @@ internal abstract class MviViewModel<Event, Result, State, Effect>(private val i
     }
 
     protected open fun onStart() = Unit
-    protected abstract fun Flow<Event>.toResults(requestType: String): Flow<Result>
+    protected abstract fun Flow<Event>.toResults(): Flow<Result>
     protected abstract fun Result.reduce(state: State): State
     protected open fun Flow<Result>.toEffects(): Flow<Effect> = emptyFlow()
 

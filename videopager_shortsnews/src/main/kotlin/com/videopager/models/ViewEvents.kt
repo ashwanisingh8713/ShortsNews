@@ -2,7 +2,7 @@ package com.videopager.models
 
 internal sealed class ViewEvent
 
-internal object LoadVideoDataEvent : ViewEvent()
+internal data class LoadVideoDataEvent(val categoryId: String, val videoFrom: String) : ViewEvent()
 
 internal sealed class PlayerLifecycleEvent : ViewEvent() {
     object Start : PlayerLifecycleEvent()

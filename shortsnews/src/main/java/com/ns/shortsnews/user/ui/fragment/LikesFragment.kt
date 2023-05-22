@@ -13,6 +13,9 @@ import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileLikesListUseCase
 import com.ns.shortsnews.user.ui.viewmodel.LikesViewModelFactory
 import com.ns.shortsnews.user.ui.viewmodel.UserLikesViewModel
+import com.ns.shortsnews.utils.AppConstants
+import com.videopager.ui.VideoPagerFragment
+import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -31,6 +34,7 @@ class LikesFragment : Fragment(R.layout.fragment_likes) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLikesBinding.bind(view)
         likesViewModel.requestLikesApi()
+        adapter = GridAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA)
 
         viewLifecycleOwner.lifecycleScope.launch {
             likesViewModel.errorState.filterNotNull().collectLatest {
@@ -46,10 +50,18 @@ class LikesFragment : Fragment(R.layout.fragment_likes) {
                 Log.i("kamlesh","ProfileFragment onSuccess ::: $it")
                 it.let {
                     binding.progressBar.visibility = View.GONE
-                    adapter = GridAdapter(it.data)
+                    adapter.updateVideoData(it.data)
                     binding.likesRecyclerview.adapter = adapter
-
                 }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            adapter.clicks().collectLatest {
+                val fragment = AppConstants.makeVideoPagerInstance("999", CategoryConstants.DEFAULT_VIDEO_DATA, requireActivity())
+                requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
+                    .addToBackStack(null)
+                    .commit()
             }
         }
 
@@ -60,6 +72,9 @@ class LikesFragment : Fragment(R.layout.fragment_likes) {
                 }
             }
         }
+
+
+
 
     }
 }

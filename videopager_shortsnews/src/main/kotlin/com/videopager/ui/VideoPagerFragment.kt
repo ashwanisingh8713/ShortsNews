@@ -31,7 +31,7 @@ import java.io.IOException
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
     private val appPlayerView: AppPlayerView,
-    private val imageLoader: ImageLoader, private val shortsType: String
+    private val imageLoader: ImageLoader,
 ) : Fragment(R.layout.video_pager_fragment) {
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
     private val sharedEventViewModel: SharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
@@ -66,7 +66,7 @@ class VideoPagerFragment(
         commentFragment = CommentsFragment()
 
         // Start point of Events, Flow, States
-        viewModel.initApi(shortsType)
+//        viewModel.initApi(shortsType)
 
         // Listening user status via shared view Module from main activity preference utils
         registerSharedViewModel()

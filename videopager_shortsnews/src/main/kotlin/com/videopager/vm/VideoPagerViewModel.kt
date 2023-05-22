@@ -28,6 +28,7 @@ import com.videopager.models.ViewEffect
 import com.videopager.models.ViewEvent
 import com.videopager.models.ViewResult
 import com.videopager.ui.extensions.ViewState
+import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.*
@@ -41,8 +42,10 @@ internal class VideoPagerViewModel(
     private val repository: VideoDataRepository,
     private val appPlayerFactory: AppPlayer.Factory,
     private val handle: PlayerSavedStateHandle,
-    initialState: ViewState
+    initialState: ViewState,
+    private val categoryId: String, private val videoFrom: String
 ) : MviViewModel<ViewEvent, ViewResult, ViewState, ViewEffect>(initialState) {
+
 
 
     var context: Context? = null
@@ -56,13 +59,13 @@ internal class VideoPagerViewModel(
     }
 
     override fun onStart() {
-        processEvent(LoadVideoDataEvent)
+        processEvent(LoadVideoDataEvent(categoryId, videoFrom))
     }
 
-    override fun Flow<ViewEvent>.toResults(requestType: String): Flow<ViewResult> {
+    override fun Flow<ViewEvent>.toResults(): Flow<ViewResult> {
         // MVI boilerplate
         return merge(
-            filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(requestType),
+            filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(categoryId, videoFrom),
             filterIsInstance<PlayerLifecycleEvent>().toPlayerLifecycleResults(),
             filterIsInstance<TappedPlayerEvent>().toTappedPlayerResults(),
             filterIsInstance<OnPageSettledEvent>().toPageSettledResults(),
@@ -80,8 +83,17 @@ internal class VideoPagerViewModel(
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String): Flow<ViewResult> {
-        return flatMapLatest { repository.videoData(requestType, context!!) }
+    private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String, videoFrom: String): Flow<ViewResult> {
+        return flatMapLatest {
+            when(videoFrom) {
+                CategoryConstants.BOOKMARK_VIDEO_DATA-> repository.bookmarkVideoData(requestType, context!!)
+                CategoryConstants.CHANNEL_VIDEO_DATA-> repository.channelVideoData(requestType, context!!)
+                CategoryConstants.DEFAULT_VIDEO_DATA-> repository.categoryVideoData(requestType, context!!)
+                else -> {
+                    repository.categoryVideoData(requestType, context!!)
+                }
+            }
+        }
             .map { videoData ->
                 val appPlayer = states.value.appPlayer
                 // If the player exists, it should be updated with the latest video data that came in

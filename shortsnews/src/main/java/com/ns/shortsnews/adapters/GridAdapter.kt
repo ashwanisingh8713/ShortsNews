@@ -1,15 +1,23 @@
 package com.ns.shortsnews.adapters
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.ns.shortsnews.MainActivity
 import com.ns.shortsnews.databinding.ItemGridViewBinding
 import com.ns.shortsnews.user.domain.models.LikesData
 import com.videopager.R
+import com.videopager.ui.extensions.ClickEvent
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
-class GridAdapter(private var itemList: List<LikesData> = emptyList()): RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
+class GridAdapter(private var itemList: List<LikesData> = emptyList(), videoFrom: String): RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
+
+    private val clicks = MutableSharedFlow<Int>(extraBufferCapacity = 1)
+    fun clicks() = clicks.asSharedFlow()
 
     class GridViewHolder(val binding:ItemGridViewBinding):RecyclerView.ViewHolder(binding.root)
 
@@ -29,9 +37,16 @@ class GridAdapter(private var itemList: List<LikesData> = emptyList()): Recycler
                     holder.binding.likeIcon.setColorFilter(ContextCompat.getColor(holder.binding.likeIcon.context, R.color.red))
                 }
             }
-
-
+            holder.itemView.setOnClickListener{
+                clicks.tryEmit(position)
+            }
             }
     }
+
+    fun updateVideoData(itemList: List<LikesData>) {
+        this.itemList = itemList
+        notifyDataSetChanged()
+    }
+
 
 }

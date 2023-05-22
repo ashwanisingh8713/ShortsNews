@@ -44,7 +44,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         .create(VideoDataService::class.java)
 
 
-    override suspend fun videoData(requestType: String, context: Context): Flow<MutableList<VideoData>> {
+    override suspend fun categoryVideoData(requestType: String, context: Context): Flow<MutableList<VideoData>> {
         var ll = mutableListOf<MutableList<VideoData>>()
 
         val llVid = withContext(Dispatchers.IO) {
@@ -126,6 +126,29 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         return llVid.asFlow()
     }
 
+
+    override suspend fun channelVideoData(
+        requestType: String,
+        context: Context
+    ): Flow<MutableList<VideoData>> {
+        var ll = mutableListOf<MutableList<VideoData>>()
+
+        val llVid = withContext(Dispatchers.IO) {
+            ll
+        }
+        return llVid.asFlow()
+    }
+
+    override suspend fun bookmarkVideoData(
+        requestType: String,
+        context: Context
+    ): Flow<MutableList<VideoData>> {
+        var ll = mutableListOf<MutableList<VideoData>>()
+        val llVid = withContext(Dispatchers.IO) {
+            ll
+        }
+        return llVid.asFlow()
+    }
 
 
     override fun like(videoId: String, position: Int): Flow<Triple<String, Boolean, Int>> = flow {

@@ -31,9 +31,11 @@ import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
+import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.videopager.ui.VideoPagerFragment
+import com.videopager.utils.CategoryConstants
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModelFactory
@@ -143,9 +145,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     /**
      * Loads Home Fragment
      */
-    private fun loadHomeFragment(shortsType: String) {
+    private fun loadHomeFragment(categoryType: String) {
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.fragment_container, makeVideoPagerInstance(shortsType))
+        ft.replace(R.id.fragment_container,
+            AppConstants.makeVideoPagerInstance(categoryType, CategoryConstants.DEFAULT_VIDEO_DATA, this@MainActivity))
         ft.commit()
         AppPreference.userToken?.let {
             sharedEventViewModel.sendUserPreferenceData(
@@ -170,7 +173,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     /**
      * Creates VideoPagerFragment Instance
      */
-    private fun makeVideoPagerInstance(shortsType: String): VideoPagerFragment {
+    private fun makeVideoPagerInstancee(shortsType: String): VideoPagerFragment {
        val appPlayerView =  ExoAppPlayerViewFactory().create(this@MainActivity)
         val vpf =  VideoPagerFragment(
             viewModelFactory = { owner ->
@@ -178,12 +181,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     repository = VideoDataRepositoryImpl(),
                     appPlayerFactory = ExoAppPlayerFactory(
                         context = this@MainActivity, cache = MainApplication.cache
-                    )
+                    ),
+                    categoryId = shortsType,
+                    videoFrom = ""
                 ).create(owner)
             },
             appPlayerView = appPlayerView,
             imageLoader = this@MainActivity.imageLoader,
-            shortsType = shortsType
         )
         return vpf
     }

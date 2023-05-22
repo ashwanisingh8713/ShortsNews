@@ -1,5 +1,14 @@
 package com.ns.shortsnews.utils
 
+import android.content.Context
+import coil.imageLoader
+import com.exo.players.ExoAppPlayerFactory
+import com.exo.ui.ExoAppPlayerViewFactory
+import com.ns.shortsnews.MainApplication
+import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
+import com.videopager.ui.VideoPagerFragment
+import com.videopager.vm.VideoPagerViewModelFactory
+
 class AppConstants {
 
     companion object {
@@ -21,6 +30,28 @@ class AppConstants {
         const val CONNECTIVITY_ERROR_TITLE = "Connectivity Error"
         const val CONNECTIVITY_MSG = "Please ensure you have active internet connection."
         const val API_ERROR_TITLE = "API error"
+
+
+        fun makeVideoPagerInstance(videoCategory: String, videoFrom: String, context: Context): VideoPagerFragment {
+            val appPlayerView =  ExoAppPlayerViewFactory().create(context)
+            val vpf =  VideoPagerFragment(
+                viewModelFactory = { owner ->
+                    VideoPagerViewModelFactory(
+                        repository = VideoDataRepositoryImpl(),
+                        appPlayerFactory = ExoAppPlayerFactory(
+                            context = context, cache = MainApplication.cache
+                        ),
+                        categoryId = videoCategory,
+                        videoFrom = videoFrom
+                    ).create(owner)
+                },
+                appPlayerView = appPlayerView,
+                imageLoader = context.imageLoader,
+            )
+            return vpf
+        }
+
+
 
     }
 }

@@ -110,4 +110,7 @@ class ProfileActivity : AppCompatActivity() {
         startActivity(intent)
         this.finish()
     }
+
+
+
 }
