@@ -81,6 +81,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         // Register GetInfo Listener
         registerGetInfo()
+
+        followingClick()
     }
 
     override fun onResume() {
@@ -228,29 +230,47 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun registerGetInfo() {
         lifecycleScope.launch {
             sharedEventViewModel.videoInfo.filterNotNull().collectLatest {
-                /*if(it.id.isEmpty()) {
-                    binding.persistentBottomsheet.following.visibility = View.INVISIBLE
+                if (it.following) {
+                    binding.persistentBottomsheet.following.text = "Following"
+                } else {
+                    binding.persistentBottomsheet.following.text = "Follow"
+                }
+                binding.persistentBottomsheet.following.tag = it.channel_id
+                binding.persistentBottomsheet.following.visibility = View.VISIBLE
+
+                if (it.channel_image.isNotEmpty()) {
+                    binding.persistentBottomsheet.clientImage.loadSvg(
+                        it.channel_image,
+                        binding.persistentBottomsheet.clientImage.context
+                    )
+                    binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
+                } else {
                     binding.persistentBottomsheet.cardViewClientImage.visibility = View.INVISIBLE
-                } else {*/
-                    if (it.following) {
-                        binding.persistentBottomsheet.following.text = "Following"
-                    } else{
-                        binding.persistentBottomsheet.following.text = "Follow"
-                    }
-                    binding.persistentBottomsheet.following.visibility = View.VISIBLE
+                }
+            }
+        }
 
-                    if (it.channel_image.isNotEmpty()) {
-                        binding.persistentBottomsheet.clientImage.loadSvg(it.channel_image, binding.persistentBottomsheet.clientImage.context)
-                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
-                    } else {
-                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.INVISIBLE
-                    }
+        lifecycleScope.launch {
+            sharedEventViewModel.followResponse.filterNotNull().collectLatest {
+                if (it.following) {
+                    binding.persistentBottomsheet.following.text = "Following"
+                } else{
+                    binding.persistentBottomsheet.following.text = "Follow"
+                }
 
-//                }
             }
         }
     }
 
+
+    private fun followingClick() {
+        binding.persistentBottomsheet.following.setOnClickListener{
+            val channelId = binding.persistentBottomsheet.following.tag
+            if(channelId != null) {
+                sharedEventViewModel.followRequest(channelId.toString())
+            }
+        }
+    }
 
 
     // To set status bar in Full-Screen
@@ -270,6 +290,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
+    // SVG Image Caching
     private fun ImageView.loadSvg(url: String, context: Context) {
         val imageLoader = ImageLoader.Builder(context)
             .components {

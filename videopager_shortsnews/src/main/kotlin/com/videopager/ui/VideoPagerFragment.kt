@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -70,7 +69,7 @@ class VideoPagerFragment(
         viewModel.initApi(shortsType)
 
         // Listening user status via shared view Module from main activity preference utils
-        listenForUserStatus()
+        registerSharedViewModel()
 
         val states = viewModel.states
             .onEach { state ->
@@ -140,7 +139,8 @@ class VideoPagerFragment(
                         pagerAdapter.refreshLikeUI(effect.position)
                     }
                     is FollowEffect -> {
-                        //pagerAdapter.refreshFollowUI(effect.position)
+//                        pagerAdapter.refreshFollowUI(effect.position)
+                        sharedEventViewModel.followResponse(pagerAdapter.getVideoData(effect.position))
                     }
                     is PageEffect -> {
                         pagerAdapter.renderEffect(
@@ -347,11 +347,24 @@ class VideoPagerFragment(
         }
     }
 
-    private fun listenForUserStatus() {
+    private fun registerSharedViewModel() {
         lifecycleScope.launch {
             sharedEventViewModel.cacheUserStatus.collectLatest {
                 isUserLoggedIn = it.first
                 Log.i("newDataUser","User logged in status ${it.first}")
+            }
+        }
+
+        lifecycleScope.launch {
+            sharedEventViewModel.followRequest.collectLatest {
+                if (!isUserLoggedIn) {
+                    sharedEventViewModel.launchLoginEvent(true)
+                    NoFurtherEvent
+                } else {
+                    val currentItem = binding.viewPager.currentItem
+                    val videoData = pagerAdapter.getVideoData(currentItem)
+                    viewModel.processEvent(FollowClickEvent(videoData.channel_id, currentItem))
+                }
             }
         }
     }
