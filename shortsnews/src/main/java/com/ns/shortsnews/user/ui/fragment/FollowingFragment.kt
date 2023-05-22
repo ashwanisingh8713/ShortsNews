@@ -30,9 +30,9 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentFollowingBinding.bind(view)
 
-        binding.backButtonUser.setOnClickListener {
-            activity?.finish()
-        }
+//        binding.backButtonUser.setOnClickListener {
+//            activity?.finish()
+//        }
         channelsViewModel.requestChannelListApi()
 
 
@@ -40,14 +40,14 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
             channelsViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarChannels.visibility = View.GONE
                 if(!it.equals("NA")){
-                    Log.i("kamlesh","ProfileFragment onError ::: $it")
+                    Log.i("kamlesh","FollowingFragment onError ::: $it")
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             channelsViewModel.ChannelsSuccessState.filterNotNull().collectLatest {
-                Log.i("kamlesh","ProfileFragment onSuccess ::: $it")
+                Log.i("kamlesh","FollowingFragment onSuccess ::: $it")
                 it.let {
                     binding.progressBarChannels.visibility = View.GONE
                     adapter = ChannelsAdapter(it.data)

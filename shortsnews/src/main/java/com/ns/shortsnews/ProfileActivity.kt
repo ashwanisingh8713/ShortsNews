@@ -13,10 +13,7 @@ import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
-import com.ns.shortsnews.user.ui.fragment.LanguageFragment
-import com.ns.shortsnews.user.ui.fragment.LoginFragment
-import com.ns.shortsnews.user.ui.fragment.OtpFragment
-import com.ns.shortsnews.user.ui.fragment.UserProfileFragment
+import com.ns.shortsnews.user.ui.fragment.*
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.AppPreference
@@ -96,7 +93,7 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun choiceFragment() {
-        val fragment = UserProfileFragment()
+        val fragment = NewProfileFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
             .commit()
     }

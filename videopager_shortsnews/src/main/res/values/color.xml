@@ -13,6 +13,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="button_background">#4E547B</color>
     <color name="transparent_color">#00000000</color>
+    <color name="gray">#808080</color>
 
 
 </resources>

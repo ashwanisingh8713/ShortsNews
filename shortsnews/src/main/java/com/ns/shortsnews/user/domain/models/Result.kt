@@ -20,7 +20,10 @@ data class ProfileData(
     val email:String,
     val name:String,
     val last_logged_in:String,
-    val image:String
+    val image:String,
+    val age:String,
+    val location:String
+
 )
 @JsonClass(generateAdapter = true)
 data class OTPResult(
@@ -110,4 +113,25 @@ data class LanguagesResult(
 data class LanguageData(
     val id:String,
     val name:String
+)
+
+@JsonClass(generateAdapter = true)
+data class LikesResult(
+    val status:Boolean,
+    val total:Int,
+    val page:Int,
+    val perPage:Int,
+    val data: List<LikesData>
+)
+
+@JsonClass(generateAdapter = true)
+data class LikesData(
+    val id:String,
+    val video_url:String,
+    val type:String,
+    val title:String,
+    val videoPreviewUrl:String,
+    val channelTitle:String,
+    val liked:Boolean,
+    val like_count:String
 )

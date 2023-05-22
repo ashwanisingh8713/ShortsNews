@@ -28,5 +28,8 @@ interface UserApiService {
 
     @GET("languages")
     suspend fun getLanguagesData():LanguagesResult
+    //Likes list for profile screen
+    @GET("my-bookmarks")
+    suspend fun getLikesData():LikesResult
 
 }
