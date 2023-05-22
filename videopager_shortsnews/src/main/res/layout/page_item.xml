@@ -97,7 +97,7 @@
 
 
         <!-- Start - Channel Image -->
-        <com.google.android.material.card.MaterialCardView
+       <!-- <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_view_client_image"
             android:layout_width="43dp"
             android:layout_height="43dp"
@@ -115,11 +115,11 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
-        </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>-->
         <!-- End - Channel Image -->
 
         <!-- Start - Following -->
-        <TextView
+        <!--<TextView
             android:id="@+id/following"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -135,7 +135,7 @@
             android:textSize="@dimen/video_page_text_size_medium"
             app:layout_constraintBottom_toBottomOf="@id/card_view_client_image"
             app:layout_constraintStart_toEndOf="@id/card_view_client_image"
-            app:layout_constraintTop_toTopOf="@id/card_view_client_image" />
+            app:layout_constraintTop_toTopOf="@id/card_view_client_image" />-->
         <!-- End - Following -->
 
 

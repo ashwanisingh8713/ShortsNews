@@ -109,8 +109,6 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                             type = "yt"
                         )
                     }
-
-
                 }.filter {
                     it.mediaUri.isNotBlank()
                 }

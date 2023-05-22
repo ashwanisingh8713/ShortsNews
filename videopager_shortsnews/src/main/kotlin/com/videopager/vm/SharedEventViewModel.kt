@@ -2,6 +2,7 @@ package com.videopager.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.videopager.data.VideoInfoData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -44,6 +45,16 @@ class SharedEventViewModel:ViewModel() {
     fun cacheVideoData_2(uri: String, id: String) {
         viewModelScope.launch {
             _cacheVideoUrl_2.emit(Pair(uri, id))
+        }
+    }
+
+
+    private var _videoInfo= MutableSharedFlow<VideoInfoData?>()
+    val videoInfo = _videoInfo.asSharedFlow()
+
+    fun shareVideoInfo(videoInfoData: VideoInfoData?) {
+        viewModelScope.launch {
+            _videoInfo.emit(videoInfoData)
         }
     }
 

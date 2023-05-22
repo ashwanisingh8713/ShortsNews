@@ -31,12 +31,12 @@ internal class PageViewHolder(
 
     fun bind(videoData: VideoData) {
         binding.previewImage.load(videoData.previewImageUri,imageLoader)
-        binding.following.setOnClickListener{
+        /*binding.following.setOnClickListener{
             click(Pair(videoData.id, FollowClick))
         }
         binding.clientImage.setOnClickListener{
             click(Pair(videoData.id, ChannelClick))
-        }
+        }*/
         binding.share.setOnClickListener{
             click(Pair(videoData.id, ShareClick))
         }

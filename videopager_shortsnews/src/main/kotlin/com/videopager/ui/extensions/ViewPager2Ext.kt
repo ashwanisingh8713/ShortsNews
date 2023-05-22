@@ -87,4 +87,6 @@ internal fun ViewPager2.videoCache(): Flow<Unit> = callbackFlow {
     awaitClose { unregisterOnPageChangeCallback(callback) }
 }
 
+
+
 internal val ViewPager2.isIdle get() = scrollState == ViewPager2.SCROLL_STATE_IDLE

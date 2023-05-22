@@ -17,6 +17,7 @@ import coil.ImageLoader
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.videopager.R
+import com.videopager.data.VideoInfoData
 import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
@@ -57,7 +58,6 @@ class VideoPagerFragment(
         viewModel.setPlayerVieww(appPlayerView.getPlayerView())
 
         binding = VideoPagerFragmentBinding.bind(view)
-        binding.toolbar.title = "News Reels"
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
 //        val appPlayerView = appPlayerViewFactory.create(view.context)
         pagerAdapter = PagerAdapter(imageLoader)
@@ -140,7 +140,7 @@ class VideoPagerFragment(
                         pagerAdapter.refreshLikeUI(effect.position)
                     }
                     is FollowEffect -> {
-                        pagerAdapter.refreshFollowUI(effect.position)
+                        //pagerAdapter.refreshFollowUI(effect.position)
                     }
                     is PageEffect -> {
                         pagerAdapter.renderEffect(
@@ -156,8 +156,10 @@ class VideoPagerFragment(
                         ).show()
                     }
                     is GetVideoInfoEffect -> {
-                        if(effect.videoInfo.id.isNotEmpty())
+                        if(effect.videoInfo.id.isNotEmpty()) {
                         pagerAdapter.getInfoRefreshUI(effect.position)
+                        sharedEventViewModel.shareVideoInfo(effect.videoInfo)
+                        }
                     }
                     is GetYoutubeUriEffect -> {
                         // TODO, Nothing,
@@ -216,6 +218,7 @@ class VideoPagerFragment(
             },
 
             getPageInfo().map {
+                sharedEventViewModel.shareVideoInfo(VideoInfoData())
                 val data = pagerAdapter.getVideoData(currentItem)
                 VideoInfoEvent(data.id, currentItem)
             },
@@ -305,7 +308,13 @@ class VideoPagerFragment(
                         sharedEventViewModel.launchLoginEvent(true)
                         NoFurtherEvent
                     } else {
-                        commentFragment.show(childFragmentManager, "comments")
+
+                        commentFragment.apply {
+
+
+                            show(childFragmentManager, "comments")
+
+                        }
                         val currentItem = binding.viewPager.currentItem
                         val videoData = pagerAdapter.getVideoData(currentItem)
                         CommentClickEvent(videoData.id, currentItem)

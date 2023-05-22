@@ -108,7 +108,7 @@ internal class PagerAdapter(
         }
     }
 
-    suspend fun refreshFollowUI(position: Int) {
+    /*suspend fun refreshFollowUI(position: Int) {
         val holder = awaitViewHolder(position)
         var data  = getItem(position)
         if (data.following) {
@@ -116,7 +116,7 @@ internal class PagerAdapter(
         } else{
             holder.binding.following.text = "Follow"
         }
-    }
+    }*/
 
     suspend fun getInfoRefreshUI(position: Int) {
         val holder = awaitViewHolder(position)
@@ -130,11 +130,6 @@ internal class PagerAdapter(
         } else {
             holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.white))
         }
-        if (data.following){
-            holder.binding.following.text = "Following"
-        } else{
-            holder.binding.following.text = "Follow"
-        }
         if (data.saved){
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.red))
             holder.binding.saveTitle.text = data.saveCount
@@ -142,12 +137,7 @@ internal class PagerAdapter(
             holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.white))
             holder.binding.saveTitle.text = data.saveCount
         }
-        if (data.channel_image.isNotEmpty()) {
-            holder.binding.clientImage.loadSvg(data.channel_image, holder.binding.clientImage.context)
-            holder.binding.cardViewClientImage.visibility = View.VISIBLE
-        } else {
-            holder.binding.cardViewClientImage.visibility = View.INVISIBLE
-        }
+
 
         holder.binding.title.setOnClickListener {
             if (isTextViewClicked){

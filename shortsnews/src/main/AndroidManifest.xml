@@ -19,7 +19,7 @@
             android:theme="@style/Theme.Material3.DayNight.NoActionBar" />
 
         <activity
-            android:name=".ProfileActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
@@ -31,12 +31,12 @@
             </intent-filter>
         </activity>
 
-        <activity
+        <!--<activity
             android:name=".MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Material3.DayNight.NoActionBar">
-        </activity>
+        </activity>-->
 
     </application>
 

@@ -9,6 +9,7 @@
     android:layout_gravity="bottom"
     app:behavior_hideable="false"
     android:background="@drawable/bottom_sheet_background"
+
     >
 
     <View
