@@ -96,7 +96,7 @@ internal class PagerAdapter(
         }
     }
 
-    suspend fun refreshSaveUI(position: Int){
+    suspend fun refreshBookmarkUI(position: Int){
         val holder = awaitViewHolder(position)
         var data  = getItem(position)
         if (data.saved){

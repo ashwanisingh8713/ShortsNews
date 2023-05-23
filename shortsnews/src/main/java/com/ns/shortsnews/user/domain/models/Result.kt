@@ -88,13 +88,13 @@ data class ChannelListData(
 @JsonClass(generateAdapter = true)
 data class LanguagesResult(
     val status: Boolean,
-    val data: List<LanguageData>
+    val data: List<LanguageData> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
 data class LanguageData(
-    val id:String,
-    val name:String
+    val id:String = "",
+    val name:String = ""
 )
 
 

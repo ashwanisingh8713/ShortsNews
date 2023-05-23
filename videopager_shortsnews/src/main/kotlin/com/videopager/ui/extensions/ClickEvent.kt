@@ -7,7 +7,7 @@ sealed class ClickEvent
 
 object ChannelClick: ClickEvent()
 object FollowClick: ClickEvent()
-object SaveClick: ClickEvent()
+object BookmarkClick: ClickEvent()
 object ShareClick: ClickEvent()
 object CommentClick: ClickEvent()
 object LikeClick: ClickEvent()

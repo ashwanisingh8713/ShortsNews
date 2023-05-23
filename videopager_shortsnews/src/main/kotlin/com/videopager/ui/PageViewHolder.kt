@@ -1,7 +1,6 @@
 package com.videopager.ui
 
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
@@ -12,7 +11,6 @@ import com.videopager.models.AnimationEffect
 import com.videopager.models.PageEffect
 import com.videopager.models.ResetAnimationsEffect
 import com.player.models.VideoData
-import com.videopager.R
 import com.videopager.ui.extensions.*
 import com.videopager.ui.extensions.findParentById
 
@@ -41,7 +39,7 @@ internal class PageViewHolder(
             click(Pair(videoData.id, ShareClick))
         }
         binding.save.setOnClickListener{
-            click(Pair(videoData.id, SaveClick))
+            click(Pair(videoData.id, BookmarkClick))
         }
         binding.comment.setOnClickListener{
             click(Pair(videoData.id, CommentClick))

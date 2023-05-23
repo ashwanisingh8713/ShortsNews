@@ -25,10 +25,8 @@ import com.videopager.utils.CategoryConstants
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
@@ -41,7 +39,6 @@ class VideoPagerFragment(
     private lateinit var pagerAdapter: PagerAdapter
     private lateinit var commentFragment: CommentsFragment
     private var isUserLoggedIn = false
-
     private var isFirstVideoInfoLoaded = false
     private var selectedPlay = 0
 
@@ -129,8 +126,8 @@ class VideoPagerFragment(
         val effects = viewModel.effects
             .onEach { effect ->
                 when (effect) {
-                    is SaveEffect -> {
-                        pagerAdapter.refreshSaveUI(effect.position)
+                    is BookmarkEffect -> {
+                        pagerAdapter.refreshBookmarkUI(effect.position)
                     }
                     is CommentEffect -> {
                         //adapter.refreshUI(0)
@@ -335,14 +332,14 @@ class VideoPagerFragment(
                         LikeClickEvent(videoData.id, currentItem)
                     }
                 }
-                SaveClick -> {
+                BookmarkClick -> {
                     if (!isUserLoggedIn) {
                         sharedEventViewModel.launchLoginEvent(true)
                         NoFurtherEvent
                     } else {
                         val currentItem = binding.viewPager.currentItem
                         val videoData = pagerAdapter.getVideoData(currentItem)
-                        SaveClickEvent(videoId = videoData.id, currentItem)
+                        BookmarkClickEvent(videoId = videoData.id, currentItem)
                     }
                 }
                 else -> NoFurtherEvent

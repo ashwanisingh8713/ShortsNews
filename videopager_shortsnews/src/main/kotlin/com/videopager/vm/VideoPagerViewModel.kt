@@ -76,7 +76,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<VideoInfoEvent>().toVideoInfoResults(),
             filterIsInstance<GetYoutubeUriEvent>().toYoutubeUriResults(),
             filterIsInstance<GetYoutubeUriEvent_2>().toYoutubeUriResults_2(),
-            filterIsInstance<SaveClickEvent>().toSaveClickResult(),
+            filterIsInstance<BookmarkClickEvent>().toSaveClickResult(),
         )
     }
 
@@ -218,7 +218,7 @@ internal class VideoPagerViewModel(
             LikeClickResult(it)
         }
     }
-    private fun Flow<SaveClickEvent>.toSaveClickResult(): Flow<ViewResult> {
+    private fun Flow<BookmarkClickEvent>.toSaveClickResult(): Flow<ViewResult> {
         return flatMapLatest { event ->
             repository.save(event.videoId, event.position)
         }.mapLatest { triple ->
@@ -226,7 +226,7 @@ internal class VideoPagerViewModel(
             states.value.videoData?.get(triple.third)?.saved  = triple.second
             triple.third
         }.map {
-            SaveClickResult(it)
+            BookmarkClickResult(it)
         }
     }
 
@@ -350,7 +350,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<PostCommentResult>().toPostCommentEffect(),
             filterIsInstance<GetYoutubeUriResult>().toGetYoutubeUriEffect(),
             filterIsInstance<GetYoutubeUriResult_2>().toGetYoutubeUriEffect_2(),
-            filterIsInstance<SaveClickResult>().toSaveViewEffect(),
+            filterIsInstance<BookmarkClickResult>().toSaveViewEffect(),
 
         )
     }
@@ -372,8 +372,8 @@ internal class VideoPagerViewModel(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<SaveClickResult>.toSaveViewEffect(): Flow<ViewEffect> {
-        return mapLatest { result -> SaveEffect(result.position) }
+    private fun Flow<BookmarkClickResult>.toSaveViewEffect(): Flow<ViewEffect> {
+        return mapLatest { result -> BookmarkEffect(result.position) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

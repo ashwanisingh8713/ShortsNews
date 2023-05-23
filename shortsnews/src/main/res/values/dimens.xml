@@ -10,6 +10,7 @@
     <dimen name="button_text_size" tools:ignore="MissingDefaultResource">12sp</dimen>
     <dimen name="button_height" tools:ignore="MissingDefaultResource">50dp</dimen>
     <dimen name="edit_text_height" tools:ignore="MissingDefaultResource">50dp</dimen>
+    <dimen name="edit_text_height_profile" tools:ignore="MissingDefaultResource">40dp</dimen>
     <dimen name="back_button_height" tools:ignore="MissingDefaultResource">30dp</dimen>
     <dimen name="back_button_width" tools:ignore="MissingDefaultResource">30dp</dimen>
     <dimen name="back_button_padding" tools:ignore="MissingDefaultResource">5dp</dimen>
