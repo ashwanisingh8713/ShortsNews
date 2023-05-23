@@ -1,7 +1,6 @@
 package com.ns.shortsnews.user.domain.repository
 
 import com.ns.shortsnews.user.domain.models.*
-import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 
 
 interface UserDataRepository {
@@ -15,5 +14,5 @@ interface UserDataRepository {
     suspend fun getLanguagesData():LanguagesResult
 
     //Likes list for profile screen
-    suspend fun getBookmarksData(): VideoDataRepositoryImpl.VideoDataResponse
+    suspend fun getBookmarksData(): VideoDataResponse
 }

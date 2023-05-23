@@ -6,12 +6,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.ns.shortsnews.databinding.ItemGridViewBinding
+import com.ns.shortsnews.user.domain.models.Data
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.videopager.R
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-class GridAdapter(private var itemList: MutableList<VideoDataRepositoryImpl.Data> = mutableListOf(),
+class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
                   videoFrom: String): RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
 
     private val clicks = MutableSharedFlow<Int>(extraBufferCapacity = 1)
@@ -41,7 +42,7 @@ class GridAdapter(private var itemList: MutableList<VideoDataRepositoryImpl.Data
             }
     }
 
-    fun updateVideoData(itemList: MutableList<VideoDataRepositoryImpl.Data>) {
+    fun updateVideoData(itemList: MutableList<Data>) {
         this.itemList = itemList
         notifyDataSetChanged()
     }

@@ -31,7 +31,6 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
         val OTP_POP = "otp_pop"
         val MAIN_ACTIVITY = "main_activity"
         val LANGUAGES = "languages"
-        val EDIT_PROFILE = "edit_profile"
     }
 
 

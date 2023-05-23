@@ -114,3 +114,45 @@ data class LanguageData(
     val id:String,
     val name:String
 )
+
+
+@JsonClass(generateAdapter = true)
+data class VideoDataResponse(
+    @Json(name = "data")
+    val `data`: MutableList<Data>,
+    @Json(name = "status")
+    val status: Boolean
+)
+
+/*(Kamlesh) Created new data class as per newsdx response */
+@JsonClass(generateAdapter = true)
+data class Data(
+    @Json(name = "title")
+    val title: String,
+    @Json(name = "video_url")
+    val videoUrl: String,
+    @Json(name = "id")
+    val id:String= "",
+    @Json(name = "videoPreviewUrl")
+    val preview:String?= "",
+    val type: String = "",
+    val channelTitle:String = "",
+    val like_count:String = "",
+    val liked:Boolean = false
+)
+/*Kamlesh(Data class for like/unlike)*/
+
+@JsonClass(generateAdapter = true)
+data class LikeUnlike(
+    @Json(name = "data")
+    val `data` : LikeUnlikeData,
+    val status:Boolean,
+    val msg:String
+)
+
+@JsonClass(generateAdapter = true)
+data class LikeUnlikeData(
+    val liked:Boolean,
+    val like_count:String
+
+)

@@ -6,6 +6,9 @@ import at.huber.me.YouTubeUri
 import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.cache.VideoPreloadWorker
+import com.ns.shortsnews.user.domain.models.Data
+import com.ns.shortsnews.user.domain.models.LikeUnlike
+import com.ns.shortsnews.user.domain.models.VideoDataResponse
 import com.ns.shortsnews.utils.AppPreference
 import com.player.models.VideoData
 import com.squareup.moshi.Json
@@ -243,50 +246,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         suspend fun comment(@Path("video_id") videoId: String): Comments
         @GET("video-info/{video_id}")
         suspend fun getVideoInfo(@Path("video_id")videoId: String): VideoInfo
-
         @POST("comment-video/{video_id}")
         suspend fun getPostComment(@Path("video_id") videoId:String, @Body comment:Map<String, String>): PostComment
     }
 
-    @JsonClass(generateAdapter = true)
-data class VideoDataResponse(
-    @Json(name = "data")
-    val `data`: MutableList<Data>,
-    @Json(name = "status")
-    val status: Boolean
-)
-
-    /*(Kamlesh) Created new data class as per newsdx response */
-@JsonClass(generateAdapter = true)
-data class Data(
-    @Json(name = "title")
-    val title: String,
-    @Json(name = "video_url")
-    val videoUrl: String,
-    @Json(name = "id")
-    val id:String= "",
-    @Json(name = "videoPreviewUrl")
-    val preview:String?= "",
-    val type: String = "",
-    val channelTitle:String = "",
-    val like_count:String = "",
-    val liked:Boolean = false
-)
-    /*Kamlesh(Data class for like/unlike)*/
-
-    @JsonClass(generateAdapter = true)
-    data class LikeUnlike(
-        @Json(name = "data")
-        val `data` : LikeUnlikeData,
-        val status:Boolean,
-        val msg:String
-    )
-
-    @JsonClass(generateAdapter = true)
-    data class LikeUnlikeData(
-        val liked:Boolean,
-        val like_count:String
-
-    )
 
 }

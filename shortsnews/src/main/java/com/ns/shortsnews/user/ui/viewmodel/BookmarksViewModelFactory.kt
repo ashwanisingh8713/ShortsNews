@@ -6,15 +6,15 @@ import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileBookmarksUseCas
 
 class BookmarksViewModelFactory: ViewModelProvider.Factory {
 
-    private lateinit var userProfileLikesListUseCase: UserProfileBookmarksUseCase
+    private lateinit var userBookmarksListUseCase: UserProfileBookmarksUseCase
 
-    fun inject(userProfileLikesListUseCase: UserProfileBookmarksUseCase){
-        this.userProfileLikesListUseCase = userProfileLikesListUseCase
+    fun inject(userProfileBookmarksUseCase: UserProfileBookmarksUseCase){
+        this.userBookmarksListUseCase = userProfileBookmarksUseCase
     }
 
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return UserBookmarksViewModel( userProfileLikesListUseCase) as T
+        return UserBookmarksViewModel( userBookmarksListUseCase) as T
     }
 
 }

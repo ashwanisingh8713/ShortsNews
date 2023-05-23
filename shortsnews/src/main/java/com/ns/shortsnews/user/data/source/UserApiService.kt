@@ -1,7 +1,6 @@
 package com.ns.shortsnews.user.data.source
 
 import com.ns.shortsnews.user.domain.models.*
-import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import retrofit2.http.*
 
 /**
@@ -31,6 +30,6 @@ interface UserApiService {
     suspend fun getLanguagesData():LanguagesResult
     //Likes list for profile screen
     @GET("my-bookmarks")
-    suspend fun getBookmarksData(): VideoDataRepositoryImpl.VideoDataResponse
+    suspend fun getBookmarksData(): VideoDataResponse
 
 }
