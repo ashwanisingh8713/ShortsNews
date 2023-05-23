@@ -65,7 +65,7 @@ internal class VideoPagerViewModel(
     override fun Flow<ViewEvent>.toResults(): Flow<ViewResult> {
         // MVI boilerplate
         return merge(
-            filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(categoryId, videoFrom),
+            filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(),
             filterIsInstance<PlayerLifecycleEvent>().toPlayerLifecycleResults(),
             filterIsInstance<TappedPlayerEvent>().toTappedPlayerResults(),
             filterIsInstance<OnPageSettledEvent>().toPageSettledResults(),
@@ -83,14 +83,14 @@ internal class VideoPagerViewModel(
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(requestType: String, videoFrom: String): Flow<ViewResult> {
-        return flatMapLatest {
+    private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(): Flow<ViewResult> {
+        return flatMapLatest {event ->
             when(videoFrom) {
-                CategoryConstants.BOOKMARK_VIDEO_DATA-> repository.bookmarkVideoData(requestType, context!!)
-                CategoryConstants.CHANNEL_VIDEO_DATA-> repository.channelVideoData(requestType, context!!)
-                CategoryConstants.DEFAULT_VIDEO_DATA-> repository.categoryVideoData(requestType, context!!)
+                CategoryConstants.BOOKMARK_VIDEO_DATA-> repository.bookmarkVideoData(event.categoryId, context!!)
+                CategoryConstants.CHANNEL_VIDEO_DATA-> repository.channelVideoData(event.categoryId, context!!)
+                CategoryConstants.DEFAULT_VIDEO_DATA-> repository.categoryVideoData(event.categoryId, context!!)
                 else -> {
-                    repository.categoryVideoData(requestType, context!!)
+                    repository.categoryVideoData(event.categoryId, context!!)
                 }
             }
         }

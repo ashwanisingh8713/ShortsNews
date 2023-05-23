@@ -21,9 +21,11 @@ import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
+import com.videopager.utils.CategoryConstants
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -41,12 +43,13 @@ class VideoPagerFragment(
     private var isUserLoggedIn = false
 
     private var isFirstVideoInfoLoaded = false
+    private var selectedPlay = 0
 
-    @Throws(IOException::class)
-    fun execution() {
-        val rnds = (0..10).random()
-        if(rnds == 4) {
-//            sharedEventViewModel._cacheVideoUrl = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            selectedPlay = arguments?.getInt(CategoryConstants.KEY_SelectedPlay)!!
         }
     }
 
@@ -64,6 +67,8 @@ class VideoPagerFragment(
         binding.viewPager.isUserInputEnabled = false
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
         commentFragment = CommentsFragment()
+
+
 
         // Start point of Events, Flow, States
 //        viewModel.initApi(shortsType)
@@ -113,8 +118,9 @@ class VideoPagerFragment(
                     binding.viewPager.isUserInputEnabled = true
 
                     if (!isFirstVideoInfoLoaded) {
-                        val data = pagerAdapter.getVideoData(0)
-                        viewModel.processEvent(VideoInfoEvent(data.id, 0))
+                        binding.viewPager.setCurrentItem(selectedPlay,true)
+                        val data = pagerAdapter.getVideoData(selectedPlay)
+                        viewModel.processEvent(VideoInfoEvent(data.id, selectedPlay))
                         isFirstVideoInfoLoaded = true
                     }
                 }
@@ -253,7 +259,6 @@ class VideoPagerFragment(
                 }
                 val nextVideoCacheData = pagerAdapter.getVideoData(nextVideoCacheIndex)
                 sharedEventViewModel.cacheVideoData(nextVideoCacheData.mediaUri, nextVideoCacheData.id)
-                execution()
                 NoFurtherEvent
             }
 

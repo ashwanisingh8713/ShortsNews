@@ -59,6 +59,9 @@ class LikesFragment : Fragment(R.layout.fragment_likes) {
         viewLifecycleOwner.lifecycleScope.launch {
             adapter.clicks().collectLatest {
                 val fragment = AppConstants.makeVideoPagerInstance("999", CategoryConstants.DEFAULT_VIDEO_DATA, requireActivity())
+                val bundle = Bundle()
+                bundle.putInt(CategoryConstants.KEY_SelectedPlay, it)
+                fragment.arguments = bundle
                 requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
                     .addToBackStack(null)
                     .commit()
