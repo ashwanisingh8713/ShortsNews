@@ -221,7 +221,7 @@ class VideoPagerFragment(
             },
 
             getPageInfo().map {
-                sharedEventViewModel.shareVideoInfo(VideoInfoData())
+//                sharedEventViewModel.shareVideoInfo(VideoInfoData())
                 val data = pagerAdapter.getVideoData(currentItem)
                 VideoInfoEvent(data.id, currentItem)
             },

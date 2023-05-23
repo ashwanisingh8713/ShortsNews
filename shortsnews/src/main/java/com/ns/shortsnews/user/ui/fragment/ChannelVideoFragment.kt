@@ -15,8 +15,10 @@ import com.ns.shortsnews.user.ui.viewmodel.BookmarksViewModelFactory
 import com.ns.shortsnews.user.ui.viewmodel.UserBookmarksViewModel
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.IntentLaunch
 import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
@@ -44,7 +46,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         binding = FragmentChannelVideosBinding.bind(view)
         binding.channelLogo.load(channelUrl)
         binding.following.text = "Following"
-        channelsVideosViewModel.requestBookmarksApi(Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
+        channelsVideosViewModel.requestVideoData(Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
         adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
         listenChannelVideos()
     }
@@ -52,14 +54,14 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
     private fun listenChannelVideos() {
         viewLifecycleOwner.lifecycleScope.launch {
-            channelsVideosViewModel.BookmarksSuccessState.collectLatest {
+            channelsVideosViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
                 adapter.updateVideoData(it!!.data)
                 binding.channelImageRecyclerview.adapter = adapter
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            channelsVideosViewModel.errorState.collectLatest {
+            channelsVideosViewModel.errorState.filterNotNull().collectLatest {
                 Alert().showGravityToast(requireActivity(), AppConstants.NO_CHANNEL_DATA)
             }
         }
@@ -67,13 +69,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         // Item click listener
         viewLifecycleOwner.lifecycleScope.launch {
             adapter.clicks().collectLatest {
-                val fragment = AppConstants.makeVideoPagerInstance(it.first, CategoryConstants.CHANNEL_VIDEO_DATA, requireActivity())
-                val bundle = Bundle()
-                bundle.putInt(CategoryConstants.KEY_SelectedPlay, it.second)
-                fragment.arguments = bundle
-                requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
-                    .addToBackStack(null)
-                    .commit()
+                IntentLaunch.launchPlainVideoPlayer(it, requireActivity())
             }
         }
     }

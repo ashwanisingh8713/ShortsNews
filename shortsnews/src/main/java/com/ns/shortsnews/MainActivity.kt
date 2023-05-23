@@ -13,6 +13,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -22,7 +23,6 @@ import coil.load
 import coil.request.ImageRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.ns.shortsnews.adapters.CategoryAdapter
-import com.ns.shortsnews.adapters.ChannelsAdapter
 import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityMainBinding
@@ -30,18 +30,19 @@ import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.user.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
-import com.ns.shortsnews.user.ui.fragment.ChannelVideosFragment
 import com.ns.shortsnews.user.ui.viewmodel.BookmarksViewModelFactory
 import com.ns.shortsnews.user.ui.viewmodel.UserBookmarksViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
+import com.ns.shortsnews.utils.IntentLaunch
 import com.videopager.utils.CategoryConstants
 import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -56,11 +57,17 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             VideoCategoryUseCase(VideoCategoryRepositoryImp(get()))
         )
     } }
+    private val videoDataViewModel: UserBookmarksViewModel by viewModels { BookmarksViewModelFactory().apply {
+        inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
+    }}
+
+    lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        standardBottomSheetBehavior = BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val view = binding.root
@@ -91,7 +98,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     override fun onResume() {
         super.onResume()
-        statusBarFullScreen()
         if (!AppPreference.isUserLoggedIn) {
             sharedEventViewModel.sendUserPreferenceData(false,"")
         } else {
@@ -104,7 +110,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     // It is having Bottom Sheet Implementation
     private fun bottomSheetDialog() {
-        val standardBottomSheetBehavior = BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
         standardBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 Log.i("", "$slideOffset")
@@ -210,26 +215,33 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
+    // Bottom Sheet Video Get Info Listen & Update
     private fun listenGetInfo() {
         lifecycleScope.launch {
             sharedEventViewModel.videoInfo.filterNotNull().collectLatest {
+
                 if (it.following) {
                     binding.persistentBottomsheet.following.text = "Following"
                 } else {
                     binding.persistentBottomsheet.following.text = "Follow"
                 }
-                binding.persistentBottomsheet.following.tag = it.channel_id
-                binding.persistentBottomsheet.imgDownArrow.tag = it.channel_id
-                binding.persistentBottomsheet.following.visibility = View.VISIBLE
 
-                if (it.channel_image.isNotEmpty()) {
-                    binding.persistentBottomsheet.clientImage.loadSvg(
-                        it.channel_image,
-                        binding.persistentBottomsheet.clientImage.context
-                    )
-                    binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
-                } else {
-                    binding.persistentBottomsheet.cardViewClientImage.visibility = View.INVISIBLE
+                val channelId  = binding.persistentBottomsheet.following.tag
+
+                if(channelId != it.channel_id) {
+                    binding.persistentBottomsheet.following.tag = it.channel_id
+                    binding.persistentBottomsheet.imgDownArrow.tag = it.channel_id
+
+                    if (it.channel_image.isNotEmpty()) {
+                        binding.persistentBottomsheet.clientImage.loadSvg(
+                            it.channel_image,
+                            binding.persistentBottomsheet.clientImage.context
+                        )
+                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
+                    } else {
+                        binding.persistentBottomsheet.cardViewClientImage.visibility =
+                            View.INVISIBLE
+                    }
                 }
             }
         }
@@ -246,25 +258,23 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
-    private val likesViewModel: UserBookmarksViewModel by viewModels { BookmarksViewModelFactory().apply {
-        inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
-    }}
+
 
     // Get Channel Video Data
     private fun getChannelVideoData(channelId: String) {
 
-        likesViewModel.requestBookmarksApi(params = Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
+        videoDataViewModel.requestVideoData(params = Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
         val adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
 
         lifecycleScope.launch {
-            likesViewModel.errorState.filterNotNull().collectLatest {
+            videoDataViewModel.errorState.filterNotNull().collectLatest {
                 binding.persistentBottomsheet.progressBar.visibility = View.GONE
                 binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
             }
         }
 
         lifecycleScope.launch {
-            likesViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
+            videoDataViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
                 delay(500) // To show the progress bar properly
                 binding.persistentBottomsheet.progressBar.visibility = View.GONE
                 binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
@@ -272,7 +282,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     adapter.updateVideoData(it.data)
 
                     binding.persistentBottomsheet.channelRecyclerview.adapter = adapter
-                    val standardBottomSheetBehavior = BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
+
                     if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                     } else {
@@ -282,22 +292,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             }
         }
 
-        // Item click listener
+        // Channel Item click listener
         lifecycleScope.launch {
             adapter.clicks().collectLatest {
-                val fragment = AppConstants.makeVideoPagerInstance(it.first, CategoryConstants.DEFAULT_VIDEO_DATA, this@MainActivity)
-                val bundle = Bundle()
-                bundle.putInt(CategoryConstants.KEY_SelectedPlay, it.second)
-                fragment.arguments = bundle
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit()
+                IntentLaunch.launchPlainVideoPlayer(it, this@MainActivity)
+                standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         }
 
     }
-
-
 
 
     private fun followingClick() {
@@ -306,23 +309,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             if(channelId != null) {
                 sharedEventViewModel.followRequest(channelId.toString())
             }
-        }
-    }
-
-
-    // To set status bar in Full-Screen
-    private fun statusBarFullScreen() {
-        if (Build.VERSION.SDK_INT in 21..29) {
-            window.statusBarColor = Color.TRANSPARENT
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.decorView.systemUiVisibility =
-                SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or SYSTEM_UI_FLAG_LAYOUT_STABLE
-
-        } else if (Build.VERSION.SDK_INT >= 30) {
-            window.statusBarColor = Color.TRANSPARENT
-            // Making status bar overlaps with the activity
-            WindowCompat.setDecorFitsSystemWindows(window, false)
         }
     }
 

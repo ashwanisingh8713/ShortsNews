@@ -38,6 +38,13 @@
             android:theme="@style/Theme.Material3.DayNight.NoActionBar">
         </activity>
 
+        <activity
+            android:name=".PlainVideoActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        </activity>
+
     </application>
 
 </manifest>

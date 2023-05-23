@@ -12,7 +12,7 @@ import com.videopager.ui.extensions.ViewState
 class VideoPagerViewModelFactory(
     private val repository: VideoDataRepository,
     private val appPlayerFactory: AppPlayer.Factory,
-    private val categoryId: String, private val videoFrom: String
+    private val requiredId: String, private val videoFrom: String
 
 ) {
     fun create(owner: SavedStateRegistryOwner): ViewModelProvider.Factory {
@@ -30,7 +30,7 @@ class VideoPagerViewModelFactory(
                     appPlayerFactory = appPlayerFactory,
                     handle = playerSavedStateHandle,
                     initialState = ViewState(playerSavedStateHandle),
-                    categoryId = categoryId,
+                    categoryId = requiredId,
                     videoFrom = videoFrom
                 ) as T
             }

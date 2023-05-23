@@ -32,7 +32,7 @@ class AppConstants {
         const val API_ERROR_TITLE = "API error"
 
 
-        fun makeVideoPagerInstance(videoCategory: String, videoFrom: String, context: Context): VideoPagerFragment {
+        fun makeVideoPagerInstance(requiredId: String, videoFrom: String, context: Context): VideoPagerFragment {
             val appPlayerView =  ExoAppPlayerViewFactory().create(context)
             val vpf =  VideoPagerFragment(
                 viewModelFactory = { owner ->
@@ -41,7 +41,7 @@ class AppConstants {
                         appPlayerFactory = ExoAppPlayerFactory(
                             context = context, cache = MainApplication.cache
                         ),
-                        categoryId = videoCategory,
+                        requiredId = requiredId,
                         videoFrom = videoFrom
                     ).create(owner)
                 },

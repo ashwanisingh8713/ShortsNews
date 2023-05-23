@@ -22,7 +22,7 @@ class UserBookmarksViewModel(private val channelsDataUseCase: VideoDataUseCase):
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
 
-    fun requestBookmarksApi(params: Pair<String, String>) {
+    fun requestVideoData(params: Pair<String, String>) {
         channelsDataUseCase.invoke(viewModelScope, params,
             object : UseCaseResponse<VideoDataResponse> {
                 override fun onSuccess(type: VideoDataResponse) {

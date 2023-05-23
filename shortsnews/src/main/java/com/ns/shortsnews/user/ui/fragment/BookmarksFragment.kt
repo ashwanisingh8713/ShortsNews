@@ -13,7 +13,7 @@ import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.BookmarksViewModelFactory
 import com.ns.shortsnews.user.ui.viewmodel.UserBookmarksViewModel
-import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.IntentLaunch
 import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -32,7 +32,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentBookmarkBinding.bind(view)
-        likesViewModel.requestBookmarksApi(params = Pair(CategoryConstants.BOOKMARK_VIDEO_DATA, ""))
+        likesViewModel.requestVideoData(params = Pair(CategoryConstants.BOOKMARK_VIDEO_DATA, ""))
         adapter = GridAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA, channelId = "")
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -58,13 +58,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
         // Item click listener
         viewLifecycleOwner.lifecycleScope.launch {
             adapter.clicks().collectLatest {
-                val fragment = AppConstants.makeVideoPagerInstance(it.first, CategoryConstants.DEFAULT_VIDEO_DATA, requireActivity())
-                val bundle = Bundle()
-                bundle.putInt(CategoryConstants.KEY_SelectedPlay, it.second)
-                fragment.arguments = bundle
-                requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
-                    .addToBackStack(null)
-                    .commit()
+                IntentLaunch.launchPlainVideoPlayer(it, requireActivity())
             }
         }
 

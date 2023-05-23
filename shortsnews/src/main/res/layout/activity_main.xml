@@ -20,6 +20,7 @@
             android:layout_height="match_parent" />
 
 
+        <!-- Start Category RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="0dp"
@@ -32,6 +33,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:listitem="@layout/item_category" />
+        <!-- End Category RecyclerView -->
 
         <!-- Start Profile Icon -->
         <com.google.android.material.card.MaterialCardView
@@ -55,6 +57,10 @@
 
         </com.google.android.material.card.MaterialCardView>
         <!-- End Profile Icon -->
+
+        <!-- Start ProgressBar Icon -->
+
+        <!-- End ProgressBar Icon -->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

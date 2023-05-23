@@ -24,7 +24,7 @@
     <dimen name="login_edit_text_margin_bottom" tools:ignore="MissingDefaultResource">50dp</dimen>
     <dimen name="login_image_view_margin_bottom" tools:ignore="MissingDefaultResource">60dp</dimen>
     <dimen name="bottom_sheet_header_peekheight" tools:ignore="MissingDefaultResource">50dp</dimen>
-    <dimen name="bottom_sheet_video_margin" tools:ignore="MissingDefaultResource">80dp</dimen>
+    <dimen name="bottom_sheet_video_margin" tools:ignore="MissingDefaultResource">55dp</dimen>
     <dimen name="bottom_sheet_header_margin" tools:ignore="MissingDefaultResource">0dp</dimen>
 
 
