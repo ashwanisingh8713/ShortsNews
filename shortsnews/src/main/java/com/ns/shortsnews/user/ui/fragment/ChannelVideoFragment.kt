@@ -42,9 +42,8 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentChannelVideosBinding.bind(view)
-
         binding.channelLogo.load(channelUrl)
-
+        binding.following.text = "Following"
         channelsVideosViewModel.requestBookmarksApi(Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
         adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
         listenChannelVideos()

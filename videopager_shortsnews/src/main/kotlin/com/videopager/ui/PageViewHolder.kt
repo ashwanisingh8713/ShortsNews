@@ -12,7 +12,6 @@ import com.videopager.models.PageEffect
 import com.videopager.models.ResetAnimationsEffect
 import com.player.models.VideoData
 import com.videopager.ui.extensions.*
-import com.videopager.ui.extensions.findParentById
 
 internal class PageViewHolder(
     val binding: PageItemBinding,

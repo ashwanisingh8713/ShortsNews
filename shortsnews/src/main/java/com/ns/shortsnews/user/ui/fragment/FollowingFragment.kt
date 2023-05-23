@@ -81,7 +81,7 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
                     arguments = bundle
                 }
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .add(R.id.fragment_containerProfile, channelVideosFragment)
+                    .replace(R.id.fragment_containerProfile, channelVideosFragment)
                     .addToBackStack(null).commit()
             }
         }

@@ -311,12 +311,7 @@ class VideoPagerFragment(
                         NoFurtherEvent
                     } else {
 
-                        commentFragment.apply {
-
-
-                            show(childFragmentManager, "comments")
-
-                        }
+                        commentFragment.show(childFragmentManager, "comments")
                         val currentItem = binding.viewPager.currentItem
                         val videoData = pagerAdapter.getVideoData(currentItem)
                         CommentClickEvent(videoData.id, currentItem)

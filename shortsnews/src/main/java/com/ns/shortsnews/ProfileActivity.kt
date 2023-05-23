@@ -104,7 +104,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun choiceFragment() {
         val fragment = NewProfileFragment()
-        supportFragmentManager.beginTransaction().addToBackStack("newProfile").replace(R.id.fragment_containerProfile, fragment)
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
             .commit()
     }
 

@@ -34,8 +34,6 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCommentsBinding.bind(view)
         recyclerView = binding.commentRecyclerview
-//        commentAdapter = CommentAdapter(commentList)
-
         binding.sendImage.setOnClickListener {
             val msg = binding.msgEditText.text
             if (msg.toString().isNotEmpty()) {
