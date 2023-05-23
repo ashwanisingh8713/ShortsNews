@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".user.ui.fragment.NewProfileFragment">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/edit_profile_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -40,7 +45,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginEnd="@dimen/margin_start"
-            android:layout_marginTop="10dp"
             android:contentDescription="setting image"
             tools:ignore="HardcodedText" />
 
@@ -76,7 +80,7 @@
 
 
         <TextView
-            android:id="@+id/otp_title_txt"
+            android:id="@+id/user_name_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Name"
@@ -122,9 +126,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
-
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

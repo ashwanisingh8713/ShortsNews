@@ -29,8 +29,8 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
         return  apiService.getLanguagesData()
     }
     //Likes list for profile screen
-    override suspend fun getLikesData(): LikesResult {
-        return apiService.getLikesData()
+    override suspend fun getBookmarksData(): BookmarksResult {
+        return apiService.getBookmarksData()
     }
 
 

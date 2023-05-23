@@ -116,16 +116,16 @@ data class LanguageData(
 )
 
 @JsonClass(generateAdapter = true)
-data class LikesResult(
+data class BookmarksResult(
     val status:Boolean,
     val total:Int,
     val page:Int,
     val perPage:Int,
-    val data: List<LikesData>
+    val data: List<BookmarksData>
 )
 
 @JsonClass(generateAdapter = true)
-data class LikesData(
+data class BookmarksData(
     val id:String,
     val video_url:String,
     val type:String,

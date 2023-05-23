@@ -14,5 +14,5 @@ interface UserDataRepository {
     suspend fun getLanguagesData():LanguagesResult
 
     //Likes list for profile screen
-    suspend fun getLikesData():LikesResult
+    suspend fun getBookmarksData():BookmarksResult
 }

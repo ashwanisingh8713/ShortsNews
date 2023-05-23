@@ -1,5 +1,6 @@
 package com.ns.shortsnews.user.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ import com.ns.shortsnews.adapters.NewProfilePagerAdapter
 import com.ns.shortsnews.databinding.FragmentNewProfileBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
+import com.ns.shortsnews.user.ui.activity.ContainerActivity
 import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
@@ -33,7 +35,7 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
         binding = FragmentNewProfileBinding.bind(view)
         userProfileViewModel.requestProfileApi()
         adapter = NewProfilePagerAdapter(requireActivity())
-        adapter.addFragment(LikesFragment(), "Bookmark")
+        adapter.addFragment(BookmarksFragment(), "Bookmark")
         adapter.addFragment(FollowingFragment(), "Following")
         binding.profileViewPager.adapter = adapter
         binding.profileViewPager.currentItem = 0
@@ -44,6 +46,11 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
 
         binding.backButton.setOnClickListener {
             activity?.finish()
+        }
+        binding.setting.setOnClickListener {
+            val intent = Intent(requireActivity(), ContainerActivity::class.java)
+            intent.putExtra("to","edit_profile")
+            startActivity(intent)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -61,6 +68,7 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
                 it.let {
                     binding.progressBarProfile.visibility = View.GONE
                     binding.profileImageView.load(it.data.image)
+                    binding.userNameTxt.text = it.data.name
                 }
             }
         }

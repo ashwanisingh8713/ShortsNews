@@ -15,15 +15,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import coil.ImageLoader
 import coil.decode.SvgDecoder
-import coil.imageLoader
 import coil.load
 import coil.request.ImageRequest
-import com.exo.players.ExoAppPlayerFactory
-import com.exo.ui.ExoAppPlayerViewFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.adapters.GridAdapter
@@ -31,20 +27,17 @@ import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
-import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileLikesListUseCase
+import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileBookmarksUseCase
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
-import com.ns.shortsnews.user.ui.viewmodel.LikesViewModelFactory
-import com.ns.shortsnews.user.ui.viewmodel.UserLikesViewModel
+import com.ns.shortsnews.user.ui.viewmodel.BookmarksViewModelFactory
+import com.ns.shortsnews.user.ui.viewmodel.UserBookmarksViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
-import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
-import com.videopager.ui.VideoPagerFragment
 import com.videopager.utils.CategoryConstants
 import com.videopager.vm.SharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
-import com.videopager.vm.VideoPagerViewModelFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -252,14 +245,14 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
-    private val likesViewModel: UserLikesViewModel by viewModels { LikesViewModelFactory().apply {
-        inject(UserProfileLikesListUseCase(UserDataRepositoryImpl(get())))
+    private val likesViewModel: UserBookmarksViewModel by viewModels { BookmarksViewModelFactory().apply {
+        inject(UserProfileBookmarksUseCase(UserDataRepositoryImpl(get())))
     }}
 
     // Get Channel Video Data
     private fun getChannelVideoData() {
 
-        likesViewModel.requestLikesApi()
+        likesViewModel.requestBookmarksApi()
         val adapter = GridAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA)
 
         lifecycleScope.launch {
@@ -271,7 +264,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
 
         lifecycleScope.launch {
-            likesViewModel.LikesSuccessState.filterNotNull().collectLatest {
+            likesViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
                 delay(1000)
                 binding.persistentBottomsheet.progressBar.visibility = View.GONE
                 binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE

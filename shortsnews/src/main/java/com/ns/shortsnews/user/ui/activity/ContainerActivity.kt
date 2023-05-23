@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.ActivityContainerBinding
+import com.ns.shortsnews.user.ui.fragment.EditProfileFragment
 import com.ns.shortsnews.user.ui.fragment.FollowingFragment
 import com.ns.shortsnews.user.ui.fragment.PersonaliseFragment
 
@@ -16,13 +17,15 @@ class ContainerActivity : AppCompatActivity() {
         val view = binding.root
         window.statusBarColor = Color.parseColor("#000000")
         window.navigationBarColor = Color.parseColor("#000000")
-        val data = intent.getStringExtra("to")
-        when(data){
+        when(intent.getStringExtra("to")){
              "per" -> {
                 launchPersonaliseFragment()
              }
             "fol" -> {
                launchFollowingFragment()
+            }
+            "edit_profile" -> {
+                launchEditProfileFragment()
             }
         }
 
@@ -38,5 +41,11 @@ class ContainerActivity : AppCompatActivity() {
     private fun launchFollowingFragment(){
         val fragment = FollowingFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fc, fragment).commit()
+    }
+
+    private fun launchEditProfileFragment() {
+        val fragment = EditProfileFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.fc, fragment)
+            .commit()
     }
 }

@@ -8,13 +8,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.GridAdapter
-import com.ns.shortsnews.databinding.FragmentLikesBinding
+import com.ns.shortsnews.databinding.FragmentBookmarkBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
-import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileLikesListUseCase
-import com.ns.shortsnews.user.ui.viewmodel.LikesViewModelFactory
-import com.ns.shortsnews.user.ui.viewmodel.UserLikesViewModel
+import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileBookmarksUseCase
+import com.ns.shortsnews.user.ui.viewmodel.BookmarksViewModelFactory
+import com.ns.shortsnews.user.ui.viewmodel.UserBookmarksViewModel
 import com.ns.shortsnews.utils.AppConstants
-import com.videopager.ui.VideoPagerFragment
 import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -22,18 +21,18 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
 
-class LikesFragment : Fragment(R.layout.fragment_likes) {
-    lateinit var binding:FragmentLikesBinding
+class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
+    lateinit var binding:FragmentBookmarkBinding
     lateinit var adapter:GridAdapter
 
-    private val likesViewModel: UserLikesViewModel by activityViewModels { LikesViewModelFactory().apply {
-        inject(UserProfileLikesListUseCase(UserDataRepositoryImpl(get())))
+    private val likesViewModel: UserBookmarksViewModel by activityViewModels { BookmarksViewModelFactory().apply {
+        inject(UserProfileBookmarksUseCase(UserDataRepositoryImpl(get())))
     }}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentLikesBinding.bind(view)
-        likesViewModel.requestLikesApi()
+        binding = FragmentBookmarkBinding.bind(view)
+        likesViewModel.requestBookmarksApi()
         adapter = GridAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA)
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -46,7 +45,7 @@ class LikesFragment : Fragment(R.layout.fragment_likes) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            likesViewModel.LikesSuccessState.filterNotNull().collectLatest {
+            likesViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
                 Log.i("kamlesh","ProfileFragment onSuccess ::: $it")
                 it.let {
                     binding.progressBar.visibility = View.GONE
@@ -75,9 +74,5 @@ class LikesFragment : Fragment(R.layout.fragment_likes) {
                 }
             }
         }
-
-
-
-
     }
 }

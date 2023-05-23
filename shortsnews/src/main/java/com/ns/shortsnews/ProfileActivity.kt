@@ -83,6 +83,10 @@ class ProfileActivity : AppCompatActivity() {
         supportFragmentManager.popBackStack()
     }
 
+    private fun popEditProfileFragment() {
+        supportFragmentManager.popBackStack()
+    }
+
 
     private fun otpFragment(bundle: Bundle) {
         val fragment = OtpFragment()
@@ -94,7 +98,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun choiceFragment() {
         val fragment = NewProfileFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
+        supportFragmentManager.beginTransaction().addToBackStack("newProfile").replace(R.id.fragment_containerProfile, fragment)
             .commit()
     }
 

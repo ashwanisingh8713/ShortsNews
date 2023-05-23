@@ -18,4 +18,6 @@ val NetworkModule = module {
     single { MoshiConverterFactory.create() }
 
     single { Moshi.Builder().build() }
+
+    single {  }
 }
