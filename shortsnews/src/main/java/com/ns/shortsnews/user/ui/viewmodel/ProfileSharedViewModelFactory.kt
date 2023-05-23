@@ -1,11 +1,11 @@
-package com.videopager.vm
+package com.ns.shortsnews.user.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-object SharedEventViewModelFactory:ViewModelProvider.Factory {
+object ProfileSharedViewModelFactory:ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return VideoSharedEventViewModel() as T
+        return ProfileSharedViewModel() as T
     }
 }

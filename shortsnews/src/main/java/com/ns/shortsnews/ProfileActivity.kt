@@ -14,9 +14,13 @@ import com.ns.shortsnews.user.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.user.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.user.ui.fragment.*
+import com.ns.shortsnews.user.ui.viewmodel.ProfileSharedViewModel
+import com.ns.shortsnews.user.ui.viewmodel.ProfileSharedViewModelFactory
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.AppPreference
+import com.videopager.vm.SharedEventViewModelFactory
+import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -24,6 +28,8 @@ import org.koin.android.ext.android.get
 
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
+
+    private val sharedViewModel: ProfileSharedViewModel by viewModels { ProfileSharedViewModelFactory }
 
     private val sharedUserViewModel: UserViewModel by viewModels {
         UserViewModelFactory().apply {

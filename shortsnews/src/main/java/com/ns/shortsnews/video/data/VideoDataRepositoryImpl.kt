@@ -3,16 +3,12 @@ package com.ns.shortsnews.video.data
 import android.content.Context
 import android.util.Log
 import at.huber.me.YouTubeUri
-import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
-import com.ns.shortsnews.cache.VideoPreloadWorker
 import com.ns.shortsnews.user.domain.models.Data
 import com.ns.shortsnews.user.domain.models.LikeUnlike
 import com.ns.shortsnews.user.domain.models.VideoDataResponse
 import com.ns.shortsnews.utils.AppPreference
 import com.player.models.VideoData
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import com.videopager.data.*
 import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.Dispatchers
@@ -48,14 +44,14 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         .create(VideoDataService::class.java)
 
 
-    override suspend fun videoData(requestType: String, context: Context, videoFrom: String): Flow<MutableList<VideoData>> {
+    override suspend fun videoData(id: String, context: Context, videoFrom: String): Flow<MutableList<VideoData>> {
         var ll = mutableListOf<MutableList<VideoData>>()
         val llVid = withContext(Dispatchers.IO) {
             val response = when (videoFrom) {
-                CategoryConstants.CHANNEL_VIDEO_DATA -> api.getChannelVideos(requestType)
+                CategoryConstants.CHANNEL_VIDEO_DATA -> api.getChannelVideos(id)
                 CategoryConstants.BOOKMARK_VIDEO_DATA -> api.getBookmarkVideos()
-                CategoryConstants.DEFAULT_VIDEO_DATA -> api.getShortsVideos(requestType)
-                    else -> api.getShortsVideos(requestType)
+                CategoryConstants.DEFAULT_VIDEO_DATA -> api.getShortsVideos(id)
+                    else -> api.getShortsVideos(id)
             }
 
             val youtubeUrl1 = Data(

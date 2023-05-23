@@ -17,7 +17,7 @@ class ChannelsAdapter(private var itemList: List<ChannelListData> = emptyList())
 
 
     // Extra buffer capacity so that emissions can be sent outside a coroutine
-    private val clicks = MutableSharedFlow<Pair<String, String>>(extraBufferCapacity = 1)
+    private val clicks = MutableSharedFlow<ChannelListData>(extraBufferCapacity = 1)
     fun clicks() = clicks.asSharedFlow()
 
     class MyViewHolder(val binding: ItemFollowingBinding) : RecyclerView.ViewHolder(binding.root)
@@ -36,13 +36,11 @@ class ChannelsAdapter(private var itemList: List<ChannelListData> = emptyList())
                binding.clientIcon.load(this.channel_image)
                 binding.channelName.text = this.channelTitle
                 binding.root.setOnClickListener{
-                    clicks.tryEmit(Pair(this.channel_id, this.channelTitle))
+                    clicks.tryEmit(this)
                 }
             }
         }
-        holder.itemView.setOnClickListener {
-            Alert().showGravityToast(holder.itemView.context, AppConstants.SPRINT_THREE)
-        }
+
     }
 
 

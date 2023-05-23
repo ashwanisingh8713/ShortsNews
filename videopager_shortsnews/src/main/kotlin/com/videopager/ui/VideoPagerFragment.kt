@@ -22,7 +22,7 @@ import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
 import com.videopager.utils.CategoryConstants
-import com.videopager.vm.SharedEventViewModel
+import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
 import kotlinx.coroutines.flow.*
@@ -34,7 +34,7 @@ class VideoPagerFragment(
     private val imageLoader: ImageLoader,
 ) : Fragment(R.layout.video_pager_fragment) {
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
-    private val sharedEventViewModel: SharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
+    private val sharedEventViewModel: VideoSharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
     lateinit var binding: VideoPagerFragmentBinding
     private lateinit var pagerAdapter: PagerAdapter
     private lateinit var commentFragment: CommentsFragment

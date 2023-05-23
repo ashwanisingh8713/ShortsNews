@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-class SharedEventViewModel:ViewModel() {
+class VideoSharedEventViewModel:ViewModel() {
 
     private var _cacheVideoUrl= MutableSharedFlow<Pair<String, String>>()
     val cacheVideoUrl = _cacheVideoUrl.asSharedFlow()

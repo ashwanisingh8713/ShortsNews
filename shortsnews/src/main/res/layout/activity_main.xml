@@ -62,5 +62,5 @@
 
     <include
         android:id="@+id/persistent_bottomsheet"
-        layout="@layout/layout_persistent_bottomsheet" />
+        layout="@layout/activity_main_bottomsheet" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

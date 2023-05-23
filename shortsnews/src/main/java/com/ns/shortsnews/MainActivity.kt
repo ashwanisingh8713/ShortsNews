@@ -22,6 +22,7 @@ import coil.load
 import coil.request.ImageRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.ns.shortsnews.adapters.CategoryAdapter
+import com.ns.shortsnews.adapters.ChannelsAdapter
 import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityMainBinding
@@ -29,6 +30,7 @@ import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.user.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
+import com.ns.shortsnews.user.ui.fragment.ChannelVideosFragment
 import com.ns.shortsnews.user.ui.viewmodel.BookmarksViewModelFactory
 import com.ns.shortsnews.user.ui.viewmodel.UserBookmarksViewModel
 import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
@@ -36,7 +38,7 @@ import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.videopager.utils.CategoryConstants
-import com.videopager.vm.SharedEventViewModel
+import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -48,7 +50,7 @@ import org.koin.android.ext.android.get
 class MainActivity : AppCompatActivity(), onProfileItemClick {
     private lateinit var binding: ActivityMainBinding
     private lateinit var caAdapter: CategoryAdapter
-    private val sharedEventViewModel: SharedEventViewModel by viewModels { SharedEventViewModelFactory }
+    private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
     private val videoCategoryViewModel: VideoCategoryViewModel by viewModels { VideoCategoryViewModelFactory().apply {
         inject(
             VideoCategoryUseCase(VideoCategoryRepositoryImp(get()))
@@ -82,7 +84,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         bottomSheetDialog()
 
         // Register GetInfo Listener
-        registerGetInfo()
+        listenGetInfo()
 
         followingClick()
     }
@@ -208,7 +210,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
-    private fun registerGetInfo() {
+    private fun listenGetInfo() {
         lifecycleScope.launch {
             sharedEventViewModel.videoInfo.filterNotNull().collectLatest {
                 if (it.following) {
@@ -252,7 +254,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun getChannelVideoData(channelId: String) {
 
         likesViewModel.requestBookmarksApi(params = Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
-        val adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA)
+        val adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
 
         lifecycleScope.launch {
             likesViewModel.errorState.filterNotNull().collectLatest {
@@ -268,6 +270,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
                 it.let {
                     adapter.updateVideoData(it.data)
+
                     binding.persistentBottomsheet.channelRecyclerview.adapter = adapter
                     val standardBottomSheetBehavior = BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
                     if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
@@ -278,7 +281,23 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 }
             }
         }
+
+        // Item click listener
+        lifecycleScope.launch {
+            adapter.clicks().collectLatest {
+                val fragment = AppConstants.makeVideoPagerInstance(it.first, CategoryConstants.DEFAULT_VIDEO_DATA, this@MainActivity)
+                val bundle = Bundle()
+                bundle.putInt(CategoryConstants.KEY_SelectedPlay, it.second)
+                fragment.arguments = bundle
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
+
     }
+
+
 
 
     private fun followingClick() {

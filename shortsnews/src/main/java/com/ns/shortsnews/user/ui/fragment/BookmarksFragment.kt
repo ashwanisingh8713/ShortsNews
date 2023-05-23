@@ -33,7 +33,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentBookmarkBinding.bind(view)
         likesViewModel.requestBookmarksApi(params = Pair(CategoryConstants.BOOKMARK_VIDEO_DATA, ""))
-        adapter = GridAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA)
+        adapter = GridAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA, channelId = "")
 
         viewLifecycleOwner.lifecycleScope.launch {
             likesViewModel.errorState.filterNotNull().collectLatest {
@@ -55,11 +55,12 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
             }
         }
 
+        // Item click listener
         viewLifecycleOwner.lifecycleScope.launch {
             adapter.clicks().collectLatest {
-                val fragment = AppConstants.makeVideoPagerInstance("999", CategoryConstants.DEFAULT_VIDEO_DATA, requireActivity())
+                val fragment = AppConstants.makeVideoPagerInstance(it.first, CategoryConstants.DEFAULT_VIDEO_DATA, requireActivity())
                 val bundle = Bundle()
-                bundle.putInt(CategoryConstants.KEY_SelectedPlay, it)
+                bundle.putInt(CategoryConstants.KEY_SelectedPlay, it.second)
                 fragment.arguments = bundle
                 requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
                     .addToBackStack(null)

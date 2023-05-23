@@ -13,6 +13,8 @@ import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.domain.usecase.channel.ChannelsDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.ChannelsViewModel
 import com.ns.shortsnews.user.ui.viewmodel.ChannelsViewModelFactory
+import com.ns.shortsnews.user.ui.viewmodel.ProfileSharedViewModel
+import com.ns.shortsnews.user.ui.viewmodel.ProfileSharedViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -23,6 +25,8 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
     lateinit var binding: FragmentFollowingBinding
     lateinit var adapter:ChannelsAdapter
 
+    private val sharedViewModel: ProfileSharedViewModel by activityViewModels { ProfileSharedViewModelFactory }
+
     private val channelsViewModel: ChannelsViewModel by activityViewModels { ChannelsViewModelFactory().apply {
         inject(ChannelsDataUseCase(UserDataRepositoryImpl(get())))
     } }
@@ -30,7 +34,7 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentFollowingBinding.bind(view)
 
-//        binding.backButtonUser.setOnClickListener {
+//        binding.backButtonUser.setOn`Click`Listener {
 //            activity?.finish()
 //        }
         channelsViewModel.requestChannelListApi()
@@ -51,6 +55,7 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
                 it.let {
                     binding.progressBarChannels.visibility = View.GONE
                     adapter = ChannelsAdapter(it.data)
+                    adapter.clicksEvent()
                     binding.recyclerviewFollowing.adapter = adapter
                 }
             }
@@ -65,5 +70,21 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
         }
     }
 
+    private fun ChannelsAdapter.clicksEvent() {
+        viewLifecycleOwner.lifecycleScope.launch() {
+            clicks().collectLatest {
+                var channelVideosFragment = ChannelVideosFragment().apply {
+                    val bundle = Bundle()
+                    bundle.putString("channelId", it.channel_id)
+                    bundle.putString("channelTitle", it.channelTitle)
+                    bundle.putString("channelUrl", it.channel_image)
+                    arguments = bundle
+                }
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .add(R.id.fragment_containerProfile, channelVideosFragment)
+                    .addToBackStack(null).commit()
+            }
+        }
+    }
 
 }
