@@ -5,11 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.ns.shortsnews.user.domain.exception.ApiError
 import com.ns.shortsnews.user.domain.models.VideoDataResponse
 import com.ns.shortsnews.user.domain.usecase.base.UseCaseResponse
-import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileBookmarksUseCase
+import com.ns.shortsnews.user.domain.usecase.videodata.VideoDataUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class UserBookmarksViewModel(private val channelsDataUseCase: UserProfileBookmarksUseCase): ViewModel() {
+class UserBookmarksViewModel(private val channelsDataUseCase: VideoDataUseCase): ViewModel() {
 
     // Profile
     private val _userBookmarksSuccessState = MutableStateFlow<VideoDataResponse?>(null)
@@ -22,8 +22,8 @@ class UserBookmarksViewModel(private val channelsDataUseCase: UserProfileBookmar
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
 
-    fun requestBookmarksApi() {
-        channelsDataUseCase.invoke(viewModelScope, null,
+    fun requestBookmarksApi(params: Pair<String, String>) {
+        channelsDataUseCase.invoke(viewModelScope, params,
             object : UseCaseResponse<VideoDataResponse> {
                 override fun onSuccess(type: VideoDataResponse) {
                     _userBookmarksSuccessState.value = type

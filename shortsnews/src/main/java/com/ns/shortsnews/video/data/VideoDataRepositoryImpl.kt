@@ -14,6 +14,7 @@ import com.player.models.VideoData
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.videopager.data.*
+import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -47,12 +48,16 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         .create(VideoDataService::class.java)
 
 
-    override suspend fun categoryVideoData(requestType: String, context: Context): Flow<MutableList<VideoData>> {
+    override suspend fun videoData(requestType: String, context: Context, videoFrom: String): Flow<MutableList<VideoData>> {
         var ll = mutableListOf<MutableList<VideoData>>()
-
         val llVid = withContext(Dispatchers.IO) {
+            val response = when (videoFrom) {
+                CategoryConstants.CHANNEL_VIDEO_DATA -> api.getChannelVideos(requestType)
+                CategoryConstants.BOOKMARK_VIDEO_DATA -> api.getBookmarkVideos()
+                CategoryConstants.DEFAULT_VIDEO_DATA -> api.getShortsVideos(requestType)
+                    else -> api.getShortsVideos(requestType)
+            }
 
-            val response = api.getShortsVideos(requestType)
             val youtubeUrl1 = Data(
                 id = "16",
                 preview = "https://ndxv3.s3.ap-south-1.amazonaws.com/video-preview.png",
@@ -129,29 +134,6 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         return llVid.asFlow()
     }
 
-
-    override suspend fun channelVideoData(
-        requestType: String,
-        context: Context
-    ): Flow<MutableList<VideoData>> {
-        var ll = mutableListOf<MutableList<VideoData>>()
-
-        val llVid = withContext(Dispatchers.IO) {
-            ll
-        }
-        return llVid.asFlow()
-    }
-
-    override suspend fun bookmarkVideoData(
-        requestType: String,
-        context: Context
-    ): Flow<MutableList<VideoData>> {
-        var ll = mutableListOf<MutableList<VideoData>>()
-        val llVid = withContext(Dispatchers.IO) {
-            ll
-        }
-        return llVid.asFlow()
-    }
 
 
     override fun like(videoId: String, position: Int): Flow<Triple<String, Boolean, Int>> = flow {
@@ -235,6 +217,13 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     private interface VideoDataService {
         @GET("videos")
         suspend fun getShortsVideos(@Query("category") category: String): VideoDataResponse
+
+        @GET("videos")
+        suspend fun getChannelVideos(@Query("channel") category: String): VideoDataResponse
+
+        @GET("my-bookmarks")
+        suspend fun getBookmarkVideos(): VideoDataResponse
+
         @GET("like-unlike-video/{video_id}")
         suspend fun like(@Path("video_id")videoId: String): LikeUnlike
 

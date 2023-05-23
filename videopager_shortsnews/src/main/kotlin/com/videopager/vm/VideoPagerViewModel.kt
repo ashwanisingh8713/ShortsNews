@@ -28,7 +28,6 @@ import com.videopager.models.ViewEffect
 import com.videopager.models.ViewEvent
 import com.videopager.models.ViewResult
 import com.videopager.ui.extensions.ViewState
-import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.*
@@ -84,17 +83,9 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(): Flow<ViewResult> {
-        return flatMapLatest {event ->
-            when(videoFrom) {
-                CategoryConstants.BOOKMARK_VIDEO_DATA-> repository.bookmarkVideoData(event.categoryId, context!!)
-                CategoryConstants.CHANNEL_VIDEO_DATA-> repository.channelVideoData(event.categoryId, context!!)
-                CategoryConstants.DEFAULT_VIDEO_DATA-> repository.categoryVideoData(event.categoryId, context!!)
-                else -> {
-                    repository.categoryVideoData(event.categoryId, context!!)
-                }
-            }
-        }
-            .map { videoData ->
+        return flatMapLatest { event ->
+            repository.videoData(event.categoryId, context!!, event.videoFrom)
+        }.map { videoData ->
                 val appPlayer = states.value.appPlayer
                 // If the player exists, it should be updated with the latest video data that came in
                 appPlayer?.setUpWith(videoData, handle.get())

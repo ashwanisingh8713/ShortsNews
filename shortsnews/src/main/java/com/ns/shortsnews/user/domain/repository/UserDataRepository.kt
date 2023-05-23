@@ -10,7 +10,7 @@ interface UserDataRepository {
 
     suspend fun getChannelsData():ChannelsDataResult
 
-    suspend fun geChannelVideoData(channelId:String): ChannelVideoDataResult
+    suspend fun getChannelVideoData(channelId:String): VideoDataResponse
     suspend fun getLanguagesData():LanguagesResult
 
     //Likes list for profile screen

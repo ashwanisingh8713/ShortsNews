@@ -20,7 +20,6 @@ import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.load
 import coil.request.ImageRequest
-import com.google.ads.interactivemedia.v3.internal.it
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.adapters.GridAdapter
@@ -28,7 +27,7 @@ import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
-import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileBookmarksUseCase
+import com.ns.shortsnews.user.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.user.ui.viewmodel.BookmarksViewModelFactory
 import com.ns.shortsnews.user.ui.viewmodel.UserBookmarksViewModel
@@ -124,7 +123,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             } else {
                 binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
                 binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
-                getChannelVideoData()
+                getChannelVideoData(channelId = binding.persistentBottomsheet.imgDownArrow.tag.toString())
             }
 
         }
@@ -157,9 +156,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 AppPreference.isUserLoggedIn, it
             )
         }
-
         registerVideoCache()
-
     }
 
     private fun launchLoginStateFlow() {
@@ -220,6 +217,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     binding.persistentBottomsheet.following.text = "Follow"
                 }
                 binding.persistentBottomsheet.following.tag = it.channel_id
+                binding.persistentBottomsheet.imgDownArrow.tag = it.channel_id
                 binding.persistentBottomsheet.following.visibility = View.VISIBLE
 
                 if (it.channel_image.isNotEmpty()) {
@@ -247,30 +245,28 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
     private val likesViewModel: UserBookmarksViewModel by viewModels { BookmarksViewModelFactory().apply {
-        inject(UserProfileBookmarksUseCase(UserDataRepositoryImpl(get())))
+        inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
     }}
 
     // Get Channel Video Data
-    private fun getChannelVideoData() {
+    private fun getChannelVideoData(channelId: String) {
 
-        likesViewModel.requestBookmarksApi()
-        val adapter = GridAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA)
+        likesViewModel.requestBookmarksApi(params = Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
+        val adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA)
 
         lifecycleScope.launch {
             likesViewModel.errorState.filterNotNull().collectLatest {
                 binding.persistentBottomsheet.progressBar.visibility = View.GONE
                 binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
-
             }
         }
 
         lifecycleScope.launch {
             likesViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
-                delay(1000)
+                delay(500) // To show the progress bar properly
                 binding.persistentBottomsheet.progressBar.visibility = View.GONE
                 binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
                 it.let {
-
                     adapter.updateVideoData(it.data)
                     binding.persistentBottomsheet.channelRecyclerview.adapter = adapter
                     val standardBottomSheetBehavior = BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)

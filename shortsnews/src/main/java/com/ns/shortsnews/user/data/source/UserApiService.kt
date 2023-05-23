@@ -24,12 +24,13 @@ interface UserApiService {
     suspend fun getVideoCategory(): VideoCategoryResult
 
     @GET("videos")
-    suspend fun getChannelVideoData(@Query("channel")channel:String):ChannelVideoDataResult
+    suspend fun getChannelVideoData(@Query("channel")channel:String):VideoDataResponse
 
     @GET("languages")
     suspend fun getLanguagesData():LanguagesResult
     //Likes list for profile screen
     @GET("my-bookmarks")
     suspend fun getBookmarksData(): VideoDataResponse
+
 
 }

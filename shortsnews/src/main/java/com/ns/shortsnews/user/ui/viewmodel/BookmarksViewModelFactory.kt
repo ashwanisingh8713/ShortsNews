@@ -2,13 +2,13 @@ package com.ns.shortsnews.user.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileBookmarksUseCase
+import com.ns.shortsnews.user.domain.usecase.videodata.VideoDataUseCase
 
 class BookmarksViewModelFactory: ViewModelProvider.Factory {
 
-    private lateinit var userBookmarksListUseCase: UserProfileBookmarksUseCase
+    private lateinit var userBookmarksListUseCase: VideoDataUseCase
 
-    fun inject(userProfileBookmarksUseCase: UserProfileBookmarksUseCase){
+    fun inject(userProfileBookmarksUseCase: VideoDataUseCase){
         this.userBookmarksListUseCase = userProfileBookmarksUseCase
     }
 

@@ -10,7 +10,7 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.databinding.FragmentBookmarkBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
-import com.ns.shortsnews.user.domain.usecase.bookmark.UserProfileBookmarksUseCase
+import com.ns.shortsnews.user.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.user.ui.viewmodel.BookmarksViewModelFactory
 import com.ns.shortsnews.user.ui.viewmodel.UserBookmarksViewModel
 import com.ns.shortsnews.utils.AppConstants
@@ -26,13 +26,13 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
     lateinit var adapter:GridAdapter
 
     private val likesViewModel: UserBookmarksViewModel by activityViewModels { BookmarksViewModelFactory().apply {
-        inject(UserProfileBookmarksUseCase(UserDataRepositoryImpl(get())))
+        inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
     }}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentBookmarkBinding.bind(view)
-        likesViewModel.requestBookmarksApi()
+        likesViewModel.requestBookmarksApi(params = Pair(CategoryConstants.BOOKMARK_VIDEO_DATA, ""))
         adapter = GridAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA)
 
         viewLifecycleOwner.lifecycleScope.launch {

@@ -22,7 +22,7 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
         return apiService.getChannelData()
     }
 
-    override suspend fun geChannelVideoData(channelId: String): ChannelVideoDataResult {
+    override suspend fun getChannelVideoData(channelId: String): VideoDataResponse {
         return apiService.getChannelVideoData(channelId)
     }
 

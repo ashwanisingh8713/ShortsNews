@@ -1,6 +1,5 @@
 package com.ns.shortsnews.user.domain.usecase.language
 
-import com.ns.shortsnews.user.domain.models.ChannelVideoDataResult
 import com.ns.shortsnews.user.domain.models.LanguagesResult
 import com.ns.shortsnews.user.domain.repository.UserDataRepository
 import com.ns.shortsnews.user.domain.usecase.base.UseCase
