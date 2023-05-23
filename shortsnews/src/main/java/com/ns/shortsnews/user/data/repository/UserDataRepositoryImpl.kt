@@ -3,6 +3,7 @@ package com.ns.shortsnews.user.data.repository
 import com.ns.shortsnews.user.data.source.UserApiService
 import com.ns.shortsnews.user.domain.models.*
 import com.ns.shortsnews.user.domain.repository.UserDataRepository
+import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 
 class UserDataRepositoryImpl constructor(private val apiService: UserApiService): UserDataRepository {
     override suspend fun getUserRegistration(data:Map<String, String>): RegistrationResult {
@@ -29,7 +30,7 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
         return  apiService.getLanguagesData()
     }
     //Likes list for profile screen
-    override suspend fun getBookmarksData(): BookmarksResult {
+    override suspend fun getBookmarksData(): VideoDataRepositoryImpl.VideoDataResponse {
         return apiService.getBookmarksData()
     }
 

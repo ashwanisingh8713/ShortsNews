@@ -114,24 +114,3 @@ data class LanguageData(
     val id:String,
     val name:String
 )
-
-@JsonClass(generateAdapter = true)
-data class BookmarksResult(
-    val status:Boolean,
-    val total:Int,
-    val page:Int,
-    val perPage:Int,
-    val data: List<BookmarksData>
-)
-
-@JsonClass(generateAdapter = true)
-data class BookmarksData(
-    val id:String,
-    val video_url:String,
-    val type:String,
-    val title:String,
-    val videoPreviewUrl:String,
-    val channelTitle:String,
-    val liked:Boolean,
-    val like_count:String
-)

@@ -6,12 +6,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.ns.shortsnews.databinding.ItemGridViewBinding
-import com.ns.shortsnews.user.domain.models.BookmarksData
+import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.videopager.R
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-class GridAdapter(private var itemList: List<BookmarksData> = emptyList(), videoFrom: String): RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
+class GridAdapter(private var itemList: MutableList<VideoDataRepositoryImpl.Data> = mutableListOf(),
+                  videoFrom: String): RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
 
     private val clicks = MutableSharedFlow<Int>(extraBufferCapacity = 1)
     fun clicks() = clicks.asSharedFlow()
@@ -27,10 +28,10 @@ class GridAdapter(private var itemList: List<BookmarksData> = emptyList(), video
 
     override fun onBindViewHolder(holder: GridViewHolder, position: Int) {
         with(holder){
-            with(itemList[position]){
-                binding.imagePreview.load(this.videoPreviewUrl)
-                binding.likeCount.text = this.like_count
-                if (this.liked){
+            with(itemList){
+                binding.imagePreview.load(this[position].preview)
+                binding.likeCount.text = this[position].like_count
+                if (this[position].liked){
                     holder.binding.likeIcon.setColorFilter(ContextCompat.getColor(holder.binding.likeIcon.context, R.color.red))
                 }
             }
@@ -40,7 +41,7 @@ class GridAdapter(private var itemList: List<BookmarksData> = emptyList(), video
             }
     }
 
-    fun updateVideoData(itemList: List<BookmarksData>) {
+    fun updateVideoData(itemList: MutableList<VideoDataRepositoryImpl.Data>) {
         this.itemList = itemList
         notifyDataSetChanged()
     }

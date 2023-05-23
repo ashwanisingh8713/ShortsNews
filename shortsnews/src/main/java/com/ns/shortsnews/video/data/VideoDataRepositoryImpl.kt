@@ -267,7 +267,10 @@ data class Data(
     val id:String= "",
     @Json(name = "videoPreviewUrl")
     val preview:String?= "",
-    val type: String = ""
+    val type: String = "",
+    val channelTitle:String = "",
+    val like_count:String = "",
+    val liked:Boolean = false
 )
     /*Kamlesh(Data class for like/unlike)*/
 
