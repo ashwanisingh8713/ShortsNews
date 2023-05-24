@@ -44,8 +44,8 @@ object AppPreference {
         }
 
     //Function for getting and setting user token
-    var userToken: String?
-        get() = preference.getString(USER_TOKEN, EMPTY_STRING)
+    var userToken: String
+        get() = preference.getString(USER_TOKEN, EMPTY_STRING)!!
         set(value) = preference.edit {
             this.putString(USER_TOKEN, value)
             this.apply()

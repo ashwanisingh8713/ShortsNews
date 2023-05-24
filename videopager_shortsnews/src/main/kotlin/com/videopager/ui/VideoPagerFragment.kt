@@ -53,6 +53,9 @@ class VideoPagerFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Listening user status via shared view Module from main activity preference utils
+        registerSharedViewModel()
+
         viewModel.setVMContext(requireContext())
         viewModel.setPlayerVieww(appPlayerView.getPlayerView())
 
@@ -64,14 +67,6 @@ class VideoPagerFragment(
         binding.viewPager.isUserInputEnabled = false
         binding.viewPager.offscreenPageLimit = 1 // Preload neighbouring page image previews
         commentFragment = CommentsFragment()
-
-
-
-        // Start point of Events, Flow, States
-//        viewModel.initApi(shortsType)
-
-        // Listening user status via shared view Module from main activity preference utils
-        registerSharedViewModel()
 
         val states = viewModel.states
             .onEach { state ->

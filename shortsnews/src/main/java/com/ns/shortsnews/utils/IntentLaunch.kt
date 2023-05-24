@@ -14,7 +14,7 @@ class IntentLaunch {
         fun launchPlainVideoPlayer(videoItemClick: VideoItemClick, context: Context) {
             val intent = Intent(context, PlainVideoActivity::class.java)
             intent.putExtra("videoItemClick", videoItemClick)
-//            context.startActivity(intent)
+            context.startActivity(intent)
         }
     }
 }

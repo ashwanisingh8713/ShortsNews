@@ -2,20 +2,15 @@ package com.ns.shortsnews
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 import android.view.WindowManager
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import coil.ImageLoader
 import coil.decode.SvgDecoder
@@ -42,7 +37,6 @@ import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -91,59 +85,29 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         bottomSheetDialog()
 
         // Register GetInfo Listener
-        listenGetInfo()
+        bottomSheetGetInfoListener()
 
-        followingClick()
+        bottomSheetFollowingClick()
+
+        registerVideoCache()
     }
 
     override fun onResume() {
         super.onResume()
-        if (!AppPreference.isUserLoggedIn) {
-            sharedEventViewModel.sendUserPreferenceData(false,"")
-        } else {
-            sharedEventViewModel.sendUserPreferenceData(AppPreference.isUserLoggedIn,AppPreference.userToken!!)
-        }
+        sharedEventViewModel.sendUserPreferenceData(AppPreference.isUserLoggedIn, AppPreference.userToken)
     }
 
-
-
-
-    // It is having Bottom Sheet Implementation
-    private fun bottomSheetDialog() {
-        standardBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                Log.i("", "$slideOffset")
-            }
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when(newState) {
-                    BottomSheetBehavior.STATE_EXPANDED-> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(resources.getDrawable(R.drawable.arrow_bottom_button, null))
-                    BottomSheetBehavior.STATE_COLLAPSED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(resources.getDrawable(R.drawable.arrow_up_button, null))
-                    BottomSheetBehavior.STATE_DRAGGING -> standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED)
-                }
-            }
-        })
-
-        binding.persistentBottomsheet.imgDownArrow.setOnClickListener{
-            if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            } else {
-                binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
-                binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
-                getChannelVideoData(channelId = binding.persistentBottomsheet.imgDownArrow.tag.toString())
-            }
-
-        }
-    }
 
     /**
      * It listens category item click
      */
-    override fun itemclick(shortsType: String, position:Int, size:Int) {
-        loadHomeFragment(shortsType)
+    override fun itemclick(requiredId: String, position:Int, size:Int) {
+        bottomSheetClearChannelId()
+        loadHomeFragment(requiredId)
+        sharedEventViewModel.sendUserPreferenceData(AppPreference.isUserLoggedIn, AppPreference.userToken)
     }
 
-    private fun launchProfileIntent(){
+    private fun launchProfileIntent() {
         val intent = Intent(this, ProfileActivity::class.java)
         intent.putExtra("fromActivity","MainActivity")
         startActivity(intent)
@@ -158,14 +122,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         ft.replace(R.id.fragment_container,
             AppConstants.makeVideoPagerInstance(categoryType, CategoryConstants.DEFAULT_VIDEO_DATA, this@MainActivity))
         ft.commit()
-        AppPreference.userToken?.let {
-            sharedEventViewModel.sendUserPreferenceData(
-                AppPreference.isUserLoggedIn, it
-            )
-        }
-        registerVideoCache()
+
     }
 
+    // It gets callback from VideoPagerFragment
+    // When User clicks on Follow, Like, Bookmark then it checks
+    // If User is not logged in then it is called
     private fun launchLoginStateFlow() {
         lifecycleScope.launch {
             sharedEventViewModel.getLoginEventStatus.collectLatest {
@@ -215,8 +177,36 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
+    // It is having Bottom Sheet Implementation
+    private fun bottomSheetDialog() {
+        standardBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                Log.i("", "$slideOffset")
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when(newState) {
+                    BottomSheetBehavior.STATE_EXPANDED-> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(resources.getDrawable(R.drawable.arrow_bottom_button, null))
+                    BottomSheetBehavior.STATE_COLLAPSED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(resources.getDrawable(R.drawable.arrow_up_button, null))
+                    BottomSheetBehavior.STATE_DRAGGING -> standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED)
+                }
+            }
+        })
+
+        binding.persistentBottomsheet.imgDownArrow.setOnClickListener{
+            if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            } else {
+                binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
+                binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
+                val channelId = binding.persistentBottomsheet.imgDownArrow.tag?.toString()
+                channelId?.let { bottomSheetGetChannelVideoData(channelId = channelId) }
+            }
+        }
+    }
+
     // Bottom Sheet Video Get Info Listen & Update
-    private fun listenGetInfo() {
+    private fun bottomSheetGetInfoListener() {
         lifecycleScope.launch {
             sharedEventViewModel.videoInfo.filterNotNull().collectLatest {
 
@@ -259,10 +249,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-
     // Get Channel Video Data
-    private fun getChannelVideoData(channelId: String) {
-
+    private fun bottomSheetGetChannelVideoData(channelId: String) {
         videoDataViewModel.requestVideoData(params = Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
         val adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
 
@@ -302,11 +290,16 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     }
 
+    private fun bottomSheetClearChannelId() {
+        binding.persistentBottomsheet.following.tag = null
+        binding.persistentBottomsheet.imgDownArrow.tag = null
+    }
 
-    private fun followingClick() {
+    // Bottom Sheet Following Click Listener
+    private fun bottomSheetFollowingClick() {
         binding.persistentBottomsheet.following.setOnClickListener{
             val channelId = binding.persistentBottomsheet.following.tag
-            if(channelId != null) {
+            channelId?.let {
                 sharedEventViewModel.followRequest(channelId.toString())
             }
         }
@@ -328,5 +321,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             .build()
         imageLoader.enqueue(request)
     }
+
 
 }

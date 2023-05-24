@@ -64,7 +64,7 @@ class PlainVideoActivity : AppCompatActivity() {
         }
 
         super.onCreate(savedInstanceState)
-        statusBarFullScreen()
+
         binding = ActivityPlainVideoBinding.inflate(layoutInflater)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -74,8 +74,9 @@ class PlainVideoActivity : AppCompatActivity() {
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
 
-
         loadHomeFragment(videoItemClick)
+
+        registerVideoCache()
 
     }
 
@@ -92,12 +93,7 @@ class PlainVideoActivity : AppCompatActivity() {
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.fragment_container, fragment)
         ft.commit()
-        AppPreference.userToken?.let {
-            sharedEventViewModel.sendUserPreferenceData(
-                AppPreference.isUserLoggedIn, it
-            )
-        }
-        registerVideoCache()
+
     }
 
 

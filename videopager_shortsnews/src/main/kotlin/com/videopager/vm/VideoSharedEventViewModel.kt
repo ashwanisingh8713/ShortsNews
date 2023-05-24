@@ -23,10 +23,10 @@ class VideoSharedEventViewModel:ViewModel() {
     private var _userLoginStatus= MutableSharedFlow<Pair<Boolean, String>>()
     val cacheUserStatus = _userLoginStatus.asSharedFlow()
 
-    fun sendUserPreferenceData(loginStatus: Boolean, userId: String) {
+    fun sendUserPreferenceData(loginStatus: Boolean, userToken: String = "") {
         viewModelScope.launch {
             delay(2000)
-            _userLoginStatus.emit(Pair(loginStatus, userId))
+            _userLoginStatus.emit(Pair(loginStatus, userToken))
         }
     }
 
