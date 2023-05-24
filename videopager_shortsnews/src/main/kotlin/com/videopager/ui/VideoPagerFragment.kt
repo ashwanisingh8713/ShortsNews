@@ -191,6 +191,15 @@ class VideoPagerFragment(
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if(pagerAdapter.itemCount > 0) {
+            val data = pagerAdapter.getVideoData(binding.viewPager.currentItem)
+            viewModel.processEvent(VideoInfoEvent(data.id, binding.viewPager.currentItem))
+        }
+    }
+
     private fun Lifecycle.viewEvents(): Flow<ViewEvent> {
         return events()
             .filter { event -> event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_STOP }
