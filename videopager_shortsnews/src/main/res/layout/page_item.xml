@@ -31,7 +31,6 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             tools:ignore="ContentDescription"
-            android:background="@android:color/holo_orange_dark"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
         <!-- End - It holds PreviewImage on Top of PlayerView -->
 

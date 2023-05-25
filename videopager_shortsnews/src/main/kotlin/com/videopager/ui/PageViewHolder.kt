@@ -1,10 +1,13 @@
 package com.videopager.ui
 
+import android.graphics.drawable.BitmapDrawable
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.load
+import coil.request.ImageRequest
+import coil.size.Scale
 import com.player.ui.AppPlayerView
 import com.videopager.databinding.PageItemBinding
 import com.videopager.models.AnimationEffect
@@ -27,7 +30,10 @@ internal class PageViewHolder(
     }
 
     fun bind(videoData: VideoData) {
-        binding.previewImage.load(videoData.previewImageUri,imageLoader)
+        binding.previewImage.load(videoData.previewImageUri,imageLoader) {
+            scale(Scale.FILL)
+        }
+
         /*binding.following.setOnClickListener{
             click(Pair(videoData.id, FollowClick))
         }

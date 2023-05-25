@@ -1,17 +1,13 @@
 package com.videopager.ui
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
 import com.player.models.VideoData
 import com.player.ui.AppPlayerView
 import com.videopager.R

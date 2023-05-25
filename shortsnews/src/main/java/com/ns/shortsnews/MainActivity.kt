@@ -280,7 +280,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                         }
                         .build()
 
-                    val disposable = loader.enqueue(req)
+                    loader.enqueue(req)
                     /* binding.persistentBottomsheet.clientImage.load(
                          it.channel_image
                      )*/
@@ -372,7 +372,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun bottomSheetHeaderBg(bitmap: Bitmap) {
         val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
         Palette.from(mutableBitmap).generate { palette ->
-            /*val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
+            val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
             lightVibrantSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightVibrantSwatch) }
 
             val vibrantSwatch = palette?.vibrantSwatch?.rgb
@@ -385,7 +385,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             mutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(mutedSwatch) }
 
             val darkMutedSwatch = palette?.darkMutedSwatch?.rgb
-            darkMutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkMutedSwatch) }*/
+            darkMutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkMutedSwatch) }
 
             val darkVibrantSwatch = palette?.darkVibrantSwatch?.rgb
             darkVibrantSwatch?.let {
