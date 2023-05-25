@@ -3,6 +3,7 @@ package com.ns.shortsnews.video.data
 import android.content.Context
 import android.util.Log
 import at.huber.me.YouTubeUri
+import com.ns.shortsnews.BuildConfig
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.user.domain.models.Data
 import com.ns.shortsnews.user.domain.models.LikeUnlike
@@ -29,7 +30,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 
     private val api = Retrofit.Builder()
         .addConverterFactory(MoshiConverterFactory.create())
-        .baseUrl("https://shorts.newsdx.io/ci/api/public/")
+        .baseUrl(BuildConfig.BASE_URL)
         .client(OkHttpClient.Builder().addInterceptor{ chain ->
             AppPreference.userToken?.let { Log.i("auth", it) }
            if(AppPreference.userToken?.isNotEmpty() == true){
@@ -54,27 +55,8 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                     else -> api.getShortsVideos(id)
             }
 
-            val youtubeUrl1 = Data(
-                id = "16",
-                preview = "https://ndxv3.s3.ap-south-1.amazonaws.com/video-preview.png",
-                videoUrl = "https://youtube.com/watch?v=m1EvCw123HM",
-                title = "",
-                type = "yt"
-            )
-
-            val youtubeUrl2 = Data(
-                id = "16",
-                preview = "https://ndxv3.s3.ap-south-1.amazonaws.com/video-preview.png",
-                videoUrl = "https://youtube.com/watch?v=jnPzy3BX-GA",
-                title = "",
-                type = "yt"
-            )
-
-//            response.data.add(0, youtubeUrl1)
-
             val youtubeUriConversionCount = 2
             val precachingAllowedCount = response.data.size
-//            val precachingAllowedCount = 2
             var conversionCount = 0
             var videoUrls = Array(precachingAllowedCount){""}
             var videoIds = Array(precachingAllowedCount){""}
@@ -117,7 +99,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                     it.mediaUri.isNotBlank()
                 }
 
-            // Preload mp4 urls
+            // Preload Video urls
 //            VideoPreloadWorker.schedulePreloadWork(videoUrls, videoIds)
             VideoPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
 

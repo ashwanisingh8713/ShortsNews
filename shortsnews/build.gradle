@@ -18,6 +18,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "BASE_URL", "\"https://shorts.newsdx.io/ci/api-v2/public/\""
     }
     buildFeatures {
         viewBinding true
@@ -102,4 +103,7 @@ dependencies {
 
     // Youtube uri extractor
     implementation project(path: ':youtubeExtractor')
+
+    // Palette
+    implementation "androidx.palette:palette-ktx:1.0.0"
 }

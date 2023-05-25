@@ -1,19 +1,18 @@
 package com.ns.shortsnews
 
-import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import coil.ImageLoader
-import coil.decode.SvgDecoder
+import androidx.palette.graphics.Palette
 import coil.load
 import coil.request.ImageRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -37,6 +36,7 @@ import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -46,14 +46,18 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private lateinit var binding: ActivityMainBinding
     private lateinit var caAdapter: CategoryAdapter
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
-    private val videoCategoryViewModel: VideoCategoryViewModel by viewModels { VideoCategoryViewModelFactory().apply {
-        inject(
-            VideoCategoryUseCase(VideoCategoryRepositoryImp(get()))
-        )
-    } }
-    private val videoDataViewModel: UserBookmarksViewModel by viewModels { BookmarksViewModelFactory().apply {
-        inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
-    }}
+    private val videoCategoryViewModel: VideoCategoryViewModel by viewModels {
+        VideoCategoryViewModelFactory().apply {
+            inject(
+                VideoCategoryUseCase(VideoCategoryRepositoryImp(get()))
+            )
+        }
+    }
+    private val videoDataViewModel: UserBookmarksViewModel by viewModels {
+        BookmarksViewModelFactory().apply {
+            inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
+        }
+    }
 
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
 
@@ -61,7 +65,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        standardBottomSheetBehavior = BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
+        standardBottomSheetBehavior =
+            BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val view = binding.root
@@ -94,22 +99,28 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     override fun onResume() {
         super.onResume()
-        sharedEventViewModel.sendUserPreferenceData(AppPreference.isUserLoggedIn, AppPreference.userToken)
+        sharedEventViewModel.sendUserPreferenceData(
+            AppPreference.isUserLoggedIn,
+            AppPreference.userToken
+        )
     }
 
 
     /**
      * It listens category item click
      */
-    override fun itemclick(requiredId: String, position:Int, size:Int) {
+    override fun itemclick(requiredId: String, position: Int, size: Int) {
         bottomSheetClearChannelId()
         loadHomeFragment(requiredId)
-        sharedEventViewModel.sendUserPreferenceData(AppPreference.isUserLoggedIn, AppPreference.userToken)
+        sharedEventViewModel.sendUserPreferenceData(
+            AppPreference.isUserLoggedIn,
+            AppPreference.userToken
+        )
     }
 
     private fun launchProfileIntent() {
         val intent = Intent(this, ProfileActivity::class.java)
-        intent.putExtra("fromActivity","MainActivity")
+        intent.putExtra("fromActivity", "MainActivity")
         startActivity(intent)
     }
 
@@ -119,8 +130,14 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      */
     private fun loadHomeFragment(categoryType: String) {
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.fragment_container,
-            AppConstants.makeVideoPagerInstance(categoryType, CategoryConstants.DEFAULT_VIDEO_DATA, this@MainActivity))
+        ft.replace(
+            R.id.fragment_container,
+            AppConstants.makeVideoPagerInstance(
+                categoryType,
+                CategoryConstants.DEFAULT_VIDEO_DATA,
+                this@MainActivity
+            )
+        )
         ft.commit()
 
     }
@@ -137,10 +154,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-
     private fun showCategory() {
         lifecycleScope.launch {
-            videoCategoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
+            videoCategoryViewModel.videoCategorySuccessState.filterNotNull().filter {
+                it.videoCategories.isNotEmpty()
+            }.collectLatest {
                 // Setup recyclerView
                 caAdapter = CategoryAdapter(
                     itemList = it.videoCategories,
@@ -149,9 +167,29 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 binding.recyclerView.adapter = caAdapter
                 val defaultCate = it.videoCategories[0]
                 loadHomeFragment(defaultCate.id)
+                hideTryAgainText()
             }
         }
+
+        lifecycleScope.launch {
+            videoCategoryViewModel.errorState.filterNotNull().collectLatest {
+                showTryAgainText()
+            }
+        }
+
     }
+
+    private fun hideTryAgainText() {
+        binding.tryAgain.visibility = View.GONE
+    }
+
+    private fun showTryAgainText() {
+            binding.tryAgain.visibility = View.VISIBLE
+            binding.tryAgain.setOnClickListener {
+                videoCategoryViewModel.loadVideoCategory()
+            }
+    }
+
 
 
     // Register Hot-Flow to listen Video Caching
@@ -160,9 +198,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
                 val url = it.first
                 val id = it.second
-                var videoUrls = Array(1){url}
-                var videoIds = Array(1){id}
-                VideoPreloadCoroutine.schedulePreloadWork(videoUrls=videoUrls, ids=videoIds)
+                var videoUrls = Array(1) { url }
+                var videoIds = Array(1) { id }
+                VideoPreloadCoroutine.schedulePreloadWork(videoUrls = videoUrls, ids = videoIds)
             }
         }
 
@@ -170,37 +208,46 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             sharedEventViewModel.cacheVideoUrl_2.filterNotNull().collectLatest {
                 val url = it.first
                 val id = it.second
-                var videoUrls = Array(1){url}
-                var videoIds = Array(1){id}
-                VideoPreloadCoroutine.schedulePreloadWork(videoUrls=videoUrls, ids=videoIds)
+                var videoUrls = Array(1) { url }
+                var videoIds = Array(1) { id }
+                VideoPreloadCoroutine.schedulePreloadWork(videoUrls = videoUrls, ids = videoIds)
             }
         }
     }
 
     // It is having Bottom Sheet Implementation
     private fun bottomSheetDialog() {
-        standardBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        standardBottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 Log.i("", "$slideOffset")
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when(newState) {
-                    BottomSheetBehavior.STATE_EXPANDED-> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(resources.getDrawable(R.drawable.arrow_bottom_button, null))
-                    BottomSheetBehavior.STATE_COLLAPSED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(resources.getDrawable(R.drawable.arrow_up_button, null))
-                    BottomSheetBehavior.STATE_DRAGGING -> standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED)
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
+                        resources.getDrawable(R.drawable.arrow_bottom_button, null)
+                    )
+                    BottomSheetBehavior.STATE_COLLAPSED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
+                        resources.getDrawable(R.drawable.arrow_up_button, null)
+                    )
+                    BottomSheetBehavior.STATE_DRAGGING -> standardBottomSheetBehavior.setState(
+                        BottomSheetBehavior.STATE_COLLAPSED
+                    )
                 }
             }
         })
 
-        binding.persistentBottomsheet.imgDownArrow.setOnClickListener{
-            if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+        binding.persistentBottomsheet.imgDownArrow.setOnClickListener {
+            if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                 standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
-                binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
-                binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
                 val channelId = binding.persistentBottomsheet.imgDownArrow.tag?.toString()
-                channelId?.let { bottomSheetGetChannelVideoData(channelId = channelId) }
+                channelId?.let {
+                    binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
+                    binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
+                    bottomSheetGetChannelVideoData(channelId = channelId)
+                }
             }
         }
     }
@@ -216,23 +263,33 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     binding.persistentBottomsheet.following.text = "Follow"
                 }
 
-                val channelId  = binding.persistentBottomsheet.following.tag
+                val channelId = binding.persistentBottomsheet.following.tag
 
-                if(channelId != it.channel_id) {
-                    binding.persistentBottomsheet.following.tag = it.channel_id
-                    binding.persistentBottomsheet.imgDownArrow.tag = it.channel_id
+//                if(channelId != it.channel_id) {
+                binding.persistentBottomsheet.following.tag = it.channel_id
+                binding.persistentBottomsheet.imgDownArrow.tag = it.channel_id
 
-                    if (it.channel_image.isNotEmpty()) {
-                        binding.persistentBottomsheet.clientImage.loadSvg(
-                            it.channel_image,
-                            binding.persistentBottomsheet.clientImage.context
-                        )
-                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
-                    } else {
-                        binding.persistentBottomsheet.cardViewClientImage.visibility =
-                            View.INVISIBLE
-                    }
+                if (it.channel_image.isNotEmpty()) {
+                    val loader = MainApplication.instance!!.newImageLoader()
+                    val req = ImageRequest.Builder(MainApplication.applicationContext())
+                        .data(it.channel_image) // demo link
+                        .target { result ->
+                            val bitmap = (result as BitmapDrawable).bitmap
+                            binding.persistentBottomsheet.clientImage.setImageBitmap(bitmap)
+                            bottomSheetHeaderBg(bitmap)
+                        }
+                        .build()
+
+                    val disposable = loader.enqueue(req)
+                    /* binding.persistentBottomsheet.clientImage.load(
+                         it.channel_image
+                     )*/
+                    binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
+                } else {
+                    binding.persistentBottomsheet.cardViewClientImage.visibility =
+                        View.INVISIBLE
                 }
+//                }
             }
         }
 
@@ -240,7 +297,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             sharedEventViewModel.followResponse.filterNotNull().collectLatest {
                 if (it.following) {
                     binding.persistentBottomsheet.following.text = "Following"
-                } else{
+                } else {
                     binding.persistentBottomsheet.following.text = "Follow"
                 }
 
@@ -251,8 +308,14 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     // Get Channel Video Data
     private fun bottomSheetGetChannelVideoData(channelId: String) {
-        videoDataViewModel.requestVideoData(params = Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
-        val adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
+        videoDataViewModel.requestVideoData(
+            params = Pair(
+                CategoryConstants.CHANNEL_VIDEO_DATA,
+                channelId
+            )
+        )
+        val adapter =
+            GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
 
         lifecycleScope.launch {
             videoDataViewModel.errorState.filterNotNull().collectLatest {
@@ -271,7 +334,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
                     binding.persistentBottomsheet.channelRecyclerview.adapter = adapter
 
-                    if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                     } else {
                         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -297,7 +360,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     // Bottom Sheet Following Click Listener
     private fun bottomSheetFollowingClick() {
-        binding.persistentBottomsheet.following.setOnClickListener{
+        binding.persistentBottomsheet.following.setOnClickListener {
             val channelId = binding.persistentBottomsheet.following.tag
             channelId?.let {
                 sharedEventViewModel.followRequest(channelId.toString())
@@ -306,20 +369,32 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-    // SVG Image Caching
-    private fun ImageView.loadSvg(url: String, context: Context) {
-        val imageLoader = ImageLoader.Builder(context)
-            .components {
-                add(SvgDecoder.Factory())
-            }
-            .build()
+    private fun bottomSheetHeaderBg(bitmap: Bitmap) {
+        val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
+        Palette.from(mutableBitmap).generate { palette ->
+            /*val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
+            lightVibrantSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightVibrantSwatch) }
 
-        val request = ImageRequest.Builder(this.context)
-            .data(url)
-            .target(this)
-            .placeholder(com.videopager.R.drawable.channel_placeholder)
-            .build()
-        imageLoader.enqueue(request)
+            val vibrantSwatch = palette?.vibrantSwatch?.rgb
+            vibrantSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(vibrantSwatch) }
+
+            val lightMutedSwatch = palette?.lightMutedSwatch?.rgb
+            lightMutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightMutedSwatch) }
+
+            val mutedSwatch = palette?.mutedSwatch?.rgb
+            mutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(mutedSwatch) }
+
+            val darkMutedSwatch = palette?.darkMutedSwatch?.rgb
+            darkMutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkMutedSwatch) }*/
+
+            val darkVibrantSwatch = palette?.darkVibrantSwatch?.rgb
+            darkVibrantSwatch?.let {
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(
+                    darkVibrantSwatch
+                )
+            }
+
+        }
     }
 
 

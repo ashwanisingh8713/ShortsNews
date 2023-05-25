@@ -180,21 +180,7 @@ internal class PagerAdapter(
         }
     }
 
-    private fun ImageView.loadSvg(url: String, context:Context) {
 
-        val imageLoader = ImageLoader.Builder(context)
-            .components {
-                add(SvgDecoder.Factory())
-            }
-            .build()
-
-        val request = ImageRequest.Builder(this.context)
-            .data(url)
-            .target(this)
-            .placeholder(R.drawable.channel_placeholder)
-            .build()
-        imageLoader.enqueue(request)
-    }
 
 
 }

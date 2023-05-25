@@ -25,4 +25,5 @@
     <string name="select_nlanguage">Select\nLanguage</string>
     <string name="upto_4">(Upto 4)</string>
     <string name="scroll_down_button">scroll_down_button</string>
+    <string name="category_not_loaded">Category is not loaded.\nKindly tap here to retry</string>
 </resources>

@@ -18,7 +18,7 @@ class VideoCategoryViewModel(private val videoCategoryUseCase: VideoCategoryUseC
     private val _videoCategorySuccessState = MutableStateFlow<UserVideoCategory?>(null)
     val videoCategorySuccessState: StateFlow<UserVideoCategory?> get() = _videoCategorySuccessState
 
-    private val _errorState = MutableStateFlow<String?>("NA")
+    private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> get() = _errorState
 
     private val _loadingState = MutableStateFlow(true)

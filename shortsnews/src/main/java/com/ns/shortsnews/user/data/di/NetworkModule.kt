@@ -1,5 +1,6 @@
 package com.ns.shortsnews.user.data.di
 
+import com.ns.shortsnews.BuildConfig
 import com.ns.shortsnews.user.data.network.createOkHttpClient
 import com.squareup.moshi.Moshi
 import org.koin.dsl.module
@@ -9,7 +10,7 @@ import com.ns.shortsnews.user.data.network.createService
 
 val NetworkModule = module {
 
-    single { createRetrofit(get(), "https://shorts.newsdx.io/ci/api/public/") }
+    single { createRetrofit(get(), BuildConfig.BASE_URL) }
 
     single { createService(get()) }
 

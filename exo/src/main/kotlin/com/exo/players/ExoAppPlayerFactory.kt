@@ -12,7 +12,10 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ads.AdsLoader
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.FileDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSink
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.player.players.AppPlayer
@@ -40,13 +43,28 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
 
     private var serverSideAdsLoader: ImaServerSideAdInsertionMediaSource.AdsLoader? = null
 
+    fun buildCacheDataSourceFactory(): DataSource.Factory {
+        val cache = cache
+        val cacheSink = CacheDataSink.Factory()
+            .setCache(cache)
+        val upstreamFactory = DefaultDataSource.Factory(appContext, DefaultHttpDataSource.Factory())
+        return CacheDataSource.Factory()
+            .setCache(cache)
+            .setCacheWriteDataSinkFactory(cacheSink)
+            .setCacheReadDataSourceFactory(FileDataSource.Factory())
+            .setUpstreamDataSourceFactory(upstreamFactory)
+            .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+    }
+
     private fun createMediaSourceFactory(playerView: StyledPlayerView):MediaSource.Factory {
         var mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
             .setAllowCrossProtocolRedirects(true)
 
-        val cacheDataSourceFactory: DataSource.Factory = CacheDataSource.Factory()
+        /*val cacheDataSourceFactory: DataSource.Factory = CacheDataSource.Factory()
             .setCache(cache)
-            .setUpstreamDataSourceFactory(mHttpDataSourceFactory)
+            .setUpstreamDataSourceFactory(mHttpDataSourceFactory)*/
+
+        val cacheDataSourceFactory: DataSource.Factory = buildCacheDataSourceFactory()
 
         val serverSideAdLoaderBuilder =
             ImaServerSideAdInsertionMediaSource.AdsLoader.Builder( appContext, playerView)

@@ -2,6 +2,8 @@ package com.ns.shortsnews
 
 import android.app.Application
 import android.content.Context
+import coil.ImageLoader
+import coil.ImageLoaderFactory
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -13,7 +15,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 
-class MainApplication:Application() {
+class MainApplication:Application(), ImageLoaderFactory {
 
     private val cacheSize: Long = 1*1024 * 1024 * 1024 //1 Gb for cache
 
@@ -21,7 +23,7 @@ class MainApplication:Application() {
         instance = this
     }
     companion object {
-        private var instance: MainApplication? = null
+        var instance: MainApplication? = null
         lateinit var cache: SimpleCache
 
 
@@ -47,6 +49,11 @@ class MainApplication:Application() {
 
     }
 
+    override fun newImageLoader(): ImageLoader {
+        return ImageLoader.Builder(this)
+            .crossfade(true)
+            .build()
+    }
 
 
 }
