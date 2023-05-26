@@ -230,12 +230,25 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
-                        resources.getDrawable(R.drawable.slide_down_arrow_icon, null)
-                    )
-                    BottomSheetBehavior.STATE_COLLAPSED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
-                        resources.getDrawable(R.drawable.slide_up_arrow_icon, null)
-                    )
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
+                            resources.getDrawable(R.drawable.slide_down_arrow_icon, null)
+                        )
+                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.GONE
+                        binding.persistentBottomsheet.following.visibility = View.GONE
+
+
+                    }
+
+
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+
+                        binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
+                            resources.getDrawable(R.drawable.slide_up_arrow_icon, null)
+                        )
+                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
+                        binding.persistentBottomsheet.following.visibility = View.VISIBLE
+                    }
                     BottomSheetBehavior.STATE_DRAGGING -> standardBottomSheetBehavior.setState(
                         BottomSheetBehavior.STATE_COLLAPSED
                     )
@@ -313,6 +326,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     // Get Channel Video Data
     private fun bottomSheetGetChannelVideoData(channelId: String) {
+
         videoDataViewModel.requestVideoData(
             params = Pair(
                 CategoryConstants.CHANNEL_VIDEO_DATA,
