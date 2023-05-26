@@ -147,20 +147,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="20dp"
             >
+            <ImageView
+                android:id="@+id/profile_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="8dp"
+                android:src="@drawable/profile_avatar"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
                 android:id="@+id/profile_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="332k"
-                android:textSize="@dimen/video_page_text_size_xxlarge"
-                android:drawableLeft="@drawable/profile_avatar"
+                android:textSize="@dimen/video_page_text_size_large"
                 android:drawablePadding="8dp"
                 android:textColor="@color/white"
                 android:maxLines="1"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/profile_icon"
+                app:layout_constraintBottom_toBottomOf="@id/profile_icon"
+                app:layout_constraintStart_toEndOf="@id/profile_icon"
+                android:layout_marginStart="5dp"
                 />
 
             <TextView
@@ -211,6 +220,7 @@
             android:text="Website"
             android:layout_marginStart="@dimen/margin_start"
             android:layout_marginEnd="@dimen/margin_end"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/channel_des"
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"

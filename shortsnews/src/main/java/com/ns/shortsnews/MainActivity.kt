@@ -230,12 +230,25 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
-                        resources.getDrawable(R.drawable.slide_down_arrow_icon, null)
-                    )
-                    BottomSheetBehavior.STATE_COLLAPSED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
-                        resources.getDrawable(R.drawable.slide_up_arrow_icon, null)
-                    )
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
+                            resources.getDrawable(R.drawable.slide_down_arrow_icon, null)
+                        )
+                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.GONE
+                        binding.persistentBottomsheet.following.visibility = View.GONE
+
+
+                    }
+
+
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+
+                        binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
+                            resources.getDrawable(R.drawable.slide_up_arrow_icon, null)
+                        )
+                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
+                        binding.persistentBottomsheet.following.visibility = View.VISIBLE
+                    }
                     BottomSheetBehavior.STATE_DRAGGING -> standardBottomSheetBehavior.setState(
                         BottomSheetBehavior.STATE_COLLAPSED
                     )
@@ -281,7 +294,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                         .target { result ->
                             val bitmap = (result as BitmapDrawable).bitmap
                             binding.persistentBottomsheet.clientImage.setImageBitmap(bitmap)
-                            bottomSheetHeaderBg(bitmap)
+                            bottomSheetHeaderBg(bitmap, it.channel_id)
                         }
                         .build()
 
@@ -313,6 +326,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     // Get Channel Video Data
     private fun bottomSheetGetChannelVideoData(channelId: String) {
+
         videoDataViewModel.requestVideoData(
             params = Pair(
                 CategoryConstants.CHANNEL_VIDEO_DATA,
@@ -374,41 +388,51 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-    private fun bottomSheetHeaderBg(bitmap: Bitmap) {
+    private fun bottomSheetHeaderBg(bitmap: Bitmap, channelId: String) {
         val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
         
         Palette.from(mutableBitmap).generate { palette ->
+            val headerTag = "HeaderBg"
+            Log.i(headerTag, "============================== :: $channelId")
             val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
             lightVibrantSwatch?.let {
+                Log.i(headerTag, "lightVibrantSwatch :: $channelId")
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightVibrantSwatch)
                 binding.persistentBottomsheet.channelTopView.setBackgroundColor(lightVibrantSwatch)
             }
 
             val vibrantSwatch = palette?.vibrantSwatch?.rgb
-            vibrantSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(vibrantSwatch)
+            vibrantSwatch?.let {
+                Log.i(headerTag, "vibrantSwatch :: $channelId")
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(vibrantSwatch)
                 binding.persistentBottomsheet.channelTopView.setBackgroundColor(vibrantSwatch)
             }
 
             val lightMutedSwatch = palette?.lightMutedSwatch?.rgb
             lightMutedSwatch?.let {
+                Log.i(headerTag, "lightMutedSwatch :: $channelId")
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightMutedSwatch)
                 binding.persistentBottomsheet.channelTopView.setBackgroundColor(lightMutedSwatch)
             }
 
             val mutedSwatch = palette?.mutedSwatch?.rgb
             mutedSwatch?.let {
+                Log.i(headerTag, "mutedSwatch :: $channelId")
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(mutedSwatch)
                 binding.persistentBottomsheet.channelTopView.setBackgroundColor(mutedSwatch)
             }
 
             val darkMutedSwatch = palette?.darkMutedSwatch?.rgb
             darkMutedSwatch?.let {
+                Log.i(headerTag, "darkVibrantSwatch :: $channelId")
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkMutedSwatch)
                 binding.persistentBottomsheet.channelTopView.setBackgroundColor(darkMutedSwatch)
             }
 
             val darkVibrantSwatch = palette?.darkVibrantSwatch?.rgb
             darkVibrantSwatch?.let {
+                Log.i(headerTag, "darkVibrantSwatch :: $channelId")
+
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(
                     darkVibrantSwatch
                 )
