@@ -135,7 +135,7 @@ internal class PagerAdapter(
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.red))
             holder.binding.saveTitle.text = data.saveCount
         } else {
-            holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.white))
+            holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.white))
             holder.binding.saveTitle.text = data.saveCount
         }
 

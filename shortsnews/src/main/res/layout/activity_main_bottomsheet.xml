@@ -112,8 +112,9 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginEnd="@dimen/margin_end"
             android:layout_marginStart="@dimen/margin_start"
+            android:background="@null"
             android:layout_marginTop="@dimen/margin_start"
-            android:src="@drawable/app_logo"/>
+            android:src="@drawable/channel_place_holder_icon"/>
 
 <!--        <com.google.android.material.card.MaterialCardView-->
 <!--            android:id="@+id/card_view_for_pin_down"-->

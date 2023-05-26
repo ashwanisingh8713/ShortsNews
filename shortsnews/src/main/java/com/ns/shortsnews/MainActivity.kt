@@ -295,6 +295,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                             val bitmap = (result as BitmapDrawable).bitmap
                             binding.persistentBottomsheet.clientImage.setImageBitmap(bitmap)
                             bottomSheetHeaderBg(bitmap, it.channel_id)
+                            binding.persistentBottomsheet.channelLogo.setImageBitmap(bitmap)
                         }
                         .build()
 
@@ -439,6 +440,14 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 binding.persistentBottomsheet.channelTopView.setBackgroundColor(darkVibrantSwatch)
             }
 
+        }
+    }
+
+    override fun onBackPressed() {
+        if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        } else {
+            onBackPressedDispatcher.onBackPressed()
         }
     }
 
