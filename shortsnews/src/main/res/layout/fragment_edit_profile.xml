@@ -40,19 +40,20 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:scaleType="centerInside"
-            android:src="@drawable/profile_image" />
+            android:src="@drawable/big_profile_place_holder" />
     </androidx.cardview.widget.CardView>
 
     <ImageView
         android:id="@+id/profile_image_edit_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src="@drawable/setting"
+        android:src="@drawable/profile_edit_icon"
         app:layout_constraintStart_toStartOf="@id/profile_image_view_card"
         app:layout_constraintEnd_toEndOf="@id/profile_image_view_card"
         app:layout_constraintTop_toTopOf="@id/profile_image_view_card"
         app:layout_constraintBottom_toBottomOf="@id/profile_image_view_card"
         android:foregroundGravity="top"
+        android:padding="2dp"
         android:elevation="10dp"/>
 
     <EditText
@@ -102,7 +103,8 @@
         app:layout_constraintBottom_toBottomOf="@id/location_edit_text"
         app:layout_constraintEnd_toStartOf="@id/location_edit_text"
         android:layout_marginEnd="10dp"
-        android:src="@drawable/ic_location"/>
+        android:padding="2dp"
+        android:src="@drawable/location_icon"/>
 
     <EditText
         android:id="@+id/location_edit_text"
@@ -193,9 +195,5 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,8 @@ object AppPreference {
     //Keys
     private const val IS_USER_LOGGED_IN = "is_user_logged_in"
     private const val USER_NAME = "user_name"
+    private const val USER_AGE = "user_age"
+    private const val USER_LOCATION = "user_location"
     private const val USER_EMAIL = "user_email"
     private const val USER_TOKEN = "user_token"
     private const val USER_PROFILE_IMAGE = "user_profile_image"
@@ -65,6 +67,23 @@ object AppPreference {
             this.putString(USER_NAME, value)
             this.apply()
         }
+
+    //Function for getting and setting user age
+    var userAge: String?
+        get() = preference.getString(USER_AGE, EMPTY_STRING)
+        set(value) = preference.edit {
+            this.putString(USER_AGE, value)
+            this.apply()
+        }
+
+    //Function for getting and setting user location
+    var userLocation: String?
+        get() = preference.getString(USER_LOCATION, EMPTY_STRING)
+        set(value) = preference.edit {
+            this.putString(USER_LOCATION, value)
+            this.apply()
+        }
+
 
     // Clear preference on logout
     fun clear(){

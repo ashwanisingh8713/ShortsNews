@@ -35,9 +35,10 @@ data class OTPResult(
 @JsonClass(generateAdapter = true)
 data class OtpValidationData(
     val access_token: String,
-    val email: String,
+    val email: String = "",
     val name: String? = null,
-    val first_time_user: Boolean
+    val first_time_user: Boolean,
+    val my_profile:ProfileData
 )
 
 @JsonClass(generateAdapter = true)
