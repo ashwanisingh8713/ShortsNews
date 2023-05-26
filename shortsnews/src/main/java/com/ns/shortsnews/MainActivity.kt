@@ -276,7 +276,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                         .target { result ->
                             val bitmap = (result as BitmapDrawable).bitmap
                             binding.persistentBottomsheet.clientImage.setImageBitmap(bitmap)
-                            bottomSheetHeaderBg(bitmap)
+                            bottomSheetHeaderBg(bitmap, it.channel_id)
                         }
                         .build()
 
@@ -369,29 +369,41 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-    private fun bottomSheetHeaderBg(bitmap: Bitmap) {
+    private fun bottomSheetHeaderBg(bitmap: Bitmap, channelId: String) {
         val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
         Palette.from(mutableBitmap).generate { palette ->
+            val headerTag = "HeaderBg"
+            Log.i(headerTag, "============================== :: $channelId")
             val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
-            lightVibrantSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightVibrantSwatch) }
+            lightVibrantSwatch?.let {
+                Log.i(headerTag, "lightVibrantSwatch :: $channelId")
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightVibrantSwatch)
+            }
 
             val vibrantSwatch = palette?.vibrantSwatch?.rgb
-            vibrantSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(vibrantSwatch) }
+            vibrantSwatch?.let {
+                Log.i(headerTag, "vibrantSwatch :: $channelId")
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(vibrantSwatch) }
 
             val lightMutedSwatch = palette?.lightMutedSwatch?.rgb
-            lightMutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightMutedSwatch) }
+            lightMutedSwatch?.let {
+                Log.i(headerTag, "lightMutedSwatch :: $channelId")
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightMutedSwatch) }
 
             val mutedSwatch = palette?.mutedSwatch?.rgb
-            mutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(mutedSwatch) }
+            mutedSwatch?.let {
+                Log.i(headerTag, "mutedSwatch :: $channelId")
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(mutedSwatch) }
 
             val darkMutedSwatch = palette?.darkMutedSwatch?.rgb
-            darkMutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkMutedSwatch) }
+            darkMutedSwatch?.let {
+                Log.i(headerTag, "darkMutedSwatch :: $channelId")
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkMutedSwatch) }
 
             val darkVibrantSwatch = palette?.darkVibrantSwatch?.rgb
             darkVibrantSwatch?.let {
-                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(
-                    darkVibrantSwatch
-                )
+                Log.i(headerTag, "darkVibrantSwatch :: $channelId")
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkVibrantSwatch)
             }
 
         }

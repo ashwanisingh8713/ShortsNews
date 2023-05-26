@@ -2,6 +2,7 @@ package com.exo.players
 
 import android.content.Context
 import com.exo.data.DiffingVideoDataUpdater
+import com.exo.manager.DemoUtil
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem.AdsConfiguration
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManagerProvider
@@ -10,6 +11,8 @@ import com.google.android.exoplayer2.ext.ima.ImaServerSideAdInsertionMediaSource
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ads.AdsLoader
+import com.google.android.exoplayer2.source.hls.HlsMediaSource
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
@@ -29,21 +32,29 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
 
     override fun create(config: AppPlayer.Factory.Config, playerView: StyledPlayerView): AppPlayer {
 
+        val trackSelector = DefaultTrackSelector(appContext)
+        trackSelector.setParameters(
+            trackSelector
+                .buildUponParameters()
+                .setAllowVideoMixedMimeTypeAdaptiveness(true))
+
         exoPlayer = ExoPlayer.Builder(appContext)
             .setMediaSourceFactory(createMediaSourceFactory(playerView))
+            .setTrackSelector(trackSelector)
             .build()
             .apply {
                 if (config.loopVideos) {
                     loopVideos()
                 }
             }
+
         val updater = DiffingVideoDataUpdater(Dispatchers.Default)
         return ExoAppPlayer(exoPlayer!!, updater)
     }
 
     private var serverSideAdsLoader: ImaServerSideAdInsertionMediaSource.AdsLoader? = null
 
-    fun buildCacheDataSourceFactory(): DataSource.Factory {
+    private fun buildCacheDataSourceFactory(): DataSource.Factory {
         val cache = cache
         val cacheSink = CacheDataSink.Factory()
             .setCache(cache)
@@ -65,23 +76,17 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
             .setUpstreamDataSourceFactory(mHttpDataSourceFactory)*/
 
         val cacheDataSourceFactory: DataSource.Factory = buildCacheDataSourceFactory()
+//        val cacheDataSourceFactory: DataSource.Factory =  DemoUtil.getDataSourceFactory(appContext)
 
         val serverSideAdLoaderBuilder =
             ImaServerSideAdInsertionMediaSource.AdsLoader.Builder( appContext, playerView)
 
         serverSideAdsLoader = serverSideAdLoaderBuilder.build()
 
-        val imaServerSideAdInsertionMediaSourceFactory =
-            ImaServerSideAdInsertionMediaSource.Factory(
-                serverSideAdsLoader!!,
-                DefaultMediaSourceFactory(appContext)
-                    .setDataSourceFactory(cacheDataSourceFactory)
-            )
-
         val drmSessionManagerProvider = DefaultDrmSessionManagerProvider()
         drmSessionManagerProvider.setDrmHttpDataSourceFactory(null)
 
-        return DefaultMediaSourceFactory(appContext)
+        /*return DefaultMediaSourceFactory(appContext)
             .setDataSourceFactory(cacheDataSourceFactory)
             .setDrmSessionManagerProvider(drmSessionManagerProvider)
             .setLocalAdInsertionComponents({ adsConfiguration: AdsConfiguration? ->
@@ -89,10 +94,11 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
                     adsConfiguration!!
                 )
             }, playerView)
-            .setServerSideAdInsertionMediaSourceFactory(imaServerSideAdInsertionMediaSourceFactory)
+            .setServerSideAdInsertionMediaSourceFactory(imaServerSideAdInsertionMediaSourceFactory)*/
 
-//        return DefaultMediaSourceFactory(appContext)
-//            .setDataSourceFactory(cacheDataSourceFactory)
+
+        return HlsMediaSource.Factory(cacheDataSourceFactory)
+
     }
 
 

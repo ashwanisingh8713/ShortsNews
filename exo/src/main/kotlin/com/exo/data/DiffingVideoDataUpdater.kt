@@ -9,6 +9,7 @@ import com.github.difflib.patch.DeltaType
 import com.github.difflib.patch.Patch
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.Player
 import com.player.models.VideoData
 import kotlinx.coroutines.withContext
@@ -65,18 +66,23 @@ internal class DiffingVideoDataUpdater(
         return map { videoData ->
             val mediaItemBuilder = MediaItem.Builder()
                 .setMediaId(videoData.id)
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setTitle(videoData.id)
+                        .build()
+                )
                 .setUri(videoData.mediaUri)
                 /*.setAdsConfiguration(
                     MediaItem.AdsConfiguration.Builder(Uri.parse(adTagUri)).setAdsId(videoData.id)
                         .build()
                 )*/
 
-            if(videoData.adTagUri.isNotEmpty()) {
+            /*if(videoData.adTagUri.isNotEmpty()) {
                 mediaItemBuilder.setAdsConfiguration(
                     MediaItem.AdsConfiguration.Builder(Uri.parse(videoData.adTagUri)).setAdsId(videoData.id)
                         .build()
                 )
-            }
+            }*/
             val mediaItem = mediaItemBuilder.build()
             mediaItem
         }

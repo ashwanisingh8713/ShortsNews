@@ -14,6 +14,7 @@ import com.videopager.R
 import com.videopager.databinding.PageItemBinding
 import com.videopager.models.PageEffect
 import com.videopager.ui.extensions.ClickEvent
+import com.videopager.ui.extensions.TrackInfoClick
 import com.videopager.ui.extensions.awaitNextLayout
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -45,11 +46,15 @@ internal class PagerAdapter(
                 PageViewHolder(binding, imageLoader) {pair ->
                     clicks.tryEmit(pair)
                 }
+
             }
     }
 
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
         getItem(position).let(holder::bind)
+        holder.binding.trackInfoBtn.setOnClickListener {
+            clicks.tryEmit(Pair(getItem(position).id, TrackInfoClick))
+        }
     }
 
     fun getVideoData(position: Int):VideoData {

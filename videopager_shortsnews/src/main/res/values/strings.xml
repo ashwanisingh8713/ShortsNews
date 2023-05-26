@@ -10,4 +10,5 @@
     <string name="enter_your_otp">Enter OTP</string>
     <string name="no_comments">No Comments</string>
     <string name="follow">Follow</string>
+    <string name="track_info">Track Info</string>
 </resources>
