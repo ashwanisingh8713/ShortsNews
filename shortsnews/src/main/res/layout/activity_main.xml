@@ -65,16 +65,16 @@
             android:layout_marginEnd="12dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="@null"
-            app:cardBackgroundColor="@color/transparent_color"
+            app:cardBackgroundColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:strokeColor="@color/white"
-            app:strokeWidth="0dp">
+            app:strokeWidth="2dp">
 
             <ImageView
                 android:id="@+id/profile_icon"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:scaleType="centerInside"
                 android:padding="6dp"
                 android:elevation="1dp"

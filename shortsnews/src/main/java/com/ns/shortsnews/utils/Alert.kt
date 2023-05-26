@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.ns.shortsnews.user.domain.models.ProfileData
 
 class Alert {
 
@@ -23,6 +24,7 @@ class Alert {
         }
 
     }
+
 
     fun isOnline(context: Context): Boolean {
         val connectivityManager =

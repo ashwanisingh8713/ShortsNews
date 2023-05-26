@@ -59,7 +59,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:padding="3dp"
-            android:src="@drawable/sent_msg_icon"
+            android:src="@drawable/icon_md_send"
             app:layout_constraintTop_toTopOf="@id/msg_edit_text"
             app:layout_constraintBottom_toBottomOf="@id/msg_edit_text"
             app:layout_constraintEnd_toEndOf="parent"
