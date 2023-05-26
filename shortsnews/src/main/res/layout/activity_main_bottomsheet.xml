@@ -17,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_sheet_header_peekheight"
         android:layout_marginTop="@dimen/bottom_sheet_header_margin"
-        android:background="@android:color/holo_orange_dark"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"

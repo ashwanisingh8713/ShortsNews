@@ -47,7 +47,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 //            bundle.putString("name", "")
 //            userViewModel.updateFragment(UserViewModel.OTP_POP,bundle )
 //        }
-        binding.otpEditText.setText("12345")
+        binding.otpEditText.setText("123456")
         binding.submitButton.setOnClickListener {
 
              val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager

@@ -31,6 +31,12 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    sourceSets {
+        getByName("main") {
+            java.srcDir("src/main/kotlin")
+        }
+    }
 }
 
 dependencies {
@@ -40,10 +46,11 @@ dependencies {
     implementation "io.github.java-diff-utils:java-diff-utils:4.11"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
-    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
 
     def work_version = "2.8.1"
     api "androidx.work:work-runtime-ktx:$work_version"
 
+    implementation 'com.google.android.material:material:1.9.0'
 
 }

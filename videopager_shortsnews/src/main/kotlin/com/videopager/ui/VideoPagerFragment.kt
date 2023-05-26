@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.viewpager2.widget.ViewPager2
 import coil.ImageLoader
+import com.exo.manager.DemoUtil
+import com.exo.manager.DownloadTracker
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.videopager.R
@@ -341,12 +343,24 @@ class VideoPagerFragment(
                         BookmarkClickEvent(videoId = videoData.id, currentItem)
                     }
                 }
+                TrackInfoClick -> {
+                    downloadTracker = DemoUtil.getDownloadTracker(requireActivity())
+                    val renderersFactory = DemoUtil.buildRenderersFactory(requireActivity())
+                    downloadTracker?.toggleDownload(
+                        requireActivity().supportFragmentManager,
+                        viewModel.states.value.appPlayer?.player?.currentMediaItem,
+                        renderersFactory
+                    )
+                    NoFurtherEvent
+                }
                 else -> NoFurtherEvent
 
             }
 
         }
     }
+
+    private var downloadTracker: DownloadTracker? = null
 
     private fun registerSharedViewModel() {
         lifecycleScope.launch {
