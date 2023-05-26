@@ -41,6 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/video_page_text_size_xxxlarge"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textColor="@color/white"/>
@@ -168,7 +169,8 @@
                 android:layout_height="34dp"
                 android:background="@null"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_comment"
+                android:padding="6dp"
+                android:src="@drawable/comment_icon"
                 app:layout_constraintBottom_toTopOf="@id/msgCount"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -204,7 +206,8 @@
                 android:layout_width="34dp"
                 android:layout_height="34dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/share"
+                android:src="@drawable/share_icon"
+                android:padding="6dp"
                 app:layout_constraintBottom_toTopOf="@id/shareTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -239,7 +242,8 @@
                 android:layout_width="34dp"
                 android:layout_height="34dp"
                 android:layout_marginBottom="5dp"
-                android:src="@drawable/save"
+                android:src="@drawable/bookmark_icon"
+                android:padding="6dp"
                 app:layout_constraintBottom_toTopOf="@id/saveTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -271,7 +275,8 @@
                 android:layout_width="34dp"
                 android:layout_height="34dp"
                 android:layout_marginBottom="5dp"
-                android:src="@drawable/ic_like"
+                android:src="@drawable/like_icon"
+                android:padding="6dp"
                 app:layout_constraintBottom_toTopOf="@id/likeTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -295,7 +300,7 @@
             android:id="@+id/flow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="const_save,const_share,const_comment,const_like"
+            app:constraint_referenced_ids="const_like,const_share,const_save,const_comment"
             app:flow_horizontalAlign="start"
             app:flow_horizontalStyle="packed"
             app:flow_maxElementsWrap="1"

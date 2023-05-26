@@ -117,5 +117,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         AppPreference.userEmail = it.email
         AppPreference.userToken = it.access_token
         AppPreference.isUserLoggedIn = true
+        AppPreference.userProfilePic = it.userProfileImage
+        AppPreference.userAge = it.age
+        AppPreference.userLocation = it.location
     }
 }

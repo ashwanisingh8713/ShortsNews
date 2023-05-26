@@ -41,7 +41,8 @@
             android:layout_height="@dimen/back_button_height"
             android:scaleType="centerInside"
             android:padding="5dp"
-            android:src="@drawable/setting"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/setting_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginEnd="@dimen/margin_start"
@@ -65,13 +66,15 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/profile_image" />
+                android:src="@drawable/big_profile_place_holder" />
         </androidx.cardview.widget.CardView>
 
         <ProgressBar
             android:id="@+id/progress_bar_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:indeterminateTint="@color/white"
+            android:indeterminateTintMode="src_in"
             app:layout_constraintStart_toStartOf="@id/profile_image_view_card"
             app:layout_constraintEnd_toEndOf="@id/profile_image_view_card"
             app:layout_constraintTop_toTopOf="@id/profile_image_view_card"

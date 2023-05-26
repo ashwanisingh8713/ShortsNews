@@ -9,7 +9,11 @@ data class UserOtp(
     val access_token: String = "",
     val email: String = "",
     val name: String? = "",
-    val first_time_user: Boolean = false
+    val first_time_user: Boolean = false,
+    val userProfileImage:String = "",
+    val user_id:String = "",
+    val age:String = "",
+    val location:String = "",
 ) {
     fun mapper(
         status: Boolean,
@@ -17,7 +21,11 @@ data class UserOtp(
         access_token: String,
         email: String,
         name: String?,
-        first_time_user: Boolean
+        first_time_user: Boolean,
+        userProfileImage: String,
+        user_id: String,
+        age: String,
+        location: String
     ): UserOtp {
         return UserOtp(
             status = status,
@@ -25,7 +33,11 @@ data class UserOtp(
             access_token = access_token,
             email = email,
             name = name,
-            first_time_user = first_time_user
+            first_time_user = first_time_user,
+            userProfileImage = userProfileImage,
+            user_id = user_id,
+            age = age,
+            location = location
         )
     }
 }

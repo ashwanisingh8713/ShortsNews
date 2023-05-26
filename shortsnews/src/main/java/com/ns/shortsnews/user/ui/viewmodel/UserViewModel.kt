@@ -91,9 +91,12 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
         otpValidationDataUseCases.invoke(viewModelScope, requestBody,
             object : UseCaseResponse<OTPResult> {
                 override fun onSuccess(result: OTPResult) {
+                    val data = result.data
                     val otpValidation = UserOtp().mapper(status = result.status, msg = result.msg,
-                        email = result.data!!.email, access_token = result.data.access_token,
-                        name = result.data.name, first_time_user = result.data.first_time_user )
+                        email = data!!.my_profile.email, access_token = data.access_token,
+                        name = data.my_profile.name, first_time_user = data.first_time_user,
+                        userProfileImage = data.my_profile.image, user_id = data.my_profile.user_id,
+                    age = data.my_profile.age, location = data.my_profile.location)
                     _otpSuccessState.value = otpValidation
                     _loadingState.value = false
                 }

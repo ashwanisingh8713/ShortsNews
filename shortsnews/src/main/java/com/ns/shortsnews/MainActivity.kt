@@ -75,7 +75,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         if (AppPreference.isUserLoggedIn) {
-            binding.profileIcon.load(AppPreference.userProfilePic)
+            if (AppPreference.userProfilePic == ""){
+                binding.profileIcon.setImageResource(R.drawable.profile_avatar)
+            } else {
+                binding.profileIcon.load(AppPreference.userProfilePic)
+            }
+
         }
 
         binding.profileIcon.setOnClickListener {
@@ -226,10 +231,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
-                        resources.getDrawable(R.drawable.arrow_bottom_button, null)
+                        resources.getDrawable(R.drawable.slide_down_arrow_icon, null)
                     )
                     BottomSheetBehavior.STATE_COLLAPSED -> binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
-                        resources.getDrawable(R.drawable.arrow_up_button, null)
+                        resources.getDrawable(R.drawable.slide_up_arrow_icon, null)
                     )
                     BottomSheetBehavior.STATE_DRAGGING -> standardBottomSheetBehavior.setState(
                         BottomSheetBehavior.STATE_COLLAPSED
@@ -371,27 +376,43 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     private fun bottomSheetHeaderBg(bitmap: Bitmap) {
         val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
+        
         Palette.from(mutableBitmap).generate { palette ->
             val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
-            lightVibrantSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightVibrantSwatch) }
+            lightVibrantSwatch?.let {
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightVibrantSwatch)
+                binding.persistentBottomsheet.channelTopView.setBackgroundColor(lightVibrantSwatch)
+            }
 
             val vibrantSwatch = palette?.vibrantSwatch?.rgb
-            vibrantSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(vibrantSwatch) }
+            vibrantSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(vibrantSwatch)
+                binding.persistentBottomsheet.channelTopView.setBackgroundColor(vibrantSwatch)
+            }
 
             val lightMutedSwatch = palette?.lightMutedSwatch?.rgb
-            lightMutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightMutedSwatch) }
+            lightMutedSwatch?.let {
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightMutedSwatch)
+                binding.persistentBottomsheet.channelTopView.setBackgroundColor(lightMutedSwatch)
+            }
 
             val mutedSwatch = palette?.mutedSwatch?.rgb
-            mutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(mutedSwatch) }
+            mutedSwatch?.let {
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(mutedSwatch)
+                binding.persistentBottomsheet.channelTopView.setBackgroundColor(mutedSwatch)
+            }
 
             val darkMutedSwatch = palette?.darkMutedSwatch?.rgb
-            darkMutedSwatch?.let { binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkMutedSwatch) }
+            darkMutedSwatch?.let {
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkMutedSwatch)
+                binding.persistentBottomsheet.channelTopView.setBackgroundColor(darkMutedSwatch)
+            }
 
             val darkVibrantSwatch = palette?.darkVibrantSwatch?.rgb
             darkVibrantSwatch?.let {
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(
                     darkVibrantSwatch
                 )
+                binding.persistentBottomsheet.channelTopView.setBackgroundColor(darkVibrantSwatch)
             }
 
         }
