@@ -39,7 +39,7 @@
             android:id="@+id/profile_image_view"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
             android:src="@drawable/big_profile_place_holder" />
     </androidx.cardview.widget.CardView>
 
@@ -66,6 +66,7 @@
         android:inputType="textPersonName"
         app:layout_constraintTop_toBottomOf="@id/profile_image_view_card"
         android:layout_marginTop="30dp"
+        android:gravity="center"
         android:background="@drawable/edit_text_background"
         android:layout_marginStart="@dimen/margin_start"
         android:layout_marginEnd="@dimen/margin_end"/>
@@ -88,10 +89,12 @@
         android:layout_height="@dimen/edit_text_height_profile"
         android:maxLines="1"
         android:inputType="number"
+        android:maxLength="2"
         app:layout_constraintTop_toTopOf="@id/age_title"
         app:layout_constraintBottom_toBottomOf="@id/age_title"
         app:layout_constraintStart_toEndOf="@id/age_title"
         android:background="@drawable/edit_text_background"
+        android:gravity="center"
         android:layout_marginStart="@dimen/margin_start"
         android:layout_marginEnd="@dimen/margin_end"/>
 
@@ -111,7 +114,8 @@
         android:layout_width="150dp"
         android:layout_height="@dimen/edit_text_height_profile"
         android:maxLines="1"
-        android:inputType="number"
+        android:inputType="text"
+        android:gravity="center"
         app:layout_constraintTop_toTopOf="@id/age_title"
         app:layout_constraintBottom_toBottomOf="@id/age_title"
         app:layout_constraintEnd_toEndOf="parent"
@@ -195,5 +199,19 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/white"
+        android:indeterminateTintMode="src_in"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.ns.shortsnews.user.data.source
 
 import com.ns.shortsnews.user.domain.models.*
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.*
 
 /**
@@ -31,6 +33,9 @@ interface UserApiService {
     //Likes list for profile screen
     @GET("my-bookmarks")
     suspend fun getBookmarksData(): VideoDataResponse
+
+    @POST("update-profile")
+    suspend fun getUpdateProfile(@Body body: RequestBody):StatusResult
 
 
 }

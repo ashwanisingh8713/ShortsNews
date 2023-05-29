@@ -17,6 +17,7 @@ import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
 import com.ns.shortsnews.user.ui.activity.ContainerActivity
 import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModelFactory
+import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -79,6 +80,14 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
                     binding.progressBarProfile.visibility = View.VISIBLE
                 }
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (AppPreference.isProfileUpdated){
+            userProfileViewModel.requestProfileApi()
+            AppPreference.isProfileUpdated = false
         }
     }
 }
