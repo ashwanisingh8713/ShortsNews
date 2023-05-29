@@ -6,9 +6,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.ns.shortsnews.databinding.ItemGridViewBinding
-import com.ns.shortsnews.user.data.model.VideoItemClick
+import com.ns.shortsnews.user.data.model.VideoClikedItem
 import com.ns.shortsnews.user.domain.models.Data
-import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.videopager.R
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -16,7 +15,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
                   private val videoFrom: String, private val channelId: String): RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
 
-    private val clicks = MutableSharedFlow<VideoItemClick>(extraBufferCapacity = 1)
+    private val clicks = MutableSharedFlow<VideoClikedItem>(extraBufferCapacity = 1)
     fun clicks() = clicks.asSharedFlow()
 
     class GridViewHolder(val binding:ItemGridViewBinding):RecyclerView.ViewHolder(binding.root)
@@ -38,7 +37,7 @@ class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
                 }
             }
             holder.itemView.setOnClickListener{
-                clicks.tryEmit(VideoItemClick(requiredId = channelId, selectedPosition = position, videoFrom = videoFrom))
+                clicks.tryEmit(VideoClikedItem(requiredId = channelId, selectedPosition = position, videoFrom = videoFrom))
             }
             }
     }

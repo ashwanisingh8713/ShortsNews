@@ -6,7 +6,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.load
-import coil.request.ImageRequest
 import coil.size.Scale
 import com.player.ui.AppPlayerView
 import com.videopager.databinding.PageItemBinding
@@ -34,12 +33,10 @@ internal class PageViewHolder(
             scale(Scale.FILL)
         }
 
-        /*binding.following.setOnClickListener{
-            click(Pair(videoData.id, FollowClick))
-        }
-        binding.clientImage.setOnClickListener{
-            click(Pair(videoData.id, ChannelClick))
+        /*binding.previewImage.load(videoData.mediaUri) {
+            decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
         }*/
+
         binding.share.setOnClickListener{
             click(Pair(videoData.id, ShareClick))
         }

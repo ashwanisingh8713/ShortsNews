@@ -109,15 +109,6 @@ internal class PagerAdapter(
         }
     }
 
-    /*suspend fun refreshFollowUI(position: Int) {
-        val holder = awaitViewHolder(position)
-        var data  = getItem(position)
-        if (data.following) {
-            holder.binding.following.text = "Following"
-        } else{
-            holder.binding.following.text = "Follow"
-        }
-    }*/
 
     suspend fun getInfoRefreshUI(position: Int) {
         val holder = awaitViewHolder(position)

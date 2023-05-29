@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
  * Created by Ashwani Kumar Singh on 23,May,2023.
  */
 @Parcelize
-data class VideoItemClick(val requiredId: String, val selectedPosition: Int, val videoFrom: String) :
+data class VideoClikedItem(val requiredId: String, val selectedPosition: Int, val videoFrom: String) :
     Parcelable {
 
 }

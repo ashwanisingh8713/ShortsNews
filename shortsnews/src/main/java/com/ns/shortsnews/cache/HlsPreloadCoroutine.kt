@@ -14,7 +14,6 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheWriter
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.ns.shortsnews.MainApplication
-import com.player.models.VideoData
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -29,7 +28,7 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
 
     companion object {
         private const val TAG = "VideoPreload"
-        private var IS_PARALLEL_DOWNLOADING = false
+        private var IS_PARALLEL_DOWNLOADING = true
         const val VIDEO_URLs = "video_urls"
         const val VIDEO_IDs = "video_ids"
         private var WorkerRequestUid: UUID = UUID.randomUUID()
@@ -59,6 +58,7 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
             WorkManager.getInstance(context).cancelWorkById(WorkerRequestUid)
             Log.i(TAG, "Cancelled Download request :: $WorkerRequestUid")
             Log.i(TAG, "----------------------------------------------------")
+            Log.i(TAG, "")
         }
 
         private fun buildWorkRequest(
@@ -114,7 +114,7 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
             return Result.success()
 
         } catch (e: Exception) {
-            Log.i(TAG, "doWork() :: Error :: ${e.message}")
+            Log.i(TAG, "DoWork() :: Error :: ${e.message}")
             return Result.failure()
         }
     }
@@ -124,67 +124,50 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
         videoUrl: String,
         videoId: String
     ) {
-        var startedTime = System.currentTimeMillis()
         Log.i(TAG, "Started Caching of :: $videoId :: $videoUrl")
-        val videoUri = Uri.parse(videoUrl)
-        val dataSpec = DataSpec(videoUri)
-
-        val mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
             .setAllowCrossProtocolRedirects(true)
 
-        val mCacheDataSource = CacheDataSource.Factory()
+        val cacheDataSource = CacheDataSource.Factory()
             .setCache(cache)
-            .setUpstreamDataSourceFactory(mHttpDataSourceFactory)
-            .createDataSource()
+            .setUpstreamDataSourceFactory(dataSourceFactory)
 
-        val progressListener = CacheWriter.ProgressListener { requestLength, bytesCached, _ ->
-            //var downloadPercentage: Double = (bytesCached * 100.0 / requestLength)
+        val downloader = HlsDownloader(mediaItem(mediaUri = videoUrl, id=videoId), cacheDataSource)
+
+        val hlsProgressListener = Downloader.ProgressListener{contentLength, bytesDownloaded, percentDownloaded ->
+            if(percentDownloaded == 100.0f) {
+                Log.i(TAG, "$videoId :: contentLength :: $contentLength")
+                Log.i(TAG, "$videoId :: bytesDownloaded :: $bytesDownloaded")
+                Log.i(TAG, "$videoId :: percentDownloaded :: $percentDownloaded")
+//                    downloader.cancel()
+            }
         }
-        runCatching {
-            CacheWriter(
-                mCacheDataSource,
-                dataSpec,
-                byteArray,
-                progressListener,
-            ).cache()
-        }.onFailure {
-            Log.i(TAG, "Download Failed :: VideoId :: $videoId :: Error is- ${it.message}")
-            Log.i(TAG, " ")
-        }.onSuccess {
-            Log.i(TAG, "Download Completed :: VideoId :: $videoId")
-            var milliseconds = System.currentTimeMillis() - startedTime
-            val seconds = (milliseconds / 1000)
-            Log.i(TAG, "Video id $videoId Downloaded in secs $seconds using byteArray of $bytes")
-            Log.i(TAG, " ")
+
+        try {
+            downloader.download(hlsProgressListener)
+        } catch (e: Exception) {
+            Log.i(TAG, "$videoId :: Error :: ${e.printStackTrace()}")
         }
     }
 
-    private val PRE_CACHE_AMOUNT = 2 * 1048576L
 
     private suspend fun oneByOneCachingExecution(videoUrl: String, videoId: String) {
-        var startedTime = System.currentTimeMillis()
-
         withContext(Dispatchers.IO) {
             Log.i(TAG, "Started Caching of :: $videoId :: $videoUrl")
-            val videoUri = Uri.parse(videoUrl)
-            val dataSpec = DataSpec(videoUri)
-
-            val mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
+            val dataSourceFactory = DefaultHttpDataSource.Factory()
                 .setAllowCrossProtocolRedirects(true)
 
-            val mCacheDataSource = CacheDataSource.Factory()
+            val cacheDataSource = CacheDataSource.Factory()
                 .setCache(cache)
-                .setUpstreamDataSourceFactory(mHttpDataSourceFactory)
-//                .createDataSource()
+                .setUpstreamDataSourceFactory(dataSourceFactory)
 
-
-            val downloader = HlsDownloader(mediaItem(mediaUri = videoUrl, id=videoId), mCacheDataSource)
+            val downloader = HlsDownloader(mediaItem(mediaUri = videoUrl, id=videoId), cacheDataSource)
 
             val hlsProgressListener = Downloader.ProgressListener{contentLength, bytesDownloaded, percentDownloaded ->
                 if(percentDownloaded == 100.0f) {
-                    Log.i(TAG, "contentLength :: $contentLength")
-                    Log.i(TAG, "bytesDownloaded :: $bytesDownloaded")
-                    Log.i(TAG, "percentDownloaded :: $percentDownloaded")
+                    Log.i(TAG, "$videoId :: contentLength :: $contentLength")
+                    Log.i(TAG, "$videoId :: bytesDownloaded :: $bytesDownloaded")
+                    Log.i(TAG, "$videoId :: percentDownloaded :: $percentDownloaded")
 //                    downloader.cancel()
                 }
             }
@@ -192,7 +175,7 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
             try {
                 downloader.download(hlsProgressListener)
             } catch (e: Exception) {
-                Log.i("", "")
+                Log.i(TAG, "$videoId :: Error :: ${e.printStackTrace()}")
             }
 
         }
