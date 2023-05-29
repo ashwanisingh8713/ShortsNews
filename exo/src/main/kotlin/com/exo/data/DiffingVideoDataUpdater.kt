@@ -1,6 +1,5 @@
 package com.exo.data
 
-import android.net.Uri
 import android.util.Log
 import com.exo.players.currentMediaItems
 import com.github.difflib.DiffUtils
@@ -11,9 +10,13 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.dash.DashMediaSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.player.models.VideoData
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
+
 
 /**
  * When new videos come in from VideoDataRepository or the UI's state has been updated without a
@@ -59,7 +62,11 @@ internal class DiffingVideoDataUpdater(
 
     private fun AbstractDelta<MediaItem>.insert(player: Player) {
         Log.i("Conv_TIME", "Diffing - insert : ${target.position}")
-        player.addMediaItems(target.position, target.lines)
+        val position = target.position
+        val mediaItems = target.lines
+        val mediaSources = mediaItems.toMediaSources()
+
+        player.addMediaItems(position, mediaItems)
     }
 
     private fun List<VideoData>.toMediaItems(): List<MediaItem> {
@@ -87,4 +94,21 @@ internal class DiffingVideoDataUpdater(
             mediaItem
         }
     }
+
+    private fun List<MediaItem>.toMediaSources(): List<MediaSource> {
+        return map { mediaItem ->
+            val defaultHttpDataSourceFactory = DefaultHttpDataSource.Factory()
+            val mediaSource = DashMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mediaItem)
+            mediaSource
+        }
+    }
+
+    /*private fun tt(dashUrl: String) {
+        val manifestUri = Uri.parse(dashUrl)
+        val dataSourceFactory = MediaSource.Factory(
+            diffingContext,
+            DefaultHttpDataSource.Factory()
+                .setUserAgent("ShortsVideo")
+        )
+    }*/
 }

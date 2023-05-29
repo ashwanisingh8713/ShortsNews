@@ -2,7 +2,9 @@ package com.videopager.vm
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import at.huber.me.YouTubeUri
+import com.google.android.exoplayer2.source.hls.offline.HlsDownloader
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.player.players.AppPlayer
 import com.videopager.R
@@ -129,6 +131,7 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun createPlayer(): Flow<ViewResult> {
+
         check(states.value.appPlayer == null) { "Tried to create a player when one already exists" }
 
         val config = AppPlayer.Factory.Config(loopVideos = true)
@@ -145,6 +148,10 @@ internal class VideoPagerViewModel(
                 } else {
                     PlayerErrorResult(it)
                 }
+            },
+            appPlayer.onTracksChanged().mapLatest {
+//                Toast.makeText(context, "Track is changed", Toast.LENGTH_SHORT).show()
+                NoOpResult
             }
         )
     }

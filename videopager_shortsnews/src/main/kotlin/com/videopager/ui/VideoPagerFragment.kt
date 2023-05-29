@@ -18,7 +18,6 @@ import com.exo.manager.DownloadTracker
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.videopager.R
-import com.videopager.data.VideoInfoData
 import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
@@ -232,26 +231,6 @@ class VideoPagerFragment(
                 VideoInfoEvent(data.id, currentItem)
             },
 
-            getYoutubeUri().map {
-                var nextYoutubeUriPage = 0
-                nextYoutubeUriPage = if (currentItem < pagerAdapter.itemCount - 1) {
-                    currentItem + 1
-                } else {
-                    currentItem
-                }
-                val data = pagerAdapter.getVideoData(nextYoutubeUriPage)
-                GetYoutubeUriEvent(data.type, nextYoutubeUriPage)
-            },
-            getYoutubeUri_2().map {
-                var nextYoutubeUriPage = 0
-                nextYoutubeUriPage = if (currentItem < pagerAdapter.itemCount - 2) {
-                    currentItem + 2
-                } else {
-                    currentItem
-                }
-                val data = pagerAdapter.getVideoData(nextYoutubeUriPage)
-                GetYoutubeUriEvent_2(data.type, nextYoutubeUriPage)
-            },
 
             videoCache().map {
                 var nextVideoCacheIndex = 0
@@ -262,6 +241,7 @@ class VideoPagerFragment(
                 }
                 val nextVideoCacheData = pagerAdapter.getVideoData(nextVideoCacheIndex)
                 sharedEventViewModel.cacheVideoData(nextVideoCacheData.mediaUri, nextVideoCacheData.id)
+
                 NoFurtherEvent
             }
 

@@ -1,11 +1,9 @@
 package com.exo.players
 
 import android.util.Log
+import android.widget.Toast
 import com.exo.data.VideoDataUpdater
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.UnrecognizedInputFormatException
 import com.player.models.PlayerState
 import com.player.models.VideoData
@@ -82,9 +80,18 @@ internal class ExoAppPlayer(
                 trySend(error)
             }
         }
-
         player.addListener(listener)
+        awaitClose { player.removeListener(listener) }
+    }
 
+    override fun onTracksChanged(): Flow<Unit> = callbackFlow {
+        val listener = object : Player.Listener {
+            override fun onTracksChanged(tracks: Tracks) {
+                super.onTracksChanged(tracks)
+                trySend(Unit)
+            }
+        }
+        player.addListener(listener)
         awaitClose { player.removeListener(listener) }
     }
 

@@ -2,6 +2,7 @@ package com.videopager.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.exoplayer2.MediaItem
 import com.player.models.VideoData
 import com.videopager.data.VideoInfoData
 import kotlinx.coroutines.delay
@@ -19,6 +20,7 @@ class VideoSharedEventViewModel:ViewModel() {
             _cacheVideoUrl.emit(Pair(uri, id))
         }
     }
+
 
     private var _userLoginStatus= MutableSharedFlow<Pair<Boolean, String>>()
     val cacheUserStatus = _userLoginStatus.asSharedFlow()
