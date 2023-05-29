@@ -1,6 +1,7 @@
 package com.videopager.models
 
 import androidx.annotation.DrawableRes
+import com.google.android.exoplayer2.MediaItem
 import com.player.models.VideoData
 import com.player.players.AppPlayer
 import com.videopager.data.*
@@ -34,3 +35,4 @@ internal object OnYoutubeUriErrorResult : ViewResult()
 internal data class AttachPlayerToViewResult(val doAttach: Boolean) : ViewResult()
 
 internal data class PlayerErrorResult(val throwable: Throwable) : ViewResult()
+internal data class MediaItemTransitionResult(val mediaItem: MediaItem) : ViewResult()

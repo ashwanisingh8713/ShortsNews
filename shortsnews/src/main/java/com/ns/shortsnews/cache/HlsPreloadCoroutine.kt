@@ -28,7 +28,7 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
 
     companion object {
         private const val TAG = "VideoPreload"
-        private var IS_PARALLEL_DOWNLOADING = true
+        private var IS_PARALLEL_DOWNLOADING = false
         const val VIDEO_URLs = "video_urls"
         const val VIDEO_IDs = "video_ids"
         private var WorkerRequestUid: UUID = UUID.randomUUID()
@@ -139,7 +139,7 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
                 Log.i(TAG, "$videoId :: contentLength :: $contentLength")
                 Log.i(TAG, "$videoId :: bytesDownloaded :: $bytesDownloaded")
                 Log.i(TAG, "$videoId :: percentDownloaded :: $percentDownloaded")
-//                    downloader.cancel()
+                    downloader.cancel()
             }
         }
 
@@ -168,7 +168,7 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
                     Log.i(TAG, "$videoId :: contentLength :: $contentLength")
                     Log.i(TAG, "$videoId :: bytesDownloaded :: $bytesDownloaded")
                     Log.i(TAG, "$videoId :: percentDownloaded :: $percentDownloaded")
-//                    downloader.cancel()
+                    downloader.cancel()
                 }
             }
 

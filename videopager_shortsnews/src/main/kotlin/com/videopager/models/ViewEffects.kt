@@ -22,3 +22,4 @@ internal data class PostCommentEffect(val data:PostCommentData, val position: In
 internal object ResetAnimationsEffect : PageEffect()
 
 internal data class PlayerErrorEffect(val throwable: Throwable) : ViewEffect()
+internal data class MediaItemTransitionEffect(val mediaItem: MediaItemTransitionResult) : ViewEffect()

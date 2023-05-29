@@ -22,6 +22,7 @@ import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
+import com.videopager.ui.view.LastPageHalfHeightTransformer
 import com.videopager.utils.CategoryConstants
 import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
@@ -68,6 +69,7 @@ class VideoPagerFragment(
         binding.viewPager.isUserInputEnabled = false
         binding.viewPager.offscreenPageLimit = 3 // Preload neighbouring page image previews
         commentFragment = CommentsFragment()
+
 
         val states = viewModel.states
             .onEach { state ->
@@ -170,6 +172,9 @@ class VideoPagerFragment(
                     }
                     is YoutubeUriErrorEffect -> {
                         Log.i("", "")
+                    }
+                    is MediaItemTransitionEffect-> {
+                        binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1)
                     }
                     else -> {}
                 }

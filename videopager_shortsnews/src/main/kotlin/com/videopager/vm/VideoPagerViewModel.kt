@@ -2,9 +2,7 @@ package com.videopager.vm
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import at.huber.me.YouTubeUri
-import com.google.android.exoplayer2.source.hls.offline.HlsDownloader
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.player.players.AppPlayer
 import com.videopager.R
@@ -149,8 +147,18 @@ internal class VideoPagerViewModel(
                     PlayerErrorResult(it)
                 }
             },
-            appPlayer.onTracksChanged().mapLatest {
-//                Toast.makeText(context, "Track is changed", Toast.LENGTH_SHORT).show()
+//            appPlayer.onTracksChanged().mapLatest {
+////                Toast.makeText(context, "Track is changed", Toast.LENGTH_SHORT).show()
+//                NoOpResult
+//            },
+//            appPlayer.onTimelineChanged().mapLatest {
+////                Toast.makeText(context, "Track is changed", Toast.LENGTH_SHORT).show()
+//                NoOpResult
+//            },
+            appPlayer.onMediaItemTransition().mapLatest {
+                MediaItemTransitionResult(it)
+            },
+            appPlayer.onPlaybackStateChanged().mapLatest {
                 NoOpResult
             }
         )
@@ -349,6 +357,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<TappedPlayerResult>().toTappedPlayerEffects(),
             filterIsInstance<OnNewPageSettledResult>().toNewPageSettledEffects(),
             filterIsInstance<PlayerErrorResult>().toPlayerErrorEffects(),
+            filterIsInstance<MediaItemTransitionResult>().toMediaItemTransitionEffects(),
 //            filterIsInstance<OnYoutubeUriErrorResult>().toYoutubeUriEffects(),
             filterIsInstance<FollowClickResult>().toFollowViewEffect(),
             filterIsInstance<LikeClickResult>().toLikeViewEffect(),
@@ -437,6 +446,11 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<PlayerErrorResult>.toPlayerErrorEffects(): Flow<ViewEffect> {
         return mapLatest { result -> PlayerErrorEffect(result.throwable) }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<MediaItemTransitionResult>.toMediaItemTransitionEffects(): Flow<ViewEffect> {
+        return mapLatest { result -> MediaItemTransitionEffect(result) }
     }
 
 

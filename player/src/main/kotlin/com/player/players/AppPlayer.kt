@@ -1,6 +1,7 @@
 package com.player.players
 
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.player.models.PlayerState
 import com.player.models.VideoData
@@ -14,12 +15,18 @@ interface AppPlayer {
 
     suspend fun setUpWith(videoData: List<VideoData>, playerState: PlayerState?)
     fun onPlayerRendering(): Flow<Unit>
-    fun onTracksChanged(): Flow<Unit>
     fun errors(): Flow<Throwable>
     fun playMediaAt(position: Int)
     fun play()
     fun pause()
     fun release()
+
+    fun onTracksChanged(): Flow<Unit>
+    fun onTimelineChanged(): Flow<Unit>
+    fun onMediaItemTransition(): Flow<MediaItem>
+    fun onPlaybackStateChanged(): Flow<Unit>
+
+
 
     interface Factory {
         fun create(config: Config, playerView: StyledPlayerView): AppPlayer

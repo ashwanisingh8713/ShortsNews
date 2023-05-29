@@ -95,6 +95,44 @@ internal class ExoAppPlayer(
         awaitClose { player.removeListener(listener) }
     }
 
+    override fun onTimelineChanged(): Flow<Unit>  = callbackFlow {
+        /*val listener = object : Player.Listener {
+            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+                super.onTimelineChanged(timeline, reason)
+                trySend(Unit)
+            }
+        }
+        player.addListener(listener)
+        awaitClose { player.removeListener(listener) }*/
+    }
+
+    override fun onMediaItemTransition(): Flow<MediaItem> = callbackFlow {
+        val listener = object : Player.Listener {
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                super.onMediaItemTransition(mediaItem, reason)
+                if (mediaItem != null) {
+                    //trySend(mediaItem)
+                }
+            }
+        }
+        player.addListener(listener)
+        awaitClose { player.removeListener(listener) }
+
+    }
+
+    override fun onPlaybackStateChanged(): Flow<Unit> = callbackFlow {
+        val listener = object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
+                if (playbackState == Player.STATE_ENDED) {
+                    trySend(Unit)
+                }
+            }
+        }
+        player.addListener(listener)
+        awaitClose { player.removeListener(listener) }
+    }
+
 
     private fun Player.toPlayerState(): PlayerState {
         return PlayerState(
