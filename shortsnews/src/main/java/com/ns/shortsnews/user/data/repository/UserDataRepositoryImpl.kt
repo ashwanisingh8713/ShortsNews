@@ -3,6 +3,9 @@ package com.ns.shortsnews.user.data.repository
 import com.ns.shortsnews.user.data.source.UserApiService
 import com.ns.shortsnews.user.domain.models.*
 import com.ns.shortsnews.user.domain.repository.UserDataRepository
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.http.Part
 
 class UserDataRepositoryImpl constructor(private val apiService: UserApiService): UserDataRepository {
     override suspend fun getUserRegistration(data:Map<String, String>): RegistrationResult {
@@ -33,6 +36,7 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
         return apiService.getBookmarksData()
     }
 
-
-
+    override suspend fun getUpdateProfileData(data:RequestBody): StatusResult {
+        return  apiService.getUpdateProfile(data)
+    }
 }

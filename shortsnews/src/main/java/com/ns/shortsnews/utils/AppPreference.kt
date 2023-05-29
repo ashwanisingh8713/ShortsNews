@@ -20,6 +20,7 @@ object AppPreference {
     private const val USER_TOKEN = "user_token"
     private const val USER_PROFILE_IMAGE = "user_profile_image"
     private const val EMPTY_STRING = ""
+    private const val IS_PROFILE_UPDATED = "is_profile_updated"
 
     fun init(context: Context) {
         preference = PreferenceManager.getDefaultSharedPreferences(context)
@@ -36,6 +37,13 @@ object AppPreference {
             this.putBoolean(IS_USER_LOGGED_IN, value)
             this.apply()
         }
+    //User Update profile status
+    var isProfileUpdated:Boolean
+    get() = preference.getBoolean(IS_PROFILE_UPDATED, false)
+    set(value) = preference.edit {
+        this.putBoolean(IS_PROFILE_UPDATED, value)
+        this.apply()
+    }
 
     //Function for getting and setting profile image
     var userProfilePic: String?

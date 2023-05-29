@@ -11,7 +11,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ProfileResult(
     val data: ProfileData,
-    val status:Boolean
+    val status:Boolean,
 )
 
 @JsonClass(generateAdapter = true)
@@ -138,4 +138,10 @@ data class LikeUnlikeData(
     val liked:Boolean,
     val like_count:String
 
+)
+
+@JsonClass(generateAdapter = true)
+data class StatusResult(
+    val status: Boolean,
+    val msg: String = ""
 )

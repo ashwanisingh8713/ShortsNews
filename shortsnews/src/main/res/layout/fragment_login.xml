@@ -38,7 +38,9 @@
         android:layout_height="wrap_content"
         android:src="@drawable/login_icon"
         app:layout_constraintStart_toStartOf="@id/card_login_image"
+        app:layout_constraintEnd_toEndOf="@id/card_login_image"
         android:layout_marginStart="10dp"
+        android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="@id/card_login_image"
         app:layout_constraintBottom_toBottomOf="@id/card_login_image"
         android:padding="8dp"
@@ -46,7 +48,7 @@
 
     <TextView
         android:id="@+id/title_txt"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/title_otp"
         android:textColor="@color/text_color_gray"
@@ -55,6 +57,7 @@
         android:textSize="@dimen/video_page_text_size_xxxlarge"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
+        app:layout_constraintEnd_toEndOf="@id/card_login_image"
         app:layout_constraintStart_toStartOf="@id/app_logo_login"
         app:layout_constraintTop_toBottomOf="@id/app_logo_login"
         android:layout_marginEnd="10dp"
