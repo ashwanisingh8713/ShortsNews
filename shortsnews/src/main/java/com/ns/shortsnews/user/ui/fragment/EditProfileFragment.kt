@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -14,14 +15,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentEditProfileBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.user.domain.models.ProfileData
 import com.ns.shortsnews.user.domain.usecase.updateuser.UpdateUserUseCase
 import com.ns.shortsnews.user.ui.viewmodel.UpdateProfileViewModel
 import com.ns.shortsnews.user.ui.viewmodel.UpdateProfileViewModelFactory
@@ -47,17 +51,28 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     companion object {
         const val cameraPermission = Manifest.permission.CAMERA
-        const val manageExternalStoragePermission = Manifest.permission.MANAGE_EXTERNAL_STORAGE
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentEditProfileBinding.bind(view)
+        val userData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("profile", ProfileData::class.java)
+        } else {
+            arguments?.getParcelable("profile")
+        }
+        if (userData != null){
+            binding.profileImageView.load(userData.image)
+            binding.nameEditText.setText(userData.name)
+            binding.ageEditText.setText(userData.age)
+            binding.locationEditText.setText(userData.location)
+        }
+
         binding.backButton.setOnClickListener {
             if (!isProfileEdited) {
                 activity?.finish()
             } else {
-                val userData = mutableMapOf<Any, Any?>()
                 if (mPhotoBitmap == null) {
                     showUpdateProfileDialog(
                             "Updating",

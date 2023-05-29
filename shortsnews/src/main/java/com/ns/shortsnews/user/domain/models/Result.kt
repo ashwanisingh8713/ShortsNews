@@ -1,7 +1,9 @@
 package com.ns.shortsnews.user.domain.models
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 
 /**
  * Created by Ashwani Kumar Singh on 21,April,2023.
@@ -15,6 +17,7 @@ data class ProfileResult(
 )
 
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class ProfileData(
     val user_id:String,
     val email:String,
@@ -23,8 +26,7 @@ data class ProfileData(
     val image:String,
     val age:String,
     val location:String
-
-)
+): Parcelable
 @JsonClass(generateAdapter = true)
 data class OTPResult(
     @Json(name = "data")

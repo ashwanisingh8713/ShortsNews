@@ -13,6 +13,8 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.NewProfilePagerAdapter
 import com.ns.shortsnews.databinding.FragmentNewProfileBinding
 import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.user.domain.models.ProfileData
+import com.ns.shortsnews.user.domain.models.ProfileResult
 import com.ns.shortsnews.user.domain.usecase.user.UserProfileDataUseCase
 import com.ns.shortsnews.user.ui.activity.ContainerActivity
 import com.ns.shortsnews.user.ui.viewmodel.UserProfileViewModel
@@ -30,6 +32,7 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
         inject(UserProfileDataUseCase(UserDataRepositoryImpl(get())))
     } }
     private lateinit var adapter:NewProfilePagerAdapter
+    private lateinit var profileData:ProfileData
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,6 +54,7 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
         binding.setting.setOnClickListener {
             val intent = Intent(requireActivity(), ContainerActivity::class.java)
             intent.putExtra("to","edit_profile")
+            intent.putExtra("profile_data",profileData )
             startActivity(intent)
         }
 
@@ -70,6 +74,8 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
                     binding.progressBarProfile.visibility = View.GONE
                     binding.profileImageView.load(it.data.image)
                     binding.userNameTxt.text = it.data.name
+                    profileData = it.data
+                    saveUserInformation(it.data)
                 }
             }
         }
@@ -89,5 +95,12 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
             userProfileViewModel.requestProfileApi()
             AppPreference.isProfileUpdated = false
         }
+    }
+
+    private fun saveUserInformation(profileData: ProfileData){
+        AppPreference.userLocation = profileData.location
+        AppPreference.userAge = profileData.age
+        AppPreference.userName = profileData.name
+        AppPreference.userProfilePic = profileData.image
     }
 }

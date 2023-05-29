@@ -14,19 +14,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:paddingBottom="10dp"
         >
 
-        <ImageView
-            android:id="@+id/channel_logo"
-            android:layout_width="match_parent"
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/channel_logo_card"
+            android:layout_width="80dp"
             android:layout_height="80dp"
+            app:cardCornerRadius="100dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/white"
+            app:strokeWidth="4dp"
             android:layout_marginEnd="@dimen/margin_end"
             android:layout_marginStart="@dimen/margin_start"
-            android:layout_marginTop="@dimen/margin_start"
-            android:src="@drawable/channel_place_holder_icon"/>
+            android:layout_marginTop="@dimen/margin_start">
+
+            <ImageView
+                android:id="@+id/channel_logo"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/channel_place_holder_icon"/>
+
+        </androidx.cardview.widget.CardView>
+
+
 
 <!--       <com.google.android.material.card.MaterialCardView-->
 <!--            android:id="@+id/card_view_for_pin_down"-->
@@ -55,7 +70,7 @@
             android:id="@+id/const_profile_follow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/channel_logo"
+            app:layout_constraintTop_toBottomOf="@id/channel_logo_card"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="20dp"
@@ -154,7 +169,6 @@
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         android:orientation="vertical"
         android:visibility="visible"
-        android:layout_marginTop="@dimen/margin_start"
         app:spanCount="3"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

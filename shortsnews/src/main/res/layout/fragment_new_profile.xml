@@ -65,7 +65,7 @@
                 android:id="@+id/profile_image_view"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:scaleType="centerInside"
+                android:scaleType="centerCrop"
                 android:src="@drawable/big_profile_place_holder" />
         </androidx.cardview.widget.CardView>
 
