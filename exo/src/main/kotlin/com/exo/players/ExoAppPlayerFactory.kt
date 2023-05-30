@@ -9,6 +9,7 @@ import com.google.android.exoplayer2.MediaItem.AdsConfiguration
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManagerProvider
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.ext.ima.ImaServerSideAdInsertionMediaSource
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ads.AdsLoader
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
@@ -109,6 +110,13 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
 
         serverSideAdsLoader = serverSideAdLoaderBuilder.build()
 
+        val imaServerSideAdInsertionMediaSourceFactory =
+            ImaServerSideAdInsertionMediaSource.Factory(
+                serverSideAdsLoader!!,
+                DefaultMediaSourceFactory(appContext)
+                    .setDataSourceFactory(cacheDataSourceFactory)
+            )
+
         val drmSessionManagerProvider = DefaultDrmSessionManagerProvider()
         drmSessionManagerProvider.setDrmHttpDataSourceFactory(null)
 
@@ -121,7 +129,6 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
                 )
             }, playerView)
             .setServerSideAdInsertionMediaSourceFactory(imaServerSideAdInsertionMediaSourceFactory)*/
-
 
         return HlsMediaSource.Factory(cacheDataSourceFactory)
 

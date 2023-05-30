@@ -18,6 +18,7 @@ import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -93,7 +94,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 Log.i("kamlesh","OTPFragment onSuccess ::: $it")
                 it.let {
                     saveUserPreference(it)
-                    binding.progressBarOtp.visibility = View.GONE
+                    delay(500)
                     val bundle = Bundle()
                     bundle.putString("name", /*it.name*/"kamlesh")
                     userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY,bundle )
