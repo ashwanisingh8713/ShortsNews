@@ -8,7 +8,7 @@ import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.ns.shortsnews.user.domain.models.ProfileData
+import com.ns.shortsnews.domain.models.ProfileData
 
 class Alert {
 

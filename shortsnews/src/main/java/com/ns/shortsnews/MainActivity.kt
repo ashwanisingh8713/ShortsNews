@@ -21,14 +21,14 @@ import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.cache.HlsPreloadCoroutine
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityMainBinding
-import com.ns.shortsnews.user.data.repository.UserDataRepositoryImpl
-import com.ns.shortsnews.user.data.repository.VideoCategoryRepositoryImp
-import com.ns.shortsnews.user.domain.usecase.videodata.VideoDataUseCase
-import com.ns.shortsnews.user.domain.usecase.video_category.VideoCategoryUseCase
-import com.ns.shortsnews.user.ui.viewmodel.BookmarksViewModelFactory
-import com.ns.shortsnews.user.ui.viewmodel.UserBookmarksViewModel
-import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModel
-import com.ns.shortsnews.user.ui.viewmodel.VideoCategoryViewModelFactory
+import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
+import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
+import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
+import com.ns.shortsnews.ui.viewmodel.BookmarksViewModelFactory
+import com.ns.shortsnews.ui.viewmodel.UserBookmarksViewModel
+import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModel
+import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
@@ -272,10 +272,25 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
+    private fun bottomSheetHeaderViewsShowHide(show: Boolean) {
+        val showHide = if(show) View.VISIBLE else View.GONE
+        binding.persistentBottomsheet.following.visibility = showHide
+        binding.persistentBottomsheet.clientImage.visibility = showHide
+        binding.persistentBottomsheet.cardViewClientImage.visibility = showHide
+        binding.persistentBottomsheet.progressBar.visibility = showHide
+        binding.persistentBottomsheet.imgDownArrow.visibility = showHide
+    }
+
     // Bottom Sheet Video Get Info Listen & Update
     private fun bottomSheetGetInfoListener() {
+
+        // On App launch, BottomSheet Header should be in gone state
+        bottomSheetHeaderViewsShowHide(false)
+
         lifecycleScope.launch {
             sharedEventViewModel.videoInfo.filterNotNull().collectLatest {
+
+                bottomSheetHeaderViewsShowHide(true)
 
                 if (it.following) {
                     binding.persistentBottomsheet.following.text = "Following"

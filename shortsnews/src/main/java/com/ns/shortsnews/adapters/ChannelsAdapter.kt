@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.ns.shortsnews.databinding.ItemFollowingBinding
-import com.ns.shortsnews.user.domain.models.ChannelListData
+import com.ns.shortsnews.domain.models.ChannelListData
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import kotlinx.coroutines.flow.MutableSharedFlow

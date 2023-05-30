@@ -13,7 +13,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityPlainVideoBinding
-import com.ns.shortsnews.user.data.model.VideoClikedItem
+import com.ns.shortsnews.data.model.VideoClikedItem
 import com.ns.shortsnews.utils.AppConstants
 import com.videopager.utils.CategoryConstants
 import com.videopager.vm.VideoSharedEventViewModel

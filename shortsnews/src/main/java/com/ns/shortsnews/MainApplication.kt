@@ -8,8 +8,8 @@ import coil.decode.VideoFrameDecoder
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
-import com.ns.shortsnews.user.data.di.AppModule
-import com.ns.shortsnews.user.data.di.NetworkModule
+import com.ns.shortsnews.data.di.AppModule
+import com.ns.shortsnews.data.di.NetworkModule
 import com.ns.shortsnews.utils.AppPreference
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger

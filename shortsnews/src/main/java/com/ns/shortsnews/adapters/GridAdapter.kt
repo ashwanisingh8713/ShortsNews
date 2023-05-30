@@ -6,8 +6,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.ns.shortsnews.databinding.ItemGridViewBinding
-import com.ns.shortsnews.user.data.model.VideoClikedItem
-import com.ns.shortsnews.user.domain.models.Data
+import com.ns.shortsnews.data.model.VideoClikedItem
+import com.ns.shortsnews.domain.models.Data
 import com.videopager.R
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

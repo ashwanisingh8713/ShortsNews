@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.ItemCategoryBinding
 import com.ns.shortsnews.onProfileItemClick
-import com.ns.shortsnews.user.domain.models.VideoCategory
+import com.ns.shortsnews.domain.models.VideoCategory
 
 
 class CategoryAdapter(private var itemList: List<VideoCategory> = emptyList(), private val itemListener:onProfileItemClick): RecyclerView.Adapter<CategoryAdapter.MyViewHolder>() {

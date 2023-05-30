@@ -1,7 +1,7 @@
 package com.ns.shortsnews.video.data
 
-import com.ns.shortsnews.user.domain.models.LikeUnlike
-import com.ns.shortsnews.user.domain.models.VideoDataResponse
+import com.ns.shortsnews.domain.models.LikeUnlike
+import com.ns.shortsnews.domain.models.VideoDataResponse
 import com.videopager.data.*
 import retrofit2.http.*
 
