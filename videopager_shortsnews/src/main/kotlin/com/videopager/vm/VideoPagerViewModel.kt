@@ -86,6 +86,7 @@ internal class VideoPagerViewModel(
         return flatMapLatest { event ->
             repository.videoData(event.categoryId, context!!, event.videoFrom)
         }.map { videoData ->
+                delay(5000)
                 val appPlayer = states.value.appPlayer
                 // If the player exists, it should be updated with the latest video data that came in
                 appPlayer?.setUpWith(videoData, handle.get())

@@ -3,7 +3,7 @@ package com.ns.shortsnews.video.data
 import android.content.Context
 import android.util.Log
 import at.huber.me.YouTubeUri
-import com.ns.shortsnews.cache.HlsPreloadCoroutine
+import com.ns.shortsnews.cache.HlsBulkPreloadCoroutine
 import com.ns.shortsnews.video.data.VideoDataNetService.videoDataApiService
 import com.player.models.VideoData
 import com.videopager.data.*
@@ -76,7 +76,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                 }
 
             // Preload Video urls
-            HlsPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
+            HlsBulkPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
 
             Log.i("Conv_TIME", "VideoDataRepositoryImpl")
 

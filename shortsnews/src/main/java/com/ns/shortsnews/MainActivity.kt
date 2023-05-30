@@ -18,7 +18,7 @@ import coil.request.ImageRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.adapters.GridAdapter
-import com.ns.shortsnews.cache.HlsPreloadCoroutine
+import com.ns.shortsnews.cache.HlsOneByOnePreloadCoroutine
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
@@ -207,7 +207,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 var videoUrls = Array(1) { url }
                 var videoIds = Array(1) { id }
 //                VideoPreloadCoroutine.schedulePreloadWork(videoUrls = videoUrls, ids = videoIds)
-                HlsPreloadCoroutine.schedulePreloadWork(videoUrls = videoUrls, ids = videoIds)
+                HlsOneByOnePreloadCoroutine.schedulePreloadWork(videoUrls = videoUrls, ids = videoIds)
             }
         }
 
