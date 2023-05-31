@@ -9,6 +9,7 @@ import com.google.android.exoplayer2.offline.Downloader
 import com.google.android.exoplayer2.source.hls.offline.HlsDownloader
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheWriter
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.ns.shortsnews.MainApplication
 import kotlinx.coroutines.*

@@ -12,3 +12,9 @@ internal suspend fun <T, VH : RecyclerView.ViewHolder> ListAdapter<T, VH>.awaitL
         cont.resume(Unit)
     }
 }
+
+internal suspend fun <T, VH : RecyclerView.ViewHolder> ListAdapter<T, VH>.addMoreVideoData(list: List<T>?) = suspendCoroutine<Unit> {
+    if (list != null) {
+        currentList.addAll(list)
+    }
+}

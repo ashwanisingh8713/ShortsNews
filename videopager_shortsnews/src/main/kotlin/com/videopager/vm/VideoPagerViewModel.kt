@@ -2,8 +2,10 @@ package com.videopager.vm
 
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.viewModelScope
 import at.huber.me.YouTubeUri
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.player.models.VideoData
 import com.player.players.AppPlayer
 import com.videopager.R
 import com.videopager.data.VideoDataRepository
@@ -45,6 +47,20 @@ internal class VideoPagerViewModel(
     private val categoryId: String, private val videoFrom: String
 ) : MviViewModel<ViewEvent, ViewResult, ViewState, ViewEffect>(initialState) {
 
+    companion object {
+        private var page = 1
+        private var perPage = 50
+    }
+
+    private var _videoProgressBarEvent= MutableSharedFlow<Int>()
+    val videoProgressBar = _videoProgressBarEvent.asSharedFlow()
+
+    fun videoProgressBarEvent(playBackState: Int) {
+        viewModelScope.launch {
+            delay(1000)
+            _videoProgressBarEvent.emit(playBackState)
+        }
+    }
 
 
     var context: Context? = null
@@ -57,8 +73,15 @@ internal class VideoPagerViewModel(
         this.playerView = playerView
     }
 
-    override fun onStart() {
-        processEvent(LoadVideoDataEvent(categoryId, videoFrom))
+    public override fun onStart() {
+        processEvent(
+            LoadVideoDataEvent(
+                categoryId = categoryId,
+                videoFrom = videoFrom,
+                page = page,
+                perPage = perPage
+            )
+        )
     }
 
     override fun Flow<ViewEvent>.toResults(): Flow<ViewResult> {
@@ -84,9 +107,15 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(): Flow<ViewResult> {
         return flatMapLatest { event ->
-            repository.videoData(event.categoryId, context!!, event.videoFrom)
+            repository.videoData(
+                requiredId = event.categoryId,
+                context = context!!,
+                videoFrom = event.videoFrom,
+                page = page,
+                perPage = perPage
+            )
         }.map { videoData ->
-                delay(5000)
+//                delay(5000)
                 val appPlayer = states.value.appPlayer
                 // If the player exists, it should be updated with the latest video data that came in
                 appPlayer?.setUpWith(videoData, handle.get())
@@ -112,8 +141,8 @@ internal class VideoPagerViewModel(
             // Don't need to create a player when one already exists. This can happen
             // after a configuration change
             states.value.appPlayer != null && event is PlayerLifecycleEvent.Start
-                // Don't tear down the player across configuration changes
-                || event is PlayerLifecycleEvent.Stop && event.isChangingConfigurations
+                    // Don't tear down the player across configuration changes
+                    || event is PlayerLifecycleEvent.Stop && event.isChangingConfigurations
         }.flatMapLatest { event ->
             when (event) {
                 is PlayerLifecycleEvent.Start -> createPlayer()
@@ -142,7 +171,7 @@ internal class VideoPagerViewModel(
             flowOf(CreatePlayerResult(appPlayer)),
             appPlayer.onPlayerRendering().map { OnPlayerRenderingResult },
             appPlayer.errors().mapLatest {
-                if(it.message == "Source error") {
+                if (it.message == "Source error") {
                     OnYoutubeUriErrorResult
                 } else {
                     PlayerErrorResult(it)
@@ -160,12 +189,13 @@ internal class VideoPagerViewModel(
                 MediaItemTransitionResult(it)
             },
             appPlayer.onPlaybackStateChanged().mapLatest {
+                videoProgressBarEvent(it)
                 NoOpResult
             }
         )
     }
 
-     private fun tearDownPlayer(): Flow<ViewResult> {
+    private fun tearDownPlayer(): Flow<ViewResult> {
         val appPlayer = requireNotNull(states.value.appPlayer)
         // Keep track of player state so that it can be restored across player recreations.
         handle.set(appPlayer.currentPlayerState)
@@ -202,18 +232,19 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<FollowClickEvent>.toFollowClickResults(): Flow<ViewResult> {
-        return flatMapLatest{ event ->
+        return flatMapLatest { event ->
             repository.follow(event.channelId, event.position)
         }.mapLatest { followResponse ->
-            states.value.videoData?.get(followResponse.second)?.following  = followResponse.first.data.following
+            states.value.videoData?.get(followResponse.second)?.following =
+                followResponse.first.data.following
             FollowClickResult(followResponse.second, following = followResponse.first)
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<CommentClickEvent>.toCommentClickResults(): Flow<ViewResult> {
-        return flatMapLatest{ event ->
-            states.value.videoData?.get(0)?.comment_count  = "200k"
+        return flatMapLatest { event ->
+            states.value.videoData?.get(0)?.comment_count = "200k"
             repository.comment(event.videoId, event.position)
         }.mapLatest { commentResponse ->
             Triple(commentResponse.first, commentResponse.second, commentResponse.third)
@@ -224,22 +255,23 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LikeClickEvent>.toLikeClickResults(): Flow<ViewResult> {
-        return flatMapLatest{ event ->
-           repository.like(event.videoId, event.position)
+        return flatMapLatest { event ->
+            repository.like(event.videoId, event.position)
         }.mapLatest { triple ->
-            states.value.videoData?.get(triple.third)?.like_count  = triple.first
-            states.value.videoData?.get(triple.third)?.liking  = triple.second
+            states.value.videoData?.get(triple.third)?.like_count = triple.first
+            states.value.videoData?.get(triple.third)?.liking = triple.second
             triple.third
         }.map {
             LikeClickResult(it)
         }
     }
+
     private fun Flow<BookmarkClickEvent>.toSaveClickResult(): Flow<ViewResult> {
         return flatMapLatest { event ->
             repository.save(event.videoId, event.position)
         }.mapLatest { triple ->
             states.value.videoData?.get(triple.third)?.saveCount = triple.first
-            states.value.videoData?.get(triple.third)?.saved  = triple.second
+            states.value.videoData?.get(triple.third)?.saved = triple.second
             triple.third
         }.map {
             BookmarkClickResult(it)
@@ -247,17 +279,15 @@ internal class VideoPagerViewModel(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<PostClickCommentEvent>.toPostCommentResults():Flow<PostCommentResult>{
+    private fun Flow<PostClickCommentEvent>.toPostCommentResults(): Flow<PostCommentResult> {
         return flatMapLatest { event ->
-               repository.getPostComment(event.videoId, event.comment, event.position)
+            repository.getPostComment(event.videoId, event.comment, event.position)
         }.mapLatest {
             Pair(it.first, it.second)
         }.map {
             PostCommentResult(it.first.data, it.second)
         }
     }
-
-
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -278,8 +308,9 @@ internal class VideoPagerViewModel(
             NoOpResult
         }
     }
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<VideoInfoEvent>.toVideoInfoResults():Flow<GetVideoInfoResult>{
+    private fun Flow<VideoInfoEvent>.toVideoInfoResults(): Flow<GetVideoInfoResult> {
         return flatMapLatest { event ->
             repository.getVideoInfo(event.videoId, event.position)
         }.mapLatest {
@@ -289,7 +320,7 @@ internal class VideoPagerViewModel(
         }
     }
 
-    private fun Flow<GetYoutubeUriEvent>.toYoutubeUriResults():Flow<GetYoutubeUriResult>{
+    private fun Flow<GetYoutubeUriEvent>.toYoutubeUriResults(): Flow<GetYoutubeUriResult> {
         return mapLatest { event ->
             getYoutubeUri(event.position)
         }.map {
@@ -297,7 +328,7 @@ internal class VideoPagerViewModel(
         }
     }
 
-    private fun Flow<GetYoutubeUriEvent_2>.toYoutubeUriResults_2():Flow<GetYoutubeUriResult_2>{
+    private fun Flow<GetYoutubeUriEvent_2>.toYoutubeUriResults_2(): Flow<GetYoutubeUriResult_2> {
         return mapLatest { event ->
             getYoutubeUri(event.position)
         }.map {
@@ -306,8 +337,8 @@ internal class VideoPagerViewModel(
     }
 
 
-
-    private suspend fun getYoutubeUri(index: Int): Pair<String, String> = withContext(Dispatchers.IO) {
+    private suspend fun getYoutubeUri(index: Int): Pair<String, String> =
+        withContext(Dispatchers.IO) {
             var uri = ""
             var videoId = ""
             var requestedIndex = index
@@ -328,7 +359,7 @@ internal class VideoPagerViewModel(
             return@withContext Pair(uri, videoId)
 
 
-    }
+        }
 
     @OptIn(DelicateCoroutinesApi::class)
     fun setUpWithPlayer() {
@@ -342,7 +373,9 @@ internal class VideoPagerViewModel(
     override fun ViewResult.reduce(state: ViewState): ViewState {
         // MVI reducer boilerplate
         return when (this) {
-            is LoadVideoDataResult -> state.copy(videoData = videoData, page = currentMediaItemIndex)
+            is LoadVideoDataResult -> {
+                state.copy(videoData = videoData, page = currentMediaItemIndex)
+            }
             is CreatePlayerResult -> state.copy(appPlayer = appPlayer)
             is TearDownPlayerResult -> state.copy(appPlayer = null)
             is OnNewPageSettledResult -> state.copy(page = page, showPlayer = false)
@@ -369,13 +402,13 @@ internal class VideoPagerViewModel(
             filterIsInstance<GetYoutubeUriResult_2>().toGetYoutubeUriEffect_2(),
             filterIsInstance<BookmarkClickResult>().toSaveViewEffect(),
 
-        )
+            )
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<TappedPlayerResult>.toTappedPlayerEffects(): Flow<ViewEffect> {
-        return mapLatest {
-                result -> AnimationEffect(result.drawable)
+        return mapLatest { result ->
+            AnimationEffect(result.drawable)
         }
     }
 
@@ -383,6 +416,7 @@ internal class VideoPagerViewModel(
     private fun Flow<OnNewPageSettledResult>.toNewPageSettledEffects(): Flow<ViewEffect> {
         return mapLatest { ResetAnimationsEffect }
     }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LikeClickResult>.toLikeViewEffect(): Flow<ViewEffect> {
         return mapLatest { result -> LikeEffect(result.position) }
@@ -395,31 +429,38 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<FollowClickResult>.toFollowViewEffect(): Flow<ViewEffect> {
-        return mapLatest { result-> FollowEffect(result.position, result.following) }
+        return mapLatest { result -> FollowEffect(result.position, result.following) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<CommentClickResult>.toCommentViewEffect(): Flow<ViewEffect> {
-        return mapLatest { result ->  CommentEffect(result.videoId, result.comments.data, result.position) }
+        return mapLatest { result ->
+            CommentEffect(
+                result.videoId,
+                result.comments.data,
+                result.position
+            )
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<PostCommentResult>.toPostCommentEffect(): Flow<ViewEffect>{
+    private fun Flow<PostCommentResult>.toPostCommentEffect(): Flow<ViewEffect> {
         return mapLatest { result ->
-            states.value.videoData?.get(states.value.page)?.comment_count = result.response.comment_count
+            states.value.videoData?.get(states.value.page)?.comment_count =
+                result.response.comment_count
             PostCommentEffect(result.response, result.position)
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<GetYoutubeUriResult>.toGetYoutubeUriEffect(): Flow<GetYoutubeUriEffect>{
+    private fun Flow<GetYoutubeUriResult>.toGetYoutubeUriEffect(): Flow<GetYoutubeUriEffect> {
         return mapLatest {
             GetYoutubeUriEffect(it.uri, it.id)
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<GetYoutubeUriResult_2>.toGetYoutubeUriEffect_2(): Flow<GetYoutubeUriEffect>{
+    private fun Flow<GetYoutubeUriResult_2>.toGetYoutubeUriEffect_2(): Flow<GetYoutubeUriEffect> {
         return mapLatest {
             GetYoutubeUriEffect(it.uri, it.id)
         }
@@ -428,7 +469,7 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<GetVideoInfoResult>.toGetVideoInfoEffect(): Flow<ViewEffect> {
         return mapLatest { result ->
-           Log.i("kamlesh","Video info data $result")
+            Log.i("kamlesh", "Video info data $result")
             states.value.videoData?.get(result.position)?.apply {
                 this.comment_count = result.response.comment_count
                 this.like_count = result.response.like_count
@@ -453,11 +494,6 @@ internal class VideoPagerViewModel(
     private fun Flow<MediaItemTransitionResult>.toMediaItemTransitionEffects(): Flow<ViewEffect> {
         return mapLatest { result -> MediaItemTransitionEffect(result) }
     }
-
-
-
-
-
 
 
 }

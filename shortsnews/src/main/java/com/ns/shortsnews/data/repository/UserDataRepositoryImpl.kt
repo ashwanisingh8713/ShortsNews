@@ -2,11 +2,8 @@ package com.ns.shortsnews.data.repository
 
 import com.ns.shortsnews.domain.models.*
 import com.ns.shortsnews.data.source.UserApiService
-import com.ns.shortsnews.user.domain.models.*
 import com.ns.shortsnews.domain.repository.UserDataRepository
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Part
 
 class UserDataRepositoryImpl constructor(private val apiService: UserApiService):
     UserDataRepository {

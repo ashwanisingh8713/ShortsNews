@@ -24,7 +24,7 @@ interface AppPlayer {
     fun onTracksChanged(): Flow<Unit>
     fun onTimelineChanged(): Flow<Unit>
     fun onMediaItemTransition(): Flow<MediaItem>
-    fun onPlaybackStateChanged(): Flow<Unit>
+    fun onPlaybackStateChanged(): Flow<Int>
 
 
 
