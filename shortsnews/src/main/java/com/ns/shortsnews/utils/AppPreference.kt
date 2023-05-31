@@ -21,6 +21,8 @@ object AppPreference {
     private const val USER_PROFILE_IMAGE = "user_profile_image"
     private const val EMPTY_STRING = ""
     private const val IS_PROFILE_UPDATED = "is_profile_updated"
+    private const val LANGUAGES_SELECTED = "language_selected"
+    private const val IS_LANGUAGE_SELECTED = "is_language_selected"
 
     fun init(context: Context) {
         preference = PreferenceManager.getDefaultSharedPreferences(context)
@@ -91,6 +93,21 @@ object AppPreference {
             this.putString(USER_LOCATION, value)
             this.apply()
         }
+
+    //Function for getting and setting user language selected by user
+    var selectedLanguages:String?
+    get() = preference.getString(LANGUAGES_SELECTED, EMPTY_STRING)
+    set(value) = preference.edit{
+        this.putString(LANGUAGES_SELECTED, value)
+        this.apply()
+    }
+
+    var isLanguageSelected:Boolean
+    get() = preference.getBoolean(IS_LANGUAGE_SELECTED, false)
+    set(value) = preference.edit {
+        this.putBoolean(IS_LANGUAGE_SELECTED, value)
+        this.apply()
+    }
 
 
     // Clear preference on logout

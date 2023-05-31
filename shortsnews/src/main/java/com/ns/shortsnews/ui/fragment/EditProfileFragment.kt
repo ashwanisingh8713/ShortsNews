@@ -27,6 +27,7 @@ import com.ns.shortsnews.databinding.FragmentEditProfileBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.domain.models.ProfileData
 import com.ns.shortsnews.domain.usecase.updateuser.UpdateUserUseCase
+import com.ns.shortsnews.ui.activity.ContainerActivity
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModel
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModelFactory
 import com.ns.shortsnews.utils.Alert
@@ -95,6 +96,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         binding.profileImageEditIcon.setOnClickListener {
             openBottomDialog()
+        }
+        binding.constInterested.setOnClickListener{
+            val intent = Intent(requireActivity(), ContainerActivity::class.java)
+            intent.putExtra("to","interests")
+            requireActivity().startActivity(intent)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

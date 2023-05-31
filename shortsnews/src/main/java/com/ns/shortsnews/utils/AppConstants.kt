@@ -17,7 +17,8 @@ class AppConstants {
         // Toast constants
 
         const val  NO_CHANNEL_DATA = "No channel data found"
-        const val  FILL_REQUIRED_FIELD = "Please fill all required field"
+        const val  FILL_NAME_REQUIRED_FIELD = "Please fill name field"
+        const val  FILL_EMAIL_REQUIRED_FIELD = "Please fill email field"
         const val  FILL_VALID_EMAIL = "Please enter valid Email id"
         const val  FILL_OTP = "Please enter OTP"
         const val  FILL_VALID_OTP = "Please enter valid OTP"

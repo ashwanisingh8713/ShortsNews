@@ -39,12 +39,12 @@
         android:src="@drawable/login_icon"
         app:layout_constraintStart_toStartOf="@id/card_login_image"
         app:layout_constraintEnd_toEndOf="@id/card_login_image"
-        android:layout_marginStart="10dp"
-        android:scaleType="centerCrop"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:scaleType="centerInside"
         app:layout_constraintTop_toTopOf="@id/card_login_image"
         app:layout_constraintBottom_toBottomOf="@id/card_login_image"
-        android:padding="8dp"
-        android:layout_marginEnd="10dp"/>
+        />
 
     <TextView
         android:id="@+id/title_txt"
@@ -55,13 +55,12 @@
         android:fontFamily="@font/roboto_regular"
         android:textStyle="normal"
         android:textSize="@dimen/video_page_text_size_xxxlarge"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="6dp"
+        android:gravity="start"
         app:layout_constraintEnd_toEndOf="@id/card_login_image"
         app:layout_constraintStart_toStartOf="@id/app_logo_login"
         app:layout_constraintTop_toBottomOf="@id/app_logo_login"
-        android:layout_marginEnd="10dp"
-
         android:layout_marginTop="5dp"
         />
 
@@ -103,6 +102,7 @@
             android:inputType="textPersonName"
             android:hint="@string/enter_your_name"
             android:maxLines="1"
+            android:text="Tester"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:textSize="@dimen/video_page_text_size_medium"

@@ -35,7 +35,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
         viewLifecycleOwner.lifecycleScope.launch(){
             userProfileViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarProfile.visibility = View.GONE
-                if(!it.equals("NA")){
+                if(it != "NA"){
                     Log.i("kamlesh","ProfileFragment onError ::: $it")
                 }
             }
@@ -69,7 +69,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
             Alert().showGravityToast(requireActivity(), AppConstants.SPRINT_TWO)
         }
         binding.perConLayout.setOnClickListener {
-            launchContainerActivity(to = "per")
+            launchContainerActivity(to = "interests")
         }
 
         binding.followConLayout.setOnClickListener {

@@ -10,6 +10,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.ns.shortsnews.data.di.AppModule
 import com.ns.shortsnews.data.di.NetworkModule
+import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.utils.AppPreference
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -19,6 +20,7 @@ import org.koin.core.logger.Level
 class MainApplication:Application(), ImageLoaderFactory {
 
     private val cacheSize: Long = 1*1024 * 1024 * 1024 //1 Gb for cache
+    private lateinit var languageDatabase:ShortsDatabase
 
     init {
         instance = this
@@ -36,6 +38,7 @@ class MainApplication:Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         val context = applicationContext()
+        ShortsDatabase.getInstance(context)
         AppPreference.init(context)
         startKoin {
             // declare used Android context

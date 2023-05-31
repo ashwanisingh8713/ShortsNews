@@ -108,4 +108,10 @@ dependencies {
     // Palette
     implementation "androidx.palette:palette-ktx:1.0.0"
 
+    //Room data base
+    implementation "androidx.room:room-ktx:2.5.1"
+    kapt "androidx.room:room-compiler:2.5.1"
+    androidTestImplementation "androidx.room:room-testing:2.5.1"
+
+
 }

@@ -1,7 +1,6 @@
 package com.ns.shortsnews.domain.repository
 
 import com.ns.shortsnews.domain.models.*
-import com.ns.shortsnews.user.domain.models.*
 import okhttp3.RequestBody
 
 

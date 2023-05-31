@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -51,12 +52,15 @@ class ProfileActivity : AppCompatActivity() {
         window.statusBarColor = Color.parseColor("#000000")
         window.navigationBarColor = Color.parseColor("#000000")
         val from = intent.getStringExtra("fromActivity")
-
         if (AppPreference.isUserLoggedIn) {
             if (from !=null && from == "MainActivity"){
-                choiceFragment()
+                profileFragment()
             } else{
-                launchMainActivityIntent()
+                if(AppPreference.isLanguageSelected) {
+                    launchMainActivityIntent()
+                } else {
+                    languagesFragment()
+                }
             }
         } else {
             loginFragment()
@@ -68,8 +72,9 @@ class ProfileActivity : AppCompatActivity() {
         lifecycleScope.launch() {
             sharedUserViewModel.fragmentStateFlow.filterNotNull().collectLatest {
                 val bundle = it
+                Log.i("fragment", "${bundle.getString("fragmentType")}")
                 when (bundle.getString("fragmentType")) {
-                    UserViewModel.PROFILE -> choiceFragment()
+                    UserViewModel.PROFILE -> profileFragment()
                     UserViewModel.OTP -> otpFragment(bundle)
                     UserViewModel.LOGIN -> loginFragment()
                     UserViewModel.OTP_POP -> popOtpFragment()
@@ -90,11 +95,6 @@ class ProfileActivity : AppCompatActivity() {
         supportFragmentManager.popBackStack()
     }
 
-    private fun popEditProfileFragment() {
-        supportFragmentManager.popBackStack()
-    }
-
-
     private fun otpFragment(bundle: Bundle) {
         val fragment = OtpFragment()
         fragment.arguments = bundle
@@ -103,7 +103,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
 
-    private fun choiceFragment() {
+    private fun profileFragment() {
         val fragment = NewProfileFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
             .commit()
@@ -121,7 +121,4 @@ class ProfileActivity : AppCompatActivity() {
         startActivity(intent)
         this.finish()
     }
-
-
-
 }

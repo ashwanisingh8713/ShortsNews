@@ -8,8 +8,7 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.ActivityContainerBinding
 import com.ns.shortsnews.domain.models.ProfileData
 import com.ns.shortsnews.ui.fragment.EditProfileFragment
-import com.ns.shortsnews.ui.fragment.FollowingFragment
-import com.ns.shortsnews.ui.fragment.PersonaliseFragment
+import com.ns.shortsnews.ui.fragment.InterestsFragment
 
 class ContainerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityContainerBinding
@@ -21,17 +20,14 @@ class ContainerActivity : AppCompatActivity() {
         window.statusBarColor = Color.parseColor("#000000")
         window.navigationBarColor = Color.parseColor("#000000")
         when(intent.getStringExtra("to")){
-             "per" -> {
+             "interests" -> {
                 launchPersonaliseFragment()
              }
-            "fol" -> {
-               launchFollowingFragment()
-            }
             "edit_profile" -> {
                 val userData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     intent.getParcelableExtra("profile_data", ProfileData::class.java)
                 } else {
-                    intent.getParcelableExtra<ProfileData>("profile_data")
+                    intent.getParcelableExtra("profile_data")
                 }
                 if (userData != null) {
                     launchEditProfileFragment(userData)
@@ -43,14 +39,9 @@ class ContainerActivity : AppCompatActivity() {
 
     }
     private fun launchPersonaliseFragment(){
-        val fragment = PersonaliseFragment()
+        val fragment = InterestsFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fc, fragment).commit()
 
-    }
-
-    private fun launchFollowingFragment(){
-        val fragment = FollowingFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fc, fragment).commit()
     }
 
     private fun launchEditProfileFragment(profileData: ProfileData) {

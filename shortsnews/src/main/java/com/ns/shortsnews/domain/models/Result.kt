@@ -1,6 +1,8 @@
 package com.ns.shortsnews.domain.models
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
@@ -97,7 +99,8 @@ data class LanguagesResult(
 @JsonClass(generateAdapter = true)
 data class LanguageData(
     val id:String = "",
-    val name:String = ""
+    val name:String = "",
+    val slug:String = ""
 )
 
 
@@ -146,4 +149,25 @@ data class LikeUnlikeData(
 data class StatusResult(
     val status: Boolean,
     val msg: String = ""
+)
+@Entity(tableName = "language")
+data class LanguageTable(
+
+    @PrimaryKey
+    val id:String ="",
+
+    val name:String = "",
+    val slug:String = "",
+
+    val selected:Boolean = false,
+    val icon:String = ""
+)
+@Entity(tableName = "interests")
+data class InterestsTable(
+    @PrimaryKey
+    val id: String ="",
+
+    val name: String ="",
+    val selected:Boolean = false,
+    val icon: String = ""
 )

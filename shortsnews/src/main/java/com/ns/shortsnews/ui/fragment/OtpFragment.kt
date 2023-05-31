@@ -57,7 +57,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 val data:MutableMap<String, String> = mutableMapOf()
                 data["OTP"] = otpValue
                 data["OTP_id"] = otpId.toString()
-                data["name"] = "kamlesh"
+               /* data["name"] = "kamlesh"*/
                 if (Alert().isOnline(requireActivity())) {
                     userViewModel.requestOtpValidationApi(data)
                 } else {
@@ -93,11 +93,12 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             userViewModel.otpSuccessState.filterNotNull().collectLatest {
                 Log.i("kamlesh","OTPFragment onSuccess ::: $it")
                 it.let {
+                    binding.progressBarOtp.visibility = View.GONE
                     saveUserPreference(it)
                     delay(500)
                     val bundle = Bundle()
-                    bundle.putString("name", /*it.name*/"kamlesh")
-                    userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY,bundle )
+                    bundle.putString("name","kamlesh")
+                    userViewModel.updateFragment(UserViewModel.LANGUAGES,bundle )
                 }
             }
         }

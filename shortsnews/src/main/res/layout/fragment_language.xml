@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".user.ui.fragment.LanguageFragment">
+    tools:context=".ui.fragment.LanguageFragment">
 
     <ProgressBar
         android:id="@+id/progressBar_languages"
@@ -53,7 +53,7 @@
         android:layout_marginTop="@dimen/margin_top_back_button"
         android:paddingBottom="10dp"
         android:scrollbars="none"
-        app:layout_constraintBottom_toTopOf="@id/continue_button"
+        app:layout_constraintBottom_toTopOf="@id/submit_button_const"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/selected_count_txt">
@@ -74,21 +74,44 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <Button
-        android:id="@+id/continue_button"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/button_height"
-        android:layout_marginBottom="@dimen/margin_end"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/submit_button_const"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
         android:background="@drawable/follow_background"
-        android:paddingStart="@dimen/margin_top_back_button"
-        android:paddingEnd="@dimen/margin_top_back_button"
-        android:text="@string/submit_button_text"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="@dimen/video_page_text_size_xxlarge"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <TextView
+            android:id="@+id/continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:paddingStart="40dp"
+            android:paddingEnd="40dp"
+            android:gravity="center"
+            android:text="@string/continue_button_text"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:textSize="@dimen/video_page_text_size_xxlarge"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/white"
+            android:indeterminateTintMode="src_in"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
