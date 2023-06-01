@@ -8,7 +8,7 @@ import com.ns.shortsnews.domain.repository.VideoCategoryRepository
  * Created by Ashwani Kumar Singh on 24,April,2023.
  */
 class VideoCategoryRepositoryImp(private val apiService: UserApiService): VideoCategoryRepository {
-    override suspend fun getVideoCategory(): VideoCategoryResult {
-        return apiService.getVideoCategory()
+    override suspend fun getVideoCategory(languages:String): VideoCategoryResult {
+        return apiService.getVideoCategory(languages)
     }
 }

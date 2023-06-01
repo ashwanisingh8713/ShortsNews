@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -17,6 +18,7 @@ import com.ns.shortsnews.databinding.FragmentInterestsBinding
 import com.ns.shortsnews.domain.models.InterestsTable
 import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.repository.InterestsRepository
+import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.*
 import kotlinx.coroutines.flow.collectLatest
@@ -33,6 +35,10 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
     private val interestsRepository = InterestsRepository(interestsDao)
     private val interestsViewModel: InterestsViewModel by activityViewModels { InterestsViewModelFactory(interestsRepository) }
 
+    private val languageDao = ShortsDatabase.instance!!.languageDao()
+    private val languageItemRepository = LanguageRepository(languageDao)
+    private val languageViewModel: LanguageViewModel by activityViewModels { LanguageViewModelFactory(languageItemRepository) }
+
     var selectedNumbers = 0
     var countValue = 0
     private val categoryViewModel: VideoCategoryViewModel by activityViewModels { VideoCategoryViewModelFactory().apply {
@@ -41,6 +47,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentInterestsBinding.bind(view)
+        getSelectedLanguagesValues()
 
         binding.backButtonUser.setOnClickListener {
             activity?.finish()
@@ -49,7 +56,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             requireActivity().finish()
         }
 
-        categoryViewModel.loadVideoCategory()
+
         viewLifecycleOwner.lifecycleScope.launch(){
             categoryViewModel.errorState.filterNotNull().collectLatest {
                 if(it != "NA"){
@@ -124,6 +131,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             binding.choiceChipGroup.addView(mChip)
             binding.choiceChipGroup.isClickable = true
             binding.choiceChipGroup.isSingleSelection = false
+            mChip.iconStartPadding = 6F
             mChip.isChipIconVisible = true
             mChip.chipStrokeWidth = 4F
             if (chipData.selected) {
@@ -217,4 +225,19 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         }
         return finalList
     }
+
+    private fun getSelectedLanguagesValues() {
+        var languageString = ""
+        lifecycleScope.launch {
+            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
+                for (data in it){
+                    if (data.selected){
+                        languageString = languageString + data.id +","
+                    }
+                }
+                categoryViewModel.loadVideoCategory(languageString)
+            }
+        }
+    }
+
 }

@@ -22,7 +22,7 @@ interface UserApiService {
     suspend fun getChannelData(): ChannelsDataResult
 
     @GET("categories")
-    suspend fun getVideoCategory(): VideoCategoryResult
+    suspend fun getVideoCategory(@Query("languages")languages:String): VideoCategoryResult
 
     @GET("videos")
     suspend fun getChannelVideoData(@Query("channel")channel:String): VideoDataResponse

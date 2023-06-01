@@ -24,8 +24,8 @@ class VideoCategoryViewModel(private val videoCategoryUseCase: VideoCategoryUseC
     private val _loadingState = MutableStateFlow(true)
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
-    fun loadVideoCategory() {
-        videoCategoryUseCase.invoke(scope = viewModelScope, params = "", onResult = object :
+    fun loadVideoCategory(languageString:String) {
+        videoCategoryUseCase.invoke(scope = viewModelScope, params = languageString, onResult = object :
             UseCaseResponse<VideoCategoryResult> {
             override fun onSuccess(result: VideoCategoryResult) {
                 _loadingState.value = false

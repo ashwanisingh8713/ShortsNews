@@ -25,6 +25,7 @@ import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -45,7 +46,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         )
     }}
     private val languageViewModel:LanguageViewModel by activityViewModels { LanguageViewModelFactory(languageItemRepository)}
-
+    var selectedNumbers = 0
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)
@@ -106,9 +107,14 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         }
 
         binding.submitButtonConst.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString("name", /*it.name*/"kamlesh")
-            userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY,bundle )
+            if (selectedNumbers >0) {
+                AppPreference.isLanguageSelected = true
+                val bundle = Bundle()
+                bundle.putString("name", /*it.name*/"kamlesh")
+                userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
+            } else {
+                Alert().showGravityToast(requireActivity(), "Please select one language")
+            }
         }
     }
     private fun setupChipGroup(optionList:List<LanguageData>){
@@ -120,6 +126,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             mChip.text = chipData.name
             mChip.isCheckable = true
             mChip.isClickable = true
+            mChip.iconStartPadding = 6F
             binding.choiceChipGroup.addView(mChip)
             binding.choiceChipGroup.isClickable = true
             binding.choiceChipGroup.isSingleSelection = false
@@ -132,6 +139,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                 languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
                 mChip.isChecked = true
+                selectedNumbers++
             } else {
                 mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), com.videopager.R.color.black))
                 mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
@@ -148,6 +156,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                     languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
+                    selectedNumbers++
                 } else {
                     mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), com.videopager.R.color.black))
                     mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
@@ -155,6 +164,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     mChip.chipStrokeWidth = 4F
                     mChip.chipStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                     languageViewModel.update(chipData.id, chipData.name,chipData.slug ,false,"")
+                    selectedNumbers--
                 }
             }
         }

@@ -6,5 +6,5 @@ import com.ns.shortsnews.domain.models.VideoCategoryResult
  * Created by Ashwani Kumar Singh on 24,April,2023.
  */
 interface VideoCategoryRepository {
-    suspend fun getVideoCategory(): VideoCategoryResult
+    suspend fun getVideoCategory(languages:String): VideoCategoryResult
 }

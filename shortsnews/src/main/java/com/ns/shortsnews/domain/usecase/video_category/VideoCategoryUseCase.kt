@@ -8,8 +8,8 @@ import com.ns.shortsnews.domain.usecase.base.UseCase
  * Created by Ashwani Kumar Singh on 24,April,2023.
  */
 class VideoCategoryUseCase(private val videoCategoryRepository: VideoCategoryRepository):
-    UseCase<VideoCategoryResult, Any>() {
-    override suspend fun run(params: Any?): VideoCategoryResult {
-        return videoCategoryRepository.getVideoCategory()
+    UseCase<VideoCategoryResult, String>() {
+    override suspend fun run(params: String?): VideoCategoryResult {
+        return videoCategoryRepository.getVideoCategory(params!!)
     }
 }

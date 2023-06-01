@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
 import coil.load
@@ -23,12 +24,11 @@ import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
+import com.ns.shortsnews.database.ShortsDatabase
+import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
-import com.ns.shortsnews.ui.viewmodel.BookmarksViewModelFactory
-import com.ns.shortsnews.ui.viewmodel.UserBookmarksViewModel
-import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModel
-import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModelFactory
+import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
@@ -46,6 +46,10 @@ import org.koin.android.ext.android.get
 class MainActivity : AppCompatActivity(), onProfileItemClick {
     private lateinit var binding: ActivityMainBinding
     private lateinit var caAdapter: CategoryAdapter
+    private val languageDao = ShortsDatabase.instance!!.languageDao()
+    private val languageItemRepository = LanguageRepository(languageDao)
+    private val languageViewModel: LanguageViewModel by viewModels { LanguageViewModelFactory(languageItemRepository) }
+
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
     private val videoCategoryViewModel: VideoCategoryViewModel by viewModels {
         VideoCategoryViewModelFactory().apply {
@@ -61,6 +65,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+    private var languageStringParams =""
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -87,7 +92,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.profileIcon.setOnClickListener {
             launchProfileIntent()
         }
-        videoCategoryViewModel.loadVideoCategory()
+        getSelectedLanguagesValues()
+
         showCategory()
         // To get status of should launch in login flow for non logged-in user
         launchLoginStateFlow()
@@ -101,6 +107,21 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         bottomSheetFollowingClick()
 
         registerVideoCache()
+    }
+
+    private fun getSelectedLanguagesValues() {
+        var languageString = ""
+        lifecycleScope.launch {
+            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
+              for (data in it){
+                  if (data.selected){
+                    languageString = languageString + data.id +","
+                  }
+              }
+                languageStringParams = languageString
+                videoCategoryViewModel.loadVideoCategory(languageString)
+            }
+        }
     }
 
     override fun onResume() {
@@ -192,7 +213,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun showTryAgainText() {
             binding.tryAgain.visibility = View.VISIBLE
             binding.tryAgain.setOnClickListener {
-                videoCategoryViewModel.loadVideoCategory()
+                videoCategoryViewModel.loadVideoCategory(languageStringParams)
             }
     }
 
