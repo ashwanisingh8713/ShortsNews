@@ -1,14 +1,12 @@
 package com.ns.shortsnews.cache
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import androidx.work.*
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.offline.Downloader
 import com.google.android.exoplayer2.source.hls.offline.HlsDownloader
-import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheWriter
@@ -17,7 +15,7 @@ import com.ns.shortsnews.MainApplication
 import kotlinx.coroutines.*
 import java.util.*
 
-class HlsPreloadCoroutine(private val context: Context, workerParameters: WorkerParameters) :
+class HlsOneByOnePreloadCoroutine(private val context: Context, workerParameters: WorkerParameters) :
     CoroutineWorker(context, workerParameters) {
 
     private val cache: SimpleCache = MainApplication.cache
@@ -27,14 +25,12 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
 
 
     companion object {
+        private const val TAG_INITIAL = "OBO -> "
         private const val TAG = "VideoPreload"
-        private var IS_PARALLEL_DOWNLOADING = false
         const val VIDEO_URLs = "video_urls"
         const val VIDEO_IDs = "video_ids"
         private var WorkerRequestUid: UUID = UUID.randomUUID()
 
-        val bytes = CacheWriter.DEFAULT_BUFFER_SIZE_BYTES
-        var byteArray = ByteArray(bytes)
 
         fun schedulePreloadWork(videoUrls: Array<String>, ids: Array<String>) {
             if (ids.isEmpty() || videoUrls.isEmpty()) {
@@ -42,7 +38,7 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
             }
 
             // Cancelling the already existing Jobs, before starting new Job
-            cancelRunningWorkRequest(MainApplication.applicationContext())
+//            cancelRunningWorkRequest(MainApplication.applicationContext())
 
             val workManager = WorkManager.getInstance(MainApplication.applicationContext())
             val videoPreloadWorker = buildWorkRequest(videoUrls, ids)
@@ -55,9 +51,9 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
         }
 
         private fun cancelRunningWorkRequest(context: Context) {
-            WorkManager.getInstance(context).cancelWorkById(WorkerRequestUid)
-            Log.i(TAG, "Cancelled Download request :: $WorkerRequestUid")
             Log.i(TAG, "----------------------------------------------------")
+            WorkManager.getInstance(context).cancelWorkById(WorkerRequestUid)
+            Log.i(TAG, "$TAG_INITIAL Cancelled Download request :: $WorkerRequestUid")
             Log.i(TAG, "")
         }
 
@@ -74,14 +70,15 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
                 .putStringArray(VIDEO_IDs, ids)
                 .putStringArray(VIDEO_URLs, videoUrls)
                 .build()
-            val workRequest = OneTimeWorkRequestBuilder<HlsPreloadCoroutine>()
+            val workRequest = OneTimeWorkRequestBuilder<HlsOneByOnePreloadCoroutine>()
                 .apply {
                     setInputData(data)
                     setConstraints(constraints)
                 }
                 .build()
             WorkerRequestUid = workRequest.id
-            Log.i(TAG, "New Download Request is created :: $WorkerRequestUid")
+            Log.i(TAG, "$TAG_INITIAL        ")
+            Log.i(TAG, "$TAG_INITIAL New Download Request is created :: $WorkerRequestUid")
             return workRequest
         }
     }
@@ -94,66 +91,23 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
             Log.i(TAG, "")
             Log.i(TAG, "=================================================")
 
-            if (IS_PARALLEL_DOWNLOADING) { // Parallel
-                var cacheList = withContext(Dispatchers.IO) {
-                    var ll = mutableListOf<Job>()
-                    videoUrls.forEachIndexed { index, element ->
-                        ll.add(launch {
-                            parallelCachingExecution(videoUrls[index], videoIds[index])
-                        })
-                    }
-                    ll
-                }
-                CoroutineScope(Dispatchers.Default).launch {
-                    cacheList.joinAll()
-                }
-            } else { // One By One
-                oneByOneCaching()
-            }
+            // One By One
+            oneByOneCaching()
 
             return Result.success()
 
         } catch (e: Exception) {
-            Log.i(TAG, "DoWork() :: Error :: ${e.message}")
+            Log.i(TAG, "##############################")
+            Log.i(TAG, "$TAG_INITIAL DoWork() :: Error :: ${e.message}")
+            Log.i(TAG, "##############################")
             return Result.failure()
-        }
-    }
-
-
-    private fun parallelCachingExecution(
-        videoUrl: String,
-        videoId: String
-    ) {
-        Log.i(TAG, "Started Caching of :: $videoId :: $videoUrl")
-        val dataSourceFactory = DefaultHttpDataSource.Factory()
-            .setAllowCrossProtocolRedirects(true)
-
-        val cacheDataSource = CacheDataSource.Factory()
-            .setCache(cache)
-            .setUpstreamDataSourceFactory(dataSourceFactory)
-
-        val downloader = HlsDownloader(mediaItem(mediaUri = videoUrl, id=videoId), cacheDataSource)
-
-        val hlsProgressListener = Downloader.ProgressListener{contentLength, bytesDownloaded, percentDownloaded ->
-            if(percentDownloaded == 100.0f) {
-                Log.i(TAG, "$videoId :: contentLength :: $contentLength")
-                Log.i(TAG, "$videoId :: bytesDownloaded :: $bytesDownloaded")
-                Log.i(TAG, "$videoId :: percentDownloaded :: $percentDownloaded")
-                    downloader.cancel()
-            }
-        }
-
-        try {
-            downloader.download(hlsProgressListener)
-        } catch (e: Exception) {
-            Log.i(TAG, "$videoId :: Error :: ${e.printStackTrace()}")
         }
     }
 
 
     private suspend fun oneByOneCachingExecution(videoUrl: String, videoId: String) {
         withContext(Dispatchers.IO) {
-            Log.i(TAG, "Started Caching of :: $videoId :: $videoUrl")
+            Log.i(TAG, "$TAG_INITIAL Started Caching of :: $videoId :: $videoUrl")
             val dataSourceFactory = DefaultHttpDataSource.Factory()
                 .setAllowCrossProtocolRedirects(true)
 
@@ -165,9 +119,9 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
 
             val hlsProgressListener = Downloader.ProgressListener{contentLength, bytesDownloaded, percentDownloaded ->
                 if(percentDownloaded == 100.0f) {
-                    Log.i(TAG, "$videoId :: contentLength :: $contentLength")
-                    Log.i(TAG, "$videoId :: bytesDownloaded :: $bytesDownloaded")
-                    Log.i(TAG, "$videoId :: percentDownloaded :: $percentDownloaded")
+                    Log.i(TAG, "$TAG_INITIAL $videoId :: contentLength :: $contentLength")
+                    Log.i(TAG, "$TAG_INITIAL $videoId :: bytesDownloaded :: $bytesDownloaded")
+                    Log.i(TAG, "$TAG_INITIAL $videoId :: percentDownloaded :: $percentDownloaded")
                     downloader.cancel()
                 }
             }
@@ -175,7 +129,8 @@ class HlsPreloadCoroutine(private val context: Context, workerParameters: Worker
             try {
                 downloader.download(hlsProgressListener)
             } catch (e: Exception) {
-                Log.i(TAG, "$videoId :: Error :: ${e.printStackTrace()}")
+                Log.i(TAG, "$TAG_INITIAL $videoId :: Error :: ${e.printStackTrace()}")
+                Log.i(TAG, "##############################")
             }
 
         }

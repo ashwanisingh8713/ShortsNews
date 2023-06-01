@@ -3,7 +3,7 @@ package com.ns.shortsnews.video.data
 import android.content.Context
 import android.util.Log
 import at.huber.me.YouTubeUri
-import com.ns.shortsnews.cache.HlsPreloadCoroutine
+import com.ns.shortsnews.cache.HlsBulkPreloadCoroutine
 import com.ns.shortsnews.video.data.VideoDataNetService.videoDataApiService
 import com.player.models.VideoData
 import com.videopager.data.*
@@ -19,7 +19,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     override suspend fun videoData(
         id: String,
         context: Context,
-        videoFrom: String
+        videoFrom: String, page: Int, perPage: Int
     ): Flow<MutableList<VideoData>> {
         var ll = mutableListOf<MutableList<VideoData>>()
 
@@ -27,8 +27,8 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             val response = when (videoFrom) {
                 CategoryConstants.CHANNEL_VIDEO_DATA -> videoDataApiService.getChannelVideos(id)
                 CategoryConstants.BOOKMARK_VIDEO_DATA -> videoDataApiService.getBookmarkVideos()
-                CategoryConstants.DEFAULT_VIDEO_DATA -> videoDataApiService.getShortsVideos(id)
-                else -> videoDataApiService.getShortsVideos(id)
+                CategoryConstants.DEFAULT_VIDEO_DATA -> videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage)
+                else -> videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage)
             }
 
             val youtubeUriConversionCount = 2
@@ -36,6 +36,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             var conversionCount = 0
             var videoUrls = Array(precachingAllowedCount) { "" }
             var videoIds = Array(precachingAllowedCount) { "" }
+
 
             val videoData = response.data
                 .mapIndexed { index, post ->
@@ -76,7 +77,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                 }
 
             // Preload Video urls
-            HlsPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
+            HlsBulkPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
 
             Log.i("Conv_TIME", "VideoDataRepositoryImpl")
 

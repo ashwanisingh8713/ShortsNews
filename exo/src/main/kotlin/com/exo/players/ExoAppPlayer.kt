@@ -120,13 +120,26 @@ internal class ExoAppPlayer(
 
     }
 
-    override fun onPlaybackStateChanged(): Flow<Unit> = callbackFlow {
+    override fun onPlaybackStateChanged(): Flow<Int> = callbackFlow {
         val listener = object : Player.Listener {
+
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
-                if (playbackState == Player.STATE_ENDED) {
-                    trySend(Unit)
-                }
+                trySend(playbackState)
+
+//                if (playbackState == ExoPlayer.STATE_ENDED) {
+//                    showControls();
+//                    Toast.makeText(getApplicationContext(), "Playback ended", Toast.LENGTH_LONG).show();
+//                }
+//                else if (playbackState == ExoPlayer.STATE_BUFFERING)
+//                {
+//                    progressBar.setVisibility(View.VISIBLE);
+//                    Toast.makeText(getApplicationContext(), "Buffering..", Toast.LENGTH_SHORT).show();
+//                }
+//                else if (playbackState == ExoPlayer.STATE_READY)
+//                {
+//                    progressBar.setVisibility(View.INVISIBLE);
+//                }
             }
         }
         player.addListener(listener)

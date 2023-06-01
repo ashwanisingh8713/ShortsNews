@@ -10,5 +10,15 @@
     app:shutter_background_color="@android:color/transparent"
     app:resize_mode="fill"
     app:use_controller="false"
+    app:show_fastforward_button="false"
+    app:show_next_button="false"
+    app:show_previous_button="false"
+    app:show_rewind_button="false"
+    app:show_shuffle_button="false"
+    app:show_subtitle_button="false"
+    app:show_vr_button="false"
+    app:played_color="@android:color/holo_red_dark"
+    app:scrubber_drawable="@drawable/bg_progressbar_play_video"
+
     />
 </FrameLayout>

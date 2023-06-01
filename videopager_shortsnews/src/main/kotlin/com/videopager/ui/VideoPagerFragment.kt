@@ -2,6 +2,8 @@ package com.videopager.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -15,6 +17,8 @@ import androidx.viewpager2.widget.ViewPager2
 import coil.ImageLoader
 import com.exo.manager.DemoUtil
 import com.exo.manager.DownloadTracker
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.videopager.R
@@ -22,13 +26,13 @@ import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
-import com.videopager.ui.view.LastPageHalfHeightTransformer
 import com.videopager.utils.CategoryConstants
-import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
+import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+
 
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
@@ -190,6 +194,8 @@ class VideoPagerFragment(
 
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+//        updateProgress()
     }
 
     override fun onResume() {
@@ -229,14 +235,11 @@ class VideoPagerFragment(
             pageChanges().map {
                 PauseVideoEvent
             },
-
             getPageInfo().map {
 //                sharedEventViewModel.shareVideoInfo(VideoInfoData())
                 val data = pagerAdapter.getVideoData(currentItem)
                 VideoInfoEvent(data.id, currentItem)
             },
-
-
             videoCache().map {
                 var nextVideoCacheIndex = 0
                 nextVideoCacheIndex = if (currentItem < pagerAdapter.itemCount - 1) {
@@ -248,11 +251,11 @@ class VideoPagerFragment(
                 sharedEventViewModel.cacheVideoData(nextVideoCacheData.mediaUri, nextVideoCacheData.id)
 
                 NoFurtherEvent
-            }
+            },
+
 
             )
     }
-
 
 
     private fun CommentsFragment.postClickComment(): Flow<ViewEvent> {
@@ -368,4 +371,34 @@ class VideoPagerFragment(
             }
         }
     }
+
+    private fun progressBarValue(position: Long, player: ExoPlayer): Int {
+        val PROGRESS_BAR_MAX = 100
+        val duration = player.duration
+        val value = if (duration == C.TIME_UNSET || duration == 0L) 0 else (position * PROGRESS_BAR_MAX / duration)
+        return value.toInt()
+    }
+
+
+
+
+    private val updateProgressAction = Runnable { updateProgress() }
+
+    private fun updateProgress() {
+
+        val player = viewModel.states.value.appPlayer?.player
+        player?.let {
+            val duration: Long = player.duration
+            val bufferedPosition = player.bufferedPosition
+            val position: Long = player.currentPosition
+            binding.videoSeekbar.progress = progressBarValue(position, player)
+            binding.videoSeekbar.secondaryProgress = progressBarValue(bufferedPosition, player)
+
+        }
+        handler.postDelayed(updateProgressAction, 1000)
+
+    }
+
+
+    private val handler = Handler(Looper.myLooper()!!)
 }

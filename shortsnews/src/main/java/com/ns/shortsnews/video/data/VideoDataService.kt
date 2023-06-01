@@ -10,7 +10,7 @@ import retrofit2.http.*
  */
 interface VideoDataService {
     @GET("videos")
-    suspend fun getShortsVideos(@Query("category") category: String): VideoDataResponse
+    suspend fun getShortsVideos(@Query("category") category: String, @Query("page") page: Int, @Query("perPage") perPage: Int): VideoDataResponse
 
     @GET("videos")
     suspend fun getChannelVideos(@Query("channel") category: String): VideoDataResponse

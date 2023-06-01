@@ -26,4 +26,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
+    <!-- Start Video Seekbar
+        https://stackoverflow.com/questions/16516540/seek-bar-increase-height
+         -->
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/video_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:maxHeight="2.5dp"
+        android:minHeight="2.5dp"
+        android:thumb="@null"
+        android:progressDrawable="@drawable/sb_progress_drawable"
+        android:thumbTint="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
+    <!-- End Video Seekbar -->
+
 </androidx.constraintlayout.widget.ConstraintLayout>
