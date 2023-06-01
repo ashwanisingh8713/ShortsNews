@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.ns.shortsnews.MainApplication
 import kotlinx.coroutines.*
 import java.util.*
+import java.util.concurrent.Executors
 
 class VideoPreloadCoroutine(private val context: Context, workerParameters: WorkerParameters) :
     CoroutineWorker(context, workerParameters) {
@@ -40,9 +41,9 @@ class VideoPreloadCoroutine(private val context: Context, workerParameters: Work
             }
 
             // Cancelling the already existing Jobs, before starting new Job
-            cancelRunningWorkRequest(MainApplication.applicationContext())
+            cancelRunningWorkRequest()
 
-            val workManager = WorkManager.getInstance(MainApplication.applicationContext())
+            val workManager = MainApplication.getAppWorkManager()
             val videoPreloadWorker = buildWorkRequest(videoUrls, ids)
             val uniqueWorkName = "workName_${ids[0]}"
             workManager.beginUniqueWork(
@@ -52,10 +53,11 @@ class VideoPreloadCoroutine(private val context: Context, workerParameters: Work
             ).enqueue()
         }
 
-        private fun cancelRunningWorkRequest(context: Context) {
-            WorkManager.getInstance(context).cancelWorkById(WorkerRequestUid)
-            Log.i(TAG, "Cancelled Download request :: $WorkerRequestUid")
+        private fun cancelRunningWorkRequest() {
             Log.i(TAG, "----------------------------------------------------")
+            MainApplication.getAppWorkManager().cancelWorkById(WorkerRequestUid)
+            Log.i(TAG, "Cancelled Download request :: $WorkerRequestUid")
+            Log.i(TAG, "")
         }
 
         private fun buildWorkRequest(

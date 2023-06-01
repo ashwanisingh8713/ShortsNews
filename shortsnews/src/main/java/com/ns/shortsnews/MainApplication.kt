@@ -2,6 +2,8 @@ package com.ns.shortsnews
 
 import android.app.Application
 import android.content.Context
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.VideoFrameDecoder
@@ -15,8 +17,10 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
+import java.util.concurrent.Executors
 
-class MainApplication:Application(), ImageLoaderFactory {
+
+class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider {
 
     private val cacheSize: Long = 1*1024 * 1024 * 1024 //1 Gb for cache
 
@@ -30,6 +34,9 @@ class MainApplication:Application(), ImageLoaderFactory {
 
         fun applicationContext() : Context {
             return instance!!.applicationContext
+        }
+        fun getAppWorkManager(): WorkManager {
+            return WorkManager.getInstance(instance!!)
         }
     }
 
@@ -58,6 +65,15 @@ class MainApplication:Application(), ImageLoaderFactory {
             }
             .build()
     }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder()
+            // Defines a thread pool with 2 threads.
+            // This can be N (typically based on the number of cores on the device)
+            .setExecutor(Executors.newFixedThreadPool(4))
+            .build()
+    }
+
 
 
 }

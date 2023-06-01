@@ -115,7 +115,7 @@ internal class VideoPagerViewModel(
                 perPage = perPage
             )
         }.map { videoData ->
-//                delay(5000)
+                delay(3000)
                 val appPlayer = states.value.appPlayer
                 // If the player exists, it should be updated with the latest video data that came in
                 appPlayer?.setUpWith(videoData, handle.get())

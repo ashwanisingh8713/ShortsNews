@@ -24,6 +24,8 @@ class HlsBulkPreloadCoroutine(private val context: Context, workerParameters: Wo
 
 
     companion object {
+
+        private const val TAG_INITIAL = "Bulk -> "
         private const val TAG = "VideoPreload"
         const val VIDEO_URLs = "video_urls"
         const val VIDEO_IDs = "video_ids"
@@ -49,9 +51,9 @@ class HlsBulkPreloadCoroutine(private val context: Context, workerParameters: Wo
         }
 
         private fun cancelRunningWorkRequest(context: Context) {
-            WorkManager.getInstance(context).cancelWorkById(ParallelJobRequestUid)
-            Log.i(TAG, "Cancelled Download request :: $ParallelJobRequestUid")
             Log.i(TAG, "----------------------------------------------------")
+            WorkManager.getInstance(context).cancelWorkById(ParallelJobRequestUid)
+            Log.i(TAG, "$TAG_INITIAL Cancelled Download request :: $ParallelJobRequestUid")
             Log.i(TAG, "")
         }
 
@@ -75,7 +77,8 @@ class HlsBulkPreloadCoroutine(private val context: Context, workerParameters: Wo
                 }
                 .build()
             ParallelJobRequestUid = workRequest.id
-            Log.i(TAG, "New Download Request is created :: $ParallelJobRequestUid")
+            Log.i(TAG, "$TAG_INITIAL        ")
+            Log.i(TAG, "$TAG_INITIAL New Download Request is created :: $ParallelJobRequestUid")
             return workRequest
         }
     }
@@ -104,7 +107,8 @@ class HlsBulkPreloadCoroutine(private val context: Context, workerParameters: Wo
             return Result.success()
 
         } catch (e: Exception) {
-            Log.i(TAG, "DoWork() :: Error :: ${e.message}")
+            Log.i(TAG, "##############################")
+            Log.i(TAG, "$TAG_INITIAL DoWork() :: Error :: ${e.message}")
             Log.i(TAG, "##############################")
             return Result.failure()
         }
@@ -115,7 +119,7 @@ class HlsBulkPreloadCoroutine(private val context: Context, workerParameters: Wo
         videoUrl: String,
         videoId: String
     ) {
-        Log.i(TAG, "Started Caching of :: $videoId :: $videoUrl")
+        Log.i(TAG, "$TAG_INITIAL Started Caching of :: $videoId :: $videoUrl")
         val dataSourceFactory = DefaultHttpDataSource.Factory()
             .setAllowCrossProtocolRedirects(true)
 
@@ -129,9 +133,9 @@ class HlsBulkPreloadCoroutine(private val context: Context, workerParameters: Wo
         val hlsProgressListener =
             Downloader.ProgressListener { contentLength, bytesDownloaded, percentDownloaded ->
                 if (percentDownloaded == 100.0f) {
-                    Log.i(TAG, "$videoId :: contentLength :: $contentLength")
-                    Log.i(TAG, "$videoId :: bytesDownloaded :: $bytesDownloaded")
-                    Log.i(TAG, "$videoId :: percentDownloaded :: $percentDownloaded")
+                    Log.i(TAG, "$TAG_INITIAL $videoId :: contentLength :: $contentLength")
+                    Log.i(TAG, "$TAG_INITIAL $videoId :: bytesDownloaded :: $bytesDownloaded")
+                    Log.i(TAG, "$TAG_INITIAL $videoId :: percentDownloaded :: $percentDownloaded")
                     downloader.cancel()
                 }
             }
@@ -139,7 +143,7 @@ class HlsBulkPreloadCoroutine(private val context: Context, workerParameters: Wo
         try {
             downloader.download(hlsProgressListener)
         } catch (e: Exception) {
-            Log.i(TAG, "$videoId :: Error :: ${e.printStackTrace()}")
+            Log.i(TAG, "$TAG_INITIAL $videoId :: Error :: ${e.printStackTrace()}")
             Log.i(TAG, "##############################")
         }
     }

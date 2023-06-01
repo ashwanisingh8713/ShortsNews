@@ -37,6 +37,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             var videoUrls = Array(precachingAllowedCount) { "" }
             var videoIds = Array(precachingAllowedCount) { "" }
 
+
             val videoData = response.data
                 .mapIndexed { index, post ->
                     if (post.type != "yt" || youtubeUriConversionCount <= conversionCount) {
@@ -76,7 +77,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                 }
 
             // Preload Video urls
-//            HlsBulkPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
+            HlsBulkPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
 
             Log.i("Conv_TIME", "VideoDataRepositoryImpl")
 

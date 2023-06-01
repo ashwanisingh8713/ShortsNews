@@ -227,7 +227,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         standardBottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                Log.i("", "$slideOffset")
+                Log.i("BottomSheetCallback", "$slideOffset")
+                binding.persistentBottomsheet.cardViewClientImage.alpha = 1.0f - slideOffset
+                binding.persistentBottomsheet.following.alpha = 1.0f - slideOffset
+
+                if(slideOffset==1.0f) {
+                    binding.persistentBottomsheet.following.isEnabled = false
+                } else if(slideOffset == 0.0f) {
+                    binding.persistentBottomsheet.following.isEnabled = true
+                }
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -236,20 +244,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
                             resources.getDrawable(R.drawable.slide_down_arrow_icon, null)
                         )
-                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.GONE
-                        binding.persistentBottomsheet.following.visibility = View.GONE
-
-
                     }
 
-
                     BottomSheetBehavior.STATE_COLLAPSED -> {
-
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
                             resources.getDrawable(R.drawable.slide_up_arrow_icon, null)
                         )
-                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
-                        binding.persistentBottomsheet.following.visibility = View.VISIBLE
                     }
                     BottomSheetBehavior.STATE_DRAGGING -> standardBottomSheetBehavior.setState(
                         BottomSheetBehavior.STATE_COLLAPSED
@@ -294,8 +294,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
                 if (it.following) {
                     binding.persistentBottomsheet.following.text = "Following"
+                    binding.persistentBottomsheet.followingExpanded.text = "Following"
                 } else {
                     binding.persistentBottomsheet.following.text = "Follow"
+                    binding.persistentBottomsheet.followingExpanded.text = "Follow"
                 }
 
                 val channelId = binding.persistentBottomsheet.following.tag
@@ -333,8 +335,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             sharedEventViewModel.followResponse.filterNotNull().collectLatest {
                 if (it.following) {
                     binding.persistentBottomsheet.following.text = "Following"
+                    binding.persistentBottomsheet.followingExpanded.text = "Following"
                 } else {
                     binding.persistentBottomsheet.following.text = "Follow"
+                    binding.persistentBottomsheet.followingExpanded.text = "Follow"
                 }
 
             }
@@ -398,6 +402,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     // Bottom Sheet Following Click Listener
     private fun bottomSheetFollowingClick() {
         binding.persistentBottomsheet.following.setOnClickListener {
+            val channelId = binding.persistentBottomsheet.following.tag
+            channelId?.let {
+                sharedEventViewModel.followRequest(channelId.toString())
+            }
+        }
+        binding.persistentBottomsheet.followingExpanded.setOnClickListener {
             val channelId = binding.persistentBottomsheet.following.tag
             channelId?.let {
                 sharedEventViewModel.followRequest(channelId.toString())

@@ -25,6 +25,7 @@ class HlsOneByOnePreloadCoroutine(private val context: Context, workerParameters
 
 
     companion object {
+        private const val TAG_INITIAL = "OBO -> "
         private const val TAG = "VideoPreload"
         const val VIDEO_URLs = "video_urls"
         const val VIDEO_IDs = "video_ids"
@@ -37,7 +38,7 @@ class HlsOneByOnePreloadCoroutine(private val context: Context, workerParameters
             }
 
             // Cancelling the already existing Jobs, before starting new Job
-            cancelRunningWorkRequest(MainApplication.applicationContext())
+//            cancelRunningWorkRequest(MainApplication.applicationContext())
 
             val workManager = WorkManager.getInstance(MainApplication.applicationContext())
             val videoPreloadWorker = buildWorkRequest(videoUrls, ids)
@@ -50,9 +51,9 @@ class HlsOneByOnePreloadCoroutine(private val context: Context, workerParameters
         }
 
         private fun cancelRunningWorkRequest(context: Context) {
-            WorkManager.getInstance(context).cancelWorkById(WorkerRequestUid)
-            Log.i(TAG, "Cancelled Download request :: $WorkerRequestUid")
             Log.i(TAG, "----------------------------------------------------")
+            WorkManager.getInstance(context).cancelWorkById(WorkerRequestUid)
+            Log.i(TAG, "$TAG_INITIAL Cancelled Download request :: $WorkerRequestUid")
             Log.i(TAG, "")
         }
 
@@ -76,7 +77,8 @@ class HlsOneByOnePreloadCoroutine(private val context: Context, workerParameters
                 }
                 .build()
             WorkerRequestUid = workRequest.id
-            Log.i(TAG, "New Download Request is created :: $WorkerRequestUid")
+            Log.i(TAG, "$TAG_INITIAL        ")
+            Log.i(TAG, "$TAG_INITIAL New Download Request is created :: $WorkerRequestUid")
             return workRequest
         }
     }
@@ -95,7 +97,8 @@ class HlsOneByOnePreloadCoroutine(private val context: Context, workerParameters
             return Result.success()
 
         } catch (e: Exception) {
-            Log.i(TAG, "DoWork() :: Error :: ${e.message}")
+            Log.i(TAG, "##############################")
+            Log.i(TAG, "$TAG_INITIAL DoWork() :: Error :: ${e.message}")
             Log.i(TAG, "##############################")
             return Result.failure()
         }
@@ -104,7 +107,7 @@ class HlsOneByOnePreloadCoroutine(private val context: Context, workerParameters
 
     private suspend fun oneByOneCachingExecution(videoUrl: String, videoId: String) {
         withContext(Dispatchers.IO) {
-            Log.i(TAG, "Started Caching of :: $videoId :: $videoUrl")
+            Log.i(TAG, "$TAG_INITIAL Started Caching of :: $videoId :: $videoUrl")
             val dataSourceFactory = DefaultHttpDataSource.Factory()
                 .setAllowCrossProtocolRedirects(true)
 
@@ -116,9 +119,9 @@ class HlsOneByOnePreloadCoroutine(private val context: Context, workerParameters
 
             val hlsProgressListener = Downloader.ProgressListener{contentLength, bytesDownloaded, percentDownloaded ->
                 if(percentDownloaded == 100.0f) {
-                    Log.i(TAG, "$videoId :: contentLength :: $contentLength")
-                    Log.i(TAG, "$videoId :: bytesDownloaded :: $bytesDownloaded")
-                    Log.i(TAG, "$videoId :: percentDownloaded :: $percentDownloaded")
+                    Log.i(TAG, "$TAG_INITIAL $videoId :: contentLength :: $contentLength")
+                    Log.i(TAG, "$TAG_INITIAL $videoId :: bytesDownloaded :: $bytesDownloaded")
+                    Log.i(TAG, "$TAG_INITIAL $videoId :: percentDownloaded :: $percentDownloaded")
                     downloader.cancel()
                 }
             }
@@ -126,7 +129,7 @@ class HlsOneByOnePreloadCoroutine(private val context: Context, workerParameters
             try {
                 downloader.download(hlsProgressListener)
             } catch (e: Exception) {
-                Log.i(TAG, "$videoId :: Error :: ${e.printStackTrace()}")
+                Log.i(TAG, "$TAG_INITIAL $videoId :: Error :: ${e.printStackTrace()}")
                 Log.i(TAG, "##############################")
             }
 
