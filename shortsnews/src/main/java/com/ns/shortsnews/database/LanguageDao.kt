@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LanguageDao {
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(languageData: LanguageTable)
 
     @Query("SELECT * FROM language ORDER BY id")
@@ -20,4 +20,7 @@ interface LanguageDao {
 
     @Query("UPDATE language SET selected = :selected WHERE id = :id ")
     suspend fun update(id:String, selected: Boolean)
+
+    @Query("SELECT (SELECT COUNT(*) FROM language) == 0")
+    suspend fun isEmpty():Boolean
 }

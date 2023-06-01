@@ -19,6 +19,10 @@ class InterestsRepository(private val categoryDao: InterestsDao) {
     }
 
     suspend fun update(id: String, interestsTable: InterestsTable){
-        TODO()
+         categoryDao.update(id, interestsTable.selected)
+    }
+
+    suspend fun isEmpty():Boolean {
+        return categoryDao.isEmpty()
     }
 }

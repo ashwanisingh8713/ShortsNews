@@ -70,7 +70,7 @@ data class VideoCategory(
     val id: String,
     val name: String,
     val selected:Boolean = false,
-    val optionSelected:Boolean = false,
+    val icon: String = ""
 )
 
 @JsonClass(generateAdapter = true)
@@ -100,7 +100,9 @@ data class LanguagesResult(
 data class LanguageData(
     val id:String = "",
     val name:String = "",
-    val slug:String = ""
+    val slug:String = "",
+    val isSelected:Boolean = false,
+    val icon: String = ""
 )
 
 

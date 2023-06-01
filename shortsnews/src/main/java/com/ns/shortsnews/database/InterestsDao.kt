@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface InterestsDao {
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(interestsTable: InterestsTable)
 
     @Query("SELECT * FROM interests ORDER BY id")
@@ -15,6 +15,9 @@ interface InterestsDao {
     @Delete
     suspend fun delete(interestsTable: InterestsTable)
 
-    @Update
-    suspend fun update(interestsTable: InterestsTable)
+    @Query("UPDATE interests SET selected = :selected WHERE id = :id ")
+    suspend fun update(id:String, selected: Boolean)
+
+    @Query("SELECT (SELECT COUNT(*) FROM interests) == 0")
+    suspend fun isEmpty():Boolean
 }

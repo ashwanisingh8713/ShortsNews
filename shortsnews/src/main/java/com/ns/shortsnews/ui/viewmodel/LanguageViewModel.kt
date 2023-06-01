@@ -39,6 +39,7 @@ class LanguageViewModel(private val languageTableRepository: LanguageRepository)
         }
 
     }
+    suspend fun isEmpty():Boolean  = languageTableRepository.isEmpty()
 
     suspend fun getAllLanguage(): Flow<List<LanguageTable>> = languageTableRepository.getAllLanguageData()
 }

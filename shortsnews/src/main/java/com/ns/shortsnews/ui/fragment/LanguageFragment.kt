@@ -33,6 +33,7 @@ import org.koin.android.ext.android.get
 
 class LanguageFragment : Fragment(R.layout.fragment_language) {
     lateinit var binding:FragmentLanguageBinding
+    private var languageListDB = emptyList<LanguageTable>()
     private val languageDao = ShortsDatabase.instance!!.languageDao()
     private val languageItemRepository = LanguageRepository(languageDao)
 
@@ -50,7 +51,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         binding = FragmentLanguageBinding.bind(view)
         userViewModel.requestLanguagesApi()
 
-
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarLanguages.visibility = View.GONE
@@ -67,10 +67,14 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 Log.i("kamlesh","OTPFragment onSuccess ::: $it")
                 it.let {
                     binding.progressBarLanguages.visibility = View.GONE
-                    for (data in it){
-                        languageViewModel.insert(data.id,data.name,data.slug,false,"")
+                    if (it.isNotEmpty()) {
+                        if (languageViewModel.isEmpty()) {
+                            loadDataFromServer(it)
+                        } else {
+                            val finalList: List<LanguageData> = compareDBServer(it, languageListDB)
+                            loadDataFromDB(finalList)
+                        }
                     }
-                    setupChipGroup(it)
                 }
             }
         }
@@ -84,23 +88,20 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         }
         viewLifecycleOwner.lifecycleScope.launch {
             languageViewModel.sharedDeleteFromTable.filterNotNull().collectLatest {
-                if (it != null){
-                    Log.i("database","Delete :: ${it.id}")
-                }
+                Log.i("database","Delete :: ${it.id}")
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             languageViewModel.sharedInsertInTable.filterNotNull().collectLatest {
-                if (it != null){
-                    Log.i("database","Inserted :: ${it.id}")
-                }
+                Log.i("database","Inserted :: ${it.id}")
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
                 Log.i("database", "All data :: $it")
+                languageListDB = it
             }
         }
 
@@ -111,7 +112,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         }
     }
     private fun setupChipGroup(optionList:List<LanguageData>){
-        var idList = mutableListOf<Int>()
+        val idList = mutableListOf<Int>()
         for (chipData in optionList){
             idList.clear()
             val mChip =
@@ -124,9 +125,22 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             binding.choiceChipGroup.isSingleSelection = false
             mChip.isChipIconVisible = true
             mChip.chipStrokeWidth = 4F
-            mChip.chipStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-            mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
 
+            if (chipData.isSelected) {
+                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
+                mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
+                mChip.isChecked = true
+            } else {
+                mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), com.videopager.R.color.black))
+                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
+                mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                mChip.isChecked = false
+                mChip.chipStrokeWidth = 4F
+                mChip.chipStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                languageViewModel.update(chipData.id, chipData.name,chipData.slug ,false,"")
+            }
 
             mChip.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -144,5 +158,36 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 }
             }
         }
+    }
+
+    private fun loadDataFromDB( list: List<LanguageData>){
+        setupChipGroup(list)
+    }
+
+    private fun loadDataFromServer(list: List<LanguageData>) {
+        for (data in list){
+            languageViewModel.insert(data.id,data.name,data.slug,false,"")
+        }
+        setupChipGroup(list)
+    }
+
+    private fun compareDBServer(languageList: List<LanguageData>, languageTableList:List<LanguageTable> ):List<LanguageData>{
+        var finalList:MutableList<LanguageData> = mutableListOf()
+        for (languageData in languageList){
+            var matched = false
+            for (languageTable in languageTableList){
+                if (languageData.id == languageTable.id){
+                    var convertedData = LanguageData(languageTable.id,languageTable.name,languageTable.slug,languageTable.selected,languageTable.icon)
+                    finalList.add(convertedData)
+                    matched = true
+                }
+            }
+            if (matched){
+                matched = false
+            } else {
+                languageViewModel.delete(languageData.id, languageData.name, languageData.slug, false, "")
+            }
+        }
+        return finalList
     }
 }

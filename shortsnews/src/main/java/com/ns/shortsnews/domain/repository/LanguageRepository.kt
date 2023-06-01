@@ -22,5 +22,9 @@ class LanguageRepository(var languageDao: LanguageDao) {
         languageDao.update(id,isSelected)
     }
 
+    suspend fun isEmpty():Boolean {
+     return  languageDao.isEmpty()
+    }
+
 
 }

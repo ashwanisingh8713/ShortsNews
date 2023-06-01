@@ -33,6 +33,16 @@ class InterestsViewModel(private val interestsRepository: InterestsRepository) :
             _sharedDeleteFromTable.emit(interestData)
         }
     }
+    fun update(id:String, name:String, isSelected:Boolean, icon:String) {
+        val interestsData = InterestsTable(id, name,isSelected,icon)
+        viewModelScope.launch {
+            interestsRepository.update(id,interestsData)
+            _sharedInsertInTable.emit(interestsData)
+        }
+
+    }
+    suspend fun isEmpty():Boolean  = interestsRepository.isEmpty()
+
 
     suspend fun getAllInterestedItems(): Flow<List<InterestsTable>> = interestsRepository.getAllInterestsData()
 }
