@@ -3,6 +3,7 @@ package com.ns.shortsnews.ui.fragment
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -10,18 +11,24 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentEditProfileBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
@@ -44,6 +51,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     lateinit var binding: FragmentEditProfileBinding
     private lateinit var mPhotoBitmap: Bitmap
     private var isProfileEdited = false
+    private var isProfileImageSelected = false
     private val updateProfileViewModel: UpdateProfileViewModel by activityViewModels {
         UpdateProfileViewModelFactory().apply {
             inject(UpdateUserUseCase(UserDataRepositoryImpl(get())))
@@ -52,6 +60,27 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     companion object {
         const val cameraPermission = Manifest.permission.CAMERA
+    }
+
+    private val textWatcher = object : TextWatcher{
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+           Log.i("","")
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            isProfileEdited = true
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            binding.consParent.forEach { view ->
+                (view as? TextInputLayout)?.let {
+                    with(it){
+                        error = null
+                        isErrorEnabled = false
+                    }
+                }
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -69,12 +98,15 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             binding.ageEditText.setText(userData.age)
             binding.locationEditText.setText(userData.location)
         }
+        addTextWatcherToEditTexts()
 
         binding.backButton.setOnClickListener {
+            it.hideKeyBoard()
             if (!isProfileEdited) {
                 activity?.finish()
             } else {
-                if (mPhotoBitmap == null) {
+
+                if (!isProfileImageSelected) {
                     showUpdateProfileDialog(
                             "Updating",
                     "Want to Updating user information",
@@ -139,7 +171,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-//            mPhotoBitmap = (result.data!!.extras!!["data"] as Bitmap?)!!
+            isProfileImageSelected = true
             mPhotoBitmap = (result.data!!.extras!!["data"] as Bitmap?)!!
 
             Log.i(
@@ -182,6 +214,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                         }
                     mPhotoBitmap = BitmapFactory.decodeStream(imageStream)
                     isProfileEdited = true
+                    isProfileImageSelected = true
                     binding.profileImageView.setImageBitmap(mPhotoBitmap)
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
@@ -274,7 +307,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
     }
 
-    private fun getRequestBody(file: File?, name: String, age: String, location: String): RequestBody {
+    private fun getRequestBody(file: File?, name: String?, age: String?, location: String?): RequestBody {
 
         val builder = MultipartBody.Builder().setType(MultipartBody.FORM)
         if (file != null) {
@@ -284,9 +317,27 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 RequestBody.create(MultipartBody.FORM, File(file.absolutePath))
             )
         }
-        builder.addFormDataPart("name", name)
-        builder.addFormDataPart("age", age)
-        builder.addFormDataPart("location", location)
+        if (name != null) {
+            builder.addFormDataPart("name", name)
+        }
+        if (age != null) {
+            builder.addFormDataPart("age", age)
+        }
+        if (location != null) {
+            builder.addFormDataPart("location", location)
+        }
         return builder.build()
+    }
+
+    private fun addTextWatcherToEditTexts(){
+      binding.consParent.forEach {  view ->
+          (view as? EditText)?.addTextChangedListener( textWatcher )
+      }
+    }
+
+    private fun View.hideKeyBoard() {
+        val inputManager =
+            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 }

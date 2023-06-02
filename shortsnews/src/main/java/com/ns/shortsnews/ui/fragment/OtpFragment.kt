@@ -42,11 +42,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         val  otpId:String? = arguments?.getString("otp_id")
         val emailId = arguments?.getString("email")
         binding.emailTxt.text = emailId
-//        binding.backButtonOtp.setOnClickListener {
-//            val bundle = Bundle()
-//            bundle.putString("name", "")
-//            userViewModel.updateFragment(UserViewModel.OTP_POP,bundle )
-//        }
         binding.otpEditText.setText("123456")
         binding.submitButton.setOnClickListener {
 
@@ -57,7 +52,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 val data:MutableMap<String, String> = mutableMapOf()
                 data["OTP"] = otpValue
                 data["OTP_id"] = otpId.toString()
-               /* data["name"] = "kamlesh"*/
                 if (Alert().isOnline(requireActivity())) {
                     userViewModel.requestOtpValidationApi(data)
                 } else {
