@@ -29,8 +29,8 @@
             android:id="@+id/preview_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"
             tools:ignore="ContentDescription"
+            android:adjustViewBounds="true"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
         <!-- End - It holds PreviewImage on Top of PlayerView -->
 

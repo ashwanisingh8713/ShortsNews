@@ -71,7 +71,7 @@ class VideoPagerFragment(
         pagerAdapter = PagerAdapter(imageLoader)
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.isUserInputEnabled = false
-        binding.viewPager.offscreenPageLimit = 3 // Preload neighbouring page image previews
+        binding.viewPager.offscreenPageLimit = 5 // Preload neighbouring page image previews
         commentFragment = CommentsFragment()
 
 

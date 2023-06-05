@@ -5,8 +5,11 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
+import coil.decode.VideoFrameDecoder
 import coil.load
+import coil.request.videoFrameMillis
 import coil.size.Scale
+import com.google.common.math.Quantiles.scale
 import com.player.ui.AppPlayerView
 import com.videopager.databinding.PageItemBinding
 import com.videopager.models.AnimationEffect
@@ -30,11 +33,22 @@ internal class PageViewHolder(
 
     fun bind(videoData: VideoData) {
         binding.previewImage.load(videoData.previewImageUri,imageLoader) {
-            scale(Scale.FILL)
+//            scale(Scale.FIT)
         }
 
-        /*binding.previewImage.load(videoData.mediaUri) {
-            decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
+        /*binding.previewImage.load(
+            uri = videoData.previewImageUri,
+            imageLoader = imageLoader
+        )*/
+
+        val smapleMp4 = "https://file-examples.com/storage/fea582e6406477bb69e8a67/2017/04/file_example_MP4_480_1_5MG.mp4"
+
+        /*binding.previewImage.load(videoData.video_url_mp4) {
+            this.memoryCacheKey(videoData.video_url_mp4)
+//            videoFrameMillis(1000)
+            decoderFactory { result, options, _ ->
+                VideoFrameDecoder(result.source, options)
+            }
         }*/
 
         binding.share.setOnClickListener{
@@ -61,7 +75,8 @@ internal class PageViewHolder(
             setDimensionRatio(binding.playerContainer.id, "")
             setDimensionRatio(binding.previewImage.id, "")*/
 
-            val ratio = videoData.aspectRatio?.let { "$it:0" }
+            val ratio = videoData.aspectRatio?.let { "$it:1" }
+//            val ratio = videoData.aspectRatio?.let { "3:4" }
             setDimensionRatio(binding.playerContainer.id, ratio)
             setDimensionRatio(binding.previewImage.id, ratio)
 

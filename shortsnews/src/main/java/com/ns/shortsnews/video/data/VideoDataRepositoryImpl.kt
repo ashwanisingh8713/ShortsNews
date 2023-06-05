@@ -40,6 +40,13 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 
             val videoData = response.data
                 .mapIndexed { index, post ->
+                    val width = post?.width
+                    val height = post?.height
+                    val aspectRatio = if (width != null && height != null) {
+                        width.toFloat() / height.toFloat()
+                    } else {
+                        null
+                    }
                     if (post.type != "yt" || youtubeUriConversionCount <= conversionCount) {
                         if (index < precachingAllowedCount) {
                             videoUrls[index] = post.videoUrl
@@ -49,8 +56,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                             id = post.id,
                             mediaUri = post.videoUrl,
                             previewImageUri = post.preview!!,
-                            aspectRatio = null,
-                            type = post.type
+                            aspectRatio = aspectRatio,
+                            type = post.type,
+                            video_url_mp4 = post.video_url_mp4
                         )
                     } else {
                         val youTubeUri = YouTubeUri(context)
@@ -68,8 +76,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                             id = post.id,
                             mediaUri = finalUri18,
                             previewImageUri = post.preview!!,
-                            aspectRatio = null,
-                            type = "yt"
+                            aspectRatio = aspectRatio,
+                            type = "yt",
+                            video_url_mp4 = post.video_url_mp4
                         )
                     }
                 }.filter {

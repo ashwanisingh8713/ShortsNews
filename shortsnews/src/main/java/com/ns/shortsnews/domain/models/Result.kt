@@ -128,6 +128,9 @@ data class Data(
     val type: String = "",
     val channelTitle:String = "",
     val like_count:String = "",
+    val video_url_mp4:String = "",
+    val width:Int = 608,
+    val height:Int = 1080,
     val liked:Boolean = false
 )
 /*Kamlesh(Data class for like/unlike)*/

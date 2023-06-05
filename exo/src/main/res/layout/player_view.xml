@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
 <com.google.android.exoplayer2.ui.StyledPlayerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/player_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:shutter_background_color="@android:color/transparent"
-    app:resize_mode="fill"
     app:use_controller="false"
     app:show_fastforward_button="false"
     app:show_next_button="false"
@@ -19,6 +16,5 @@
     app:show_vr_button="false"
     app:played_color="@android:color/holo_red_dark"
     app:scrubber_drawable="@drawable/bg_progressbar_play_video"
-
     />
-</FrameLayout>
+
