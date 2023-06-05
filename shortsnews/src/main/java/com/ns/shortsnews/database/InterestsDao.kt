@@ -20,4 +20,7 @@ interface InterestsDao {
 
     @Query("SELECT (SELECT COUNT(*) FROM interests) == 0")
     suspend fun isEmpty():Boolean
+
+    @Query("DELETE FROM interests")
+    suspend fun deleteInterestsData()
 }

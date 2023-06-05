@@ -41,9 +41,9 @@ import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModel
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModelFactory
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppPreference
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.koin.android.ext.android.get
@@ -85,6 +85,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -126,6 +127,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     )
                 }
             }
+        }
+        binding.constLogout.setOnClickListener {
+            AppPreference.clear()
+            AppPreference.isProfileDeleted = true
+            activity?.finish()
         }
 
         binding.profileImageEditIcon.setOnClickListener {
@@ -177,7 +183,21 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            updateProfileViewModel.DeleteProfileSuccessState.filterNotNull().collectLatest {
+                if (it.status){
+                    binding.progressBar.visibility = View.GONE
+                    AppPreference.clear()
+                    AppPreference.isProfileDeleted = true
+                    ShortsDatabase.instance!!.languageDao().deleteLanguageData()
+                    ShortsDatabase.instance!!.interestsDao().deleteInterestsData()
+                    activity?.finish()
+                }
+            }
+        }
     }
+
 
 
     private var launchLoginActivityResultCameraLauncher = registerForActivityResult(

@@ -1,5 +1,6 @@
 package com.ns.shortsnews.ui.activity
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -44,6 +45,7 @@ class ContainerActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("CommitTransaction")
     private fun launchEditProfileFragment(profileData: ProfileData) {
         val fragment = EditProfileFragment()
         val bundle = Bundle()

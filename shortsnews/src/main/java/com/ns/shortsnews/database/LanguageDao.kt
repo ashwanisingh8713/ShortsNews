@@ -1,6 +1,5 @@
 package com.ns.shortsnews.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.ns.shortsnews.domain.models.LanguageTable
 import kotlinx.coroutines.flow.Flow
@@ -23,4 +22,8 @@ interface LanguageDao {
 
     @Query("SELECT (SELECT COUNT(*) FROM language) == 0")
     suspend fun isEmpty():Boolean
+
+
+    @Query("DELETE FROM language")
+    suspend fun deleteLanguageData()
 }

@@ -1,5 +1,6 @@
 package com.ns.shortsnews
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -106,6 +107,7 @@ class ProfileActivity : AppCompatActivity() {
             .commit()
     }
 
+    @SuppressLint("CommitTransaction")
     private fun languagesFragment() {
         val fragment = LanguageFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
@@ -117,5 +119,16 @@ class ProfileActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         this.finish()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (AppPreference.isProfileDeleted){
+            AppPreference.clear()
+            val i = Intent(this, ProfileActivity::class.java)
+            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(i)
+
+        }
     }
 }
