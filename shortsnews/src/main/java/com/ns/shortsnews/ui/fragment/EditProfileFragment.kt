@@ -32,7 +32,9 @@ import com.google.android.material.textfield.TextInputLayout
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentEditProfileBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.domain.models.ProfileData
+import com.ns.shortsnews.domain.usecase.updateuser.DeleteProfileUseCase
 import com.ns.shortsnews.domain.usecase.updateuser.UpdateUserUseCase
 import com.ns.shortsnews.ui.activity.ContainerActivity
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModel
@@ -54,7 +56,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     private var isProfileImageSelected = false
     private val updateProfileViewModel: UpdateProfileViewModel by activityViewModels {
         UpdateProfileViewModelFactory().apply {
-            inject(UpdateUserUseCase(UserDataRepositoryImpl(get())))
+            inject(UpdateUserUseCase(UserDataRepositoryImpl(get())), DeleteProfileUseCase(UserDataRepositoryImpl(get())))
         }
     }
 
@@ -133,6 +135,17 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             val intent = Intent(requireActivity(), ContainerActivity::class.java)
             intent.putExtra("to","interests")
             requireActivity().startActivity(intent)
+        }
+        binding.constDelete.setOnClickListener {
+            updateProfileViewModel.requestDeleteProfile()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            updateProfileViewModel.UpdateProfileSuccessState.filterNotNull().collectLatest {
+                AppPreference.clear()
+                ShortsDatabase.instance!!.close()
+
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

@@ -38,4 +38,8 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
     override suspend fun getUpdateProfileData(data:RequestBody): StatusResult {
         return  apiService.getUpdateProfile(data)
     }
+
+    override suspend fun getDeleteProfile(): StatusResult {
+      return apiService.getDeleteProfile()
+    }
 }

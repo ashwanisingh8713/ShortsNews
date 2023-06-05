@@ -19,4 +19,7 @@ interface UserDataRepository {
 
     // Update profile
     suspend fun getUpdateProfileData(data:RequestBody): StatusResult
+
+    //Delete Profile
+    suspend fun getDeleteProfile():StatusResult
 }

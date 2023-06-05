@@ -14,10 +14,7 @@ import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
-import com.ns.shortsnews.ui.fragment.LanguageFragment
-import com.ns.shortsnews.ui.fragment.LoginFragment
-import com.ns.shortsnews.ui.fragment.NewProfileFragment
-import com.ns.shortsnews.ui.fragment.OtpFragment
+import com.ns.shortsnews.ui.fragment.*
 import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModel
 import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserViewModel

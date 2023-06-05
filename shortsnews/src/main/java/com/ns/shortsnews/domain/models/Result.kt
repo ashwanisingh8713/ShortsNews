@@ -152,6 +152,7 @@ data class LikeUnlikeData(
 
 @JsonClass(generateAdapter = true)
 data class StatusResult(
+    val data:List<String>? = emptyList(),
     val status: Boolean,
     val msg: String = ""
 )

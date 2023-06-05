@@ -3,20 +3,24 @@ package com.ns.shortsnews.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ns.shortsnews.domain.exception.ApiError
-import com.ns.shortsnews.domain.models.ProfileResult
 import com.ns.shortsnews.domain.models.StatusResult
 import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
+import com.ns.shortsnews.domain.usecase.updateuser.DeleteProfileUseCase
 import com.ns.shortsnews.domain.usecase.updateuser.UpdateUserUseCase
-import com.ns.shortsnews.domain.usecase.user.UserProfileDataUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.RequestBody
 
-class UpdateProfileViewModel(private val updateUserUseCase: UpdateUserUseCase): ViewModel() {
+class UpdateProfileViewModel(private val updateUserUseCase: UpdateUserUseCase,
+                             private val deleteProfileUseCase: DeleteProfileUseCase): ViewModel() {
 
     // Update Profile
     private val _updateProfileSuccessState = MutableStateFlow<StatusResult?>(null)
     val UpdateProfileSuccessState: MutableStateFlow<StatusResult?> get() = _updateProfileSuccessState
+
+    // Delete Profile
+    private val _deleteProfileSuccessState = MutableStateFlow<StatusResult?>(null)
+    val DeleteProfileSuccessState: MutableStateFlow<StatusResult?> get() = _deleteProfileSuccessState
 
     private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> get() = _errorState
@@ -43,5 +47,25 @@ class UpdateProfileViewModel(private val updateUserUseCase: UpdateUserUseCase): 
                 }
             }
         )
+    }
+
+    fun requestDeleteProfile(){
+        deleteProfileUseCase.invoke(viewModelScope, null,
+        object :UseCaseResponse<StatusResult>{
+            override fun onSuccess(type: StatusResult) {
+                _deleteProfileSuccessState.value = type
+                _loadingState.value = true
+            }
+
+            override fun onError(apiError: ApiError) {
+                _errorState.value = apiError.getErrorMessage()
+                _loadingState.value = false
+            }
+
+            override fun onLoading(isLoading: Boolean) {
+                _loadingState.value = true
+            }
+
+        })
     }
 }

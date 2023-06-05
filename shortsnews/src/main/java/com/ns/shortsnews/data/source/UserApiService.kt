@@ -36,5 +36,8 @@ interface UserApiService {
     @POST("update-profile")
     suspend fun getUpdateProfile(@Body body: RequestBody): StatusResult
 
+    @GET("delete-profile")
+    suspend fun getDeleteProfile():StatusResult
+
 
 }
