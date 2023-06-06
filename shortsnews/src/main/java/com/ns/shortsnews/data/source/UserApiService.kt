@@ -21,7 +21,7 @@ interface UserApiService {
     @GET("my-channels")
     suspend fun getChannelData(): ChannelsDataResult
 
-    @GET("categories_")
+    @GET("categories")
     suspend fun getVideoCategory(@Query("languages")languages:String): VideoCategoryResult
 
     @GET("videos")

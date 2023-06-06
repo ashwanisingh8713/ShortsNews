@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".user.ui.fragment.FollowingFragment"
+    tools:context=".ui.fragment.FollowingFragment"
     android:background="@color/screen_background">
 
     <ProgressBar
@@ -17,36 +17,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
-<!--    <ImageView-->
-<!--        android:id="@+id/back_button_user"-->
-<!--        android:layout_width="@dimen/back_button_width"-->
-<!--        android:layout_height="@dimen/back_button_height"-->
-<!--        android:src="@drawable/back_button"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        android:scaleType="centerInside"-->
-<!--        android:padding="5dp"-->
-<!--        android:layout_marginStart="@dimen/margin_start"-->
-<!--        android:layout_marginTop="@dimen/margin_top_back_button"-->
-<!--        android:contentDescription="back button otp"-->
-<!--        tools:ignore="HardcodedText" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/following_txt"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Your Following"-->
-<!--        android:textColorHint="@color/white"-->
-<!--        android:textColor="@color/white"-->
-<!--        android:fontFamily="@font/roboto_bold"-->
-<!--        android:textStyle="bold"-->
-<!--        android:textSize="@dimen/video_page_text_size_xxxxlarge"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="@id/back_button_user"-->
-<!--        app:layout_constraintBottom_toBottomOf="@id/back_button_user"-->
-<!--        tools:ignore="HardcodedText" />-->
+    <TextView
+        android:id="@+id/following_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Follow some channels"
+        android:textColor="@color/white"
+        android:textSize="@dimen/video_page_text_size_xxlarge"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_following"

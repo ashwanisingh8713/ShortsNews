@@ -127,6 +127,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             mChip.isCheckable = true
             mChip.isClickable = true
             mChip.iconStartPadding = 6F
+            mChip.chipStrokeColor = null
+            mChip.chipStrokeWidth = 0F
             binding.choiceChipGroup.addView(mChip)
             binding.choiceChipGroup.isClickable = true
             binding.choiceChipGroup.isSingleSelection = false

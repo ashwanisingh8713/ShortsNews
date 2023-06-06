@@ -57,6 +57,9 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
                     adapter = ChannelsAdapter(it.data)
                     adapter.clicksEvent()
                     binding.recyclerviewFollowing.adapter = adapter
+                    if (it.data.isEmpty()){
+                      binding.followingText.visibility = View.VISIBLE
+                    }
                 }
             }
         }

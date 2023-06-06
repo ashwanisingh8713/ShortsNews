@@ -1,5 +1,6 @@
 package com.ns.shortsnews
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -11,7 +12,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
 import coil.load
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
 
         binding.profileIcon.setOnClickListener {
-            launchProfileIntent()
+            launchProfileActivity()
         }
         getSelectedLanguagesValues()
 
@@ -130,6 +130,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             AppPreference.isUserLoggedIn,
             AppPreference.userToken
         )
+
+        if (AppPreference.isProfileUpdated){
+            binding.profileIcon.load(AppPreference.userProfilePic)
+            AppPreference.isProfileUpdated = false
+        }
     }
 
 
@@ -144,8 +149,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             AppPreference.userToken
         )
     }
-
-    private fun launchProfileIntent() {
+    /*
+    Load profile activity
+    */
+    private fun launchProfileActivity() {
         val intent = Intent(this, ProfileActivity::class.java)
         intent.putExtra("fromActivity", "MainActivity")
         startActivity(intent)
@@ -175,7 +182,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun launchLoginStateFlow() {
         lifecycleScope.launch {
             sharedEventViewModel.getLoginEventStatus.collectLatest {
-                launchProfileIntent()
+                launchProfileActivity()
             }
         }
     }
@@ -259,6 +266,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 }
             }
 
+            @SuppressLint("UseCompatLoadingForDrawables")
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED -> {
@@ -435,8 +443,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             }
         }
     }
-
-
+    /*Bottom sheet pallet color using bitmap icon from response URL*/
     private fun bottomSheetHeaderBg(bitmap: Bitmap, channelId: String) {
         val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
         
@@ -490,7 +497,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         }
     }
-
+     /*Handling Back pressed for main activity and channel bottom sheet state*/
     override fun onBackPressed() {
         if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -498,8 +505,4 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             onBackPressedDispatcher.onBackPressed()
         }
     }
-
-
-
-
 }

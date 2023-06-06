@@ -1,11 +1,12 @@
 package com.videopager.ui
 
+import android.content.Context
+import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -56,6 +57,7 @@ class VideoPagerFragment(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -264,6 +266,7 @@ class VideoPagerFragment(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun PagerAdapter.clicksEvent(): Flow<ViewEvent> {
         return clicks().map {
             when (it.second) {
@@ -304,7 +307,6 @@ class VideoPagerFragment(
                         sharedEventViewModel.launchLoginEvent(true)
                         NoFurtherEvent
                     } else {
-
                         commentFragment.show(childFragmentManager, "comments")
                         val currentItem = binding.viewPager.currentItem
                         val videoData = pagerAdapter.getVideoData(currentItem)
@@ -316,6 +318,7 @@ class VideoPagerFragment(
                         sharedEventViewModel.launchLoginEvent(true)
                         NoFurtherEvent
                     } else {
+                        vibratePhone()
                         val currentItem = binding.viewPager.currentItem
                         val videoData = pagerAdapter.getVideoData(currentItem)
                         LikeClickEvent(videoData.id, currentItem)
@@ -326,6 +329,7 @@ class VideoPagerFragment(
                         sharedEventViewModel.launchLoginEvent(true)
                         NoFurtherEvent
                     } else {
+                        vibratePhone()
                         val currentItem = binding.viewPager.currentItem
                         val videoData = pagerAdapter.getVideoData(currentItem)
                         BookmarkClickEvent(videoId = videoData.id, currentItem)
@@ -397,6 +401,18 @@ class VideoPagerFragment(
         }
         handler.postDelayed(updateProgressAction, 1000)
 
+    }
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun Fragment.vibratePhone() {
+        val vib = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager =
+                activity?.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            activity?.getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+        vib.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 
 

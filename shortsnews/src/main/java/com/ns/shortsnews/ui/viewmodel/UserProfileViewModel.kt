@@ -15,7 +15,7 @@ class UserProfileViewModel(private val userChoiceDataUseCase: UserProfileDataUse
     private val _userProfileSuccessState = MutableStateFlow<ProfileResult?>(null)
     val UserProfileSuccessState: StateFlow<ProfileResult?> get() = _userProfileSuccessState
 
-    private val _errorState = MutableStateFlow<String?>("NA")
+    private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> get() = _errorState
 
     private val _loadingState = MutableStateFlow(true)

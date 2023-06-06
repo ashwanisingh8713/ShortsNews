@@ -51,6 +51,9 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
                     binding.progressBar.visibility = View.GONE
                     adapter.updateVideoData(it.data)
                     binding.likesRecyclerview.adapter = adapter
+                    if (it.data.isEmpty()){
+                        binding.noBookmarksText.visibility = View.VISIBLE
+                    }
                 }
             }
         }

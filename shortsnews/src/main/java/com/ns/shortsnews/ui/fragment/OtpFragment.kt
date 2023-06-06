@@ -42,7 +42,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         val  otpId:String? = arguments?.getString("otp_id")
         val emailId = arguments?.getString("email")
         binding.emailTxt.text = emailId
-        binding.otpEditText.setText("123456")
+//        binding.otpEditText.setText("123456")
         binding.submitButton.setOnClickListener {
 
              val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager

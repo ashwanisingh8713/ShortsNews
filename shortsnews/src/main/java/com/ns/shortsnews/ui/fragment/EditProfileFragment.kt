@@ -147,14 +147,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            updateProfileViewModel.UpdateProfileSuccessState.filterNotNull().collectLatest {
-                AppPreference.clear()
-                ShortsDatabase.instance!!.close()
-
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
             updateProfileViewModel.errorState.filterNotNull().collectLatest {
                 if (it != null) {
                     binding.progressBar.visibility = View.GONE

@@ -28,7 +28,7 @@ class PlainVideoActivity : AppCompatActivity() {
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
 
     companion object {
-        val KEY_VIDEO_CLICKED_ITEM = "videoClickedItem"
+        const val KEY_VIDEO_CLICKED_ITEM = "videoClickedItem"
     }
 
 

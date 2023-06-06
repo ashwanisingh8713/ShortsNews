@@ -17,6 +17,7 @@ import com.ns.shortsnews.domain.models.ProfileData
 import com.ns.shortsnews.domain.usecase.user.UserProfileDataUseCase
 import com.ns.shortsnews.ui.viewmodel.UserProfileViewModel
 import com.ns.shortsnews.ui.viewmodel.UserProfileViewModelFactory
+import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -31,6 +32,7 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
     } }
     private lateinit var adapter:NewProfilePagerAdapter
     private lateinit var profileData: ProfileData
+    private val TAG = "NewProfileFragment"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,9 +61,8 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
         viewLifecycleOwner.lifecycleScope.launch {
             userProfileViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarProfile.visibility = View.GONE
-                if(it != "NA"){
-                    Log.i("kamlesh","ProfileFragment onError ::: $it")
-                }
+                Log.i("kamlesh","ProfileFragment onError ::: $it")
+                Alert().showGravityToast(requireActivity(), it)
             }
         }
 
@@ -89,10 +90,12 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
 
     override fun onResume() {
         super.onResume()
+        Log.i(TAG, "OnResume :: profile update status ${AppPreference.isProfileUpdated}")
         if (AppPreference.isProfileUpdated){
+            Log.i(TAG, "OnResume :: requesting profile API")
             userProfileViewModel.requestProfileApi()
-            AppPreference.isProfileUpdated = false
         }
+        Log.i(TAG, "OnResume :: requesting profile API not happened")
     }
 
     private fun saveUserInformation(profileData: ProfileData){

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".user.ui.fragment.BookmarksFragment">
+    tools:context=".ui.fragment.BookmarksFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/likes_recyclerview"
@@ -15,6 +15,19 @@
         app:spanCount="3"
         android:padding="2dp"
         tools:listitem="@layout/item_grid_view"/>
+
+    <TextView
+        android:id="@+id/no_bookmarks_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You have no bookmarks"
+        android:textColor="@color/white"
+        android:textSize="@dimen/video_page_text_size_xxlarge"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
 
     <ProgressBar
         android:id="@+id/progress_bar"

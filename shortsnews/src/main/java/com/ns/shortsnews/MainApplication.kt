@@ -24,7 +24,6 @@ import java.util.concurrent.Executors
 class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider {
 
     private val cacheSize: Long = 1*1024 * 1024 * 1024 //1 Gb for cache
-    private lateinit var languageDatabase:ShortsDatabase
 
     init {
         instance = this
@@ -76,7 +75,4 @@ class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider 
             .setExecutor(Executors.newFixedThreadPool(4))
             .build()
     }
-
-
-
 }
