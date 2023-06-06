@@ -1,6 +1,7 @@
 package com.videopager.ui
 
 import android.graphics.drawable.BitmapDrawable
+import android.util.Log
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -32,8 +33,9 @@ internal class PageViewHolder(
     }
 
     fun bind(videoData: VideoData) {
+        Log.i("ImageTa", "${videoData.id} :: ${videoData.previewImageUri}")
         binding.previewImage.load(videoData.previewImageUri,imageLoader) {
-//            scale(Scale.FIT)
+//            scale(Scale.FILL)
         }
 
         /*binding.previewImage.load(
@@ -75,7 +77,7 @@ internal class PageViewHolder(
             setDimensionRatio(binding.playerContainer.id, "")
             setDimensionRatio(binding.previewImage.id, "")*/
 
-            val ratio = videoData.aspectRatio?.let { "$it:1" }
+            val ratio = videoData.aspectRatio?.let { "$it:0" }
 //            val ratio = videoData.aspectRatio?.let { "3:4" }
             setDimensionRatio(binding.playerContainer.id, ratio)
             setDimensionRatio(binding.previewImage.id, ratio)
