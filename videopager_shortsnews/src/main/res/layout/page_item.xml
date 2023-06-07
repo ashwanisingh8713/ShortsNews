@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:ignore="ContentDescription"
-            android:scaleType="centerCrop"
+            android:adjustViewBounds="false"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
         <!-- End - It holds PreviewImage on Top of PlayerView -->
 
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/video_page_text_size_xxxlarge"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textColor="@color/white"/>
@@ -254,7 +254,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="@string/save"
+                android:text="Save"
                 android:textColor="@color/white"
                 android:textSize="10sp"
                 android:textStyle="bold"

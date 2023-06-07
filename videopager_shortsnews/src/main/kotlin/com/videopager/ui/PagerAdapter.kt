@@ -92,8 +92,10 @@ internal class PagerAdapter(
         var data  = getItem(position)
         if (data.liking){
             holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.red))
+            holder.binding.likeTitle.text = data.like_count
         } else {
             holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.white))
+            holder.binding.likeTitle.text = data.like_count
         }
     }
 
@@ -102,10 +104,10 @@ internal class PagerAdapter(
         var data  = getItem(position)
         if (data.saved){
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.red))
-            holder.binding.saveTitle.text = data.saveCount
+//            holder.binding.saveTitle.text = data.saveCount
         } else {
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.white))
-            holder.binding.saveTitle.text = data.saveCount
+//            holder.binding.saveTitle.text = data.saveCount
         }
     }
 
@@ -124,10 +126,10 @@ internal class PagerAdapter(
         }
         if (data.saved){
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.red))
-            holder.binding.saveTitle.text = data.saveCount
+//            holder.binding.saveTitle.text = data.saveCount
         } else {
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.white))
-            holder.binding.saveTitle.text = data.saveCount
+//            holder.binding.saveTitle.text = data.saveCount
         }
 
 
