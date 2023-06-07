@@ -44,13 +44,15 @@ internal class VideoPagerViewModel(
     private val appPlayerFactory: AppPlayer.Factory,
     private val handle: PlayerSavedStateHandle,
     initialState: ViewState,
-    private val categoryId: String, private val videoFrom: String
+    val categoryId: String, val videoFrom: String
 ) : MviViewModel<ViewEvent, ViewResult, ViewState, ViewEffect>(initialState) {
 
     companion object {
-        private var page = 1
-        private var perPage = 50
+        val perPage = 5
     }
+
+    var page = 1
+    private set
 
     private var _videoProgressBarEvent= MutableSharedFlow<Int>()
     val videoProgressBar = _videoProgressBarEvent.asSharedFlow()
@@ -115,16 +117,26 @@ internal class VideoPagerViewModel(
                 perPage = perPage
             )
         }.map { videoData ->
-                delay(3000)
-                val appPlayer = states.value.appPlayer
-                // If the player exists, it should be updated with the latest video data that came in
-                appPlayer?.setUpWith(videoData, handle.get())
-                // Capture any updated index so UI page state can stay in sync. For example, a video
-                // may have been added to the page before the currently active one. That means the
-                // the current video/page index will have changed
-                val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
-                LoadVideoDataResult(videoData, index)
+            if (page == 1) {
+                delay(1000)
             }
+            val appPlayer = states.value.appPlayer
+            // If the player exists, it should be updated with the latest video data that came in
+
+            var pageVideoData: MutableList<VideoData> = mutableListOf()
+            if (states.value.videoData != null) {
+                pageVideoData.addAll(states.value.videoData!!)
+            }
+            pageVideoData.addAll(videoData)
+            page++
+
+            appPlayer?.setUpWith(pageVideoData, handle.get())
+            // Capture any updated index so UI page state can stay in sync. For example, a video
+            // may have been added to the page before the currently active one. That means the
+            // the current video/page index will have changed
+            val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
+            LoadVideoDataResult(pageVideoData, index)
+        }
     }
 
 
