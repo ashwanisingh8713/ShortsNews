@@ -7,6 +7,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/player_view"
+    app:resize_mode="fixed_height"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:shutter_background_color="@android:color/transparent"

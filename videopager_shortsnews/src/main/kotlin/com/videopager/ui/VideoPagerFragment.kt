@@ -20,9 +20,11 @@ import com.exo.manager.DemoUtil
 import com.exo.manager.DownloadTracker
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.videopager.R
+import com.videopager.data.VideoInfoData
 import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
@@ -164,9 +166,9 @@ class VideoPagerFragment(
                     }
                     is GetVideoInfoEffect -> {
                         if(effect.videoInfo.id.isNotEmpty()) {
-                        pagerAdapter.getInfoRefreshUI(effect.position)
-                        sharedEventViewModel.shareVideoInfo(effect.videoInfo)
+                            pagerAdapter.getInfoRefreshUI(effect.position)
                         }
+                        sharedEventViewModel.shareVideoInfo(effect.videoInfo)
                     }
                     is GetYoutubeUriEffect -> {
                         // TODO, Nothing,
@@ -238,9 +240,10 @@ class VideoPagerFragment(
                 PauseVideoEvent
             },
             getPageInfo().map {
-//                sharedEventViewModel.shareVideoInfo(VideoInfoData())
+                sharedEventViewModel.shareVideoInfo(VideoInfoData())
                 val data = pagerAdapter.getVideoData(currentItem)
                 VideoInfoEvent(data.id, currentItem)
+//                NoFurtherEvent
             },
             videoCache().map {
                 var nextVideoCacheIndex = 0
@@ -383,6 +386,21 @@ class VideoPagerFragment(
                     val currentItem = binding.viewPager.currentItem
                     val videoData = pagerAdapter.getVideoData(currentItem)
                     viewModel.processEvent(FollowClickEvent(videoData.channel_id, currentItem))
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            sharedEventViewModel.sliderState.filterNotNull().collectLatest {
+                when (it) {
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        viewModel.playerView?.player?.pause()
+                    }
+
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        viewModel.playerView?.player?.play()
+                    }
+
                 }
             }
         }

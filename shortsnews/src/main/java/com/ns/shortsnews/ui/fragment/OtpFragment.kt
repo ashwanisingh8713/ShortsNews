@@ -52,7 +52,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 val data:MutableMap<String, String> = mutableMapOf()
                 data["OTP"] = otpValue
                 data["OTP_id"] = otpId.toString()
-                if (Alert().isOnline(requireActivity())) {
+                if (Alert.isOnline(requireActivity())) {
                     userViewModel.requestOtpValidationApi(data)
                 } else {
                     Alert().showErrorDialog(
