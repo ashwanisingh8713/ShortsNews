@@ -40,6 +40,7 @@ import com.ns.shortsnews.ui.activity.ContainerActivity
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModel
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModelFactory
 import com.ns.shortsnews.utils.Alert
+import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -102,6 +103,9 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             binding.locationEditText.setText(userData.location)
         }
         addTextWatcherToEditTexts()
+        binding.constLanguage.setOnClickListener {
+            languagesFragment()
+        }
 
         binding.backButton.setOnClickListener {
             it.hideKeyBoard()
@@ -364,5 +368,13 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val inputManager =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(windowToken, 0)
+    }
+    private fun languagesFragment() {
+        val fragment = LanguageFragment()
+        val bundle = Bundle()
+        bundle.putString("from", AppConstants.FROM_EDIT_PROFILE)
+        fragment.arguments = bundle
+        childFragmentManager.beginTransaction().add(R.id.fragment_container_edit, fragment).addToBackStack("language")
+            .commit()
     }
 }

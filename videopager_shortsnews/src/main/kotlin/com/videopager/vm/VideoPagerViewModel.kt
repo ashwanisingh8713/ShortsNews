@@ -44,7 +44,7 @@ internal class VideoPagerViewModel(
     private val appPlayerFactory: AppPlayer.Factory,
     private val handle: PlayerSavedStateHandle,
     initialState: ViewState,
-    val categoryId: String, val videoFrom: String
+    val categoryId: String, val videoFrom: String, val languages:String
 ) : MviViewModel<ViewEvent, ViewResult, ViewState, ViewEffect>(initialState) {
 
     companion object {
@@ -81,7 +81,9 @@ internal class VideoPagerViewModel(
                 categoryId = categoryId,
                 videoFrom = videoFrom,
                 page = page,
-                perPage = perPage
+                perPage = perPage,
+                languages = languages
+
             )
         )
     }
@@ -114,7 +116,8 @@ internal class VideoPagerViewModel(
                 context = context!!,
                 videoFrom = event.videoFrom,
                 page = page,
-                perPage = perPage
+                perPage = perPage,
+                languages = languages
             )
         }.map { videoData ->
             if (page == 1) {

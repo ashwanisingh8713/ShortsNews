@@ -86,7 +86,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             } else {
                 binding.profileIcon.load(AppPreference.userProfilePic)
             }
-
         }
 
         binding.profileIcon.setOnClickListener {
@@ -106,7 +105,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         bottomSheetFollowingClick()
 
-        registerVideoCache()
+//        registerVideoCache()
     }
 
     private fun getSelectedLanguagesValues() {
@@ -143,7 +142,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      */
     override fun itemclick(requiredId: String, position: Int, size: Int) {
         bottomSheetClearChannelId()
-        loadHomeFragment(requiredId)
+        loadHomeFragment(requiredId, languageStringParams)
         sharedEventViewModel.sendUserPreferenceData(
             AppPreference.isUserLoggedIn,
             AppPreference.userToken
@@ -162,18 +161,18 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     /**
      * Loads Home Fragment
      */
-    private fun loadHomeFragment(categoryType: String) {
+    private fun loadHomeFragment(categoryType: String, languages:String) {
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(
             R.id.fragment_container,
             AppConstants.makeVideoPagerInstance(
                 categoryType,
                 CategoryConstants.DEFAULT_VIDEO_DATA,
-                this@MainActivity
+                this@MainActivity,
+                languages = languages
             )
         )
         ft.commit()
-
     }
 
     // It gets callback from VideoPagerFragment
@@ -200,7 +199,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 )
                 binding.recyclerView.adapter = caAdapter
                 val defaultCate = it.videoCategories[0]
-                loadHomeFragment(defaultCate.id)
+                loadHomeFragment(defaultCate.id,languageStringParams)
                 hideTryAgainText()
             }
         }

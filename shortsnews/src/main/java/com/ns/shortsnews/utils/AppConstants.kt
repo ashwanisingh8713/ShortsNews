@@ -32,8 +32,12 @@ class AppConstants {
         const val CONNECTIVITY_MSG = "Please ensure you have active internet connection."
         const val API_ERROR_TITLE = "API error"
 
+        // Arguments values
+        const val FROM_EDIT_PROFILE = "from_edit_profile"
+        const val FROM_PROFILE = "from_profile"
 
-        fun makeVideoPagerInstance(requiredId: String, videoFrom: String, context: Context): VideoPagerFragment {
+
+        fun makeVideoPagerInstance(requiredId: String, videoFrom: String, context: Context, languages:String): VideoPagerFragment {
             val appPlayerView =  ExoAppPlayerViewFactory().create(context)
             val vpf =  VideoPagerFragment(
                 viewModelFactory = { owner ->
@@ -43,7 +47,8 @@ class AppConstants {
                             context = context, cache = MainApplication.cache
                         ),
                         requiredId = requiredId,
-                        videoFrom = videoFrom
+                        videoFrom = videoFrom,
+                        languages = languages
                     ).create(owner)
                 },
                 appPlayerView = appPlayerView,

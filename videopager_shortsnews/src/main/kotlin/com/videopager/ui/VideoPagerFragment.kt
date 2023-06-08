@@ -262,7 +262,8 @@ class VideoPagerFragment(
                     categoryId = viewModel.categoryId,
                     videoFrom = viewModel.videoFrom,
                     page = viewModel.page,
-                    perPage = VideoPagerViewModel.perPage
+                    perPage = VideoPagerViewModel.perPage,
+                    languages = viewModel.languages
                 ))
                 NoFurtherEvent
             }
