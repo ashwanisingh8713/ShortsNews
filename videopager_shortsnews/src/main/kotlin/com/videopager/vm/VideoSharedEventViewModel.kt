@@ -79,6 +79,15 @@ class VideoSharedEventViewModel:ViewModel() {
         }
     }
 
+    private var _SliderState= MutableSharedFlow<Int>()
+    val sliderState = _SliderState.asSharedFlow()
+
+    fun sendSliderState(sliderState: Int) {
+        viewModelScope.launch {
+            _SliderState.emit(sliderState)
+        }
+    }
+
 
 
 }

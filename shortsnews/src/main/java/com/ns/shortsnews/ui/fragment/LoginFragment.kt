@@ -52,7 +52,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     val bundle:MutableMap<String, String> = mutableMapOf()
                     bundle["email"] = email
                     bundle["name"] = name
-                    if (Alert().isOnline(requireActivity())) {
+                    if (Alert.isOnline(requireActivity())) {
                         userViewModel.requestRegistrationApi(bundle)
                     } else {
                             Alert().showErrorDialog(AppConstants.CONNECTIVITY_ERROR_TITLE,AppConstants.CONNECTIVITY_MSG, requireActivity())

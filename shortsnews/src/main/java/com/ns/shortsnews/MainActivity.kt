@@ -6,7 +6,9 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -74,6 +76,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         standardBottomSheetBehavior =
             BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
 
+        standardBottomSheetBehavior.isDraggable = false
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val view = binding.root
 
@@ -81,12 +85,20 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         if (AppPreference.isUserLoggedIn) {
-            if (AppPreference.userProfilePic == ""){
+            if (AppPreference.userProfilePic == "") {
                 binding.profileIcon.setImageResource(R.drawable.profile_avatar)
             } else {
                 binding.profileIcon.load(AppPreference.userProfilePic)
             }
         }
+
+        // Disable Touch or Click event of BottomSheet for non clickable places
+        binding.persistentBottomsheet.bottomSheet.setOnTouchListener(object : OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                return true
+            }
+
+        })
 
         binding.profileIcon.setOnClickListener {
             launchProfileActivity()
@@ -269,12 +281,14 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED -> {
+                        sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_EXPANDED)
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
                             resources.getDrawable(R.drawable.slide_down_arrow_icon, null)
                         )
                     }
 
                     BottomSheetBehavior.STATE_COLLAPSED -> {
+                        sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_COLLAPSED)
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
                             resources.getDrawable(R.drawable.slide_up_arrow_icon, null)
                         )
@@ -286,15 +300,18 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             }
         })
 
+        // Bottom Sheet Image Arrow CLick Listener to OPEN or CLOSE Drawer
         binding.persistentBottomsheet.imgDownArrow.setOnClickListener {
             if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                 standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
                 val channelId = binding.persistentBottomsheet.imgDownArrow.tag?.toString()
                 channelId?.let {
-                    binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
-                    binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
-                    bottomSheetGetChannelVideoData(channelId = channelId)
+                    if(channelId != "") {
+                        binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
+                        binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
+                        bottomSheetGetChannelVideoData(channelId = channelId)
+                    }
                 }
             }
         }
@@ -429,16 +446,21 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     // Bottom Sheet Following Click Listener
     private fun bottomSheetFollowingClick() {
+
         binding.persistentBottomsheet.following.setOnClickListener {
             val channelId = binding.persistentBottomsheet.following.tag
             channelId?.let {
-                sharedEventViewModel.followRequest(channelId.toString())
+                if(it != "") {
+                    sharedEventViewModel.followRequest(channelId.toString())
+                }
             }
         }
         binding.persistentBottomsheet.followingExpanded.setOnClickListener {
             val channelId = binding.persistentBottomsheet.following.tag
             channelId?.let {
-                sharedEventViewModel.followRequest(channelId.toString())
+                if(it != "") {
+                    sharedEventViewModel.followRequest(channelId.toString())
+                }
             }
         }
     }

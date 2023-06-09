@@ -20,9 +20,11 @@ import com.exo.manager.DemoUtil
 import com.exo.manager.DownloadTracker
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.videopager.R
+import com.videopager.data.VideoInfoData
 import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
@@ -164,9 +166,9 @@ class VideoPagerFragment(
                     }
                     is GetVideoInfoEffect -> {
                         if(effect.videoInfo.id.isNotEmpty()) {
-                        pagerAdapter.getInfoRefreshUI(effect.position)
-                        sharedEventViewModel.shareVideoInfo(effect.videoInfo)
+                            pagerAdapter.getInfoRefreshUI(effect.position)
                         }
+                        sharedEventViewModel.shareVideoInfo(effect.videoInfo)
                     }
                     is GetYoutubeUriEffect -> {
                         // TODO, Nothing,
@@ -197,7 +199,7 @@ class VideoPagerFragment(
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
-//        updateProgress()
+        updateProgress()
     }
 
     override fun onResume() {
@@ -241,6 +243,7 @@ class VideoPagerFragment(
 //                sharedEventViewModel.shareVideoInfo(VideoInfoData())
                 val data = pagerAdapter.getVideoData(currentItem)
                 VideoInfoEvent(data.id, currentItem)
+//                NoFurtherEvent
             },
             videoCache().map {
                 var nextVideoCacheIndex = 0
@@ -387,6 +390,21 @@ class VideoPagerFragment(
                 }
             }
         }
+
+        lifecycleScope.launch {
+            sharedEventViewModel.sliderState.filterNotNull().collectLatest {
+                when (it) {
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        viewModel.playerView?.player?.pause()
+                    }
+
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        viewModel.playerView?.player?.play()
+                    }
+
+                }
+            }
+        }
     }
 
     private fun progressBarValue(position: Long, player: ExoPlayer): Int {
@@ -402,17 +420,15 @@ class VideoPagerFragment(
     private val updateProgressAction = Runnable { updateProgress() }
 
     private fun updateProgress() {
-
         val player = viewModel.states.value.appPlayer?.player
         player?.let {
             val duration: Long = player.duration
             val bufferedPosition = player.bufferedPosition
-            val position: Long = player.currentPosition
+            var position: Long = player.currentPosition
             binding.videoSeekbar.progress = progressBarValue(position, player)
             binding.videoSeekbar.secondaryProgress = progressBarValue(bufferedPosition, player)
-
         }
-        handler.postDelayed(updateProgressAction, 1000)
+        handler.postDelayed(updateProgressAction, 100)
 
     }
     @RequiresApi(Build.VERSION_CODES.S)

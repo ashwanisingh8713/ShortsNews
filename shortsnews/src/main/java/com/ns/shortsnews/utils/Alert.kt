@@ -25,7 +25,7 @@ class Alert {
 
     }
 
-
+companion object {
     fun isOnline(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -47,6 +47,7 @@ class Alert {
         }
         return false
     }
+}
 
     fun showGravityToast(context: Context, msg:String){
         val toast = Toast.makeText(context,msg, Toast.LENGTH_LONG)
