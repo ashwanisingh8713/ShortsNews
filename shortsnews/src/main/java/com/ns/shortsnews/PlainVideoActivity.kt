@@ -62,12 +62,8 @@ class PlainVideoActivity : AppCompatActivity() {
         setContentView(view)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-
-
-        loadVideoFragment(videoClickedItem, getSelectedLanguagesValues())
-
-//        registerVideoCache()
-
+        getSelectedLanguagesValues(videoClickedItem)
+        registerVideoCache()
     }
 
 
@@ -127,7 +123,7 @@ class PlainVideoActivity : AppCompatActivity() {
         }
     }
 
-    private fun getSelectedLanguagesValues():String {
+    private fun getSelectedLanguagesValues(videoClikedItem: VideoClikedItem) {
         var languageString = ""
         lifecycleScope.launch {
             languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
@@ -136,9 +132,10 @@ class PlainVideoActivity : AppCompatActivity() {
                         languageString = languageString + data.id +","
                     }
                 }
+                loadVideoFragment(videoClikedItem, languageString)
             }
         }
-        return languageString
+
     }
 
 
