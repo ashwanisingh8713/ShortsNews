@@ -19,7 +19,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     override suspend fun videoData(
         id: String,
         context: Context,
-        videoFrom: String, page: Int, perPage: Int
+        videoFrom: String, page: Int, perPage: Int,languages:String,
     ): Flow<MutableList<VideoData>> {
         var ll = mutableListOf<MutableList<VideoData>>()
 
@@ -27,8 +27,8 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             val response = when (videoFrom) {
                 CategoryConstants.CHANNEL_VIDEO_DATA -> videoDataApiService.getChannelVideos(id)
                 CategoryConstants.BOOKMARK_VIDEO_DATA -> videoDataApiService.getBookmarkVideos()
-                CategoryConstants.DEFAULT_VIDEO_DATA -> videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage)
-                else -> videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage)
+                CategoryConstants.DEFAULT_VIDEO_DATA -> videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
+                else -> videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
             }
 
             val youtubeUriConversionCount = 2

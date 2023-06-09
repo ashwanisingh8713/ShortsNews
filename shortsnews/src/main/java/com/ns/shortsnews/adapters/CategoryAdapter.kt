@@ -51,6 +51,4 @@ class CategoryAdapter(private var itemList: List<VideoCategory> = emptyList(), p
             itemListener.itemclick(itemList[position].id, position, itemCount)
         }
     }
-
-
 }

@@ -10,15 +10,22 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityPlainVideoBinding
 import com.ns.shortsnews.data.model.VideoClikedItem
+import com.ns.shortsnews.database.ShortsDatabase
+import com.ns.shortsnews.domain.models.LanguageTable
+import com.ns.shortsnews.domain.repository.LanguageRepository
+import com.ns.shortsnews.ui.viewmodel.LanguageViewModel
+import com.ns.shortsnews.ui.viewmodel.LanguageViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
 import com.videopager.utils.CategoryConstants
 import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
@@ -26,6 +33,11 @@ import kotlinx.coroutines.launch
 class PlainVideoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlainVideoBinding
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
+    private var languageListDB = emptyList<LanguageTable>()
+    private val languageDao = ShortsDatabase.instance!!.languageDao()
+    private val languageItemRepository = LanguageRepository(languageDao)
+    private val languageViewModel: LanguageViewModel by viewModels { LanguageViewModelFactory(languageItemRepository) }
+
 
     companion object {
         const val KEY_VIDEO_CLICKED_ITEM = "videoClickedItem"
@@ -50,11 +62,8 @@ class PlainVideoActivity : AppCompatActivity() {
         setContentView(view)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-
-        loadVideoFragment(videoClickedItem)
-
+        getSelectedLanguagesValues(videoClickedItem)
         registerVideoCache()
-
     }
 
 
@@ -62,8 +71,9 @@ class PlainVideoActivity : AppCompatActivity() {
     /**
      * Loads Home Fragment
      */
-    private fun loadVideoFragment(it: VideoClikedItem) {
-        val fragment = AppConstants.makeVideoPagerInstance(requiredId = it.requiredId, videoFrom = it.videoFrom, this@PlainVideoActivity)
+    private fun loadVideoFragment(it: VideoClikedItem, languages:String) {
+        val fragment = AppConstants.makeVideoPagerInstance(requiredId = it.requiredId,
+            videoFrom = it.videoFrom, this@PlainVideoActivity, languages)
         val bundle = Bundle()
         bundle.putInt(CategoryConstants.KEY_SelectedPlay, it.selectedPosition)
         fragment.arguments = bundle
@@ -111,6 +121,21 @@ class PlainVideoActivity : AppCompatActivity() {
             // Making status bar overlaps with the activity
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
+    }
+
+    private fun getSelectedLanguagesValues(videoClikedItem: VideoClikedItem) {
+        var languageString = ""
+        lifecycleScope.launch {
+            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
+                for (data in it){
+                    if (data.selected){
+                        languageString = languageString + data.id +","
+                    }
+                }
+                loadVideoFragment(videoClikedItem, languageString)
+            }
+        }
+
     }
 
 

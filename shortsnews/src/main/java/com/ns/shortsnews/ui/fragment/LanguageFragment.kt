@@ -37,6 +37,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
     private var languageListDB = emptyList<LanguageTable>()
     private val languageDao = ShortsDatabase.instance!!.languageDao()
     private val languageItemRepository = LanguageRepository(languageDao)
+    private var from:String = ""
 
     private val userViewModel: UserViewModel by activityViewModels { UserViewModelFactory().apply {
         inject(
@@ -51,6 +52,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)
         userViewModel.requestLanguagesApi()
+        from = arguments?.getString("from").toString()
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
@@ -108,10 +110,14 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
 
         binding.submitButtonConst.setOnClickListener {
             if (selectedNumbers >0) {
-                AppPreference.isLanguageSelected = true
-                val bundle = Bundle()
-                bundle.putString("name", /*it.name*/"kamlesh")
-                userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
+                if (from == AppConstants.FROM_PROFILE) {
+                    AppPreference.isLanguageSelected = true
+                    val bundle = Bundle()
+                    bundle.putString("name", /*it.name*/"kamlesh")
+                    userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
+                } else {
+                    activity?.finish()
+                }
             } else {
                 Alert().showGravityToast(requireActivity(), "Please select one language")
             }

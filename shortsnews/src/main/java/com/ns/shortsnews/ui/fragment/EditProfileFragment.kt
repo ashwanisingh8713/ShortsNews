@@ -37,9 +37,11 @@ import com.ns.shortsnews.domain.models.ProfileData
 import com.ns.shortsnews.domain.usecase.updateuser.DeleteProfileUseCase
 import com.ns.shortsnews.domain.usecase.updateuser.UpdateUserUseCase
 import com.ns.shortsnews.ui.activity.ContainerActivity
+import com.ns.shortsnews.ui.activity.LanguageContainer
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModel
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModelFactory
 import com.ns.shortsnews.utils.Alert
+import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -102,6 +104,9 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             binding.locationEditText.setText(userData.location)
         }
         addTextWatcherToEditTexts()
+        binding.constLanguage.setOnClickListener {
+            languagesFragment()
+        }
 
         binding.backButton.setOnClickListener {
             it.hideKeyBoard()
@@ -190,6 +195,10 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
     }
 
+    private fun languagesFragment() {
+        val intent  = Intent(requireActivity(), LanguageContainer::class.java)
+        startActivity(intent)
+    }
 
 
     private var launchLoginActivityResultCameraLauncher = registerForActivityResult(

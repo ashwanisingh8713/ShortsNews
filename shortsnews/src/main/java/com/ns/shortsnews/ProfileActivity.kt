@@ -20,6 +20,7 @@ import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModel
 import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
+import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -110,6 +111,9 @@ class ProfileActivity : AppCompatActivity() {
     @SuppressLint("CommitTransaction")
     private fun languagesFragment() {
         val fragment = LanguageFragment()
+        val bundle = Bundle()
+        bundle.putString("from", AppConstants.FROM_PROFILE)
+        fragment.arguments = bundle
         supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
             .commit()
     }
