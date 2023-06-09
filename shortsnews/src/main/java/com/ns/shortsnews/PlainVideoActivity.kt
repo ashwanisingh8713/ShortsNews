@@ -66,7 +66,7 @@ class PlainVideoActivity : AppCompatActivity() {
 
         loadVideoFragment(videoClickedItem, getSelectedLanguagesValues())
 
-        registerVideoCache()
+//        registerVideoCache()
 
     }
 

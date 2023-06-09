@@ -110,13 +110,13 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
 
         binding.submitButtonConst.setOnClickListener {
             if (selectedNumbers >0) {
-                if (from.equals(AppConstants.FROM_PROFILE)) {
+                if (from == AppConstants.FROM_PROFILE) {
                     AppPreference.isLanguageSelected = true
                     val bundle = Bundle()
                     bundle.putString("name", /*it.name*/"kamlesh")
                     userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
                 } else {
-                    childFragmentManager.popBackStack()
+                    activity?.finish()
                 }
             } else {
                 Alert().showGravityToast(requireActivity(), "Please select one language")
