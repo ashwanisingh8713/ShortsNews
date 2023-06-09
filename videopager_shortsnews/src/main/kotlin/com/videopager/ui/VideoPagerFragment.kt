@@ -199,7 +199,7 @@ class VideoPagerFragment(
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
-//        updateProgress()
+        updateProgress()
     }
 
     override fun onResume() {
@@ -240,7 +240,7 @@ class VideoPagerFragment(
                 PauseVideoEvent
             },
             getPageInfo().map {
-                sharedEventViewModel.shareVideoInfo(VideoInfoData())
+//                sharedEventViewModel.shareVideoInfo(VideoInfoData())
                 val data = pagerAdapter.getVideoData(currentItem)
                 VideoInfoEvent(data.id, currentItem)
 //                NoFurtherEvent
@@ -419,17 +419,15 @@ class VideoPagerFragment(
     private val updateProgressAction = Runnable { updateProgress() }
 
     private fun updateProgress() {
-
         val player = viewModel.states.value.appPlayer?.player
         player?.let {
             val duration: Long = player.duration
             val bufferedPosition = player.bufferedPosition
-            val position: Long = player.currentPosition
+            var position: Long = player.currentPosition
             binding.videoSeekbar.progress = progressBarValue(position, player)
             binding.videoSeekbar.secondaryProgress = progressBarValue(bufferedPosition, player)
-
         }
-        handler.postDelayed(updateProgressAction, 1000)
+        handler.postDelayed(updateProgressAction, 100)
 
     }
     @RequiresApi(Build.VERSION_CODES.S)

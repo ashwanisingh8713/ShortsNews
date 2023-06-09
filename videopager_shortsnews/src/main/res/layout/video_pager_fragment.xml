@@ -35,15 +35,15 @@
         android:layout_height="wrap_content"
         android:paddingStart="0dp"
         android:paddingEnd="0dp"
-        android:maxHeight="2.5dp"
-        android:minHeight="2.5dp"
+        android:maxHeight="2.0dp"
+        android:minHeight="2.0dp"
         android:thumb="@null"
         android:progressDrawable="@drawable/sb_progress_drawable"
         android:thumbTint="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="gone"/>
+        />
     <!-- End Video Seekbar -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

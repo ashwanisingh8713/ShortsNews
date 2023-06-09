@@ -8,5 +8,6 @@ internal val Player.currentMediaItems: List<MediaItem> get() {
 }
 
 internal fun Player.loopVideos() {
-    repeatMode = Player.REPEAT_MODE_ONE
+//    repeatMode = Player.REPEAT_MODE_ONE
+    repeatMode = Player.REPEAT_MODE_OFF
 }

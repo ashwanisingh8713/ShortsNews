@@ -110,8 +110,8 @@ internal class ExoAppPlayer(
         val listener = object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 super.onMediaItemTransition(mediaItem, reason)
-                if (mediaItem != null) {
-                    //trySend(mediaItem)
+                if (mediaItem != null && (reason == 1) ) {
+                    trySend(mediaItem)
                 }
             }
         }
