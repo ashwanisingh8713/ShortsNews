@@ -104,7 +104,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                 }
 
             // Preload Video urls
-            HlsBulkPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
+//            HlsBulkPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
 
             Log.i("Conv_TIME", "VideoDataRepositoryImpl")
 

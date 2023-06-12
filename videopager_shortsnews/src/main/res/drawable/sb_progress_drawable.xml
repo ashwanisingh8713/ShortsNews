@@ -5,16 +5,16 @@
         <shape android:shape="rectangle">
             <solid android:color="#1AFFFFFF"/>
         </shape>
-    </item>
+    </item>-->
 
     <item android:id="@android:id/secondaryProgress">
         <scale
             android:scaleWidth="100%" >
             <shape android:shape="rectangle">
-                <solid android:color="#FAD8BBBB"/>
+<!--                <solid android:color="#FAD8BBBB"/>-->
             </shape>
         </scale>
-    </item>-->
+    </item>
 
     <item android:id="@android:id/progress">
         <scale

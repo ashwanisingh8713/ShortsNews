@@ -258,9 +258,10 @@ class VideoPagerFragment(
                 NoFurtherEvent
             },
             loadMoreVideoData().map {
-                Log.i("VideoPreload", "")
-                Log.i("VideoPreload", "########### NEW PAGE REQUEST IS SENT TO SERVER #################")
-                Log.i("VideoPreload", "VideoFrom :: ${viewModel.videoFrom}, CategoryId :: ${viewModel.categoryId}, Page :: ${viewModel.page}")
+                val Tag = "PagePreload"
+                Log.i(Tag, "")
+                Log.i(Tag, "########### NEW PAGE REQUEST IS SENT TO SERVER #################")
+                Log.i(Tag, "VideoFrom :: ${viewModel.videoFrom}, CategoryId :: ${viewModel.categoryId}, Page :: ${viewModel.page}")
                 viewModel.processEvent(LoadVideoDataEvent(
                     categoryId = viewModel.categoryId,
                     videoFrom = viewModel.videoFrom,
