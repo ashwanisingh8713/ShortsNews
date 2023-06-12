@@ -47,7 +47,19 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                     } else {
                         null
                     }
-                    if (post.type != "yt" || youtubeUriConversionCount <= conversionCount) {
+                    if (index < precachingAllowedCount) {
+                        videoUrls[index] = post.videoUrl
+                        videoIds[index] = post.id
+                    }
+                    VideoData(
+                        id = post.id,
+                        mediaUri = post.videoUrl,
+                        previewImageUri = post.preview!!,
+                        aspectRatio = aspectRatio,
+                        type = post.type,
+                        video_url_mp4 = post.video_url_mp4
+                    )
+                    /*if (post.type != "yt" || youtubeUriConversionCount <= conversionCount) {
                         if (index < precachingAllowedCount) {
                             videoUrls[index] = post.videoUrl
                             videoIds[index] = post.id
@@ -80,7 +92,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                             type = "yt",
                             video_url_mp4 = post.video_url_mp4
                         )
-                    }
+                    }*/
                 }.filter {
                     it.mediaUri.isNotBlank()
                 }
