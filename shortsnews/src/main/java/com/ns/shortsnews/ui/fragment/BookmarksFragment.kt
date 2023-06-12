@@ -1,10 +1,12 @@
 package com.ns.shortsnews.ui.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.GridAdapter
@@ -13,12 +15,14 @@ import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.BookmarksViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserBookmarksViewModel
+import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
 import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
+import org.koin.androidx.scope.fragmentScope
 
 
 class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
@@ -29,6 +33,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
         inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
     }}
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentBookmarkBinding.bind(view)
@@ -48,6 +53,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
             likesViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
                 Log.i("kamlesh","ProfileFragment onSuccess ::: $it")
                 it.let {
+                    binding.likesRecyclerview.visibility = View.VISIBLE
                     binding.progressBar.visibility = View.GONE
                     adapter.updateVideoData(it.data)
                     binding.likesRecyclerview.adapter = adapter
@@ -72,5 +78,24 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("bookmark","onResume")
+        if (AppPreference.isUpdateNeeded) {
+            likesViewModel.requestVideoData(
+                params = Pair(
+                    CategoryConstants.BOOKMARK_VIDEO_DATA,
+                    ""
+                )
+            )
+            AppPreference.isUpdateNeeded = false
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        AppPreference.isUpdateNeeded = false
     }
 }

@@ -15,6 +15,7 @@ import com.ns.shortsnews.ui.viewmodel.ChannelsViewModel
 import com.ns.shortsnews.ui.viewmodel.ChannelsViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModel
 import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModelFactory
+import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -83,6 +84,7 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
                     bundle.putString("channelUrl", it.channel_image)
                     arguments = bundle
                 }
+                AppPreference.isUpdateNeeded  = true
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_containerProfile, channelVideosFragment)
                     .addToBackStack(null).commit()

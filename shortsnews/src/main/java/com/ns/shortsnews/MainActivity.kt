@@ -19,6 +19,7 @@ import androidx.palette.graphics.Palette
 import coil.load
 import coil.request.ImageRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
 import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.cache.HlsOneByOnePreloadCoroutine
@@ -117,7 +118,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         bottomSheetFollowingClick()
 
-//        registerVideoCache()
+        registerVideoCache()
     }
 
     private fun getSelectedLanguagesValues() {
@@ -129,8 +130,27 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     languageString = languageString + data.id +","
                   }
               }
-                languageStringParams = languageString
+                languageStringParams = languageString.dropLast(1)
                 videoCategoryViewModel.loadVideoCategory(languageString)
+            }
+        }
+    }
+    private fun getSelectedLanguagesValuesOnClick(requiredId: String) {
+        var languageString = ""
+        lifecycleScope.launch {
+            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
+                for (data in it){
+                    if (data.selected){
+                        languageString = languageString + data.id +","
+                    }
+                }
+               languageString.dropLast(1)
+                Log.i("lang"," item click $languageString")
+                loadHomeFragment(requiredId, languageString)
+                sharedEventViewModel.sendUserPreferenceData(
+                    AppPreference.isUserLoggedIn,
+                    AppPreference.userToken
+                )
             }
         }
     }
@@ -154,11 +174,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      */
     override fun itemclick(requiredId: String, position: Int, size: Int) {
         bottomSheetClearChannelId()
-        loadHomeFragment(requiredId, languageStringParams)
-        sharedEventViewModel.sendUserPreferenceData(
-            AppPreference.isUserLoggedIn,
-            AppPreference.userToken
-        )
+       getSelectedLanguagesValuesOnClick(requiredId)
     }
     /*
     Load profile activity
@@ -211,6 +227,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 )
                 binding.recyclerView.adapter = caAdapter
                 val defaultCate = it.videoCategories[0]
+                Log.i("languages","show category $languageStringParams")
                 loadHomeFragment(defaultCate.id,languageStringParams)
                 hideTryAgainText()
             }
@@ -231,6 +248,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun showTryAgainText() {
             binding.tryAgain.visibility = View.VISIBLE
             binding.tryAgain.setOnClickListener {
+                Log.i("lang","" +
+                        "try again $languageStringParams")
                 videoCategoryViewModel.loadVideoCategory(languageStringParams)
             }
     }
@@ -519,6 +538,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
      /*Handling Back pressed for main activity and channel bottom sheet state*/
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED

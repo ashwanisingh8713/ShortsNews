@@ -1,5 +1,6 @@
 package com.ns.shortsnews.ui.fragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ns.shortsnews.R
@@ -39,8 +41,6 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
         binding = FragmentNewProfileBinding.bind(view)
         userProfileViewModel.requestProfileApi()
         adapter = NewProfilePagerAdapter(requireActivity())
-        adapter.addFragment(BookmarksFragment(), "Bookmark")
-        adapter.addFragment(FollowingFragment(), "Following")
         binding.profileViewPager.adapter = adapter
         binding.profileViewPager.currentItem = 0
         TabLayoutMediator(binding.profileTabLayout, binding.profileViewPager) { tab, position ->
@@ -49,6 +49,7 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
 
 
         binding.backButton.setOnClickListener {
+            AppPreference.isUpdateNeeded  =false
             activity?.finish()
         }
         binding.setting.setOnClickListener {
@@ -57,6 +58,17 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
             intent.putExtra("profile_data",profileData )
             startActivity(intent)
         }
+        binding.profileViewPager.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if(position == 0) {
+                    adapter.createFragment(0)
+                }
+            }
+
+        })
 
         viewLifecycleOwner.lifecycleScope.launch {
             userProfileViewModel.errorState.filterNotNull().collectLatest {
@@ -95,7 +107,6 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
             Log.i(TAG, "OnResume :: requesting profile API")
             userProfileViewModel.requestProfileApi()
         }
-        Log.i(TAG, "OnResume :: requesting profile API not happened")
     }
 
     private fun saveUserInformation(profileData: ProfileData){

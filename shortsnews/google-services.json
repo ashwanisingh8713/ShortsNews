@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "68375531080",
+    "project_id": "newsdx-shorts",
+    "storage_bucket": "newsdx-shorts.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68375531080:android:33bd1a5f8d45651f8f127d",
+        "android_client_info": {
+          "package_name": "com.ns.shortsnews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68375531080-io10vs6i3c4dtvh6k86raatsa5ei4df3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqs8BXO87slpL0UnENlKzwcWakBSTsFbs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68375531080-io10vs6i3c4dtvh6k86raatsa5ei4df3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

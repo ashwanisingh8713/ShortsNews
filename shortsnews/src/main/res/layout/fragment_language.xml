@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/screen_background"
     tools:context=".ui.fragment.LanguageFragment">
 
     <ProgressBar
@@ -56,7 +56,8 @@
         app:layout_constraintBottom_toTopOf="@id/submit_button_const"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/selected_count_txt">
+        app:layout_constraintTop_toBottomOf="@id/selected_count_txt"
+        android:background="@color/screen_background">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/choice_chip_group"

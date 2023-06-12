@@ -74,6 +74,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     private fun listenChannelVideos() {
         viewLifecycleOwner.lifecycleScope.launch {
             channelsVideosViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
+                binding.channelImageRecyclerview.visibility = View.VISIBLE
                 adapter.updateVideoData(it!!.data)
                 binding.channelImageRecyclerview.adapter = adapter
             }

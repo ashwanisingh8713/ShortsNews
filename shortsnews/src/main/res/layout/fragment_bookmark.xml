@@ -14,7 +14,8 @@
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="3"
         android:padding="2dp"
-        tools:listitem="@layout/item_grid_view"/>
+        tools:listitem="@layout/item_grid_view"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/no_bookmarks_text"

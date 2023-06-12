@@ -21,6 +21,7 @@ import com.ns.shortsnews.domain.repository.InterestsRepository
 import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.*
+import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -55,6 +56,9 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         binding.submitButtonPers.setOnClickListener {
             requireActivity().finish()
         }
+        if(AppPreference.isLanguageSelected){
+            binding.submitButtonPers.text = "Save"
+        }
 
 
         viewLifecycleOwner.lifecycleScope.launch(){
@@ -72,7 +76,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                     binding.progressBarPer.visibility = View.GONE
                     if (it.videoCategories.isNotEmpty()) {
                         countValue = it.videoCategories.size
-                        updateSelectedItems()
+//                        updateSelectedItems()
                         if (interestsViewModel.isEmpty()) {
                             loadDataFromServer(it.videoCategories.toMutableList())
                         } else {
@@ -128,12 +132,12 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             mChip.text = chipData.name
             mChip.isCheckable = true
             mChip.isClickable = true
-            binding.choiceChipGroup.addView(mChip)
-            binding.choiceChipGroup.isClickable = true
-            binding.choiceChipGroup.isSingleSelection = false
             mChip.iconStartPadding = 6F
             mChip.isChipIconVisible = true
             mChip.chipStrokeWidth = 4F
+            binding.choiceChipGroup.isSingleSelection = false
+            binding.choiceChipGroup.isClickable = true
+            binding.choiceChipGroup.addView(mChip)
             if (chipData.selected) {
                 mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
                 mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
@@ -152,23 +156,13 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             mChip.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
-                    mChip.chipBackgroundColor = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
+                    mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                     selectedNumbers++
-                    updateSelectedItems()
+//                    updateSelectedItems()
                     interestsViewModel.update(chipData.id, chipData.name, true, "")
                 } else {
-                    mChip.chipBackgroundColor = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            com.videopager.R.color.black
-                        )
-                    )
+                    mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), com.videopager.R.color.black))
                     mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                     mChip.chipStrokeWidth = 4F
@@ -179,17 +173,17 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                         )
                     )
                     selectedNumbers--
-                    updateSelectedItems()
+//                    updateSelectedItems()
                     interestsViewModel.update(chipData.id, chipData.name, false, "")
                 }
             }
         }
-        updateSelectedItems()
+//        updateSelectedItems()
     }
 
     @SuppressLint("SetTextI18n")
     fun updateSelectedItems(){
-        binding.selectedTxt.text = "Selected $selectedNumbers/$countValue languages"
+        binding.selectedTxt.text = "Selected $selectedNumbers/$countValue categories"
 
     }
 

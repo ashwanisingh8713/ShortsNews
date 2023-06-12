@@ -27,8 +27,14 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             val response = when (videoFrom) {
                 CategoryConstants.CHANNEL_VIDEO_DATA -> videoDataApiService.getChannelVideos(id)
                 CategoryConstants.BOOKMARK_VIDEO_DATA -> videoDataApiService.getBookmarkVideos()
-                CategoryConstants.DEFAULT_VIDEO_DATA -> videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
-                else -> videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
+                CategoryConstants.DEFAULT_VIDEO_DATA -> {
+                    Log.i("language",languages.toString())
+                    videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
+                }
+                else -> {
+                    Log.i("language",languages.toString())
+                    videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
+                }
             }
 
             val youtubeUriConversionCount = 2

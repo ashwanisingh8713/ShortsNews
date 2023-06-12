@@ -24,6 +24,7 @@ object AppPreference {
     private const val LANGUAGES_SELECTED = "language_selected"
     private const val IS_LANGUAGE_SELECTED = "is_language_selected"
     private const val IS_PROFILE_DELETED = "profile_cleared"
+    private const val UPDATE_NEEDED = "update_needed"
 
     fun init(context: Context) {
         preference = PreferenceManager.getDefaultSharedPreferences(context)
@@ -114,6 +115,13 @@ object AppPreference {
     get() = preference.getBoolean(IS_PROFILE_DELETED, false)
     set(value) = preference.edit {
         this.putBoolean(IS_PROFILE_DELETED, value)
+        this.apply()
+    }
+
+    var isUpdateNeeded:Boolean
+    get() = preference.getBoolean(UPDATE_NEEDED,false)
+    set(value) = preference.edit {
+        this.putBoolean(UPDATE_NEEDED, value)
         this.apply()
     }
 

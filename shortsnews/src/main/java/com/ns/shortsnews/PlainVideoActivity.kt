@@ -3,6 +3,7 @@ package com.ns.shortsnews
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 import android.view.WindowManager
@@ -80,7 +81,6 @@ class PlainVideoActivity : AppCompatActivity() {
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.fragment_container, fragment)
         ft.commit()
-
     }
 
 
@@ -132,6 +132,7 @@ class PlainVideoActivity : AppCompatActivity() {
                         languageString = languageString + data.id +","
                     }
                 }
+                Log.i("language",languageString)
                 loadVideoFragment(videoClikedItem, languageString)
             }
         }

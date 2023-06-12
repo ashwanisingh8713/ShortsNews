@@ -53,6 +53,9 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         binding = FragmentLanguageBinding.bind(view)
         userViewModel.requestLanguagesApi()
         from = arguments?.getString("from").toString()
+        if(AppPreference.isLanguageSelected){
+            binding.continueButton.text = "Save"
+        }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
@@ -133,17 +136,18 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             mChip.isCheckable = true
             mChip.isClickable = true
             mChip.iconStartPadding = 6F
-            mChip.chipStrokeColor = null
-            mChip.chipStrokeWidth = 0F
-            binding.choiceChipGroup.addView(mChip)
-            binding.choiceChipGroup.isClickable = true
-            binding.choiceChipGroup.isSingleSelection = false
             mChip.isChipIconVisible = true
             mChip.chipStrokeWidth = 4F
+            mChip.checkedIcon =  ContextCompat.getDrawable(requireContext(), R.drawable.check)
+            binding.choiceChipGroup.isSingleSelection = false
+            binding.choiceChipGroup.isClickable = true
+
+            binding.choiceChipGroup.addView(mChip)
 
             if (chipData.isSelected) {
-                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
+                mChip.chipIcon =  ContextCompat.getDrawable(requireContext(), R.drawable.check)
                 mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                mChip.setChipBackgroundColorResource(R.color.white)
                 mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                 languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
                 mChip.isChecked = true
