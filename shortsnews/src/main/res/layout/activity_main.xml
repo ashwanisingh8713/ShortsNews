@@ -50,6 +50,8 @@
                 android:paddingStart="?listPreferredItemPaddingStart"
                 android:paddingEnd="?listPreferredItemPaddingEnd"
                 android:text="@string/category_not_loaded"
+                android:textSize="16sp"
+                android:lineSpacingExtra="2dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 android:textColor="@color/white"
                 android:visibility="gone"/>

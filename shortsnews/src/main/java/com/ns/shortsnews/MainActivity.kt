@@ -267,11 +267,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun showTryAgainText() {
         binding.tryAgain.visibility = View.VISIBLE
         binding.tryAgain.setOnClickListener {
-            Log.i(
-                "lang", "" +
-                        "try again $languageStringParams"
-            )
-            videoCategoryViewModel.loadVideoCategory(languageStringParams)
+            if(NetworkXProvider.isInternetConnected) {
+                videoCategoryViewModel.loadVideoCategory(languageStringParams)
+            } else {
+                NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
+            }
+
+        }
+        if(!NetworkXProvider.isInternetConnected) {
+            NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
         }
     }
 
