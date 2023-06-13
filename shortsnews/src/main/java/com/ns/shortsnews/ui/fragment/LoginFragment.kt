@@ -8,20 +8,20 @@ import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.work.CoroutineWorker
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentLoginBinding
-import com.ns.shortsnews.databinding.NewLoginScreenLayoutBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
-import com.ns.shortsnews.domain.connectivity.ConnectionStatus
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.*
+import com.rommansabbir.networkx.NetworkXProvider
+import com.videopager.utils.NoConnection
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -43,30 +43,42 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
         binding.sendImage.setOnClickListener{
-            val email = binding.emailEditText.text.toString()
-            val name = binding.nameEditText.text.toString()
-            if (email.isNotEmpty()  && name.trim().isNotEmpty()) {
-                if (validateEmail(email)){
-                    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                    imm?.hideSoftInputFromWindow(view.windowToken, 0)
-                    val bundle:MutableMap<String, String> = mutableMapOf()
-                    bundle["email"] = email
-                    bundle["name"] = name
-                    if (Alert.isOnline(requireActivity())) {
-                        userViewModel.requestRegistrationApi(bundle)
+            if (NetworkXProvider.isInternetConnected) {
+                val email = binding.emailEditText.text.toString()
+                val name = binding.nameEditText.text.toString()
+                if (email.isNotEmpty() && name.trim().isNotEmpty()) {
+                    if (validateEmail(email)) {
+                        val imm =
+                            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                        imm?.hideSoftInputFromWindow(view.windowToken, 0)
+                        val bundle: MutableMap<String, String> = mutableMapOf()
+                        bundle["email"] = email
+                        bundle["name"] = name
+                        if (Alert.isOnline(requireActivity())) {
+                            userViewModel.requestRegistrationApi(bundle)
+                        } else {
+                            Alert().showErrorDialog(
+                                AppConstants.CONNECTIVITY_ERROR_TITLE,
+                                AppConstants.CONNECTIVITY_MSG,
+                                requireActivity()
+                            )
+                        }
                     } else {
-                            Alert().showErrorDialog(AppConstants.CONNECTIVITY_ERROR_TITLE,AppConstants.CONNECTIVITY_MSG, requireActivity())
+                        Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_EMAIL)
                     }
                 } else {
-                    Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_EMAIL)
+                    if (name.isEmpty() || email.isEmpty()) {
+                        Alert().showGravityToast(
+                            requireActivity(),
+                            AppConstants.FILL_REQUIRED_FIELD
+                        )
+                    }
                 }
-            } else{
-                if (name.isEmpty()){
-                    Alert().showGravityToast(requireActivity(),AppConstants.FILL_NAME_REQUIRED_FIELD)
-                }
-                if (email.isEmpty()){
-                    Alert().showGravityToast(requireActivity(),AppConstants.FILL_EMAIL_REQUIRED_FIELD)
-                }
+            } else {
+                // No Internet Snackbar: Fire
+                NoConnection.noConnectionSnackBarInfinite(binding.root,
+                    requireContext() as AppCompatActivity
+                )
             }
         }
 

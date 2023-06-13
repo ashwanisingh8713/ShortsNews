@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
@@ -21,6 +22,8 @@ import com.ns.shortsnews.ui.viewmodel.UserProfileViewModel
 import com.ns.shortsnews.ui.viewmodel.UserProfileViewModelFactory
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppPreference
+import com.rommansabbir.networkx.NetworkXProvider
+import com.videopager.utils.NoConnection
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -39,7 +42,14 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewProfileBinding.bind(view)
-        userProfileViewModel.requestProfileApi()
+        if (NetworkXProvider.isInternetConnected) {
+            userProfileViewModel.requestProfileApi()
+        } else {
+            // No Internet Snackbar: Fire
+            NoConnection.noConnectionSnackBarInfinite(binding.root,
+                requireContext() as AppCompatActivity
+            )
+        }
         adapter = NewProfilePagerAdapter(requireActivity())
         binding.profileViewPager.adapter = adapter
         binding.profileViewPager.currentItem = 0

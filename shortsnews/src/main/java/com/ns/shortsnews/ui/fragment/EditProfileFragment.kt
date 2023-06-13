@@ -21,6 +21,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -43,6 +44,8 @@ import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModelFactory
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
+import com.rommansabbir.networkx.NetworkXProvider
+import com.videopager.utils.NoConnection
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -105,7 +108,14 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
         addTextWatcherToEditTexts()
         binding.constLanguage.setOnClickListener {
-            languagesFragment()
+            if (NetworkXProvider.isInternetConnected) {
+                languagesFragment()
+            } else {
+                // No Internet Snackbar: Fire
+                NoConnection.noConnectionSnackBarInfinite(binding.root,
+                    requireContext() as AppCompatActivity
+                )
+            }
         }
 
         binding.backButton.setOnClickListener {
@@ -143,9 +153,16 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             openBottomDialog()
         }
         binding.constInterested.setOnClickListener{
-            val intent = Intent(requireActivity(), ContainerActivity::class.java)
-            intent.putExtra("to","interests")
-            requireActivity().startActivity(intent)
+            if (NetworkXProvider.isInternetConnected) {
+                val intent = Intent(requireActivity(), ContainerActivity::class.java)
+                intent.putExtra("to", "interests")
+                requireActivity().startActivity(intent)
+            } else {
+                // No Internet Snackbar: Fire
+                NoConnection.noConnectionSnackBarInfinite(binding.root,
+                    requireContext() as AppCompatActivity
+                )
+            }
         }
         binding.constDelete.setOnClickListener {
             deleteProfileSelect = true
@@ -317,7 +334,14 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             this.setTitle(title)
             this.setMessage(msg)
             this.setPositiveButton("Save") { dialog, _ ->
-                updateProfileViewModel.requestUpdateProfileApi(profileData)
+                if (NetworkXProvider.isInternetConnected) {
+                    updateProfileViewModel.requestUpdateProfileApi(profileData)
+                } else {
+                    // No Internet Snackbar: Fire
+                    NoConnection.noConnectionSnackBarInfinite(binding.root,
+                        requireContext() as AppCompatActivity
+                    )
+                }
             }
             this.setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()

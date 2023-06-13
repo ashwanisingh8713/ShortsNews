@@ -50,7 +50,7 @@ companion object {
 }
 
     fun showGravityToast(context: Context, msg:String){
-        val toast = Toast.makeText(context,msg, Toast.LENGTH_LONG)
+        val toast = Toast.makeText(context,msg, Toast.LENGTH_SHORT)
         toast.setGravity(Gravity.BOTTOM,0,0)
         toast.show()
     }

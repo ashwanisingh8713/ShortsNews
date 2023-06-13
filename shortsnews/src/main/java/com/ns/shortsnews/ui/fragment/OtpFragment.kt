@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
@@ -18,6 +19,8 @@ import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.*
+import com.rommansabbir.networkx.NetworkXProvider
+import com.videopager.utils.NoConnection
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -45,28 +48,35 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 //        binding.otpEditText.setText("123456")
         binding.submitButton.setOnClickListener {
 
-             val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            val imm =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(view.windowToken, 0)
-            val otpValue = binding.otpEditText.text.toString()
-            if (otpValue.isNotEmpty() && otpValue.length == 6){
-                val data:MutableMap<String, String> = mutableMapOf()
-                data["OTP"] = otpValue
-                data["OTP_id"] = otpId.toString()
-                if (Alert.isOnline(requireActivity())) {
-                    userViewModel.requestOtpValidationApi(data)
+            if (NetworkXProvider.isInternetConnected) {
+                val otpValue = binding.otpEditText.text.toString()
+                if (otpValue.isNotEmpty() && otpValue.length == 6) {
+                    val data: MutableMap<String, String> = mutableMapOf()
+                    data["OTP"] = otpValue
+                    data["OTP_id"] = otpId.toString()
+                    if (Alert.isOnline(requireActivity())) {
+                        userViewModel.requestOtpValidationApi(data)
+                    } else {
+                        Alert().showErrorDialog(
+                            AppConstants.CONNECTIVITY_ERROR_TITLE,
+                            AppConstants.CONNECTIVITY_MSG,
+                            requireActivity()
+                        )
+                    }
                 } else {
-                    Alert().showErrorDialog(
-                        AppConstants.CONNECTIVITY_ERROR_TITLE,
-                        AppConstants.CONNECTIVITY_MSG,
-                        requireActivity()
-                    )
+                    if (otpValue.isEmpty()) {
+                        Alert().showGravityToast(requireActivity(), AppConstants.FILL_OTP)
+                    } else {
+                        Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_OTP)
+                    }
                 }
-            } else{
-                if (otpValue.isEmpty()){
-                    Alert().showGravityToast(requireActivity(),AppConstants.FILL_OTP)
-                } else {
-                    Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_OTP)
-                }
+            } else {
+                NoConnection.noConnectionSnackBarInfinite(binding.root,
+                    requireContext() as AppCompatActivity
+                )
             }
         }
 

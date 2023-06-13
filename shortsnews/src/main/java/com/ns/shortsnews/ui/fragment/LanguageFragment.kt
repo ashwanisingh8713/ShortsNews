@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +27,8 @@ import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
+import com.rommansabbir.networkx.NetworkXProvider
+import com.videopager.utils.NoConnection
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -51,7 +54,13 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)
-        userViewModel.requestLanguagesApi()
+        if (NetworkXProvider.isInternetConnected) {
+            userViewModel.requestLanguagesApi()
+        } else {
+            NoConnection.noConnectionSnackBarInfinite(binding.root,
+                requireContext() as AppCompatActivity
+            )
+        }
         from = arguments?.getString("from").toString()
         if(AppPreference.isLanguageSelected){
             binding.continueButton.text = "Save"
@@ -119,7 +128,14 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     bundle.putString("name", /*it.name*/"kamlesh")
                     userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
                 } else {
-                    activity?.finish()
+                    if (NetworkXProvider.isInternetConnected) {
+                        activity?.finish()
+                    } else {
+                        // No Internet Snackbar: Fire
+                        NoConnection.noConnectionSnackBarInfinite(binding.root,
+                            requireContext() as AppCompatActivity
+                        )
+                    }
                 }
             } else {
                 Alert().showGravityToast(requireActivity(), "Please select one language")
