@@ -22,4 +22,7 @@ interface UserDataRepository {
 
     //Delete Profile
     suspend fun getDeleteProfile():StatusResult
+
+    //GetChannelInfo
+    suspend fun getChannelInfo(channelId: String):ChannelInfo
 }

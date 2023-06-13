@@ -53,11 +53,13 @@ class VideoPagerFragment(
     private var isUserLoggedIn = false
     private var isFirstVideoInfoLoaded = false
     private var selectedPlay = 0
+    private var isLoggedIn:Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            isUserLoggedIn = arguments?.getBoolean("logged_in")!!
             selectedPlay = arguments?.getInt(CategoryConstants.KEY_SelectedPlay)!!
         }
     }
@@ -403,7 +405,7 @@ class VideoPagerFragment(
 
     private fun registerSharedViewModel() {
         lifecycleScope.launch {
-            sharedEventViewModel.cacheUserStatus.collectLatest {
+            sharedEventViewModel.cacheUserStatus.filterNotNull().collectLatest {
                 isUserLoggedIn = it.first
                 Log.i("newDataUser","User logged in status ${it.first}")
             }

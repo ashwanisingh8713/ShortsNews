@@ -28,8 +28,9 @@ import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.domain.repository.LanguageRepository
-import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
+import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
+import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
@@ -71,9 +72,14 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
         }
     }
+    private val channelInfoViewModel:ChannelInfoViewModel by viewModels {
+        ChannelInfoViewModelFactory().apply {
+            inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
+        }
+    }
 
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
-    private var languageStringParams = ""
+    private var languageStringParams =""
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -123,43 +129,41 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         bottomSheetFollowingClick()
 
-        registerVideoCache()
+//        registerVideoCache()
     }
 
     private fun getSelectedLanguagesValues() {
         var languageString = ""
         lifecycleScope.launch {
-            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }
-                .collectLatest {
-                    for (data in it) {
-                        if (data.selected) {
-                            languageString = languageString + data.id + ","
-                        }
-                    }
-                    languageStringParams = languageString.dropLast(1)
-                    videoCategoryViewModel.loadVideoCategory(languageString)
-                }
+            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
+              for (data in it){
+                  if (data.selected){
+                    languageString = languageString + data.id +","
+                  }
+              }
+                languageStringParams = languageString.dropLast(1)
+                videoCategoryViewModel.loadVideoCategory(languageString)
+            }
         }
     }
 
     private fun getSelectedLanguagesValuesOnClick(requiredId: String) {
         var languageString = ""
         lifecycleScope.launch {
-            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }
-                .collectLatest {
-                    for (data in it) {
-                        if (data.selected) {
-                            languageString = languageString + data.id + ","
-                        }
+            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
+                for (data in it){
+                    if (data.selected){
+                        languageString = languageString + data.id +","
                     }
-                    languageString.dropLast(1)
-                    Log.i("lang", " item click $languageString")
-                    loadHomeFragment(requiredId, languageString)
-                    sharedEventViewModel.sendUserPreferenceData(
-                        AppPreference.isUserLoggedIn,
-                        AppPreference.userToken
-                    )
                 }
+               languageString.dropLast(1)
+                Log.i("lang"," item click $languageString")
+                loadHomeFragment(requiredId, languageString)
+                sharedEventViewModel.sendUserPreferenceData(
+                    AppPreference.isUserLoggedIn,
+                    AppPreference.userToken
+                )
+            }
         }
     }
 
@@ -170,7 +174,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             AppPreference.userToken
         )
 
-        if (AppPreference.isProfileUpdated) {
+        if (AppPreference.isProfileUpdated){
             binding.profileIcon.load(AppPreference.userProfilePic)
             AppPreference.isProfileUpdated = false
         }
@@ -208,7 +212,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     /**
      * Loads Home Fragment
      */
-    private fun loadHomeFragment(categoryType: String, languages: String) {
+    private fun loadHomeFragment(categoryType: String, languages:String) {
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(
             R.id.fragment_container,
@@ -246,8 +250,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 )
                 binding.recyclerView.adapter = caAdapter
                 val defaultCate = it.videoCategories[0]
-                Log.i("languages", "show category $languageStringParams")
-                loadHomeFragment(defaultCate.id, languageStringParams)
+                loadHomeFragment(defaultCate.id,languageStringParams)
                 hideTryAgainText()
             }
         }
@@ -357,6 +360,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                         if (channelId != "") {
                             binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
                             binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
+                            bottomSheetChannelInfo(channelId = channelId)
                             bottomSheetGetChannelVideoData(channelId = channelId)
                         }
                     }
@@ -438,6 +442,31 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
             }
         }
+    }
+
+    //Get Channel info by channelId
+    private fun bottomSheetChannelInfo(channelId: String) {
+        Log.i("channelInfo", "Channel id :: $channelId")
+        channelInfoViewModel.requestChannelInfoApi(channelId)
+        lifecycleScope.launch {
+            channelInfoViewModel.ChannelInfoSuccessState.filterNotNull().collectLatest {
+                binding.persistentBottomsheet.profileCount.text = it.data.follow_count
+                binding.persistentBottomsheet.channelDes.text = it.data.description
+            }
+        }
+
+        lifecycleScope.launch {
+            channelInfoViewModel.errorState.filterNotNull().collectLatest {
+                Log.i("channelInfo", it)
+            }
+        }
+
+        lifecycleScope.launch {
+            channelInfoViewModel.loadingState.filterNotNull().collectLatest {
+                Log.i("channelInfo", "$it")
+            }
+        }
+
     }
 
 

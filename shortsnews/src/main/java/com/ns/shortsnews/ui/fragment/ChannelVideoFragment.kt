@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.activity.viewModels
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
@@ -17,16 +18,21 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.databinding.FragmentChannelVideosBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
-import com.ns.shortsnews.ui.viewmodel.BookmarksViewModelFactory
-import com.ns.shortsnews.ui.viewmodel.UserBookmarksViewModel
+import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.IntentLaunch
 import com.videopager.utils.CategoryConstants
+import com.videopager.vm.SharedEventViewModelFactory
+import com.videopager.vm.VideoSharedEventViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.get
 
 class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
@@ -36,10 +42,17 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     private var channelId = ""
     private var channelTitle = ""
     private var channelUrl = ""
+    private val channelInfoViewModel: ChannelInfoViewModel by activityViewModels {
+        ChannelInfoViewModelFactory().apply {
+            inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
+        }
+    }
 
-    private val channelsVideosViewModel: UserBookmarksViewModel by activityViewModels { BookmarksViewModelFactory().apply {
+    private val channelsVideosViewModel: ChannelVideoViewModel by activityViewModels { ChannelVideoViewModelFactory().apply {
         inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
     }}
+    private val sharedEventViewModel: VideoSharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +65,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentChannelVideosBinding.bind(view)
+        listenChannelInfo()
         if (channelUrl.isNotEmpty()){
             val loader = MainApplication.instance!!.newImageLoader()
             val req = ImageRequest.Builder(MainApplication.applicationContext()).data(channelUrl)
@@ -64,25 +78,68 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             loader.enqueue(req)
         }
         binding.channelLogo.load(channelUrl)
-        binding.following.text = "Following"
-        channelsVideosViewModel.requestVideoData(Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
+        channelsVideosViewModel.requestChannelVideoData(Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
         adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
         listenChannelVideos()
+        binding.following.setOnClickListener {
+            sharedEventViewModel.followRequest(channelId)
+        }
+
+        lifecycleScope.launch {
+            sharedEventViewModel.followResponse.filterNotNull().collectLatest {
+                if (it.following) {
+                    binding.following.text = "Following"
+                } else {
+                    binding.following.text = "Follow"
+                }
+
+            }
+        }
     }
+
+    private fun listenChannelInfo(){
+        channelInfoViewModel.requestChannelInfoApi(channelId)
+        viewLifecycleOwner.lifecycleScope.launch {
+            channelInfoViewModel.ChannelInfoSuccessState.filterNotNull().collectLatest {
+                binding.channelDes.text = it.data.description
+                binding.profileCount.text = it.data.follow_count
+                if (it.data.following){
+                    binding.following.text = "Following"
+                } else {
+                    binding.following.text = "Follow"
+                }
+            }
+        }
+    }
+
 
 
     private fun listenChannelVideos() {
         viewLifecycleOwner.lifecycleScope.launch {
             channelsVideosViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
-                binding.channelImageRecyclerview.visibility = View.VISIBLE
-                adapter.updateVideoData(it!!.data)
-                binding.channelImageRecyclerview.adapter = adapter
+                it.let {
+                    binding.channelImageRecyclerview.visibility = View.VISIBLE
+                    adapter.updateVideoData(it!!.data)
+                    binding.channelImageRecyclerview.adapter = adapter
+
+                    withContext(Dispatchers.Main){
+                        binding.progressBar.visibility = View.GONE
+                    }
+
+                }
+
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            channelsVideosViewModel.loadingState.filterNotNull().collectLatest {
+                binding.progressBar.visibility = View.GONE
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             channelsVideosViewModel.errorState.filterNotNull().collectLatest {
-                Alert().showGravityToast(requireActivity(), AppConstants.NO_CHANNEL_DATA)
+                binding.progressBar.visibility = View.GONE
+                binding.noChannelDataText.visibility = View.VISIBLE
             }
         }
 
@@ -130,4 +187,12 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
         }
     }
+
+    fun Fragment?.runOnUiThread(action: () -> Unit) {
+        this ?: return
+        if (!isAdded) return // Fragment not attached to an Activity
+        activity?.runOnUiThread(action)
+    }
+
+
 }

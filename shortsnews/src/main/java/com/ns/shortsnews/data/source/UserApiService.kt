@@ -1,6 +1,7 @@
 package com.ns.shortsnews.data.source
 
 import com.ns.shortsnews.domain.models.*
+import com.videopager.data.VideoInfo
 import okhttp3.RequestBody
 import retrofit2.http.*
 
@@ -38,6 +39,9 @@ interface UserApiService {
 
     @GET("delete-profile")
     suspend fun getDeleteProfile():StatusResult
+
+    @GET("channel-info/{channel_id}")
+    suspend fun getChannelInfo(@Path("channel_id") channel_id: String): ChannelInfo
 
 
 }

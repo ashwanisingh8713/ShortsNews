@@ -89,6 +89,22 @@ data class ChannelListData(
    val channelTitle:String
 )
 
+@JsonClass(generateAdapter = true)
+data class ChannelInfo(
+    val data:ChannelInfoData,
+    val status:Boolean
+)
+
+@JsonClass(generateAdapter = true)
+data class ChannelInfoData(
+val channel_id:String = "",
+val channel_image:String = "",
+val channelTitle:String = "",
+val follow_count:String = "",
+val description:String = "",
+val following:Boolean = false
+)
+
 
 @JsonClass(generateAdapter = true)
 data class LanguagesResult(

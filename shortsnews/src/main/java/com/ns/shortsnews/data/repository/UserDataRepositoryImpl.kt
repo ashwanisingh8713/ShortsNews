@@ -42,4 +42,8 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
     override suspend fun getDeleteProfile(): StatusResult {
       return apiService.getDeleteProfile()
     }
+
+    override suspend fun getChannelInfo(channelId: String): ChannelInfo {
+        return apiService.getChannelInfo(channelId)
+    }
 }

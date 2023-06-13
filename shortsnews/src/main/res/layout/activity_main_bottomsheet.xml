@@ -226,6 +226,8 @@
             app:layout_constraintTop_toBottomOf="@+id/const_profile_follow"
             android:layout_marginTop="20dp"
             android:lineHeight="24dp"
+            android:maxLines="3"
+            android:ellipsize="end"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

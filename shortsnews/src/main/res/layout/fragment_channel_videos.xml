@@ -90,7 +90,7 @@
                 android:id="@+id/profile_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="332k"
+                tools:text="332k"
                 android:textSize="@dimen/video_page_text_size_xxlarge"
                 android:textColor="@color/white"
                 android:maxLines="1"
@@ -128,9 +128,11 @@
             android:textSize="@dimen/video_page_text_size_xlarge"
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/white"
-            android:text="Welcome to the times of india Nuwes Page, Follow us for more information and snippets on so and so on."
+            tools:text="Welcome to the times of india Nuwes Page, Follow us for more information and snippets on so and so on."
             android:layout_marginStart="@dimen/margin_start"
             android:layout_marginEnd="@dimen/margin_end"
+            android:maxLines="3"
+            android:ellipsize="end"
             android:gravity="center_horizontal"
             app:layout_constraintTop_toBottomOf="@+id/const_profile_follow"
             android:layout_marginTop="20dp"
@@ -145,7 +147,7 @@
             android:textSize="@dimen/video_page_text_size_xlarge"
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/white"
-            android:text="Website"
+            tools:text="Website"
             android:layout_marginStart="@dimen/margin_start"
             android:layout_marginEnd="@dimen/margin_end"
             app:layout_constraintTop_toBottomOf="@+id/channel_des"
@@ -168,7 +170,34 @@
         tools:listitem="@layout/item_grid_view"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         android:orientation="vertical"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:spanCount="3"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="10dp"
+        android:padding="3dp"
+        android:visibility="gone"
+        android:indeterminateTint="@color/white"
+        android:indeterminateTintMode="src_in"
+        app:layout_constraintBottom_toBottomOf="@id/channel_image_recyclerview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/channel_image_recyclerview" />
+
+    <TextView
+        android:id="@+id/no_channel_data_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No channel data"
+        android:textColor="@color/white"
+        android:textSize="@dimen/video_page_text_size_xxlarge"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/channel_image_recyclerview"
+        app:layout_constraintBottom_toBottomOf="@id/channel_image_recyclerview"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

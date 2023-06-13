@@ -6,12 +6,12 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.databinding.FragmentBookmarkBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.domain.models.VideoDataResponse
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.BookmarksViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserBookmarksViewModel
@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
-import org.koin.androidx.scope.fragmentScope
 
 
 class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
@@ -43,9 +42,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
         viewLifecycleOwner.lifecycleScope.launch {
             likesViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBar.visibility = View.GONE
-                if(it != "NA"){
-                    Log.i("kamlesh","ProfileFragment onError ::: $it")
-                }
+                Log.i("kamlesh","ProfileFragment onError ::: $it")
             }
         }
 
@@ -54,13 +51,14 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
                 Log.i("kamlesh","ProfileFragment onSuccess ::: $it")
                 it.let {
                     binding.likesRecyclerview.visibility = View.VISIBLE
-                    binding.progressBar.visibility = View.GONE
                     adapter.updateVideoData(it.data)
                     binding.likesRecyclerview.adapter = adapter
+                    binding.progressBar.visibility = View.GONE
                     if (it.data.isEmpty()){
                         binding.noBookmarksText.visibility = View.VISIBLE
                     }
                 }
+
             }
         }
 
@@ -74,7 +72,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
         viewLifecycleOwner.lifecycleScope.launch {
             likesViewModel.loadingState.filterNotNull().collectLatest {
                 if (it) {
-                    binding.progressBar.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.GONE
                 }
             }
         }
@@ -84,6 +82,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
         super.onResume()
         Log.i("bookmark","onResume")
         if (AppPreference.isUpdateNeeded) {
+            binding.progressBar.visibility = View.GONE
             likesViewModel.requestVideoData(
                 params = Pair(
                     CategoryConstants.BOOKMARK_VIDEO_DATA,
@@ -92,6 +91,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
             )
             AppPreference.isUpdateNeeded = false
         }
+        binding.progressBar.visibility = View.GONE
     }
 
     override fun onDestroy() {

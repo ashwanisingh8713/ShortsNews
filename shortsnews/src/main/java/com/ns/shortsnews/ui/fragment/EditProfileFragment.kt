@@ -56,6 +56,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     private lateinit var mPhotoBitmap: Bitmap
     private var isProfileEdited = false
     private var isProfileImageSelected = false
+    private var deleteProfileSelect:Boolean = false
     private val updateProfileViewModel: UpdateProfileViewModel by activityViewModels {
         UpdateProfileViewModelFactory().apply {
             inject(UpdateUserUseCase(UserDataRepositoryImpl(get())), DeleteProfileUseCase(UserDataRepositoryImpl(get())))
@@ -87,7 +88,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -148,6 +148,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             requireActivity().startActivity(intent)
         }
         binding.constDelete.setOnClickListener {
+            deleteProfileSelect = true
             updateProfileViewModel.requestDeleteProfile()
         }
 
@@ -155,11 +156,21 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             updateProfileViewModel.errorState.filterNotNull().collectLatest {
                 if (it != null) {
                     binding.progressBar.visibility = View.GONE
-                    Alert().showErrorDialog(
-                        "Profile Update",
-                        "Error in updating you profile",
-                        requireActivity()
-                    )
+                    if (deleteProfileSelect){
+                        Alert().showErrorDialog(
+                            "Profile Delete",
+                            "Error in deleting your profile",
+                            requireActivity()
+                        )
+                        deleteProfileSelect = false
+                    } else {
+                        Alert().showErrorDialog(
+                            "Profile Update",
+                            "Error in updating you profile",
+                            requireActivity()
+                        )
+                    }
+
                 }
             }
         }

@@ -12,7 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.savedstate.SavedStateRegistryOwner
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityPlainVideoBinding
 import com.ns.shortsnews.data.model.VideoClikedItem
@@ -22,6 +25,7 @@ import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.ui.viewmodel.LanguageViewModel
 import com.ns.shortsnews.ui.viewmodel.LanguageViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.AppPreference
 import com.videopager.utils.CategoryConstants
 import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
@@ -38,7 +42,6 @@ class PlainVideoActivity : AppCompatActivity() {
     private val languageDao = ShortsDatabase.instance!!.languageDao()
     private val languageItemRepository = LanguageRepository(languageDao)
     private val languageViewModel: LanguageViewModel by viewModels { LanguageViewModelFactory(languageItemRepository) }
-
 
     companion object {
         const val KEY_VIDEO_CLICKED_ITEM = "videoClickedItem"
@@ -64,7 +67,7 @@ class PlainVideoActivity : AppCompatActivity() {
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         getSelectedLanguagesValues(videoClickedItem)
-        registerVideoCache()
+//        registerVideoCache()
     }
 
 
@@ -77,6 +80,7 @@ class PlainVideoActivity : AppCompatActivity() {
             videoFrom = it.videoFrom, this@PlainVideoActivity, languages)
         val bundle = Bundle()
         bundle.putInt(CategoryConstants.KEY_SelectedPlay, it.selectedPosition)
+        bundle.putBoolean("logged_in", AppPreference.isUserLoggedIn)
         fragment.arguments = bundle
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.fragment_container, fragment)

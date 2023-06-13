@@ -65,11 +65,10 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
     }
 
     private fun setUpAdapter(commentsList: List<CommentData>) {
-        commentAdapter = CommentAdapter(commentsList = commentsList)
+        commentAdapter = CommentAdapter(commentsList = commentsList as MutableList<CommentData>)
         recyclerView.adapter = commentAdapter
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("NotifyDataSetChanged")
    suspend fun updateCommentAdapter(data: PostCommentData) {
         val commentData = CommentData(
@@ -77,11 +76,13 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
             data.comment, data.created_at, data.user_image
         )
         commentList.add(0, commentData)
-       withContext(Dispatchers.Main){
-           setUpAdapter(commentList)
-           commentAdapter.notifyDataSetChanged()
-       }
-
+        if (commentList.isEmpty()) {
+            binding.noCommentText.visibility = View.VISIBLE
+        } else {
+            binding.noCommentText.visibility = View.GONE
+            binding.commentRecyclerview.visibility = View.VISIBLE
+            setUpAdapter(commentList)
+        }
 
 
     }
