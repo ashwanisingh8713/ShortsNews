@@ -19,25 +19,26 @@ import androidx.palette.graphics.Palette
 import coil.load
 import coil.request.ImageRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
 import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.cache.HlsOneByOnePreloadCoroutine
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
-import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.database.ShortsDatabase
+import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.domain.repository.LanguageRepository
-import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
+import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
+import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.CategoryConstants
-import com.videopager.vm.VideoSharedEventViewModel
+import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
+import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
@@ -51,7 +52,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private lateinit var caAdapter: CategoryAdapter
     private val languageDao = ShortsDatabase.instance!!.languageDao()
     private val languageItemRepository = LanguageRepository(languageDao)
-    private val languageViewModel: LanguageViewModel by viewModels { LanguageViewModelFactory(languageItemRepository) }
+    private val languageViewModel: LanguageViewModel by viewModels {
+        LanguageViewModelFactory(
+            languageItemRepository
+        )
+    }
 
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
     private val videoCategoryViewModel: VideoCategoryViewModel by viewModels {
@@ -68,7 +73,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
-    private var languageStringParams =""
+    private var languageStringParams = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -94,7 +99,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
 
         // Disable Touch or Click event of BottomSheet for non clickable places
-        binding.persistentBottomsheet.bottomSheet.setOnTouchListener(object : OnTouchListener{
+        binding.persistentBottomsheet.bottomSheet.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 return true
             }
@@ -124,34 +129,37 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun getSelectedLanguagesValues() {
         var languageString = ""
         lifecycleScope.launch {
-            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
-              for (data in it){
-                  if (data.selected){
-                    languageString = languageString + data.id +","
-                  }
-              }
-                languageStringParams = languageString.dropLast(1)
-                videoCategoryViewModel.loadVideoCategory(languageString)
-            }
+            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }
+                .collectLatest {
+                    for (data in it) {
+                        if (data.selected) {
+                            languageString = languageString + data.id + ","
+                        }
+                    }
+                    languageStringParams = languageString.dropLast(1)
+                    videoCategoryViewModel.loadVideoCategory(languageString)
+                }
         }
     }
+
     private fun getSelectedLanguagesValuesOnClick(requiredId: String) {
         var languageString = ""
         lifecycleScope.launch {
-            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
-                for (data in it){
-                    if (data.selected){
-                        languageString = languageString + data.id +","
+            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }
+                .collectLatest {
+                    for (data in it) {
+                        if (data.selected) {
+                            languageString = languageString + data.id + ","
+                        }
                     }
+                    languageString.dropLast(1)
+                    Log.i("lang", " item click $languageString")
+                    loadHomeFragment(requiredId, languageString)
+                    sharedEventViewModel.sendUserPreferenceData(
+                        AppPreference.isUserLoggedIn,
+                        AppPreference.userToken
+                    )
                 }
-               languageString.dropLast(1)
-                Log.i("lang"," item click $languageString")
-                loadHomeFragment(requiredId, languageString)
-                sharedEventViewModel.sendUserPreferenceData(
-                    AppPreference.isUserLoggedIn,
-                    AppPreference.userToken
-                )
-            }
         }
     }
 
@@ -162,7 +170,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             AppPreference.userToken
         )
 
-        if (AppPreference.isProfileUpdated){
+        if (AppPreference.isProfileUpdated) {
             binding.profileIcon.load(AppPreference.userProfilePic)
             AppPreference.isProfileUpdated = false
         }
@@ -173,23 +181,34 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      * It listens category item click
      */
     override fun itemclick(requiredId: String, position: Int, size: Int) {
-        bottomSheetClearChannelId()
-       getSelectedLanguagesValuesOnClick(requiredId)
+        if (NetworkXProvider.isInternetConnected) {
+            bottomSheetClearChannelId()
+            getSelectedLanguagesValuesOnClick(requiredId)
+        } else {
+            // No Internet Snackbar: Fire
+            NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
+        }
     }
+
     /*
     Load profile activity
     */
     private fun launchProfileActivity() {
-        val intent = Intent(this, ProfileActivity::class.java)
-        intent.putExtra("fromActivity", "MainActivity")
-        startActivity(intent)
+        if (NetworkXProvider.isInternetConnected) {
+            val intent = Intent(this, ProfileActivity::class.java)
+            intent.putExtra("fromActivity", "MainActivity")
+            startActivity(intent)
+        } else {
+            // No Internet Snackbar: Fire
+            NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
+        }
     }
 
 
     /**
      * Loads Home Fragment
      */
-    private fun loadHomeFragment(categoryType: String, languages:String) {
+    private fun loadHomeFragment(categoryType: String, languages: String) {
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(
             R.id.fragment_container,
@@ -227,8 +246,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 )
                 binding.recyclerView.adapter = caAdapter
                 val defaultCate = it.videoCategories[0]
-                Log.i("languages","show category $languageStringParams")
-                loadHomeFragment(defaultCate.id,languageStringParams)
+                Log.i("languages", "show category $languageStringParams")
+                loadHomeFragment(defaultCate.id, languageStringParams)
                 hideTryAgainText()
             }
         }
@@ -246,14 +265,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
     private fun showTryAgainText() {
-            binding.tryAgain.visibility = View.VISIBLE
-            binding.tryAgain.setOnClickListener {
-                Log.i("lang","" +
-                        "try again $languageStringParams")
-                videoCategoryViewModel.loadVideoCategory(languageStringParams)
-            }
+        binding.tryAgain.visibility = View.VISIBLE
+        binding.tryAgain.setOnClickListener {
+            Log.i(
+                "lang", "" +
+                        "try again $languageStringParams"
+            )
+            videoCategoryViewModel.loadVideoCategory(languageStringParams)
+        }
     }
-
 
 
     // Register Hot-Flow to listen Video Caching
@@ -265,7 +285,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 var videoUrls = Array(1) { url }
                 var videoIds = Array(1) { id }
 //                VideoPreloadCoroutine.schedulePreloadWork(videoUrls = videoUrls, ids = videoIds)
-                HlsOneByOnePreloadCoroutine.schedulePreloadWork(videoUrls = videoUrls, ids = videoIds)
+                HlsOneByOnePreloadCoroutine.schedulePreloadWork(
+                    videoUrls = videoUrls,
+                    ids = videoIds
+                )
             }
         }
 
@@ -289,9 +312,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 binding.persistentBottomsheet.cardViewClientImage.alpha = 1.0f - slideOffset
                 binding.persistentBottomsheet.following.alpha = 1.0f - slideOffset
 
-                if(slideOffset==1.0f) {
+                if (slideOffset == 1.0f) {
                     binding.persistentBottomsheet.following.isEnabled = false
-                } else if(slideOffset == 0.0f) {
+                } else if (slideOffset == 0.0f) {
                     binding.persistentBottomsheet.following.isEnabled = true
                 }
             }
@@ -324,20 +347,24 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                 standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
-                val channelId = binding.persistentBottomsheet.imgDownArrow.tag?.toString()
-                channelId?.let {
-                    if(channelId != "") {
-                        binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
-                        binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
-                        bottomSheetGetChannelVideoData(channelId = channelId)
+                if (NetworkXProvider.isInternetConnected) {
+                    val channelId = binding.persistentBottomsheet.imgDownArrow.tag?.toString()
+                    channelId?.let {
+                        if (channelId != "") {
+                            binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
+                            binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
+                            bottomSheetGetChannelVideoData(channelId = channelId)
+                        }
                     }
+                } else {
+                    NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
                 }
             }
         }
     }
 
     private fun bottomSheetHeaderViewsShowHide(show: Boolean) {
-        val showHide = if(show) View.VISIBLE else View.GONE
+        val showHide = if (show) View.VISIBLE else View.GONE
         binding.persistentBottomsheet.following.visibility = showHide
         binding.persistentBottomsheet.clientImage.visibility = showHide
         binding.persistentBottomsheet.cardViewClientImage.visibility = showHide
@@ -467,33 +494,44 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun bottomSheetFollowingClick() {
 
         binding.persistentBottomsheet.following.setOnClickListener {
-            val channelId = binding.persistentBottomsheet.following.tag
-            channelId?.let {
-                if(it != "") {
-                    sharedEventViewModel.followRequest(channelId.toString())
+            if (NetworkXProvider.isInternetConnected) {
+                val channelId = binding.persistentBottomsheet.following.tag
+                channelId?.let {
+                    if (it != "") {
+                        sharedEventViewModel.followRequest(channelId.toString())
+                    }
                 }
+            } else {
+                NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
             }
         }
         binding.persistentBottomsheet.followingExpanded.setOnClickListener {
-            val channelId = binding.persistentBottomsheet.following.tag
-            channelId?.let {
-                if(it != "") {
-                    sharedEventViewModel.followRequest(channelId.toString())
+            if (NetworkXProvider.isInternetConnected) {
+                val channelId = binding.persistentBottomsheet.following.tag
+                channelId?.let {
+                    if (it != "") {
+                        sharedEventViewModel.followRequest(channelId.toString())
+                    }
                 }
+            } else {
+                NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
             }
         }
     }
+
     /*Bottom sheet pallet color using bitmap icon from response URL*/
     private fun bottomSheetHeaderBg(bitmap: Bitmap, channelId: String) {
         val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
-        
+
         Palette.from(mutableBitmap).generate { palette ->
             val headerTag = "HeaderBg"
             Log.i(headerTag, "============================== :: $channelId")
             val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
             lightVibrantSwatch?.let {
                 Log.i(headerTag, "lightVibrantSwatch :: $channelId")
-                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightVibrantSwatch)
+                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(
+                    lightVibrantSwatch
+                )
                 binding.persistentBottomsheet.channelTopView.setBackgroundColor(lightVibrantSwatch)
             }
 
@@ -537,10 +575,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         }
     }
-     /*Handling Back pressed for main activity and channel bottom sheet state*/
+
+    /*Handling Back pressed for main activity and channel bottom sheet state*/
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if(standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+        if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             onBackPressedDispatcher.onBackPressed()

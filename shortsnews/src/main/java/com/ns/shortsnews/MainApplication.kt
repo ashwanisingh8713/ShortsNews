@@ -6,7 +6,6 @@ import androidx.work.Configuration
 import androidx.work.WorkManager
 import coil.ImageLoader
 import coil.ImageLoaderFactory
-import coil.decode.VideoFrameDecoder
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -14,6 +13,9 @@ import com.ns.shortsnews.data.di.AppModule
 import com.ns.shortsnews.data.di.NetworkModule
 import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.utils.AppPreference
+import com.rommansabbir.networkx.NetworkXLifecycle
+import com.rommansabbir.networkx.NetworkXProvider
+import com.rommansabbir.networkx.SmartConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -44,6 +46,7 @@ class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider 
     override fun onCreate() {
         super.onCreate()
         val context = applicationContext()
+        NetworkXProvider.enable(SmartConfig(this, false, NetworkXLifecycle.Application))
         ShortsDatabase.getInstance(context)
         AppPreference.init(context)
         startKoin {
@@ -63,7 +66,7 @@ class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider 
         return ImageLoader.Builder(this)
             .crossfade(true)
             .components {
-                add(VideoFrameDecoder.Factory())
+//                add(VideoFrameDecoder.Factory())
             }
             .build()
     }

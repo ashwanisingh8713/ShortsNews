@@ -83,8 +83,9 @@ dependencies {
         exclude module: 'appcompat-v7'
     }
 
-    // Coil Video Frames
-    api "io.coil-kt:coil-video:2.4.0"
+    // Network X
+    api 'com.github.rommansabbir:NetworkX:4.2.0'
+
 
 
 

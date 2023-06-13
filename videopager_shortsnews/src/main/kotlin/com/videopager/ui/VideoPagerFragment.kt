@@ -7,6 +7,7 @@ import android.os.*
 import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -23,6 +24,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
+import com.rommansabbir.networkx.NetworkXProvider.isInternetConnected
 import com.videopager.R
 import com.videopager.data.VideoInfoData
 import com.videopager.databinding.VideoPagerFragmentBinding
@@ -30,6 +32,7 @@ import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
 import com.videopager.utils.CategoryConstants
+import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
 import com.videopager.vm.VideoSharedEventViewModel
@@ -258,17 +261,24 @@ class VideoPagerFragment(
                 NoFurtherEvent
             },
             loadMoreVideoData().map {
-                val Tag = "PagePreload"
-                Log.i(Tag, "")
-                Log.i(Tag, "########### NEW PAGE REQUEST IS SENT TO SERVER #################")
-                Log.i(Tag, "VideoFrom :: ${viewModel.videoFrom}, CategoryId :: ${viewModel.categoryId}, Page :: ${viewModel.page}")
-                viewModel.processEvent(LoadVideoDataEvent(
-                    categoryId = viewModel.categoryId,
-                    videoFrom = viewModel.videoFrom,
-                    page = viewModel.page,
-                    perPage = VideoPagerViewModel.perPage,
-                    languages = viewModel.languages
-                ))
+                if(isInternetConnected) {
+                    val Tag = "PagePreload"
+                    Log.i(Tag, "")
+                    Log.i(Tag, "########### NEW PAGE REQUEST IS SENT TO SERVER #################")
+                    Log.i(
+                        Tag,
+                        "VideoFrom :: ${viewModel.videoFrom}, CategoryId :: ${viewModel.categoryId}, Page :: ${viewModel.page}"
+                    )
+                    viewModel.processEvent(
+                        LoadVideoDataEvent(
+                            categoryId = viewModel.categoryId,
+                            videoFrom = viewModel.videoFrom,
+                            page = viewModel.page,
+                            perPage = VideoPagerViewModel.perPage,
+                            languages = viewModel.languages
+                        )
+                    )
+                }
                 NoFurtherEvent
             }
 
@@ -299,9 +309,15 @@ class VideoPagerFragment(
                     }
                 }
                 ChannelClick -> {
-                    val currentItem = binding.viewPager.currentItem
-                    val videoData = pagerAdapter.getVideoData(currentItem)
-                    ChannelClickEvent
+                    if(isInternetConnected) {
+                        val currentItem = binding.viewPager.currentItem
+                        val videoData = pagerAdapter.getVideoData(currentItem)
+                        ChannelClickEvent
+                    } else {
+                        NoConnection.noConnectionSnackBarInfinite(view, requireActivity() as AppCompatActivity)
+                        NoFurtherEvent
+                    }
+
                 }
                 ShareClick -> {
                     val currentItem = binding.viewPager.currentItem
@@ -319,37 +335,51 @@ class VideoPagerFragment(
                     ShareClickEvent
                 }
                 CommentClick -> {
-
-                    if (!isUserLoggedIn) {
-                        sharedEventViewModel.launchLoginEvent(true)
-                        NoFurtherEvent
+                    if(isInternetConnected) {
+                        if (!isUserLoggedIn) {
+                            sharedEventViewModel.launchLoginEvent(true)
+                            NoFurtherEvent
+                        } else {
+                            commentFragment.show(childFragmentManager, "comments")
+                            val currentItem = binding.viewPager.currentItem
+                            val videoData = pagerAdapter.getVideoData(currentItem)
+                            CommentClickEvent(videoData.id, currentItem)
+                        }
                     } else {
-                        commentFragment.show(childFragmentManager, "comments")
-                        val currentItem = binding.viewPager.currentItem
-                        val videoData = pagerAdapter.getVideoData(currentItem)
-                        CommentClickEvent(videoData.id, currentItem)
+                        NoConnection.noConnectionSnackBarInfinite(view, requireActivity() as AppCompatActivity)
+                        NoFurtherEvent
                     }
                 }
                 LikeClick -> {
-                    if (!isUserLoggedIn) {
-                        sharedEventViewModel.launchLoginEvent(true)
-                        NoFurtherEvent
+                    if(isInternetConnected) {
+                        if (!isUserLoggedIn) {
+                            sharedEventViewModel.launchLoginEvent(true)
+                            NoFurtherEvent
+                        } else {
+                            vibratePhone()
+                            val currentItem = binding.viewPager.currentItem
+                            val videoData = pagerAdapter.getVideoData(currentItem)
+                            LikeClickEvent(videoData.id, currentItem)
+                        }
                     } else {
-                        vibratePhone()
-                        val currentItem = binding.viewPager.currentItem
-                        val videoData = pagerAdapter.getVideoData(currentItem)
-                        LikeClickEvent(videoData.id, currentItem)
+                        NoConnection.noConnectionSnackBarInfinite(view, requireActivity() as AppCompatActivity)
+                        NoFurtherEvent
                     }
                 }
                 BookmarkClick -> {
-                    if (!isUserLoggedIn) {
-                        sharedEventViewModel.launchLoginEvent(true)
-                        NoFurtherEvent
+                    if(isInternetConnected) {
+                        if (!isUserLoggedIn) {
+                            sharedEventViewModel.launchLoginEvent(true)
+                            NoFurtherEvent
+                        } else {
+                            vibratePhone()
+                            val currentItem = binding.viewPager.currentItem
+                            val videoData = pagerAdapter.getVideoData(currentItem)
+                            BookmarkClickEvent(videoId = videoData.id, currentItem)
+                        }
                     } else {
-                        vibratePhone()
-                        val currentItem = binding.viewPager.currentItem
-                        val videoData = pagerAdapter.getVideoData(currentItem)
-                        BookmarkClickEvent(videoId = videoData.id, currentItem)
+                        NoConnection.noConnectionSnackBarInfinite(view, requireActivity() as AppCompatActivity)
+                        NoFurtherEvent
                     }
                 }
                 TrackInfoClick -> {

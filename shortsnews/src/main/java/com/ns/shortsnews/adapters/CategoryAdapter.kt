@@ -12,6 +12,7 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.ItemCategoryBinding
 import com.ns.shortsnews.onProfileItemClick
 import com.ns.shortsnews.domain.models.VideoCategory
+import com.rommansabbir.networkx.NetworkXProvider
 
 
 class CategoryAdapter(private var itemList: List<VideoCategory> = emptyList(), private val itemListener:onProfileItemClick): RecyclerView.Adapter<CategoryAdapter.MyViewHolder>() {
@@ -46,9 +47,13 @@ class CategoryAdapter(private var itemList: List<VideoCategory> = emptyList(), p
             }
         }
         holder.itemView.setOnClickListener {
-            lastCheckedPosition = position
-            notifyItemRangeChanged(0, itemCount)
-            itemListener.itemclick(itemList[position].id, position, itemCount)
+            if(NetworkXProvider.isInternetConnected) {
+                lastCheckedPosition = position
+                notifyItemRangeChanged(0, itemCount)
+                itemListener.itemclick(itemList[position].id, position, itemCount)
+            } else {
+                itemListener.itemclick(itemList[position].id, position, itemCount)
+            }
         }
     }
 }

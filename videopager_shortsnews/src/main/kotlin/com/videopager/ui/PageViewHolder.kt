@@ -1,16 +1,11 @@
 package com.videopager.ui
 
-import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
-import coil.decode.VideoFrameDecoder
 import coil.load
-import coil.request.videoFrameMillis
-import coil.size.Scale
-import com.google.common.math.Quantiles.scale
 import com.player.ui.AppPlayerView
 import com.videopager.databinding.PageItemBinding
 import com.videopager.models.AnimationEffect
