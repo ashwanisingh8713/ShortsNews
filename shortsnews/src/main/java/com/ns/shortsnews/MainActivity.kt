@@ -269,10 +269,16 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
     private fun showTryAgainText() {
+        binding.noNetworkParent.visibility = View.VISIBLE
         binding.tryAgain.visibility = View.VISIBLE
         binding.tryAgain.setOnClickListener {
             if(NetworkXProvider.isInternetConnected) {
                 videoCategoryViewModel.loadVideoCategory(languageStringParams)
+                if (AppPreference.userProfilePic == "") {
+                    binding.profileIcon.setImageResource(R.drawable.profile_avatar)
+                } else {
+                    binding.profileIcon.load(AppPreference.userProfilePic)
+                }
             } else {
                 NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
             }

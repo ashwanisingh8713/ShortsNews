@@ -69,11 +69,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarLanguages.visibility = View.GONE
-                if(it != "NA"){
-                    Log.i("kamlesh","OTPFragment onError ::: $it")
-                    Alert().showGravityToast(requireActivity(), AppConstants.OTP_VALIDATION_ERROR)
+               Log.i("kamlesh","OTPFragment onError ::: $it")
 
-                }
             }
         }
 

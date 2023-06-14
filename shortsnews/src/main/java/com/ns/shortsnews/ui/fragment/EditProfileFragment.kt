@@ -146,7 +146,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         binding.constLogout.setOnClickListener {
             AppPreference.clear()
             AppPreference.isProfileDeleted = true
-            activity?.finish()
+            lifecycleScope.launch {
+                ShortsDatabase.instance!!.languageDao().deleteLanguageData()
+                ShortsDatabase.instance!!.interestsDao().deleteInterestsData()
+                activity?.finish()
+            }
         }
 
         binding.profileImageEditIcon.setOnClickListener {

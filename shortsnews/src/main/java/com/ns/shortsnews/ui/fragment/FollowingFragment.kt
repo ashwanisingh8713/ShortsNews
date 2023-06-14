@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
@@ -16,6 +17,8 @@ import com.ns.shortsnews.ui.viewmodel.ChannelsViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModel
 import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModelFactory
 import com.ns.shortsnews.utils.AppPreference
+import com.rommansabbir.networkx.NetworkXProvider
+import com.videopager.utils.NoConnection
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -68,17 +71,24 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
     private fun ChannelsAdapter.clicksEvent() {
         viewLifecycleOwner.lifecycleScope.launch() {
             clicks().collectLatest {
-                var channelVideosFragment = ChannelVideosFragment().apply {
-                    val bundle = Bundle()
-                    bundle.putString("channelId", it.channel_id)
-                    bundle.putString("channelTitle", it.channelTitle)
-                    bundle.putString("channelUrl", it.channel_image)
-                    arguments = bundle
+                if (NetworkXProvider.isInternetConnected) {
+                    var channelVideosFragment = ChannelVideosFragment().apply {
+                        val bundle = Bundle()
+                        bundle.putString("channelId", it.channel_id)
+                        bundle.putString("channelTitle", it.channelTitle)
+                        bundle.putString("channelUrl", it.channel_image)
+                        arguments = bundle
+                    }
+                    AppPreference.isUpdateNeeded = true
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_containerProfile, channelVideosFragment)
+                        .addToBackStack(null).commit()
+                } else {
+                    // No Internet Snack bar: Fire
+                    NoConnection.noConnectionSnackBarInfinite(binding.root,
+                        requireContext() as AppCompatActivity
+                    )
                 }
-                AppPreference.isUpdateNeeded  = true
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_containerProfile, channelVideosFragment)
-                    .addToBackStack(null).commit()
             }
         }
     }

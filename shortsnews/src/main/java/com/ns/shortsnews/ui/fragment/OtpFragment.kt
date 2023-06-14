@@ -51,7 +51,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             val imm =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(view.windowToken, 0)
-            if (NetworkXProvider.isInternetConnected) {
                 val otpValue = binding.otpEditText.text.toString()
                 if (otpValue.isNotEmpty() && otpValue.length == 6) {
                     val data: MutableMap<String, String> = mutableMapOf()
@@ -60,7 +59,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     if (NetworkXProvider.isInternetConnected) {
                         userViewModel.requestOtpValidationApi(data)
                     } else {
-                        // No Internet Snackbar: Fire
+                        // No Internet Snack bar: Fire
                         NoConnection.noConnectionSnackBarInfinite(binding.root,
                             requireContext() as AppCompatActivity
                         )
@@ -72,23 +71,15 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                         Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_OTP)
                     }
                 }
-            } else {
-                NoConnection.noConnectionSnackBarInfinite(binding.root,
-                    requireContext() as AppCompatActivity
-                )
-            }
+
         }
 
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarOtp.visibility = View.GONE
-                if(it != "NA"){
                     Log.i("kamlesh","OTPFragment onError ::: $it")
                     binding.submitButton.visibility = View.VISIBLE
-                    Alert().showGravityToast(requireActivity(), AppConstants.OTP_VALIDATION_ERROR)
-
-                }
             }
         }
 
