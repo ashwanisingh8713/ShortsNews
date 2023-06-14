@@ -27,6 +27,7 @@
     <string name="select_nlanguage">Select\nLanguage</string>
     <string name="upto_4">(Upto 4)</string>
     <string name="scroll_down_button">scroll_down_button</string>
-    <string name="category_not_loaded">Category is not loaded.\nKindly tap here to retry</string>
+    <string name="no_internet_category">Kindly connect with internet\n Tap here to retry again</string>
+    <string name="some_thing_went_wrong">Something went wrong\n Tap here to retry again</string>
     <string name="camra_permission_msg">Allow camera permission to take picture</string>
 </resources>

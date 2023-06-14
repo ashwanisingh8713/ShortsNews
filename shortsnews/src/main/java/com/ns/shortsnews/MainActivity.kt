@@ -265,6 +265,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     private fun hideTryAgainText() {
         binding.tryAgain.visibility = View.GONE
+        binding.noNetworkImg.visibility = View.GONE
     }
 
     private fun showTryAgainText() {
@@ -278,7 +279,14 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         }
         if(!NetworkXProvider.isInternetConnected) {
+            binding.tryAgain.visibility = View.VISIBLE
+            binding.noNetworkImg.visibility = View.VISIBLE
+            binding.tryAgain.text = getString(R.string.no_internet_category)
             NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
+        } else {
+            binding.tryAgain.visibility = View.VISIBLE
+            binding.noNetworkImg.visibility = View.GONE
+            binding.tryAgain.text = getString(R.string.some_thing_went_wrong)
         }
     }
 

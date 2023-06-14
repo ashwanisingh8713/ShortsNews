@@ -17,7 +17,7 @@ android {
         minSdk 29
         targetSdk 33
         versionCode 1
-        versionName "1.1"
+        versionName "14Jun23"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BASE_URL", "\"https://shorts.newsdx.io/ci/api-v2/public/\""
