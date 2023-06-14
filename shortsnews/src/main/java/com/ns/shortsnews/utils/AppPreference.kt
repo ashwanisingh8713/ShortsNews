@@ -25,6 +25,7 @@ object AppPreference {
     private const val IS_LANGUAGE_SELECTED = "is_language_selected"
     private const val IS_PROFILE_DELETED = "profile_cleared"
     private const val UPDATE_NEEDED = "update_needed"
+    private const val FOLLOWING_UPDATE_NEEDED = "following_update_needed"
 
     fun init(context: Context) {
         preference = PreferenceManager.getDefaultSharedPreferences(context)
@@ -124,6 +125,13 @@ object AppPreference {
         this.putBoolean(UPDATE_NEEDED, value)
         this.apply()
     }
+
+    var isFollowingUpdateNeeded:Boolean
+        get() = preference.getBoolean(FOLLOWING_UPDATE_NEEDED,false)
+        set(value) = preference.edit {
+            this.putBoolean(FOLLOWING_UPDATE_NEEDED, value)
+            this.apply()
+        }
 
 
     // Clear preference on logout

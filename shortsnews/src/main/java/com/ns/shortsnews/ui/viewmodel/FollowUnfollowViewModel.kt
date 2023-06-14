@@ -3,17 +3,17 @@ package com.ns.shortsnews.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ns.shortsnews.domain.exception.ApiError
-import com.ns.shortsnews.domain.models.VideoDataResponse
 import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
-import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
+import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
+import com.videopager.data.Following
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class ChannelVideoViewModel(private val channelsDataUseCase: VideoDataUseCase): ViewModel() {
+class FollowUnfollowViewModel(private val followUnfollowUseCse: FollowUnfollowUseCase): ViewModel() {
 
     // Profile
-    private val _channelVideoSuccessState = MutableStateFlow<VideoDataResponse?>(null)
-    val BookmarksSuccessState: StateFlow<VideoDataResponse?> get() = _channelVideoSuccessState
+    private val _followUnfollowSuccessState = MutableStateFlow<Following?>(null)
+    val FollowUnfollowSuccessState: StateFlow<Following?> get() = _followUnfollowSuccessState
 
     private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> get() = _errorState
@@ -22,11 +22,11 @@ class ChannelVideoViewModel(private val channelsDataUseCase: VideoDataUseCase): 
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
 
-    fun requestChannelVideoData(params: Pair<String, String>) {
-        channelsDataUseCase.invoke(viewModelScope, params,
-            object : UseCaseResponse<VideoDataResponse> {
-                override fun onSuccess(type: VideoDataResponse) {
-                    _channelVideoSuccessState.value = type
+    fun requestFollowUnfollowApi(channelId:String) {
+        followUnfollowUseCse.invoke(viewModelScope, channelId,
+            object : UseCaseResponse<Following> {
+                override fun onSuccess(type: Following) {
+                    _followUnfollowSuccessState.value = type
                     _loadingState.value = false
                 }
 
@@ -41,9 +41,4 @@ class ChannelVideoViewModel(private val channelsDataUseCase: VideoDataUseCase): 
             }
         )
     }
-
-    fun clearChannelVideos(){
-        _channelVideoSuccessState.value = null
-    }
-
 }

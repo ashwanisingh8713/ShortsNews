@@ -13,12 +13,10 @@
         android:layout_height="wrap_content"
         android:src="@drawable/login_icon"
         android:layout_margin="@dimen/margin_start"
-        android:scaleType="centerCrop"
+        android:scaleType="centerInside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="100dp"
-        android:padding="20dp"
        />
 
     <TextView
@@ -30,7 +28,6 @@
         android:fontFamily="@font/roboto_regular"
         android:textStyle="normal"
         android:textSize="@dimen/video_page_text_size_xxxlarge"
-        android:paddingStart="20dp"
         app:layout_constraintStart_toStartOf="@id/app_logo"
         app:layout_constraintTop_toBottomOf="@+id/app_logo"
         android:layout_marginTop="5dp"

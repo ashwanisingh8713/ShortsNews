@@ -17,7 +17,10 @@ import com.ns.shortsnews.adapters.NewProfilePagerAdapter
 import com.ns.shortsnews.databinding.FragmentNewProfileBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.domain.models.ProfileData
+import com.ns.shortsnews.domain.usecase.channel.ChannelsDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserProfileDataUseCase
+import com.ns.shortsnews.ui.viewmodel.ChannelsViewModel
+import com.ns.shortsnews.ui.viewmodel.ChannelsViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserProfileViewModel
 import com.ns.shortsnews.ui.viewmodel.UserProfileViewModelFactory
 import com.ns.shortsnews.utils.Alert
@@ -34,6 +37,9 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
     lateinit var binding:FragmentNewProfileBinding
     private val userProfileViewModel: UserProfileViewModel by activityViewModels { UserProfileViewModelFactory().apply {
         inject(UserProfileDataUseCase(UserDataRepositoryImpl(get())))
+    } }
+    private val channelsViewModel: ChannelsViewModel by activityViewModels { ChannelsViewModelFactory().apply {
+        inject(ChannelsDataUseCase(UserDataRepositoryImpl(get())))
     } }
     private lateinit var adapter:NewProfilePagerAdapter
     private lateinit var profileData: ProfileData
@@ -110,12 +116,17 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
         Log.i(TAG, "OnResume :: profile update status ${AppPreference.isProfileUpdated}")
         if (AppPreference.isProfileUpdated){
             Log.i(TAG, "OnResume :: requesting profile API")
             userProfileViewModel.requestProfileApi()
+        }
+        if (AppPreference.isFollowingUpdateNeeded){
+            channelsViewModel.requestChannelListApi()
+            AppPreference.isFollowingUpdateNeeded = false
         }
     }
 
@@ -125,4 +136,5 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
         AppPreference.userName = profileData.name
         AppPreference.userProfilePic = profileData.image
     }
+
 }

@@ -41,4 +41,8 @@ class ChannelInfoViewModel(private val channelInfoUseCase: ChannelInfoUseCase): 
             }
         )
     }
+
+    fun clearChannelInfo(){
+        _channelInfoSuccessState.value = null
+    }
 }

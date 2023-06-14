@@ -1,6 +1,7 @@
 package com.ns.shortsnews.data.source
 
 import com.ns.shortsnews.domain.models.*
+import com.videopager.data.Following
 import com.videopager.data.VideoInfo
 import okhttp3.RequestBody
 import retrofit2.http.*
@@ -42,6 +43,9 @@ interface UserApiService {
 
     @GET("channel-info/{channel_id}")
     suspend fun getChannelInfo(@Path("channel_id") channel_id: String): ChannelInfo
+
+    @GET("follow-unfollow-channel/{channel_id}")
+    suspend fun follow(@Path("channel_id") channel_id: String): Following
 
 
 }

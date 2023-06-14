@@ -1,6 +1,7 @@
 package com.ns.shortsnews.domain.repository
 
 import com.ns.shortsnews.domain.models.*
+import com.videopager.data.Following
 import okhttp3.RequestBody
 
 
@@ -25,4 +26,6 @@ interface UserDataRepository {
 
     //GetChannelInfo
     suspend fun getChannelInfo(channelId: String):ChannelInfo
+
+    suspend fun getFollowUnfollow(channelId: String):Following
 }

@@ -19,10 +19,12 @@ import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.databinding.FragmentChannelVideosBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
+import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
+import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
 import com.videopager.utils.CategoryConstants
 import com.videopager.vm.SharedEventViewModelFactory
@@ -51,7 +53,9 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     private val channelsVideosViewModel: ChannelVideoViewModel by activityViewModels { ChannelVideoViewModelFactory().apply {
         inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
     }}
-    private val sharedEventViewModel: VideoSharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
+    private val followUnfollowViewModel:FollowUnfollowViewModel by activityViewModels {FollowUnfollowViewModelFactory().apply {
+        inject(FollowUnfollowUseCase(UserDataRepositoryImpl(get())))
+    }  }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,17 +86,27 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
         listenChannelVideos()
         binding.following.setOnClickListener {
-            sharedEventViewModel.followRequest(channelId)
+            listenFollowUnfollow(channelId)
         }
+    }
 
-        lifecycleScope.launch {
-            sharedEventViewModel.followResponse.filterNotNull().collectLatest {
-                if (it.following) {
+    override fun onDetach() {
+        super.onDetach()
+        channelsVideosViewModel.clearChannelVideos()
+        channelInfoViewModel.clearChannelInfo()
+
+    }
+
+    private fun listenFollowUnfollow(channelId:String) {
+        followUnfollowViewModel.requestFollowUnfollowApi(channelId)
+        viewLifecycleOwner.lifecycleScope.launch {
+            followUnfollowViewModel.FollowUnfollowSuccessState.filterNotNull().collectLatest {
+                AppPreference.isFollowingUpdateNeeded = true
+                if (it.data.following) {
                     binding.following.text = "Following"
                 } else {
                     binding.following.text = "Follow"
                 }
-
             }
         }
     }
@@ -103,6 +117,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             channelInfoViewModel.ChannelInfoSuccessState.filterNotNull().collectLatest {
                 binding.channelDes.text = it.data.description
                 binding.profileCount.text = it.data.follow_count
+                binding.following.visibility = View.VISIBLE
                 if (it.data.following){
                     binding.following.text = "Following"
                 } else {
@@ -187,12 +202,4 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
         }
     }
-
-    fun Fragment?.runOnUiThread(action: () -> Unit) {
-        this ?: return
-        if (!isAdded) return // Fragment not attached to an Activity
-        activity?.runOnUiThread(action)
-    }
-
-
 }

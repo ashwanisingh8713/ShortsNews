@@ -3,6 +3,7 @@ package com.ns.shortsnews.data.repository
 import com.ns.shortsnews.domain.models.*
 import com.ns.shortsnews.data.source.UserApiService
 import com.ns.shortsnews.domain.repository.UserDataRepository
+import com.videopager.data.Following
 import okhttp3.RequestBody
 
 class UserDataRepositoryImpl constructor(private val apiService: UserApiService):
@@ -45,5 +46,9 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
 
     override suspend fun getChannelInfo(channelId: String): ChannelInfo {
         return apiService.getChannelInfo(channelId)
+    }
+
+    override suspend fun getFollowUnfollow(channelId: String): Following {
+       return apiService.follow(channelId)
     }
 }

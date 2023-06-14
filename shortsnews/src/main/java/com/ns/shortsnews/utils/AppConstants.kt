@@ -24,6 +24,7 @@ class AppConstants {
         const val  OTP_VALIDATION_ERROR = "Error validating otp try again"
         const val  SPRINT_TWO = "Coming in sprint 2nd"
         const val  SPRINT_THREE = "Coming in phase 3rd"
+        const val API_ERROR = "Something went wrong"
 
 
         // Toast MSG text

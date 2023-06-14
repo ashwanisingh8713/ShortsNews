@@ -57,13 +57,12 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     val data: MutableMap<String, String> = mutableMapOf()
                     data["OTP"] = otpValue
                     data["OTP_id"] = otpId.toString()
-                    if (Alert.isOnline(requireActivity())) {
+                    if (NetworkXProvider.isInternetConnected) {
                         userViewModel.requestOtpValidationApi(data)
                     } else {
-                        Alert().showErrorDialog(
-                            AppConstants.CONNECTIVITY_ERROR_TITLE,
-                            AppConstants.CONNECTIVITY_MSG,
-                            requireActivity()
+                        // No Internet Snackbar: Fire
+                        NoConnection.noConnectionSnackBarInfinite(binding.root,
+                            requireContext() as AppCompatActivity
                         )
                     }
                 } else {

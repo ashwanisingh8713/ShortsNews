@@ -17,37 +17,13 @@ class Alert {
         alertDialog.apply {
             this.setTitle(title)
             this.setMessage(msg)
-            this.setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, which ->
+            this.setPositiveButton("Ok") { dialog, _ ->
                 dialog.dismiss()
-            })
+            }
             this.show()
         }
 
     }
-
-companion object {
-    fun isOnline(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (connectivityManager != null) {
-            val capabilities =
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
-                    return true
-                }
-            }
-        }
-        return false
-    }
-}
 
     fun showGravityToast(context: Context, msg:String){
         val toast = Toast.makeText(context,msg, Toast.LENGTH_SHORT)

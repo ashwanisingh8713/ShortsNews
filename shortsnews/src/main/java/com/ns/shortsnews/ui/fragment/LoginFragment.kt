@@ -43,7 +43,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
         binding.sendImage.setOnClickListener{
-            if (NetworkXProvider.isInternetConnected) {
                 val email = binding.emailEditText.text.toString()
                 val name = binding.nameEditText.text.toString()
                 if (email.isNotEmpty() && name.trim().isNotEmpty()) {
@@ -54,14 +53,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         val bundle: MutableMap<String, String> = mutableMapOf()
                         bundle["email"] = email
                         bundle["name"] = name
-                        if (Alert.isOnline(requireActivity())) {
+                         if (NetworkXProvider.isInternetConnected) {
                             userViewModel.requestRegistrationApi(bundle)
                         } else {
-                            Alert().showErrorDialog(
-                                AppConstants.CONNECTIVITY_ERROR_TITLE,
-                                AppConstants.CONNECTIVITY_MSG,
-                                requireActivity()
-                            )
+                             // No Internet Snackbar: Fire
+                             NoConnection.noConnectionSnackBarInfinite(binding.root,
+                                 requireContext() as AppCompatActivity
+                             )
                         }
                     } else {
                         Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_EMAIL)
@@ -74,22 +72,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         )
                     }
                 }
-            } else {
-                // No Internet Snackbar: Fire
-                NoConnection.noConnectionSnackBarInfinite(binding.root,
-                    requireContext() as AppCompatActivity
-                )
-            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.errorState.filterNotNull().collectLatest {
-              if(it != "NA"){
                   binding.progressBarLogin.visibility = View.GONE
                   binding.sendImage.visibility = View.VISIBLE
-                      Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, it, requireActivity())
+                      Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
                   Log.i("kamlesh","$it")
-                }
+
             }
         }
 

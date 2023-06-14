@@ -25,26 +25,17 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
 
     lateinit var binding: FragmentFollowingBinding
     lateinit var adapter:ChannelsAdapter
-
-    private val sharedViewModel: ProfileSharedViewModel by activityViewModels { ProfileSharedViewModelFactory }
-
     private val channelsViewModel: ChannelsViewModel by activityViewModels { ChannelsViewModelFactory().apply {
         inject(ChannelsDataUseCase(UserDataRepositoryImpl(get())))
     } }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentFollowingBinding.bind(view)
-
-//        binding.backButtonUser.setOn`Click`Listener {
-//            activity?.finish()
-//        }
         channelsViewModel.requestChannelListApi()
-
-
         viewLifecycleOwner.lifecycleScope.launch(){
             channelsViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarChannels.visibility = View.GONE
-                if(!it.equals("NA")){
+                if(it != "NA"){
                     Log.i("kamlesh","FollowingFragment onError ::: $it")
                 }
             }
@@ -91,5 +82,4 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
             }
         }
     }
-
 }

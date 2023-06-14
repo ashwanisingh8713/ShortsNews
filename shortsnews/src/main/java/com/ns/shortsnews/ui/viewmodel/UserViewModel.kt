@@ -51,7 +51,7 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
     private val _languagesSuccessState = MutableStateFlow<List<LanguageData>>(emptyList())
     val LanguagesSuccessState: StateFlow<List<LanguageData>> get() = _languagesSuccessState
 
-    private val _errorState = MutableStateFlow<String?>("NA")
+    private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> get() = _errorState
 
     private val _loadingState = MutableStateFlow(false)

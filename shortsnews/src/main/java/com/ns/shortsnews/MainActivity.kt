@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         bottomSheetFollowingClick()
 
-//        registerVideoCache()
+        registerVideoCache()
     }
 
     private fun getSelectedLanguagesValues() {
