@@ -1,10 +1,8 @@
 package com.exo.players
 
 import android.util.Log
-import android.widget.Toast
 import com.exo.data.VideoDataUpdater
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.source.UnrecognizedInputFormatException
 import com.player.models.PlayerState
 import com.player.models.VideoData
 import com.player.players.AppPlayer
@@ -15,9 +13,9 @@ import kotlinx.coroutines.flow.callbackFlow
 internal class ExoAppPlayer(
     override val player: ExoPlayer,
     private val updater: VideoDataUpdater,
-    private val currentMediaItemIndex: Int
+    private val selectedVideoPlayIndex: Int
 ) : AppPlayer {
-    override val currentPlayerState: PlayerState get() = player.toPlayerState(currentMediaItemIndex)
+    override val currentPlayerState: PlayerState get() = player.toPlayerState(selectedVideoPlayIndex)
     private var isPlayerSetUp = false
 
     override suspend fun setUpWith(videoData: List<VideoData>, playerState: PlayerState?) {
@@ -148,13 +146,26 @@ internal class ExoAppPlayer(
     }
 
 
-    private fun Player.toPlayerState(currentMediaItemIndex: Int): PlayerState {
-        return PlayerState(
-            currentMediaItemId = currentMediaItem?.mediaId,
-            currentMediaItemIndex = currentMediaItemIndex,
-            seekPositionMillis = currentPosition,
-            isPlaying = playWhenReady
-        )
+    private fun Player.toPlayerState(selectedVideoPlayIndex: Int): PlayerState {
+        // This should be fixed
+        // If we give "selectedVideoPlayIndex" then it plays selected video
+        // But with pagination it is shuffling towards zero index
+        // To fix it we must read "currentMediaItemIndex" which belongs to ExoPlayer Media Index
+        return if(selectedVideoPlayIndex != 0) {
+            PlayerState(
+                currentMediaItemId = currentMediaItem?.mediaId,
+                currentMediaItemIndex = selectedVideoPlayIndex,
+                seekPositionMillis = currentPosition,
+                isPlaying = playWhenReady
+            )
+        } else {
+            PlayerState(
+                currentMediaItemId = currentMediaItem?.mediaId,
+                currentMediaItemIndex = currentMediaItemIndex,
+                seekPositionMillis = currentPosition,
+                isPlaying = playWhenReady
+            )
+        }
     }
 
     override fun playMediaAt(position: Int) {

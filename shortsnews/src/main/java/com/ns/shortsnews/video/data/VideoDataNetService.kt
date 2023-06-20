@@ -17,7 +17,8 @@ object VideoDataNetService {
         .baseUrl(BuildConfig.BASE_URL)
         .client(
             OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(100, TimeUnit.SECONDS)
                 .addInterceptor { chain ->
                     chain.proceed(
                         chain.request()

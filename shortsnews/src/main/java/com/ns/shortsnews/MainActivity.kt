@@ -174,10 +174,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             AppPreference.userToken
         )
 
-        if (AppPreference.isProfileUpdated){
+        if (AppPreference.isProfileUpdated) {
             binding.profileIcon.load(AppPreference.userProfilePic)
             AppPreference.isProfileUpdated = false
         }
+
+        // When Bottom Slider is opened and selected any video to play
+        // then coming back it should collapse the slider and play the video
+        // Playing video is happening using lifecycle
+        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
 
@@ -526,7 +531,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         lifecycleScope.launch {
             adapter.clicks().collectLatest {
                 IntentLaunch.launchPlainVideoPlayer(it, this@MainActivity)
-                standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+//                standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         }
 

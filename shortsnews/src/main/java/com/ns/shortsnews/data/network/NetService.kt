@@ -9,7 +9,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 
-private const val TIME_OUT = 30L
 
 fun createRetrofit(okHttpClient: OkHttpClient, url: String): Retrofit {
     return Retrofit.Builder()
@@ -37,8 +36,8 @@ fun createOkHttpClient(): OkHttpClient {
                     .build()
             )
         }
-        .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
-        .readTimeout(TIME_OUT, TimeUnit.SECONDS)
+        .connectTimeout(100, TimeUnit.SECONDS)
+        .readTimeout(100, TimeUnit.SECONDS)
         .addInterceptor(httpLoggingInterceptor).build()
 }
 
