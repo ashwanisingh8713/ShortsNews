@@ -1,0 +1,8 @@
+PlayerExt.kt
+    repeatMode = Player.REPEAT_MODE_OFF
+
+ExoAppPlayer.kt
+    onMediaItemTransition() =>
+    if (reason == 1) {
+    trySend(mediaItem)
+    }

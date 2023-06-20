@@ -1,0 +1,18 @@
+VideoPagerFragment.kt
+	viewModel.processEvent(OnPageSettledEvent(state.page))
+
+
+ExoAppPlayer.kt
+	 private fun Player.toPlayerState(currentMediaItemIndex: Int): PlayerState {
+	        return PlayerState(
+	            currentMediaItemId = currentMediaItem?.mediaId,
+	            currentMediaItemIndex = currentMediaItemIndex,
+	            seekPositionMillis = currentPosition,
+	            isPlaying = playWhenReady
+	        )
+	    }
+
+
+VideoPagerViewModel.kt
+	toLoadVideoDataResults()
+		states.value.page = 5

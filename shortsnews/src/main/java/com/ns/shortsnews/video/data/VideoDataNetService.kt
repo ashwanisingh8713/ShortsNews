@@ -5,6 +5,7 @@ import com.ns.shortsnews.utils.AppPreference
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Ashwani Kumar Singh on 29,May,2023.
@@ -16,6 +17,7 @@ object VideoDataNetService {
         .baseUrl(BuildConfig.BASE_URL)
         .client(
             OkHttpClient.Builder()
+                .connectTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor { chain ->
                     chain.proceed(
                         chain.request()

@@ -28,7 +28,7 @@ import com.player.players.AppPlayer
 import kotlinx.coroutines.Dispatchers
 
 
-class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : AppPlayer.Factory {
+class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache, private val currentMediaItemIndex: Int) : AppPlayer.Factory {
     // Use application context to avoid leaking Activity.
     private val appContext = context.applicationContext
     var exoPlayer:ExoPlayer? = null
@@ -68,7 +68,7 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache) : Ap
             exoPlayer?.addAnalyticsListener(EventLogger())
 
         val updater = DiffingVideoDataUpdater(Dispatchers.Default)
-        return ExoAppPlayer(exoPlayer!!, updater)
+        return ExoAppPlayer(exoPlayer!!, updater, currentMediaItemIndex)
     }
 
     private var serverSideAdsLoader: ImaServerSideAdInsertionMediaSource.AdsLoader? = null

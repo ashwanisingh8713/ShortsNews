@@ -37,18 +37,19 @@ class AppConstants {
         const val FROM_PROFILE = "from_profile"
 
 
-        fun makeVideoPagerInstance(requiredId: String, videoFrom: String, context: Context, languages:String): VideoPagerFragment {
+        fun makeVideoPagerInstance(requiredId: String, videoFrom: String, context: Context, languages:String, selectedPlay:Int = 0): VideoPagerFragment {
             val appPlayerView =  ExoAppPlayerViewFactory().create(context)
             val vpf =  VideoPagerFragment(
                 viewModelFactory = { owner ->
                     VideoPagerViewModelFactory(
                         repository = VideoDataRepositoryImpl(),
                         appPlayerFactory = ExoAppPlayerFactory(
-                            context = context, cache = MainApplication.cache
+                            context = context, cache = MainApplication.cache, currentMediaItemIndex = selectedPlay
                         ),
                         requiredId = requiredId,
                         videoFrom = videoFrom,
-                        languages = languages
+                        languages = languages,
+                        selectedPlay = selectedPlay
                     ).create(owner)
                 },
                 appPlayerView = appPlayerView,

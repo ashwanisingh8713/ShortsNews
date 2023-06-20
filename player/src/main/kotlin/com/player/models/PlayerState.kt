@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class PlayerState(
     val currentMediaItemId: String?,
-    val currentMediaItemIndex: Int? = null,
+    var currentMediaItemIndex: Int? = null,
     val seekPositionMillis: Long,
     val isPlaying: Boolean
 ) : Parcelable {

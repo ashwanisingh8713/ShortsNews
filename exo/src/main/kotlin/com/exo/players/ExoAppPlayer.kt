@@ -14,9 +14,10 @@ import kotlinx.coroutines.flow.callbackFlow
 
 internal class ExoAppPlayer(
     override val player: ExoPlayer,
-    private val updater: VideoDataUpdater
+    private val updater: VideoDataUpdater,
+    private val currentMediaItemIndex: Int
 ) : AppPlayer {
-    override val currentPlayerState: PlayerState get() = player.toPlayerState()
+    override val currentPlayerState: PlayerState get() = player.toPlayerState(currentMediaItemIndex)
     private var isPlayerSetUp = false
 
     override suspend fun setUpWith(videoData: List<VideoData>, playerState: PlayerState?) {
@@ -147,7 +148,7 @@ internal class ExoAppPlayer(
     }
 
 
-    private fun Player.toPlayerState(): PlayerState {
+    private fun Player.toPlayerState(currentMediaItemIndex: Int): PlayerState {
         return PlayerState(
             currentMediaItemId = currentMediaItem?.mediaId,
             currentMediaItemIndex = currentMediaItemIndex,

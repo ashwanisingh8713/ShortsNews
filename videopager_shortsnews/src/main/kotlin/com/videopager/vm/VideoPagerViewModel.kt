@@ -30,6 +30,7 @@ import com.videopager.models.ViewEffect
 import com.videopager.models.ViewEvent
 import com.videopager.models.ViewResult
 import com.videopager.ui.extensions.ViewState
+import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.*
@@ -44,7 +45,7 @@ internal class VideoPagerViewModel(
     private val appPlayerFactory: AppPlayer.Factory,
     private val handle: PlayerSavedStateHandle,
     initialState: ViewState,
-    val categoryId: String, val videoFrom: String, val languages:String
+    val categoryId: String, val videoFrom: String, val languages:String, private val selectedPlay:Int
 ) : MviViewModel<ViewEvent, ViewResult, ViewState, ViewEffect>(initialState) {
 
     companion object {
@@ -123,6 +124,10 @@ internal class VideoPagerViewModel(
             if (page == 1) {
                 delay(1000)
             }
+            if(videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA) {
+                states.value.page = selectedPlay
+            }
+
             val appPlayer = states.value.appPlayer
             // If the player exists, it should be updated with the latest video data that came in
 
@@ -308,9 +313,13 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<OnPageSettledEvent>.toPageSettledResults(): Flow<ViewResult> {
         return mapLatest { event ->
-            val appPlayer = requireNotNull(states.value.appPlayer)
-            appPlayer.playMediaAt(event.page)
-            OnNewPageSettledResult(page = event.page)
+            if(states.value.appPlayer == null) {
+                NoOpResult
+            } else {
+                val appPlayer = requireNotNull(states.value.appPlayer)
+                appPlayer.playMediaAt(event.page)
+                OnNewPageSettledResult(page = event.page)
+            }
         }
     }
 

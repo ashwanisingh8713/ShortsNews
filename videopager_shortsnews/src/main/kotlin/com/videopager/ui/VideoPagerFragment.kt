@@ -108,6 +108,11 @@ class VideoPagerFragment(
 
                 // Can't query any ViewHolders if the adapter has no pages
                 if (pagerAdapter.currentList.isNotEmpty()) {
+
+                    if(viewModel.videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || viewModel.videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA) {
+                        viewModel.processEvent(OnPageSettledEvent(state.page))
+                    }
+
                     // Set the player view on the active page. Note that ExoPlayer won't render
                     // any frames until the output view (here, appPlayerView) is on-screen
                     pagerAdapter.attachPlayerView(appPlayerView, state.page)

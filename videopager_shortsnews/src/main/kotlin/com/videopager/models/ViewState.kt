@@ -6,7 +6,7 @@ import com.player.players.AppPlayer
 data class ViewState(
     val appPlayer: AppPlayer? = null,
     val attachPlayer: Boolean = false,
-    val page: Int = 0,
+    var page: Int = 0,
     val showPlayer: Boolean = false,
     val youtubeUriError: Boolean = false,
     val videoData: MutableList<VideoData>? = null
