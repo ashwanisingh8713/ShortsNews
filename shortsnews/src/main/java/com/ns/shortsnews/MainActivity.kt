@@ -352,7 +352,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED -> {
-                        Log.i("BottomSlider","STATE_EXPANDED")
                         sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_EXPANDED)
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
                             resources.getDrawable(R.drawable.slide_down_arrow_icon, null)
@@ -383,6 +382,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
                 if (NetworkXProvider.isInternetConnected) {
+
+                    channelInfoViewModel.clearChannelInfo()
+                    videoDataViewModel.clearVideoData()
 
                     val channelId = binding.persistentBottomsheet.imgDownArrow.tag?.toString()
                     channelId?.let {

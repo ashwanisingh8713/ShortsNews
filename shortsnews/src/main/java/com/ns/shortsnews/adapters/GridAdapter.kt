@@ -34,6 +34,8 @@ class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
                 binding.likeCount.text = this[position].like_count
                 if (this[position].liked){
                     holder.binding.likeIcon.setColorFilter(ContextCompat.getColor(holder.binding.likeIcon.context, R.color.red))
+                } else {
+                    holder.binding.likeIcon.setColorFilter(ContextCompat.getColor(holder.binding.likeIcon.context, R.color.white))
                 }
             }
             holder.itemView.setOnClickListener{

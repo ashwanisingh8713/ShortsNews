@@ -44,4 +44,7 @@ class UserBookmarksViewModel(private val channelsDataUseCase: VideoDataUseCase):
             }
         )
     }
+    fun clearVideoData(){
+        _userBookmarksSuccessState.value = null
+    }
 }
