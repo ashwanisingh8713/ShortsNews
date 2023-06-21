@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 class UserBookmarksViewModel(private val channelsDataUseCase: VideoDataUseCase): ViewModel() {
 
     // Profile
-    private val _userBookmarksSuccessState = MutableStateFlow<VideoDataResponse?>(null)
-    val BookmarksSuccessState: StateFlow<VideoDataResponse?> get() = _userBookmarksSuccessState
+    private val _videoDataSuccessState = MutableStateFlow<VideoDataResponse?>(null)
+    val videoDataState: StateFlow<VideoDataResponse?> get() = _videoDataSuccessState
 
     private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> get() = _errorState
@@ -21,12 +21,15 @@ class UserBookmarksViewModel(private val channelsDataUseCase: VideoDataUseCase):
     private val _loadingState = MutableStateFlow(true)
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
+    fun clearChannelVideoData() {
+        _videoDataSuccessState.value = null
+    }
 
     fun requestVideoData(params: Pair<String, String>) {
         channelsDataUseCase.invoke(viewModelScope, params,
             object : UseCaseResponse<VideoDataResponse> {
                 override fun onSuccess(type: VideoDataResponse) {
-                    _userBookmarksSuccessState.value = type
+                    _videoDataSuccessState.value = type
                     _loadingState.value = false
                 }
 

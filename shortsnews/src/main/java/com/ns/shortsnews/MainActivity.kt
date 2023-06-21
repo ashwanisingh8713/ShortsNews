@@ -2,7 +2,9 @@ package com.ns.shortsnews
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
@@ -29,8 +31,8 @@ import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
-import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
+import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
@@ -50,7 +52,7 @@ import org.koin.android.ext.android.get
 
 class MainActivity : AppCompatActivity(), onProfileItemClick {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var caAdapter: CategoryAdapter
+    private lateinit var categoryAdapter: CategoryAdapter
     private val languageDao = ShortsDatabase.instance!!.languageDao()
     private val languageItemRepository = LanguageRepository(languageDao)
     private val languageViewModel: LanguageViewModel by viewModels {
@@ -80,6 +82,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     private var languageStringParams =""
+    private var bottomSheetRecyclerAdapter: GridAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -249,13 +252,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 it.videoCategories.isNotEmpty()
             }.collectLatest {
                 // Setup recyclerView
-                caAdapter = CategoryAdapter(
+                categoryAdapter = CategoryAdapter(
                     itemList = it.videoCategories,
                     itemListener = this@MainActivity
                 )
-                binding.recyclerView.adapter = caAdapter
+                binding.recyclerView.adapter = categoryAdapter
                 val defaultCate = it.videoCategories[0]
-                loadHomeFragment(defaultCate.id,languageStringParams)
+                loadHomeFragment(defaultCate.id, languageStringParams)
                 hideTryAgainText()
             }
         }
@@ -349,6 +352,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED -> {
+                        Log.i("BottomSlider","STATE_EXPANDED")
                         sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_EXPANDED)
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
                             resources.getDrawable(R.drawable.slide_down_arrow_icon, null)
@@ -356,14 +360,18 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     }
 
                     BottomSheetBehavior.STATE_COLLAPSED -> {
+                        Log.i("BottomSlider","STATE_COLLAPSED")
                         sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_COLLAPSED)
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
                             resources.getDrawable(R.drawable.slide_up_arrow_icon, null)
                         )
                     }
-                    BottomSheetBehavior.STATE_DRAGGING -> standardBottomSheetBehavior.setState(
-                        BottomSheetBehavior.STATE_COLLAPSED
-                    )
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+                        Log.i("BottomSlider","STATE_DRAGGING")
+                        standardBottomSheetBehavior.setState(
+                            BottomSheetBehavior.STATE_COLLAPSED
+                        )
+                    }
                 }
             }
         })
@@ -371,9 +379,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         // Bottom Sheet Image Arrow CLick Listener to OPEN or CLOSE Drawer
         binding.persistentBottomsheet.imgDownArrow.setOnClickListener {
             if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                Log.i("BottomSlider","STATE_EXPANDED-2")
                 standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
                 if (NetworkXProvider.isInternetConnected) {
+
                     val channelId = binding.persistentBottomsheet.imgDownArrow.tag?.toString()
                     channelId?.let {
                         if (channelId != "") {
@@ -498,8 +508,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 channelId
             )
         )
-        val adapter =
-            GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
+        bottomSheetRecyclerAdapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
 
         lifecycleScope.launch {
             videoDataViewModel.errorState.filterNotNull().collectLatest {
@@ -509,29 +518,22 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
 
         lifecycleScope.launch {
-            videoDataViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
+            videoDataViewModel.videoDataState.filterNotNull().collectLatest {
                 delay(500) // To show the progress bar properly
                 binding.persistentBottomsheet.progressBar.visibility = View.GONE
                 binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
                 it.let {
-                    adapter.updateVideoData(it.data)
-
-                    binding.persistentBottomsheet.channelRecyclerview.adapter = adapter
-
-                    if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                    } else {
-                        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                    }
+                    bottomSheetRecyclerAdapter?.updateVideoData(it.data)
+                    binding.persistentBottomsheet.channelRecyclerview.adapter = bottomSheetRecyclerAdapter
+                    standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             }
         }
 
         // Channel Item click listener
         lifecycleScope.launch {
-            adapter.clicks().collectLatest {
+            bottomSheetRecyclerAdapter!!.clicks().collectLatest {
                 IntentLaunch.launchPlainVideoPlayer(it, this@MainActivity)
-//                standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         }
 
@@ -540,6 +542,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun bottomSheetClearChannelId() {
         binding.persistentBottomsheet.following.tag = null
         binding.persistentBottomsheet.imgDownArrow.tag = null
+        videoDataViewModel.clearChannelVideoData()
+        bottomSheetRecyclerAdapter?.clearChannelData()
+        binding.persistentBottomsheet.clientImage.setImageBitmap(null)
+        binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(R.color.black)
+        binding.persistentBottomsheet.bottomSheetHeader.alpha = 0.3f
     }
 
     // Bottom Sheet Following Click Listener
@@ -573,6 +580,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     /*Bottom sheet pallet color using bitmap icon from response URL*/
     private fun bottomSheetHeaderBg(bitmap: Bitmap, channelId: String) {
+        binding.persistentBottomsheet.bottomSheetHeader.alpha = 1.0f
+
         val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
 
         Palette.from(mutableBitmap).generate { palette ->
@@ -632,6 +641,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            Log.i("BottomSlider","STATE_EXPANDED-4")
             standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             onBackPressedDispatcher.onBackPressed()

@@ -11,7 +11,6 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.databinding.FragmentBookmarkBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
-import com.ns.shortsnews.domain.models.VideoDataResponse
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.BookmarksViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserBookmarksViewModel
@@ -47,7 +46,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            likesViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
+            likesViewModel.videoDataState.filterNotNull().collectLatest {
                 Log.i("kamlesh","ProfileFragment onSuccess ::: $it")
                 it.let {
                     binding.likesRecyclerview.visibility = View.VISIBLE

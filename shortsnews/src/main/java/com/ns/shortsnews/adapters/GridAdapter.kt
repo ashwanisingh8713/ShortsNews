@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
-                  private val videoFrom: String, private val channelId: String): RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
+                  private var videoFrom: String, private var channelId: String): RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
 
     private val clicks = MutableSharedFlow<VideoClikedItem>(extraBufferCapacity = 1)
     fun clicks() = clicks.asSharedFlow()
@@ -44,6 +44,13 @@ class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
 
     fun updateVideoData(itemList: MutableList<Data>) {
         this.itemList = itemList
+        notifyDataSetChanged()
+    }
+
+    fun clearChannelData() {
+        this.itemList.clear()
+        channelId = ""
+        videoFrom = ""
         notifyDataSetChanged()
     }
 
