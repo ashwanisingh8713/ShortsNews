@@ -6,8 +6,10 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.widget.RemoteViews
+import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.ns.shortsnews.MainActivity
@@ -43,7 +45,7 @@ class FirebaseMessagingServiceNew : FirebaseMessagingService() {
         val remoteView = RemoteViews(channelName, R.layout.notification_const)
         remoteView.setTextViewText(R.id.notification_title, title)
         remoteView.setTextViewText(R.id.notification_des, des)
-        remoteView.setImageViewResource(R.id.app_logo, R.mipmap.ic_launcher)
+//        remoteView.setImageViewResource(R.id.app_logo, R.mipmap.ic_launcher)
         return remoteView
     }
 
@@ -62,7 +64,7 @@ class FirebaseMessagingServiceNew : FirebaseMessagingService() {
         }
 
         var builder:androidx.core.app.NotificationCompat.Builder = androidx.core.app.NotificationCompat.Builder(applicationContext, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(IconCompat.createWithAdaptiveBitmap(BitmapFactory.decodeResource(resources, R.drawable.notification)))
             .setAutoCancel(true)
             .setVibrate(longArrayOf(1000,1000,1000,1000))
             .setOnlyAlertOnce(true)
