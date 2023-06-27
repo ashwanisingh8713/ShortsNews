@@ -2,16 +2,19 @@ package com.ns.shortsnews
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -31,6 +34,7 @@ import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
+import com.ns.shortsnews.domain.usecase.notification.FCMTokenDataUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.*
@@ -74,20 +78,39 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
         }
     }
+
+
     private val channelInfoViewModel:ChannelInfoViewModel by viewModels {
         ChannelInfoViewModelFactory().apply {
             inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
         }
     }
 
+    private val notificationViewModel:NotificationViewModel by viewModels {
+        NotificationViewModelFactory().apply {
+            inject(FCMTokenDataUseCase(UserDataRepositoryImpl(get())))
+        }
+    }
+
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     private var languageStringParams =""
     private var bottomSheetRecyclerAdapter: GridAdapter? = null
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted){
+            // FCM SDK (and your app) can post notifications.
+        } else {
+            // TODO: Inform user that that your app will not show notifications.
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+
         standardBottomSheetBehavior =
             BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
 
@@ -133,6 +156,51 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         bottomSheetFollowingClick()
 
         registerVideoCache()
+        askNotificationPermission()
+        AppPreference.isMainActivityLaunched = true
+
+        if (AppPreference.fcmToken!!.isNotEmpty()) {
+            sendFcmTokenToServer()
+        } else {
+            Log.i("Token", "Token not fetched from firebase")
+        }
+    }
+
+    private fun sendFcmTokenToServer(){
+        val bundle: MutableMap<String, String> = mutableMapOf()
+        bundle["platform"] = "Android"
+        bundle["device_token"] = AppPreference.fcmToken.toString()
+        notificationViewModel.requestSendFcmToken(bundle)
+
+        lifecycleScope.launch {
+            notificationViewModel.SendNotificationSuccessState.filterNotNull().collectLatest {
+                if (it.status){
+                    Log.i("Token","Token Send ")
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            notificationViewModel.errorState.filterNotNull().collectLatest {
+                Log.i("Token","Error in sending token $it")
+            }
+        }
+    }
+
+    private fun askNotificationPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this,android.Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED) {
+                // FCM SDK (and your app) can post notifications.
+            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
+                // TODO: display an educational UI explaining to the user the features that will be enabled
+                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
+                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
+                //       If the user selects "No thanks," allow the user to continue without notifications.
+            } else {
+               requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
     }
 
     private fun getSelectedLanguagesValues() {
@@ -221,17 +289,19 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      * Loads Home Fragment
      */
     private fun loadHomeFragment(categoryType: String, languages:String) {
-        val ft = supportFragmentManager.beginTransaction()
-        ft.replace(
-            R.id.fragment_container,
-            AppConstants.makeVideoPagerInstance(
-                categoryType,
-                CategoryConstants.DEFAULT_VIDEO_DATA,
-                this@MainActivity,
-                languages = languages
+        if (!supportFragmentManager.isStateSaved) {
+            val ft = supportFragmentManager.beginTransaction()
+            ft.replace(
+                R.id.fragment_container,
+                AppConstants.makeVideoPagerInstance(
+                    categoryType,
+                    CategoryConstants.DEFAULT_VIDEO_DATA,
+                    this@MainActivity,
+                    languages = languages
+                )
             )
-        )
-        ft.commit()
+            ft.commitAllowingStateLoss()
+        }
     }
 
     // It gets callback from VideoPagerFragment
@@ -541,6 +611,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     }
 
+    @SuppressLint("ResourceAsColor")
     private fun bottomSheetClearChannelId() {
         binding.persistentBottomsheet.following.tag = null
         binding.persistentBottomsheet.imgDownArrow.tag = null

@@ -12,6 +12,7 @@ import kotlinx.parcelize.Parcelize
  */
 
 
+
 @JsonClass(generateAdapter = true)
 data class ProfileResult(
     val data: ProfileData,
@@ -21,13 +22,13 @@ data class ProfileResult(
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class ProfileData(
-    val user_id:String,
-    val email:String,
-    val name:String,
-    val last_logged_in:String,
-    val image:String,
-    val age:String,
-    val location:String
+    val user_id:String = "",
+    val email:String ="",
+    val name:String ="",
+    val last_logged_in:String ="",
+    val image:String ="",
+    val age:String ="",
+    val location:String =""
 ): Parcelable
 @JsonClass(generateAdapter = true)
 data class OTPResult(
@@ -193,3 +194,5 @@ data class InterestsTable(
     val selected:Boolean = false,
     val icon: String = ""
 )
+
+

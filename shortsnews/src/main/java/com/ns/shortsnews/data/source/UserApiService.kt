@@ -47,5 +47,8 @@ interface UserApiService {
     @GET("follow-unfollow-channel/{channel_id}")
     suspend fun follow(@Path("channel_id") channel_id: String): Following
 
+    @POST("send-device-token")
+    suspend fun sendFCMToken(@Body body: Map<String, String>):StatusResult
+
 
 }

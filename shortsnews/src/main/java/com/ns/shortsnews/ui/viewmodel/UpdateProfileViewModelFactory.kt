@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ns.shortsnews.domain.usecase.updateuser.DeleteProfileUseCase
 import com.ns.shortsnews.domain.usecase.updateuser.UpdateUserUseCase
-import com.ns.shortsnews.domain.usecase.user.UserProfileDataUseCase
 
 class UpdateProfileViewModelFactory: ViewModelProvider.Factory {
 

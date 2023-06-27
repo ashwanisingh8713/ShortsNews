@@ -67,7 +67,7 @@ class PlainVideoActivity : AppCompatActivity() {
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         getSelectedLanguagesValues(videoClickedItem)
-//        registerVideoCache()
+        registerVideoCache()
     }
 
 

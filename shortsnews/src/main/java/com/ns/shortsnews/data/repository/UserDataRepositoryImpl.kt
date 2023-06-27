@@ -51,4 +51,8 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
     override suspend fun getFollowUnfollow(channelId: String): Following {
        return apiService.follow(channelId)
     }
+
+    override suspend fun getNotificationTokenStatus(data: Map<String, String>): StatusResult {
+        return apiService.sendFCMToken(data)
+    }
 }

@@ -28,4 +28,6 @@ interface UserDataRepository {
     suspend fun getChannelInfo(channelId: String):ChannelInfo
 
     suspend fun getFollowUnfollow(channelId: String):Following
+
+    suspend fun getNotificationTokenStatus(data: Map<String, String>):StatusResult
 }

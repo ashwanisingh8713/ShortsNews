@@ -34,7 +34,14 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentFollowingBinding.bind(view)
-        channelsViewModel.requestChannelListApi()
+        if (NetworkXProvider.isInternetConnected) {
+            channelsViewModel.requestChannelListApi()
+        } else {
+            // No Internet Snack bar: Fire
+            NoConnection.noConnectionSnackBarInfinite(binding.root,
+                requireContext() as AppCompatActivity
+            )
+        }
         viewLifecycleOwner.lifecycleScope.launch(){
             channelsViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarChannels.visibility = View.GONE

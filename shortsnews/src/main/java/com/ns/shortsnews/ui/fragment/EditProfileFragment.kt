@@ -136,9 +136,12 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     showUpdateProfileDialog(
                         "Updating",
                         "Want to Updating user information",
-                        getRequestBody(bitmapToFile(mPhotoBitmap, "user") as File, binding.nameEditText.text.toString()
-                            ,binding.ageEditText.text.toString(),
-                            binding.locationEditText.text.toString() )
+                        getRequestBody(
+                            bitmapToFile(mPhotoBitmap, "user") as File,
+                            binding.nameEditText.text.toString(),
+                            binding.ageEditText.text.toString(),
+                            binding.locationEditText.text.toString()
+                        )
                     )
                 }
             }

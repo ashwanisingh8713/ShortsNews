@@ -30,4 +30,5 @@
     <string name="no_internet_category">Kindly connect with internet\n Tap here to retry again</string>
     <string name="some_thing_went_wrong">Something went wrong\n Tap here to retry again</string>
     <string name="camra_permission_msg">Allow camera permission to take picture</string>
+    <string name="default_notification_channel_id">1</string>
 </resources>

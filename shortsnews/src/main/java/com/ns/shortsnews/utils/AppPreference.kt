@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
+import com.ns.shortsnews.MainActivity
 
 object AppPreference {
 
@@ -26,6 +27,8 @@ object AppPreference {
     private const val IS_PROFILE_DELETED = "profile_cleared"
     private const val UPDATE_NEEDED = "update_needed"
     private const val FOLLOWING_UPDATE_NEEDED = "following_update_needed"
+    private const val MAIN_ACTIVITY_LAUNCHED = "main_activity_launched"
+    private const val NOTIFICATION_TOKEN = "notification_token"
 
     fun init(context: Context) {
         preference = PreferenceManager.getDefaultSharedPreferences(context)
@@ -132,6 +135,20 @@ object AppPreference {
             this.putBoolean(FOLLOWING_UPDATE_NEEDED, value)
             this.apply()
         }
+
+    var isMainActivityLaunched:Boolean
+    get() = preference.getBoolean(MAIN_ACTIVITY_LAUNCHED, false)
+    set(value) = preference.edit {
+        this.putBoolean(MAIN_ACTIVITY_LAUNCHED, value)
+        this.apply()
+    }
+
+    var fcmToken:String?
+     get() = preference.getString(NOTIFICATION_TOKEN, EMPTY_STRING)
+    set(value) = preference.edit{
+        this.putString(NOTIFICATION_TOKEN, value)
+        this.apply()
+    }
 
 
     // Clear preference on logout

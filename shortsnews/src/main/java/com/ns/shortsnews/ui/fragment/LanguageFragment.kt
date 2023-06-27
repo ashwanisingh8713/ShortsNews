@@ -62,6 +62,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             )
         }
         from = arguments?.getString("from").toString()
+        Log.i("launchFrom", "Language fragment from $from")
         if(AppPreference.isLanguageSelected){
             binding.continueButton.text = "Save"
         }
@@ -125,14 +126,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     bundle.putString("name", /*it.name*/"kamlesh")
                     userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
                 } else {
-                    if (NetworkXProvider.isInternetConnected) {
-                        activity?.finish()
-                    } else {
-                        // No Internet Snackbar: Fire
-                        NoConnection.noConnectionSnackBarInfinite(binding.root,
-                            requireContext() as AppCompatActivity
-                        )
-                    }
+                    activity?.finish()
                 }
             } else {
                 Alert().showGravityToast(requireActivity(), "Please select one language")

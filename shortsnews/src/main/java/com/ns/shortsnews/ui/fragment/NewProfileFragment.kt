@@ -34,14 +34,18 @@ import org.koin.android.ext.android.get
 
 class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
 
-    lateinit var binding:FragmentNewProfileBinding
-    private val userProfileViewModel: UserProfileViewModel by activityViewModels { UserProfileViewModelFactory().apply {
-        inject(UserProfileDataUseCase(UserDataRepositoryImpl(get())))
-    } }
-    private val channelsViewModel: ChannelsViewModel by activityViewModels { ChannelsViewModelFactory().apply {
-        inject(ChannelsDataUseCase(UserDataRepositoryImpl(get())))
-    } }
-    private lateinit var adapter:NewProfilePagerAdapter
+    lateinit var binding: FragmentNewProfileBinding
+    private val userProfileViewModel: UserProfileViewModel by activityViewModels {
+        UserProfileViewModelFactory().apply {
+            inject(UserProfileDataUseCase(UserDataRepositoryImpl(get())))
+        }
+    }
+    private val channelsViewModel: ChannelsViewModel by activityViewModels {
+        ChannelsViewModelFactory().apply {
+            inject(ChannelsDataUseCase(UserDataRepositoryImpl(get())))
+        }
+    }
+    private lateinit var adapter: NewProfilePagerAdapter
     private lateinit var profileData: ProfileData
     private val TAG = "NewProfileFragment"
 
@@ -52,7 +56,8 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
             userProfileViewModel.requestProfileApi()
         } else {
             // No Internet Snackbar: Fire
-            NoConnection.noConnectionSnackBarInfinite(binding.root,
+            NoConnection.noConnectionSnackBarInfinite(
+                binding.root,
                 requireContext() as AppCompatActivity
             )
         }
@@ -65,21 +70,28 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
 
 
         binding.backButton.setOnClickListener {
-            AppPreference.isUpdateNeeded  =false
+            AppPreference.isUpdateNeeded = false
             activity?.finish()
         }
         binding.setting.setOnClickListener {
-            val intent = Intent(requireActivity(), com.ns.shortsnews.ui.activity.ContainerActivity::class.java)
-            intent.putExtra("to","edit_profile")
-            intent.putExtra("profile_data",profileData )
-            startActivity(intent)
+            if (this::profileData.isInitialized) {
+                val intent = Intent(
+                    requireActivity(),
+                    com.ns.shortsnews.ui.activity.ContainerActivity::class.java
+                )
+                intent.putExtra("to", "edit_profile")
+                intent.putExtra("profile_data", profileData)
+                startActivity(intent)
+            } else {
+                getProfileData()
+            }
         }
         binding.profileViewPager.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             @SuppressLint("NotifyDataSetChanged")
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if(position == 0) {
+                if (position == 0) {
                     adapter.createFragment(0)
                 }
             }
@@ -89,14 +101,14 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
         viewLifecycleOwner.lifecycleScope.launch {
             userProfileViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarProfile.visibility = View.GONE
-                Log.i("kamlesh","ProfileFragment onError ::: $it")
+                Log.i("kamlesh", "ProfileFragment onError ::: $it")
                 Alert().showGravityToast(requireActivity(), it)
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             userProfileViewModel.UserProfileSuccessState.filterNotNull().collectLatest {
-                Log.i("kamlesh","ProfileFragment onSuccess ::: $it")
+                Log.i("kamlesh", "ProfileFragment onSuccess ::: $it")
                 it.let {
                     binding.progressBarProfile.visibility = View.GONE
                     binding.profileImageView.load(it.data.image)
@@ -120,21 +132,33 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
     override fun onResume() {
         super.onResume()
         Log.i(TAG, "OnResume :: profile update status ${AppPreference.isProfileUpdated}")
-        if (AppPreference.isProfileUpdated){
+        if (AppPreference.isProfileUpdated) {
             Log.i(TAG, "OnResume :: requesting profile API")
             userProfileViewModel.requestProfileApi()
         }
-        if (AppPreference.isFollowingUpdateNeeded){
+        if (AppPreference.isFollowingUpdateNeeded) {
             channelsViewModel.requestChannelListApi()
             AppPreference.isFollowingUpdateNeeded = false
         }
     }
 
-    private fun saveUserInformation(profileData: ProfileData){
+    private fun saveUserInformation(profileData: ProfileData) {
         AppPreference.userLocation = profileData.location
         AppPreference.userAge = profileData.age
         AppPreference.userName = profileData.name
         AppPreference.userProfilePic = profileData.image
+        AppPreference.userEmail = profileData.email
     }
 
+    private fun getProfileData() {
+        profileData = ProfileData("", AppPreference.userEmail!!,AppPreference.userName!!,
+            "",AppPreference.userProfilePic!!,AppPreference.userAge!!,AppPreference.userAge!!)
+        val intent = Intent(
+            requireActivity(),
+            com.ns.shortsnews.ui.activity.ContainerActivity::class.java
+        )
+        intent.putExtra("to", "edit_profile")
+        intent.putExtra("profile_data", profileData)
+        startActivity(intent)
+    }
 }
