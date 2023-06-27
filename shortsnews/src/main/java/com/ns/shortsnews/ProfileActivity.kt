@@ -13,13 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.databinding.ActivityProfileBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
+import com.ns.shortsnews.domain.usecase.notification.FCMTokenDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.ui.fragment.*
-import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModel
-import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModelFactory
-import com.ns.shortsnews.ui.viewmodel.UserViewModel
-import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
+import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.collectLatest
@@ -39,6 +37,12 @@ class ProfileActivity : AppCompatActivity() {
                 UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
             )
+        }
+    }
+
+    private val notificationViewModel: NotificationViewModel by viewModels {
+        NotificationViewModelFactory().apply {
+            inject(FCMTokenDataUseCase(UserDataRepositoryImpl(get())))
         }
     }
 
@@ -65,6 +69,12 @@ class ProfileActivity : AppCompatActivity() {
             loginFragment()
         }
         listenFragmentUpdate()
+
+        if (AppPreference.fcmToken!!.isNotEmpty()) {
+            sendFcmTokenToServer()
+        } else {
+            Log.i("Token", "Token not fetched from firebase")
+        }
     }
 
     private fun listenFragmentUpdate() {
@@ -124,6 +134,28 @@ class ProfileActivity : AppCompatActivity() {
         startActivity(intent)
         this.finish()
     }
+
+    private fun sendFcmTokenToServer(){
+        val bundle: MutableMap<String, String> = mutableMapOf()
+        bundle["platform"] = "Android"
+        bundle["device_token"] = AppPreference.fcmToken.toString()
+        notificationViewModel.requestSendFcmToken(bundle)
+
+        lifecycleScope.launch {
+            notificationViewModel.SendNotificationSuccessState.filterNotNull().collectLatest {
+                if (it.status){
+                    Log.i("Token","Token Send ")
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            notificationViewModel.errorState.filterNotNull().collectLatest {
+                Log.i("Token","Error in sending token $it")
+            }
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
