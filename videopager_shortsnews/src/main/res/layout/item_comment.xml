@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/screen_background"
-    android:paddingBottom="20dp">
+    android:paddingBottom="10dp">
 
 
     <com.google.android.material.card.MaterialCardView
@@ -14,12 +14,12 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         app:cardCornerRadius="12dp"
-        app:strokeWidth="4dp"
+        app:strokeWidth="2dp"
         app:strokeColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginEnd="15dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        >
 
         <ImageView
             android:id="@+id/profile_icon"
@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerInside"
             android:src="@drawable/item_row_icon"
-            android:contentDescription="profileImage" />
+            android:contentDescription="@string/profileimage" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -63,7 +63,7 @@
         android:fontFamily="sans-serif"
         android:textColor="@color/white"
         android:layout_marginTop="10dp"
-        tools:text="The new AI is changing the world rapidly and it is also effecting the environment which is very danger for our future "
+        tools:text="The new AI is changing the world rapidly and it is also effecting the environment which is very danger for our future The new AI is changing the world rapidly and it is also effecting the environment which is very danger for our future "
         app:layout_constraintTop_toBottomOf="@id/profile_name"
         app:layout_constraintStart_toStartOf="@id/profile_name"
         android:layout_marginStart="5dp"

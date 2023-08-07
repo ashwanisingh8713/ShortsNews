@@ -102,6 +102,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         viewLifecycleOwner.lifecycleScope.launch {
             followUnfollowViewModel.FollowUnfollowSuccessState.filterNotNull().collectLatest {
                 AppPreference.isFollowingUpdateNeeded = true
+                binding.profileCount.text = it.data.follow_count
                 if (it.data.following) {
                     binding.following.text = "Following"
                 } else {

@@ -68,7 +68,8 @@ data class Following(
 @JsonClass(generateAdapter = true)
 data class FollowingData (
     val following:Boolean,
-    val channel_id:String
+    val channel_id:String,
+    val follow_count: String
     )
 
 @JsonClass(generateAdapter = true)

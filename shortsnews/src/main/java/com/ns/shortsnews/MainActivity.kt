@@ -3,9 +3,7 @@ package com.ns.shortsnews
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +17,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
 import coil.load
@@ -32,9 +31,11 @@ import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.databinding.ActivityMainBinding
+import com.ns.shortsnews.domain.models.Data
+import com.ns.shortsnews.domain.models.VideoDataResponse
 import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
-import com.ns.shortsnews.domain.usecase.notification.FCMTokenDataUseCase
+import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.*
@@ -42,6 +43,7 @@ import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
 import com.rommansabbir.networkx.NetworkXProvider
+import com.videopager.ui.VideoPagerFragment
 import com.videopager.utils.CategoryConstants
 import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
@@ -57,6 +59,7 @@ import org.koin.android.ext.android.get
 class MainActivity : AppCompatActivity(), onProfileItemClick {
     private lateinit var binding: ActivityMainBinding
     private lateinit var categoryAdapter: CategoryAdapter
+    private var videoPagerFragment: VideoPagerFragment? = null
     private val languageDao = ShortsDatabase.instance!!.languageDao()
     private val languageItemRepository = LanguageRepository(languageDao)
     private val languageViewModel: LanguageViewModel by viewModels {
@@ -85,12 +88,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
         }
     }
-
-    private val notificationViewModel:NotificationViewModel by viewModels {
-        NotificationViewModelFactory().apply {
-            inject(FCMTokenDataUseCase(UserDataRepositoryImpl(get())))
-        }
-    }
+    private val followUnfollowViewModel:FollowUnfollowViewModel by viewModels {FollowUnfollowViewModelFactory().apply {
+        inject(FollowUnfollowUseCase(UserDataRepositoryImpl(get())))
+    }  }
 
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     private var languageStringParams =""
@@ -106,11 +106,16 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
 
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        Log.i("intent_newLaunch","get intent data on Create Main activity triggered")
+        if (intent?.extras != null){
+            Log.i("intent_newLaunch","get intent data on Create Main activity" + intent.extras.toString())
+            getData(intent)
+        }
         standardBottomSheetBehavior =
             BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
 
@@ -158,33 +163,42 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         registerVideoCache()
         askNotificationPermission()
         AppPreference.isMainActivityLaunched = true
+    }
+    private fun listenFollowUnfollow(channelId:String) {
+        followUnfollowViewModel.requestFollowUnfollowApi(channelId)
+        lifecycleScope.launch {
+            followUnfollowViewModel.FollowUnfollowSuccessState.filterNotNull().collectLatest {
+                AppPreference.isFollowingUpdateNeeded = true
+                binding.persistentBottomsheet.profileCount.text = it.data.follow_count
+                if (it.data.following) {
+                    binding.persistentBottomsheet.following.text = "Following"
+                    binding.persistentBottomsheet.followingExpanded.text = "Following"
+                } else {
+                    binding.persistentBottomsheet.following.text = "Follow"
+                    binding.persistentBottomsheet.followingExpanded.text = "Follow"
+                }
 
-        if (AppPreference.fcmToken!!.isNotEmpty()) {
-            sendFcmTokenToServer()
-        } else {
-            Log.i("Token", "Token not fetched from firebase")
+            }
         }
     }
 
-    private fun sendFcmTokenToServer(){
-        val bundle: MutableMap<String, String> = mutableMapOf()
-        bundle["platform"] = "Android"
-        bundle["device_token"] = AppPreference.fcmToken.toString()
-        notificationViewModel.requestSendFcmToken(bundle)
 
-        lifecycleScope.launch {
-            notificationViewModel.SendNotificationSuccessState.filterNotNull().collectLatest {
-                if (it.status){
-                    Log.i("Token","Token Send ")
-                }
-            }
+    @SuppressLint("MissingSuperCall")
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.i("intent_newLaunch","get intent data on newIntent MainActivity :: " + intent?.extras.toString())
+        if (intent?.extras != null){
+            getData(intent)
         }
+    }
 
-        lifecycleScope.launch {
-            notificationViewModel.errorState.filterNotNull().collectLatest {
-                Log.i("Token","Error in sending token $it")
-            }
-        }
+    private fun getData(intent: Intent?) {
+        val id =intent?.getStringExtra("videoId").toString()
+        val type =intent?.getStringExtra("type").toString()
+        val previewUrl =intent?.getStringExtra("preview_url").toString()
+        val video_url =intent?.getStringExtra("video_url").toString()
+        Log.i("intent_newLaunch","Main activity intent data :: id : $id type : $type preview:: $previewUrl  videoUrl:: $video_url")
+        attachNotification(id,previewUrl,video_url)
     }
 
     private fun askNotificationPermission(){
@@ -240,6 +254,14 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     override fun onResume() {
         super.onResume()
+//        Log.i("intent_newLaunch","get intent data on Resume  triggered")
+//        if (intent?.extras != null){
+//            Log.i("intent_newLaunch","get intent data on onResume MainActivity" + intent.extras.toString())
+//            getData(intent)
+//        } else {
+//            Log.i("intent_newLaunch","get intent data on  resume is :: " + intent.extras.toString())
+//        }
+//        Log.i("lifecycle", "OnResume called of Main Activity")
         sharedEventViewModel.sendUserPreferenceData(
             AppPreference.isUserLoggedIn,
             AppPreference.userToken
@@ -291,14 +313,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun loadHomeFragment(categoryType: String, languages:String) {
         if (!supportFragmentManager.isStateSaved) {
             val ft = supportFragmentManager.beginTransaction()
+            videoPagerFragment = AppConstants.makeVideoPagerInstance(
+                categoryType,
+                CategoryConstants.DEFAULT_VIDEO_DATA,
+                this@MainActivity,
+                languages = languages
+            )
             ft.replace(
                 R.id.fragment_container,
-                AppConstants.makeVideoPagerInstance(
-                    categoryType,
-                    CategoryConstants.DEFAULT_VIDEO_DATA,
-                    this@MainActivity,
-                    languages = languages
-                )
+                videoPagerFragment!!
             )
             ft.commitAllowingStateLoss()
         }
@@ -591,6 +614,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         lifecycleScope.launch {
             videoDataViewModel.videoDataState.filterNotNull().collectLatest {
+                bottomSheetRecyclerAdapter?.updateVideoData(mutableListOf<Data>())
                 delay(500) // To show the progress bar properly
                 binding.persistentBottomsheet.progressBar.visibility = View.GONE
                 binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
@@ -642,7 +666,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 val channelId = binding.persistentBottomsheet.following.tag
                 channelId?.let {
                     if (it != "") {
-                        sharedEventViewModel.followRequest(channelId.toString())
+                        listenFollowUnfollow(channelId.toString())
                     }
                 }
             } else {
@@ -720,4 +744,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             onBackPressedDispatcher.onBackPressed()
         }
     }
+
+
+    public fun attachNotification(videoId:String, previewUrl:String, mediaUri:String){
+        videoPagerFragment?.getNotificationData(videoId,previewUrl,mediaUri)
+    }
+
+
 }

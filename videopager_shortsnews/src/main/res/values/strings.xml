@@ -12,4 +12,5 @@
     <string name="follow">Follow</string>
     <string name="track_info">Track Info</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="profileimage">profileImage</string>
 </resources>

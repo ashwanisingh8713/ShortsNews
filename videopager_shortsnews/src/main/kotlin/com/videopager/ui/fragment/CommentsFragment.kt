@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
     lateinit var binding: FragmentCommentsBinding
     private lateinit var recyclerView: RecyclerView
-    lateinit var commentAdapter: CommentAdapter
+    private lateinit var commentAdapter: CommentAdapter
     private val clicks = MutableSharedFlow<Triple<String, String, Int>>(extraBufferCapacity = 1)
     fun clicks() = clicks.asSharedFlow()
     private var itemPosition: Int = 0
@@ -35,7 +35,7 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
         binding = FragmentCommentsBinding.bind(view)
         recyclerView = binding.commentRecyclerview
         binding.sendImage.setOnClickListener {
-            val msg = binding.msgEditText.text
+            val msg = binding.msgEditText.text.trim()
             if (msg.toString().isNotEmpty()) {
                 clicks.tryEmit(Triple(itemVideoId, msg.toString(), itemPosition))
                 it.hideKeyBoard()

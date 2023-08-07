@@ -6,16 +6,21 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentOtpBinding
 import com.ns.shortsnews.data.mapper.UserOtp
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
+import com.ns.shortsnews.domain.usecase.notification.FCMTokenDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
+import com.ns.shortsnews.ui.viewmodel.NotificationViewModel
+import com.ns.shortsnews.ui.viewmodel.NotificationViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.*
@@ -38,7 +43,11 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             LanguageDataUseCase(UserDataRepositoryImpl(get())),
         )
     }}
-
+    private val notificationViewModel: NotificationViewModel by viewModels {
+        NotificationViewModelFactory().apply {
+            inject(FCMTokenDataUseCase(UserDataRepositoryImpl(get())))
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentOtpBinding.bind(view)
@@ -87,6 +96,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             userViewModel.otpSuccessState.filterNotNull().collectLatest {
                 Log.i("kamlesh","OTPFragment onSuccess ::: $it")
                 it.let {
+                    sendFcmTokenToServer()
                     binding.progressBarOtp.visibility = View.GONE
                     saveUserPreference(it)
                     delay(500)
@@ -103,6 +113,28 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     binding.submitButton.visibility = View.GONE
                     binding.progressBarOtp.visibility = View.VISIBLE
                 }
+            }
+        }
+    }
+
+    private fun sendFcmTokenToServer()
+    {
+        val bundle: MutableMap<String, String> = mutableMapOf()
+        bundle["platform"] = "Android"
+        bundle["device_token"] = AppPreference.fcmToken.toString()
+        notificationViewModel.requestSendFcmToken(bundle)
+
+        lifecycleScope.launch {
+            notificationViewModel.SendNotificationSuccessState.filterNotNull().collectLatest {
+                if (it.status){
+                    Log.i("Token","Token Send ")
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            notificationViewModel.errorState.filterNotNull().collectLatest {
+                Log.i("Token","Error in sending token $it")
             }
         }
     }

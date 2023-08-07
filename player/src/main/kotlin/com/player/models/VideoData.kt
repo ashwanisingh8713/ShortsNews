@@ -16,5 +16,6 @@ data class VideoData(
     var adTagUri:String = "",
     var saveCount:String = "",
     var saved:Boolean = false,
-    var video_url_mp4:String = ""
+    var video_url_mp4:String = "",
+    var follow_count:String = ""
 )

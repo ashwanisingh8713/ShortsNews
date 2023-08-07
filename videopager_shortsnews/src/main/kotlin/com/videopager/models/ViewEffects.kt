@@ -23,3 +23,4 @@ internal object ResetAnimationsEffect : PageEffect()
 
 internal data class PlayerErrorEffect(val throwable: Throwable) : ViewEffect()
 internal data class MediaItemTransitionEffect(val mediaItem: MediaItemTransitionResult) : ViewEffect()
+internal data class NotificationEffect(val position:Int, val videoId: String): ViewEffect()

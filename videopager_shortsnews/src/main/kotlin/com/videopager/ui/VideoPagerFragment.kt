@@ -36,6 +36,9 @@ import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
 import com.videopager.vm.VideoSharedEventViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -193,6 +196,15 @@ class VideoPagerFragment(
                     }
                     is MediaItemTransitionEffect-> {
                         binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1)
+                    }
+                    is NotificationEffect -> {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            delay(500)
+                            Log.i("notification_position","Notification Position :: ${effect.position}")
+                            viewModel.processEvent(OnPageSettledEvent(effect.position+1))
+                            delay(500)
+                            viewModel.processEvent(VideoInfoEvent(effect.videoId, effect.position+1))
+                        }
                     }
                     else -> {}
                 }
@@ -484,4 +496,10 @@ class VideoPagerFragment(
 
 
     private val handler = Handler(Looper.myLooper()!!)
+
+     fun getNotificationData(videoId:String, previewUrl:String, videoUrl:String) {
+         viewModel.processEvent(PauseVideoEvent)
+         viewModel.processEvent(InsertVideoEvent(videoId = videoId, previewUrl = previewUrl, videoUrl = videoUrl, type = "GN"))
+         viewModel.processEvent(NotificationClickEvent( viewModel.playerView?.player?.currentMediaItemIndex ?:0, videoId))
+     }
 }

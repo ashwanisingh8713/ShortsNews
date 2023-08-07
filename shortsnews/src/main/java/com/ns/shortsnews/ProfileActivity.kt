@@ -40,18 +40,15 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private val notificationViewModel: NotificationViewModel by viewModels {
-        NotificationViewModelFactory().apply {
-            inject(FCMTokenDataUseCase(UserDataRepositoryImpl(get())))
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        if (intent?.extras != null){
+            getData(intent)
+        }
         window.statusBarColor = Color.parseColor("#000000")
         window.navigationBarColor = Color.parseColor("#000000")
         val from = intent.getStringExtra("fromActivity")
@@ -69,12 +66,6 @@ class ProfileActivity : AppCompatActivity() {
             loginFragment()
         }
         listenFragmentUpdate()
-
-        if (AppPreference.fcmToken!!.isNotEmpty()) {
-            sendFcmTokenToServer()
-        } else {
-            Log.i("Token", "Token not fetched from firebase")
-        }
     }
 
     private fun listenFragmentUpdate() {
@@ -92,6 +83,17 @@ class ProfileActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun getData(data: Intent?) {
+        val intent = Intent(this, MainActivity::class.java)
+        val id = intent.putExtra("videoId",data?.getStringExtra("id").toString())
+        val type = intent.putExtra("type",data?.getStringExtra("type").toString())
+        val previewUrl = intent.putExtra("preview_url",data?.getStringExtra("videoPreviewUrl").toString())
+        val video_url = intent.putExtra("video_url", data?.getStringExtra("video_url").toString())
+        Log.i("intent_newLaunch","From profile activity :: $id $type $previewUrl $video_url")
+        startActivity(intent)
+        this.finish()
     }
 
     private fun loginFragment() {
@@ -134,28 +136,6 @@ class ProfileActivity : AppCompatActivity() {
         startActivity(intent)
         this.finish()
     }
-
-    private fun sendFcmTokenToServer(){
-        val bundle: MutableMap<String, String> = mutableMapOf()
-        bundle["platform"] = "Android"
-        bundle["device_token"] = AppPreference.fcmToken.toString()
-        notificationViewModel.requestSendFcmToken(bundle)
-
-        lifecycleScope.launch {
-            notificationViewModel.SendNotificationSuccessState.filterNotNull().collectLatest {
-                if (it.status){
-                    Log.i("Token","Token Send ")
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            notificationViewModel.errorState.filterNotNull().collectLatest {
-                Log.i("Token","Error in sending token $it")
-            }
-        }
-    }
-
 
     override fun onResume() {
         super.onResume()

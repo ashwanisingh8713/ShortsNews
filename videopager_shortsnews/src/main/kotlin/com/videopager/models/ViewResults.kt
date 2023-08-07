@@ -36,3 +36,5 @@ internal data class AttachPlayerToViewResult(val doAttach: Boolean) : ViewResult
 
 internal data class PlayerErrorResult(val throwable: Throwable) : ViewResult()
 internal data class MediaItemTransitionResult(val mediaItem: MediaItem) : ViewResult()
+
+internal data class NotificationClickResult(val position: Int, val videoId: String): ViewResult()

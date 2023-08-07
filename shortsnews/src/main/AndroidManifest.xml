@@ -54,12 +54,19 @@
             android:name=".MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar"></activity>
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+
+        </activity>
+
         <activity
             android:name=".PlainVideoActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar"></activity>
+            android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+
+        </activity>
 
         <provider
             android:name="androidx.startup.InitializationProvider"
@@ -74,7 +81,7 @@
 
         <service
             android:name=".utils.FirebaseMessagingServiceNew"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
