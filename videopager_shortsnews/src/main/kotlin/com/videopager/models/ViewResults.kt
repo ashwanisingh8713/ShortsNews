@@ -20,6 +20,7 @@ internal data class GetYoutubeUriResult_2(val uri: String, val id: String): View
 internal data class PostCommentResult(val response:PostCommentData , val position:Int):ViewResult()
 
 internal data class LoadVideoDataResult(val videoData: MutableList<VideoData>, val currentMediaItemIndex: Int) : ViewResult()
+internal data class FromNotificationInsertVideoDataResult(val videoData: MutableList<VideoData>, val currentMediaItemIndex: Int) : ViewResult()
 
 internal data class CreatePlayerResult(val appPlayer: AppPlayer) : ViewResult()
 
@@ -37,4 +38,4 @@ internal data class AttachPlayerToViewResult(val doAttach: Boolean) : ViewResult
 internal data class PlayerErrorResult(val throwable: Throwable) : ViewResult()
 internal data class MediaItemTransitionResult(val mediaItem: MediaItem) : ViewResult()
 
-internal data class NotificationClickResult(val position: Int, val videoId: String): ViewResult()
+//internal data class NotificationVideoPageSettleResult(val position: Int, val videoId: String): ViewResult()

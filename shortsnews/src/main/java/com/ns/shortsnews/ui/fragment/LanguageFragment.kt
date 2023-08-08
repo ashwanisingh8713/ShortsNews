@@ -148,7 +148,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             mChip.checkedIcon =  ContextCompat.getDrawable(requireContext(), R.drawable.check)
             binding.choiceChipGroup.isSingleSelection = false
             binding.choiceChipGroup.isClickable = true
-
             binding.choiceChipGroup.addView(mChip)
 
             if (chipData.isSelected) {

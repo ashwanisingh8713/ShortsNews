@@ -26,5 +26,4 @@ class LanguageRepository(var languageDao: LanguageDao) {
      return  languageDao.isEmpty()
     }
 
-
 }

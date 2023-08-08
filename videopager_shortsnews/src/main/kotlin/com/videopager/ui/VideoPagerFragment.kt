@@ -26,7 +26,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnected
 import com.videopager.R
-import com.videopager.data.VideoInfoData
 import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
@@ -56,7 +55,8 @@ class VideoPagerFragment(
     private var isUserLoggedIn = false
     private var isFirstVideoInfoLoaded = false
     private var selectedPlay = 0
-    private var isLoggedIn:Boolean = false
+    private var isNotificationVideoCame:Boolean = false
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,8 +112,9 @@ class VideoPagerFragment(
                 // Can't query any ViewHolders if the adapter has no pages
                 if (pagerAdapter.currentList.isNotEmpty()) {
 
-                    if(viewModel.videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || viewModel.videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA) {
+                    if(isNotificationVideoCame || viewModel.videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || viewModel.videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA) {
                         viewModel.processEvent(OnPageSettledEvent(state.page))
+                        isNotificationVideoCame = false
                     }
 
                     // Set the player view on the active page. Note that ExoPlayer won't render
@@ -223,6 +224,8 @@ class VideoPagerFragment(
 
         updateProgress()
     }
+
+
 
     override fun onResume() {
         super.onResume()
@@ -498,8 +501,9 @@ class VideoPagerFragment(
     private val handler = Handler(Looper.myLooper()!!)
 
      fun getNotificationData(videoId:String, previewUrl:String, videoUrl:String) {
-         viewModel.processEvent(PauseVideoEvent)
-         viewModel.processEvent(InsertVideoEvent(videoId = videoId, previewUrl = previewUrl, videoUrl = videoUrl, type = "GN"))
-         viewModel.processEvent(NotificationClickEvent( viewModel.playerView?.player?.currentMediaItemIndex ?:0, videoId))
+         isNotificationVideoCame = true
+         viewModel.processEvent(FromNotificationInsertVideoEvent(videoId = videoId, previewUrl = previewUrl, videoUrl = videoUrl, type = "GN"))
+//         viewModel.processEvent(InsertVideoEvent(videoId = videoId, previewUrl = previewUrl, videoUrl = videoUrl, type = "GN"))
+//         viewModel.processEvent(NotificationVideoPlayerSettleEvent( viewModel.playerView?.player?.currentMediaItemIndex ?:0, videoId))
      }
 }

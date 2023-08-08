@@ -42,13 +42,14 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
+        if (intent?.extras != null){
+            getData(intent)
+        }
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        if (intent?.extras != null){
-            getData(intent)
-        }
+
         window.statusBarColor = Color.parseColor("#000000")
         window.navigationBarColor = Color.parseColor("#000000")
         val from = intent.getStringExtra("fromActivity")

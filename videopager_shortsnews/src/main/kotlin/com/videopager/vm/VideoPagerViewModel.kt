@@ -2,7 +2,6 @@ package com.videopager.vm
 
 import android.content.Context
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.viewModelScope
 import at.huber.me.YouTubeUri
 import com.google.android.exoplayer2.ui.StyledPlayerView
@@ -94,11 +93,12 @@ internal class VideoPagerViewModel(
         // MVI boilerplate
         return merge(
             filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(),
-            filterIsInstance<InsertVideoEvent>().toInsertVideoDataResults(),
+//            filterIsInstance<InsertVideoEvent>().toInsertVideoDataResults(),
             filterIsInstance<PlayerLifecycleEvent>().toPlayerLifecycleResults(),
             filterIsInstance<TappedPlayerEvent>().toTappedPlayerResults(),
             filterIsInstance<OnPageSettledEvent>().toPageSettledResults(),
             filterIsInstance<PauseVideoEvent>().toPauseVideoResults(),
+            filterIsInstance<FromNotificationInsertVideoEvent>().toFromNotificationVideoResults(),
             filterIsInstance<FollowClickEvent>().toFollowClickResults(),
             filterIsInstance<CommentClickEvent>().toCommentClickResults(),
             filterIsInstance<LikeClickEvent>().toLikeClickResults(),
@@ -107,12 +107,12 @@ internal class VideoPagerViewModel(
             filterIsInstance<GetYoutubeUriEvent>().toYoutubeUriResults(),
             filterIsInstance<GetYoutubeUriEvent_2>().toYoutubeUriResults_2(),
             filterIsInstance<BookmarkClickEvent>().toSaveClickResult(),
-            filterIsInstance<NotificationClickEvent>().toNotificationClickResult(),
+//            filterIsInstance<NotificationVideoPlayerSettleEvent>().toNotificationClickResult(),
         )
     }
 
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    /*@OptIn(ExperimentalCoroutinesApi::class)
      fun Flow<InsertVideoEvent>.toInsertVideoDataResults(): Flow<ViewResult> {
         return map { event ->
             val videoData = VideoData(
@@ -131,9 +131,9 @@ internal class VideoPagerViewModel(
             // Here, We are inserting new video data
             pageVideoData.add(index+1, videoData)
             appPlayer?.setUpWith(pageVideoData, handle.get())
-            LoadVideoDataResult(pageVideoData, index )
+            FromNotificationInsertVideoDataResult(pageVideoData, index )
         }
-    }
+    }*/
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LoadVideoDataEvent>.toLoadVideoDataResults(): Flow<ViewResult> {
@@ -344,6 +344,7 @@ internal class VideoPagerViewModel(
                 NoOpResult
             } else {
                 val appPlayer = requireNotNull(states.value.appPlayer)
+                // To Play directly at specific index
                 appPlayer.playMediaAt(event.page)
                 OnNewPageSettledResult(page = event.page)
             }
@@ -355,8 +356,40 @@ internal class VideoPagerViewModel(
         return mapLatest {
             val appPlayer = requireNotNull(states.value.appPlayer)
             appPlayer.pause()
+
         }.mapLatest {
             NoOpResult
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<FromNotificationInsertVideoEvent>.toFromNotificationVideoResults(): Flow<ViewResult> {
+        return map {event->
+            if(states.value.appPlayer != null) {
+                val appPlayer = requireNotNull(states.value.appPlayer)
+                appPlayer.pause()
+            }
+
+            val videoData = VideoData(
+                id = event.videoId, mediaUri = event.videoUrl, previewImageUri = event.previewUrl
+            )
+            var pageVideoData: MutableList<VideoData> = mutableListOf()
+            // It should add all existing videos in newly created collection
+            if (states.value.videoData != null) {
+                // It should add all existing videos in newly created collection
+                pageVideoData.addAll(states.value.videoData!!)
+            }
+
+            val appPlayer = states.value.appPlayer
+            val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
+            val upComingIndex = index+1
+
+            states.value.page = upComingIndex
+
+            // Here, We are inserting new video data
+            pageVideoData.add(upComingIndex, videoData)
+            appPlayer?.setUpWith(pageVideoData, handle.get())
+            FromNotificationInsertVideoDataResult(pageVideoData, upComingIndex )
         }
     }
 
@@ -386,11 +419,11 @@ internal class VideoPagerViewModel(
             GetYoutubeUriResult_2(it.first, it.second)
         }
     }
-    private fun Flow<NotificationClickEvent>.toNotificationClickResult(): Flow<ViewResult> {
-        return map { event ->
-            NotificationClickResult(event.position, event.videoId)
-        }
-    }
+//    private fun Flow<NotificationVideoPlayerSettleEvent>.toNotificationClickResult(): Flow<ViewResult> {
+//        return map { event ->
+//            NotificationVideoPageSettleResult(event.position, event.videoId)
+//        }
+//    }
 
 
     private suspend fun getYoutubeUri(index: Int): Pair<String, String> =
@@ -432,6 +465,9 @@ internal class VideoPagerViewModel(
             is LoadVideoDataResult -> {
                 state.copy(videoData = videoData, page = currentMediaItemIndex)
             }
+            is FromNotificationInsertVideoDataResult -> {
+                state.copy(videoData = videoData, page = currentMediaItemIndex)
+            }
             is CreatePlayerResult -> state.copy(appPlayer = appPlayer)
             is TearDownPlayerResult -> state.copy(appPlayer = null)
             is OnNewPageSettledResult -> state.copy(page = page, showPlayer = false)
@@ -457,7 +493,7 @@ internal class VideoPagerViewModel(
             filterIsInstance<GetYoutubeUriResult>().toGetYoutubeUriEffect(),
             filterIsInstance<GetYoutubeUriResult_2>().toGetYoutubeUriEffect_2(),
             filterIsInstance<BookmarkClickResult>().toSaveViewEffect(),
-            filterIsInstance<NotificationClickResult>().toNotificationClickEffect()
+//            filterIsInstance<NotificationVideoPageSettleResult>().toNotificationPlayerSettleEffect()
 
             )
     }
@@ -552,10 +588,10 @@ internal class VideoPagerViewModel(
         return mapLatest { result -> MediaItemTransitionEffect(result) }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<NotificationClickResult>.toNotificationClickEffect():Flow<ViewEffect> {
-        return mapLatest { result -> NotificationEffect(result.position, result.videoId) }
-    }
+//    @OptIn(ExperimentalCoroutinesApi::class)
+//    private fun Flow<NotificationVideoPageSettleResult>.toNotificationPlayerSettleEffect():Flow<ViewEffect> {
+//        return mapLatest { result -> NotificationEffect(result.position, result.videoId) }
+//    }
 
 
 }
