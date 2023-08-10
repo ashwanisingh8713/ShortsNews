@@ -17,6 +17,9 @@
     <style name="Theme.BasicAppSample.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="background">@color/black</item>
+        <item name="colorOnBackground">@color/black</item>
     </style>
 
     <style name="Theme.BasicAppSample.Starting" parent="Theme.SplashScreen">

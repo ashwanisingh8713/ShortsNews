@@ -3,9 +3,10 @@ package com.ns.shortsnews.utils
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import androidx.preference.Preference
 import androidx.preference.PreferenceManager
-import com.ns.shortsnews.MainActivity
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.ns.shortsnews.domain.models.VideoCategory
 
 object AppPreference {
 
@@ -29,11 +30,15 @@ object AppPreference {
     private const val FOLLOWING_UPDATE_NEEDED = "following_update_needed"
     private const val MAIN_ACTIVITY_LAUNCHED = "main_activity_launched"
     private const val NOTIFICATION_TOKEN = "notification_token"
+    private const val VIDEO_CATEGORIES = "video_category"
+
 
     fun init(context: Context) {
         preference = PreferenceManager.getDefaultSharedPreferences(context)
         editor = preference.edit()
-
+        if (categoryListStr!!.isNotEmpty()) {
+            retrieveCategoriesFromPreference()
+        }
     }
 
     // Functions for getter and setter of preference data
@@ -108,6 +113,13 @@ object AppPreference {
         this.apply()
     }
 
+    var categoryListStr:String?
+        get() = preference.getString(VIDEO_CATEGORIES, EMPTY_STRING)
+        set(value) = preference.edit{
+            this.putString(VIDEO_CATEGORIES, value)
+            this.apply()
+        }
+
     var isLanguageSelected:Boolean
     get() = preference.getBoolean(IS_LANGUAGE_SELECTED, false)
     set(value) = preference.edit {
@@ -154,6 +166,23 @@ object AppPreference {
     // Clear preference on logout
     fun clear(){
         editor.clear().apply()
+    }
+
+    fun saveCategoriesToPreference(categoryList:List<VideoCategory>) {
+        val gson = Gson()
+        val json = gson.toJson(categoryList)
+        categoryListStr = json.toString()
+    }
+    var categoryList: MutableList<VideoCategory> = mutableListOf<VideoCategory>()
+    private fun retrieveCategoriesFromPreference():List<VideoCategory> {
+        if(categoryList.isEmpty()) {
+            val gson = Gson()
+            val categoryJsonString = categoryListStr
+            val myListType = object : TypeToken<List<VideoCategory>>() {}.type
+            categoryList = gson.fromJson<List<VideoCategory>>(categoryJsonString,myListType) as MutableList<VideoCategory>
+        }
+
+        return categoryList
     }
 
 }

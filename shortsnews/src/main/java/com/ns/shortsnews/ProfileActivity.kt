@@ -39,9 +39,6 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-//        if (intent?.extras != null){
-//            getData(intent)
-//        }
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         val view = binding.root
@@ -145,6 +142,7 @@ class ProfileActivity : AppCompatActivity() {
 
         }
     }
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val fragmentManager: FragmentManager = supportFragmentManager
         if (fragmentManager.backStackEntryCount > 1) {
@@ -155,10 +153,4 @@ class ProfileActivity : AppCompatActivity() {
             finish()
         }
     }
-
-
-//    override fun onBackPressed() {
-//        supportFragmentManager.popBackStack()
-//        onBackPressedDispatcher.onBackPressed()
-//    }
 }

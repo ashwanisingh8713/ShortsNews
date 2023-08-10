@@ -34,7 +34,7 @@
             android:name=".LauncherActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppSplash"
+            android:theme="@style/Theme.News"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,17 +46,19 @@
             android:name=".ui.activity.LanguageContainer"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar" />
+            android:theme="@style/Theme.News"
+            />
         <activity
             android:name=".ui.activity.ContainerActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar" />
+            android:theme="@style/Theme.News"
+            />
         <activity
             android:name=".ProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar"
+            android:theme="@style/Theme.News"
             android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
@@ -64,13 +66,14 @@
             android:exported="false"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar"
+            android:theme="@style/Theme.News"
             android:windowSoftInputMode="adjustPan"></activity>
         <activity
             android:name=".PlainVideoActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar"></activity>
+            android:theme="@style/Theme.News"
+            ></activity>
 
         <provider
             android:name="androidx.startup.InitializationProvider"

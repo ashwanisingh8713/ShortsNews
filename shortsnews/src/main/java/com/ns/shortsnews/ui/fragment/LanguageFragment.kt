@@ -5,14 +5,18 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
 import com.ns.shortsnews.R
+import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.databinding.FragmentLanguageBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.models.LanguageData
@@ -20,13 +24,17 @@ import com.ns.shortsnews.domain.models.LanguageTable
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
+import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.LanguageViewModel
 import com.ns.shortsnews.ui.viewmodel.LanguageViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
+import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModel
+import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
+import com.ns.shortsnews.utils.CommonFunctions
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
 import kotlinx.coroutines.flow.collectLatest
@@ -38,10 +46,16 @@ import org.koin.android.ext.android.get
 class LanguageFragment : Fragment(R.layout.fragment_language) {
     lateinit var binding:FragmentLanguageBinding
     private var languageListDB = emptyList<LanguageTable>()
-    private val languageDao = ShortsDatabase.instance!!.languageDao()
-    private val languageItemRepository = LanguageRepository(languageDao)
+    private val languageItemRepository = LanguageRepository(ShortsDatabase.instance!!.languageDao())
     private var from:String = ""
-
+    private var selectedLanguages = ""
+    private val videoCategoryViewModel: VideoCategoryViewModel by activityViewModels {
+        VideoCategoryViewModelFactory().apply {
+            inject(
+                VideoCategoryUseCase(VideoCategoryRepositoryImp(get()))
+            )
+        }
+    }
     private val userViewModel: UserViewModel by activityViewModels { UserViewModelFactory().apply {
         inject(
             UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
@@ -50,7 +64,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         )
     }}
     private val languageViewModel:LanguageViewModel by activityViewModels { LanguageViewModelFactory(languageItemRepository)}
-    var selectedNumbers = 0
+    private var selectedNumbers = 0
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)
@@ -74,6 +88,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
 
             }
         }
+
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.LanguagesSuccessState.filterNotNull().collectLatest {
@@ -117,14 +132,25 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 languageListDB = it
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            videoCategoryViewModel.videoCategorySuccessState.filterNotNull().filter {
+                it.videoCategories.isNotEmpty()
+            }.collectLatest {
+              // Save category data in preference
+                AppPreference.saveCategoriesToPreference(categoryList = it.videoCategories)
+                val bundle = Bundle()
+                bundle.putString("name", /*it.name*/"")
+                userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
+            }
+        }
+
 
         binding.submitButtonConst.setOnClickListener {
             if (selectedNumbers >0) {
                 if (from == AppConstants.FROM_PROFILE) {
                     AppPreference.isLanguageSelected = true
-                    val bundle = Bundle()
-                    bundle.putString("name", /*it.name*/"kamlesh")
-                    userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
+                    AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
+                    videoCategoryViewModel.loadVideoCategory(selectedLanguages)
                 } else {
                     activity?.finish()
                 }
@@ -174,6 +200,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                     languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
+                    createSelectedLanguagesValue(chipData.id)
                     selectedNumbers++
                 } else {
                     mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), com.videopager.R.color.black))
@@ -182,6 +209,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     mChip.chipStrokeWidth = 4F
                     mChip.chipStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                     languageViewModel.update(chipData.id, chipData.name,chipData.slug ,false,"")
+                    createSelectedLanguagesValue(chipData.id)
                     selectedNumbers--
                 }
             }
@@ -217,5 +245,16 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             }
         }
         return finalList
+    }
+
+    private fun createSelectedLanguagesValue(id:String){
+        val tempValue = "$id,"
+        var modifiedString = ""
+        if (selectedLanguages.contains(tempValue)){
+            modifiedString = selectedLanguages.replace(tempValue,"")
+            selectedLanguages = modifiedString
+        } else {
+            selectedLanguages += tempValue
+        }
     }
 }
