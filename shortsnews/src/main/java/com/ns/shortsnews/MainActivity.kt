@@ -17,7 +17,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
 import coil.load
@@ -29,11 +29,8 @@ import com.ns.shortsnews.cache.HlsOneByOnePreloadCoroutine
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
-import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.domain.models.Data
-import com.ns.shortsnews.domain.models.VideoDataResponse
-import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
 import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
@@ -41,6 +38,7 @@ import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
+import com.ns.shortsnews.utils.CommonFunctions
 import com.ns.shortsnews.utils.IntentLaunch
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.ui.VideoPagerFragment
@@ -48,6 +46,8 @@ import com.videopager.utils.CategoryConstants
 import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoSharedEventViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
@@ -60,22 +60,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private lateinit var binding: ActivityMainBinding
     private lateinit var categoryAdapter: CategoryAdapter
     private var videoPagerFragment: VideoPagerFragment? = null
-    private val languageDao = ShortsDatabase.instance!!.languageDao()
-    private val languageItemRepository = LanguageRepository(languageDao)
-    private val languageViewModel: LanguageViewModel by viewModels {
-        LanguageViewModelFactory(
-            languageItemRepository
-        )
-    }
-
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
-    private val videoCategoryViewModel: VideoCategoryViewModel by viewModels {
-        VideoCategoryViewModelFactory().apply {
-            inject(
-                VideoCategoryUseCase(VideoCategoryRepositoryImp(get()))
-            )
-        }
-    }
+    private var videoCategoryViewModel: VideoCategoryViewModel? = null
     private val videoDataViewModel: UserBookmarksViewModel by viewModels {
         BookmarksViewModelFactory().apply {
             inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
@@ -95,23 +81,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     private var languageStringParams =""
     private var bottomSheetRecyclerAdapter: GridAdapter? = null
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted){
-            // FCM SDK (and your app) can post notifications.
-        } else {
-            // TODO: Inform user that that your app will not show notifications.
-        }
-
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
-        Log.i("intent_newLaunch","get intent data on Create Main activity triggered")
+        setContentView(binding.root)
+
         if (intent?.extras != null){
             Log.i("intent_newLaunch","get intent data on Create Main activity" + intent.extras.toString())
             getData(intent)
@@ -122,9 +98,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         standardBottomSheetBehavior.isDraggable = false
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        val view = binding.root
 
-        setContentView(view)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         if (AppPreference.isUserLoggedIn) {
@@ -146,22 +120,39 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.profileIcon.setOnClickListener {
             launchProfileActivity()
         }
-        getSelectedLanguagesValues()
 
-        showCategory()
-        // To get status of should launch in login flow for non logged-in user
-        launchLoginStateFlow()
+        val videoCategories = AppPreference.categoryList
+
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(1000)
+            videoCategoryViewModel =
+                ViewModelProvider(this@MainActivity, VideoCategoryViewModelFactory().apply {
+                    inject(VideoCategoryUseCase(VideoCategoryRepositoryImp(get())))
+                })[VideoCategoryViewModel::class.java]
+        }
+
+        if (AppPreference.categoryListStr!!.isEmpty()) {
+            showTryAgainText()
+        } else {
+
+            categoryAdapter = CategoryAdapter(
+                itemList = videoCategories!!,
+                itemListener = this@MainActivity
+            )
+            binding.recyclerView.adapter = categoryAdapter
+            val defaultCate = videoCategories[0]
+            loadHomeFragment(defaultCate.id, languageStringParams)
+            hideTryAgainText()
+        }
 
         // Bottom Sheet
         bottomSheetDialog()
-
         // Register GetInfo Listener
         bottomSheetGetInfoListener()
-
         bottomSheetFollowingClick()
-
         registerVideoCache()
         askNotificationPermission()
+        launchLoginStateFlow()
         AppPreference.isMainActivityLaunched = true
     }
     private fun listenFollowUnfollow(channelId:String) {
@@ -186,7 +177,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.i("intent_newLaunch","get intent data on newIntent MainActivity :: " + intent?.extras.toString())
+        Log.i("intent_newLaunch","newIntent MainActivity :: " + intent?.extras.toString())
         if (intent?.extras != null){
             getData(intent)
         }
@@ -198,9 +189,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         val previewUrl =intent?.getStringExtra("preview_url").toString()
         val video_url =intent?.getStringExtra("video_url").toString()
         Log.i("intent_newLaunch","Main activity intent data :: id : $id type : $type preview:: $previewUrl  videoUrl:: $video_url")
-        attachNotification(id,previewUrl,video_url)
+        notificationDataFromIntent(id,previewUrl,video_url)
     }
 
+    // Notification permission launcher
     private fun askNotificationPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this,android.Manifest.permission.POST_NOTIFICATIONS) ==
@@ -212,56 +204,31 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
                 //       If the user selects "No thanks," allow the user to continue without notifications.
             } else {
-               requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                registerForActivityResult(
+                    ActivityResultContracts.RequestPermission()
+                ) { isGranted ->
+                    if (isGranted){
+                        // FCM SDK (and your app) can post notifications.
+                    } else {
+                        // TODO: Inform user that that your app will not show notifications.
+                    }
+
+                }.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
         }
     }
 
-    private fun getSelectedLanguagesValues() {
-        var languageString = ""
-        lifecycleScope.launch {
-            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
-              for (data in it){
-                  if (data.selected){
-                    languageString = languageString + data.id +","
-                  }
-              }
-                languageStringParams = languageString.dropLast(1)
-                videoCategoryViewModel.loadVideoCategory(languageString)
-            }
-        }
-    }
 
     private fun getSelectedLanguagesValuesOnClick(requiredId: String) {
-        var languageString = ""
-        lifecycleScope.launch {
-            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
-                for (data in it){
-                    if (data.selected){
-                        languageString = languageString + data.id +","
-                    }
-                }
-               languageString.dropLast(1)
-                Log.i("lang"," item click $languageString")
-                loadHomeFragment(requiredId, languageString)
-                sharedEventViewModel.sendUserPreferenceData(
-                    AppPreference.isUserLoggedIn,
-                    AppPreference.userToken
-                )
-            }
-        }
+        loadHomeFragment(requiredId, AppPreference.selectedLanguages!!)
+        sharedEventViewModel.sendUserPreferenceData(
+            AppPreference.isUserLoggedIn,
+            AppPreference.userToken
+        )
     }
 
     override fun onResume() {
         super.onResume()
-//        Log.i("intent_newLaunch","get intent data on Resume  triggered")
-//        if (intent?.extras != null){
-//            Log.i("intent_newLaunch","get intent data on onResume MainActivity" + intent.extras.toString())
-//            getData(intent)
-//        } else {
-//            Log.i("intent_newLaunch","get intent data on  resume is :: " + intent.extras.toString())
-//        }
-//        Log.i("lifecycle", "OnResume called of Main Activity")
         sharedEventViewModel.sendUserPreferenceData(
             AppPreference.isUserLoggedIn,
             AppPreference.userToken
@@ -339,9 +306,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
+    /*Get API call for setting video categories*/
     private fun showCategory() {
         lifecycleScope.launch {
-            videoCategoryViewModel.videoCategorySuccessState.filterNotNull().filter {
+            videoCategoryViewModel!!.videoCategorySuccessState.filterNotNull().filter {
                 it.videoCategories.isNotEmpty()
             }.collectLatest {
                 // Setup recyclerView
@@ -357,7 +325,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
 
         lifecycleScope.launch {
-            videoCategoryViewModel.errorState.filterNotNull().collectLatest {
+            videoCategoryViewModel!!.errorState.filterNotNull().collectLatest {
                 showTryAgainText()
             }
         }
@@ -374,7 +342,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.tryAgain.visibility = View.VISIBLE
         binding.tryAgain.setOnClickListener {
             if(NetworkXProvider.isInternetConnected) {
-                videoCategoryViewModel.loadVideoCategory(languageStringParams)
+                videoCategoryViewModel!!.loadVideoCategory(languageStringParams)
+                showCategory()
                 if (AppPreference.userProfilePic == "") {
                     binding.profileIcon.setImageResource(R.drawable.profile_avatar)
                 } else {
@@ -418,8 +387,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             sharedEventViewModel.cacheVideoUrl_2.filterNotNull().collectLatest {
                 val url = it.first
                 val id = it.second
-                var videoUrls = Array(1) { url }
-                var videoIds = Array(1) { id }
+                val videoUrls = Array(1) { url }
+                val videoIds = Array(1) { id }
                 VideoPreloadCoroutine.schedulePreloadWork(videoUrls = videoUrls, ids = videoIds)
             }
         }
@@ -463,6 +432,18 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                         standardBottomSheetBehavior.setState(
                             BottomSheetBehavior.STATE_COLLAPSED
                         )
+                    }
+
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+                        Log.i("BottomSlider","STATE_HALF_EXPANDED")
+                    }
+
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        Log.i("BottomSlider","STATE_HIDDEN")
+                    }
+
+                    BottomSheetBehavior.STATE_SETTLING -> {
+                        Log.i("BottomSlider","STATE_SETTLING")
                     }
                 }
             }
@@ -516,11 +497,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 bottomSheetHeaderViewsShowHide(true)
 
                 if (it.following) {
-                    binding.persistentBottomsheet.following.text = "Following"
-                    binding.persistentBottomsheet.followingExpanded.text = "Following"
+                    binding.persistentBottomsheet.following.text = getString(R.string.following)
+                    binding.persistentBottomsheet.followingExpanded.text = getString(R.string.following)
                 } else {
-                    binding.persistentBottomsheet.following.text = "Follow"
-                    binding.persistentBottomsheet.followingExpanded.text = "Follow"
+                    binding.persistentBottomsheet.following.text = getString(R.string.follow)
+                    binding.persistentBottomsheet.followingExpanded.text =getString(R.string.follow)
                 }
 
                 val channelId = binding.persistentBottomsheet.following.tag
@@ -557,11 +538,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         lifecycleScope.launch {
             sharedEventViewModel.followResponse.filterNotNull().collectLatest {
                 if (it.following) {
-                    binding.persistentBottomsheet.following.text = "Following"
-                    binding.persistentBottomsheet.followingExpanded.text = "Following"
+                    binding.persistentBottomsheet.following.text =getString(R.string.following)
+                    binding.persistentBottomsheet.followingExpanded.text = getString(R.string.following)
                 } else {
-                    binding.persistentBottomsheet.following.text = "Follow"
-                    binding.persistentBottomsheet.followingExpanded.text = "Follow"
+                    binding.persistentBottomsheet.following.text = getString(R.string.follow)
+                    binding.persistentBottomsheet.followingExpanded.text = getString(R.string.follow)
                 }
 
             }
@@ -746,7 +727,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-    public fun attachNotification(videoId:String, previewUrl:String, mediaUri:String){
+
+    private fun notificationDataFromIntent(videoId:String, previewUrl:String, mediaUri:String){
         videoPagerFragment?.getNotificationData(videoId,previewUrl,mediaUri)
     }
 
