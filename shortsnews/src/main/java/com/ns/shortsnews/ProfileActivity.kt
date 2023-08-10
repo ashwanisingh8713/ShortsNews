@@ -3,17 +3,15 @@ package com.ns.shortsnews
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
-
-import com.ns.shortsnews.databinding.ActivityProfileBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.databinding.ActivityProfileBinding
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
-import com.ns.shortsnews.domain.usecase.notification.FCMTokenDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.ui.fragment.*
@@ -41,15 +39,13 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
-        if (intent?.extras != null){
-            getData(intent)
-        }
+//        if (intent?.extras != null){
+//            getData(intent)
+//        }
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
         window.statusBarColor = Color.parseColor("#000000")
         window.navigationBarColor = Color.parseColor("#000000")
         val from = intent.getStringExtra("fromActivity")
@@ -92,6 +88,7 @@ class ProfileActivity : AppCompatActivity() {
         val type = intent.putExtra("type",data?.getStringExtra("type").toString())
         val previewUrl = intent.putExtra("preview_url",data?.getStringExtra("videoPreviewUrl").toString())
         val video_url = intent.putExtra("video_url", data?.getStringExtra("video_url").toString())
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         Log.i("intent_newLaunch","From profile activity :: $id $type $previewUrl $video_url")
         startActivity(intent)
         this.finish()
@@ -99,7 +96,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun loginFragment() {
         val fra = LoginFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fra)
+        supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fra)
             .addToBackStack("login").commit()
     }
 
@@ -148,4 +145,20 @@ class ProfileActivity : AppCompatActivity() {
 
         }
     }
+    override fun onBackPressed() {
+        val fragmentManager: FragmentManager = supportFragmentManager
+        if (fragmentManager.backStackEntryCount > 1) {
+            // If there are fragments in the back stack, pop the top fragment
+            fragmentManager.popBackStack()
+        } else {
+            // If there are no fragments in the back stack, finish the activity
+            finish()
+        }
+    }
+
+
+//    override fun onBackPressed() {
+//        supportFragmentManager.popBackStack()
+//        onBackPressedDispatcher.onBackPressed()
+//    }
 }
