@@ -21,6 +21,7 @@ import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.models.LanguageData
 import com.ns.shortsnews.domain.models.LanguageTable
+import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
@@ -36,6 +37,8 @@ import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -64,6 +67,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
     }}
     private val languageViewModel:LanguageViewModel by activityViewModels { LanguageViewModelFactory(languageItemRepository)}
     private var selectedNumbers = 0
+    private var selectedItemList = mutableListOf<LanguageData>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)
@@ -96,9 +100,11 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     binding.progressBarLanguages.visibility = View.GONE
                     if (it.isNotEmpty()) {
                         if (languageViewModel.isEmpty()) {
+                            selectedItemList.addAll(it)
                             loadDataFromServer(it)
                         } else {
                             val finalList: List<LanguageData> = compareDBServer(it, languageListDB)
+                            selectedItemList.addAll(finalList)
                             loadDataFromDB(finalList)
                         }
                     }
@@ -152,7 +158,21 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
                     videoCategoryViewModel.loadVideoCategory(selectedLanguages)
                 } else {
-                    activity?.finish()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        if (selectedItemList.isNotEmpty()) {
+                            for (item in selectedItemList) {
+                                languageViewModel.update(
+                                    item.id,
+                                    item.name,
+                                    item.slug,
+                                    item.isSelected,
+                                    ""
+                                )
+                            }
+                            activity?.finish()
+                    }
+
+                    }
                 }
             } else {
                 Alert().showGravityToast(requireActivity(), "Please select one language")
@@ -181,7 +201,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                 mChip.setChipBackgroundColorResource(R.color.white)
                 mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
+//                languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
                 mChip.isChecked = true
                 selectedNumbers++
             } else {
@@ -191,7 +211,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 mChip.isChecked = false
                 mChip.chipStrokeWidth = 4F
                 mChip.chipStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-                languageViewModel.update(chipData.id, chipData.name,chipData.slug ,false,"")
+//                languageViewModel.update(chipData.id, chipData.name,chipData.slug ,false,"")
             }
 
             mChip.setOnCheckedChangeListener { _, isChecked ->
@@ -199,7 +219,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
                     mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                    languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
+//                    languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
+                    updateSelectedItem(chipData.id, chipData.name, chipData.slug,true, "")
                     createSelectedLanguagesValue(chipData.id)
                     selectedNumbers++
                 } else {
@@ -208,7 +229,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                     mChip.chipStrokeWidth = 4F
                     mChip.chipStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-                    languageViewModel.update(chipData.id, chipData.name,chipData.slug ,false,"")
+//                    languageViewModel.update(chipData.id, chipData.name,chipData.slug ,false,"")
+                    updateSelectedItem(chipData.id, chipData.name, chipData.slug,false, "")
                     createSelectedLanguagesValue(chipData.id)
                     selectedNumbers--
                 }
@@ -255,6 +277,17 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             selectedLanguages = modifiedString
         } else {
             selectedLanguages += tempValue
+        }
+    }
+
+    private fun updateSelectedItem(id: String, name: String, slug:String, selected: Boolean, icon: String) {
+        for (item in selectedItemList){
+            if (item.id == id){
+                item.isSelected = selected
+                item.name = name
+                item.slug = slug
+                item.icon = icon
+            }
         }
     }
 }

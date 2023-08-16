@@ -116,10 +116,10 @@ data class LanguagesResult(
 @JsonClass(generateAdapter = true)
 data class LanguageData(
     val id:String = "",
-    val name:String = "",
-    val slug:String = "",
-    val isSelected:Boolean = false,
-    val icon: String = ""
+    var name:String = "",
+    var slug:String = "",
+    var isSelected:Boolean = false,
+    var icon: String = ""
 )
 
 
