@@ -198,15 +198,15 @@ class VideoPagerFragment(
                     is MediaItemTransitionEffect-> {
                         binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1)
                     }
-                    is NotificationEffect -> {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            delay(500)
-                            Log.i("notification_position","Notification Position :: ${effect.position}")
-                            viewModel.processEvent(OnPageSettledEvent(effect.position+1))
-                            delay(500)
-                            viewModel.processEvent(VideoInfoEvent(effect.videoId, effect.position+1))
-                        }
-                    }
+//                    is NotificationEffect -> {
+//                        CoroutineScope(Dispatchers.IO).launch {
+//                            delay(500)
+//                            Log.i("notification_position","Notification Position :: ${effect.position}")
+//                            viewModel.processEvent(OnPageSettledEvent(effect.position+1))
+//                            delay(500)
+//                            viewModel.processEvent(VideoInfoEvent(effect.videoId, effect.position+1))
+//                        }
+//                    }
                     else -> {}
                 }
             }

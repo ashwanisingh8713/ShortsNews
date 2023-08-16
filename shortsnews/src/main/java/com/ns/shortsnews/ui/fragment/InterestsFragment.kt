@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
 import com.ns.shortsnews.R
+import com.ns.shortsnews.data.mapper.UserVideoCategory
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.databinding.FragmentInterestsBinding
@@ -40,11 +41,14 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
     private val languageItemRepository = LanguageRepository(languageDao)
     private val languageViewModel: LanguageViewModel by activityViewModels { LanguageViewModelFactory(languageItemRepository) }
 
-    var selectedNumbers = 0
-    var countValue = 0
+    private var selectedNumbers = 0
+    private var countValue = 0
     private val categoryViewModel: VideoCategoryViewModel by activityViewModels { VideoCategoryViewModelFactory().apply {
         inject(VideoCategoryUseCase(VideoCategoryRepositoryImp(get())))
     } }
+
+    private var selectedItemList = mutableListOf<VideoCategory>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentInterestsBinding.bind(view)
@@ -54,7 +58,14 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             activity?.finish()
         }
         binding.submitButtonPers.setOnClickListener {
-            requireActivity().finish()
+            if (selectedItemList.isNotEmpty()){
+                for (item in selectedItemList){
+                    interestsViewModel.update(item.id, item.name, item.selected, "")
+                }
+                activity?.finish()
+            } else {
+                activity?.finish()
+            }
         }
         if(AppPreference.isLanguageSelected){
             binding.submitButtonPers.text = "Save"
@@ -76,16 +87,16 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                     binding.progressBarPer.visibility = View.GONE
                     if (it.videoCategories.isNotEmpty()) {
                         countValue = it.videoCategories.size
-//                        updateSelectedItems()
                         if (interestsViewModel.isEmpty()) {
                             loadDataFromServer(it.videoCategories.toMutableList())
+                            selectedItemList.addAll(it.videoCategories)
                         } else {
                             val finalList: MutableList<VideoCategory> = compareDBServer(it.videoCategories.toMutableList(), interestsListDB.toMutableList())
+                            selectedItemList.addAll(finalList)
                             loadDataFromDB(finalList)
                         }
                     }
                 }
-
             }
         }
 
@@ -159,8 +170,9 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                     mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                     selectedNumbers++
-//                    updateSelectedItems()
-                    interestsViewModel.update(chipData.id, chipData.name, true, "")
+//                    interestsViewModel.update(chipData.id, chipData.name, true, "")
+                    updateSelectedItem(chipData.id, chipData.name, true, "")
+
                 } else {
                     mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), com.videopager.R.color.black))
                     mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
@@ -173,8 +185,8 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                         )
                     )
                     selectedNumbers--
-//                    updateSelectedItems()
-                    interestsViewModel.update(chipData.id, chipData.name, false, "")
+//                    interestsViewModel.update(chipData.id, chipData.name, false, "")
+                    updateSelectedItem(chipData.id, chipData.name, false, "")
                 }
             }
         }
@@ -185,6 +197,16 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
     fun updateSelectedItems(){
         binding.selectedTxt.text = "Selected $selectedNumbers/$countValue categories"
 
+    }
+
+    private fun updateSelectedItem(id: String, name: String, selected: Boolean, icon: String) {
+        for (item in selectedItemList){
+            if (item.id == id){
+                item.selected = selected
+                item.name = name
+                item.icon = icon
+            }
+        }
     }
 
 

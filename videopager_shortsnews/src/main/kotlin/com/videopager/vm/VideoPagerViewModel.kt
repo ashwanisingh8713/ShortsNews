@@ -382,7 +382,10 @@ internal class VideoPagerViewModel(
 
             val appPlayer = states.value.appPlayer
             val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
-            val upComingIndex = index+1
+            var upComingIndex = index
+            if (upComingIndex !=0) {
+                upComingIndex++
+            }
 
             states.value.page = upComingIndex
 

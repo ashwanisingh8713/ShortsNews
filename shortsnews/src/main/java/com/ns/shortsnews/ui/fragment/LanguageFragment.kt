@@ -34,7 +34,6 @@ import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
-import com.ns.shortsnews.utils.CommonFunctions
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
 import kotlinx.coroutines.flow.collectLatest
@@ -138,6 +137,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             }.collectLatest {
               // Save category data in preference
                 AppPreference.saveCategoriesToPreference(categoryList = it.videoCategories)
+                AppPreference.init(requireActivity())
                 val bundle = Bundle()
                 bundle.putString("name", /*it.name*/"")
                 userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)

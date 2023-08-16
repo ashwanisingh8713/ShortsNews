@@ -38,7 +38,6 @@ import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
-import com.ns.shortsnews.utils.CommonFunctions
 import com.ns.shortsnews.utils.IntentLaunch
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.ui.VideoPagerFragment
@@ -87,10 +86,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Log.i("lifecycle","Main activity OnCreate")
 
         if (intent?.extras != null){
             Log.i("intent_newLaunch","get intent data on Create Main activity" + intent.extras.toString())
-            getData(intent)
+            getNotificationIntentExtras(intent)
         }
         standardBottomSheetBehavior =
             BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
@@ -136,11 +136,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         } else {
 
             categoryAdapter = CategoryAdapter(
-                itemList = videoCategories!!,
+                itemList = videoCategories,
                 itemListener = this@MainActivity
             )
             binding.recyclerView.adapter = categoryAdapter
             val defaultCate = videoCategories[0]
+            Log.i("lifecycle","OnCreate loadHomeFragment")
             loadHomeFragment(defaultCate.id, languageStringParams)
             hideTryAgainText()
         }
@@ -179,11 +180,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         super.onNewIntent(intent)
         Log.i("intent_newLaunch","newIntent MainActivity :: " + intent?.extras.toString())
         if (intent?.extras != null){
-            getData(intent)
+            getNotificationIntentExtras(intent)
         }
     }
 
-    private fun getData(intent: Intent?) {
+    private fun getNotificationIntentExtras(intent: Intent?) {
         val id =intent?.getStringExtra("videoId").toString()
         val type =intent?.getStringExtra("type").toString()
         val previewUrl =intent?.getStringExtra("preview_url").toString()
@@ -220,6 +221,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
 
     private fun getSelectedLanguagesValuesOnClick(requiredId: String) {
+        Log.i("lifecycle","Main activity get selected language msg")
         loadHomeFragment(requiredId, AppPreference.selectedLanguages!!)
         sharedEventViewModel.sendUserPreferenceData(
             AppPreference.isUserLoggedIn,
@@ -227,8 +229,30 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         )
     }
 
+    override fun onStop() {
+        super.onStop()
+        Log.i("lifecycle","Main activity OnStop")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("lifecycle","Main activity OnDestroy")
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        Log.i("lifecycle"," Main activity OnDetach From Window")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        Log.i("lifecycle","Main activity onPause")
+    }
+
     override fun onResume() {
         super.onResume()
+        Log.i("lifecycle","Main activity OnResume")
         sharedEventViewModel.sendUserPreferenceData(
             AppPreference.isUserLoggedIn,
             AppPreference.userToken
@@ -278,6 +302,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      * Loads Home Fragment
      */
     private fun loadHomeFragment(categoryType: String, languages:String) {
+        Log.i("lifecycle","Main activity Load Home fragment inside method")
         if (!supportFragmentManager.isStateSaved) {
             val ft = supportFragmentManager.beginTransaction()
             videoPagerFragment = AppConstants.makeVideoPagerInstance(
@@ -300,6 +325,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun launchLoginStateFlow() {
         lifecycleScope.launch {
             sharedEventViewModel.getLoginEventStatus.collectLatest {
+                Log.i("lifecycle","Main activity login flow called")
                 launchProfileActivity()
             }
         }
@@ -319,6 +345,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 )
                 binding.recyclerView.adapter = categoryAdapter
                 val defaultCate = it.videoCategories[0]
+                Log.i("lifecycle","Show category")
                 loadHomeFragment(defaultCate.id, languageStringParams)
                 hideTryAgainText()
             }
@@ -723,6 +750,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             onBackPressedDispatcher.onBackPressed()
+            this@MainActivity.finish()
         }
     }
 

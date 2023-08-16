@@ -71,7 +71,8 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
 
         binding.backButton.setOnClickListener {
             AppPreference.isUpdateNeeded = false
-            activity?.finish()
+
+            activity?.onBackPressedDispatcher?.onBackPressed()
         }
         binding.setting.setOnClickListener {
             if (this::profileData.isInitialized) {

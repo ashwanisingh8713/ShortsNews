@@ -45,14 +45,6 @@ class FirebaseMessagingServiceNew : FirebaseMessagingService() {
         }
     }
 
-//    private fun getRemoteView(title: String, des: String): RemoteViews {
-//        val remoteView = RemoteViews(channelName, R.layout.notification_const)
-//        remoteView.setTextViewText(R.id.notification_title, title)
-//        remoteView.setTextViewText(R.id.notification_des, des)
-////        remoteView.setImageViewResource(R.id.app_logo, R.mipmap.ic_launcher)
-//        return remoteView
-//    }
-
     @SuppressLint("UnspecifiedImmutableFlag")
     fun generateNotification(title: String, body: String, notificationData: Map<String, String>) {
 

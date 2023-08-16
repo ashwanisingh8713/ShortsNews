@@ -61,6 +61,26 @@ class ProfileActivity : AppCompatActivity() {
         }
         listenFragmentUpdate()
     }
+    override fun onStop() {
+        super.onStop()
+        Log.i("lifecycle","Profile activity OnStop")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("lifecycle","Profile activity OnDestroy")
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        Log.i("lifecycle"," Profile activity OnDetach From Window")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i("lifecycle","Profile activity onPause")
+    }
+
 
     private fun listenFragmentUpdate() {
         lifecycleScope.launch() {
@@ -79,29 +99,22 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun getData(data: Intent?) {
-        val intent = Intent(this, MainActivity::class.java)
-        val id = intent.putExtra("videoId",data?.getStringExtra("id").toString())
-        val type = intent.putExtra("type",data?.getStringExtra("type").toString())
-        val previewUrl = intent.putExtra("preview_url",data?.getStringExtra("videoPreviewUrl").toString())
-        val video_url = intent.putExtra("video_url", data?.getStringExtra("video_url").toString())
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        Log.i("intent_newLaunch","From profile activity :: $id $type $previewUrl $video_url")
-        startActivity(intent)
-        this.finish()
-    }
+
 
     private fun loginFragment() {
+        Log.i("lifecycle","Profile activity on login fragment called")
         val fra = LoginFragment()
         supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fra)
             .addToBackStack("login").commit()
     }
 
     private fun popOtpFragment() {
+        Log.i("lifecycle","Profile activity on pop otp fragment called")
         supportFragmentManager.popBackStack()
     }
 
     private fun otpFragment(bundle: Bundle) {
+        Log.i("lifecycle","Profile activity on OTP fragment launch called")
         val fragment = OtpFragment()
         fragment.arguments = bundle
         supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fragment)
@@ -110,6 +123,7 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun profileFragment() {
+        Log.i("lifecycle","Profile activity on new Profile fragment called")
         val fragment = NewProfileFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
             .commit()
@@ -117,6 +131,7 @@ class ProfileActivity : AppCompatActivity() {
 
     @SuppressLint("CommitTransaction")
     private fun languagesFragment() {
+        Log.i("lifecycle","Profile activity on language fragment called")
         val fragment = LanguageFragment()
         val bundle = Bundle()
         bundle.putString("from", AppConstants.FROM_PROFILE)
@@ -127,6 +142,7 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun launchMainActivityIntent() {
+        Log.i("lifecycle","Profile activity on main activity called")
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         this.finish()
@@ -134,6 +150,7 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        Log.i("lifecycle","Profile activity on resume called")
         if (AppPreference.isProfileDeleted){
             AppPreference.clear()
             val i = Intent(this, ProfileActivity::class.java)
@@ -144,12 +161,15 @@ class ProfileActivity : AppCompatActivity() {
     }
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        Log.i("lifecycle","Profile activity on backPressed called")
         val fragmentManager: FragmentManager = supportFragmentManager
         if (fragmentManager.backStackEntryCount > 1) {
             // If there are fragments in the back stack, pop the top fragment
             fragmentManager.popBackStack()
         } else {
             // If there are no fragments in the back stack, finish the activity
+            Log.i("lifecycle","Profile activity on backPressed activity finish called")
+            onBackPressedDispatcher.onBackPressed()
             finish()
         }
     }

@@ -69,9 +69,9 @@ data class VideoCategoryResult(
 @JsonClass(generateAdapter = true)
 data class VideoCategory(
     val id: String,
-    val name: String,
-    val selected:Boolean = false,
-    val icon: String = ""
+    var name: String,
+    var selected:Boolean = false,
+    var icon: String = ""
 )
 
 @JsonClass(generateAdapter = true)
@@ -190,9 +190,9 @@ data class InterestsTable(
     @PrimaryKey
     val id: String ="",
 
-    val name: String ="",
-    val selected:Boolean = false,
-    val icon: String = ""
+    var name: String ="",
+    var selected:Boolean = false,
+    var icon: String = ""
 )
 
 

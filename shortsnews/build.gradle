@@ -20,8 +20,8 @@ android {
         versionName "27Jun23"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//        buildConfigField "String", "BASE_URL", "\"https://shorts.newsdx.io/ci/api-v2/public/\""
-        buildConfigField "String", "BASE_URL", "\"https://shorts.newsdx.io/ci/api-v3/public/\""
+        buildConfigField "String", "BASE_URL", "\"https://shorts.newsdx.io/ci/api-v2/public/\""
+//        buildConfigField "String", "BASE_URL", "\"https://shorts.newsdx.io/ci/api-v3/public/\""
     }
     buildFeatures {
         viewBinding true
