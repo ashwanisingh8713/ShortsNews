@@ -6,7 +6,6 @@
     android:background="@color/black">
 
 
-
     <androidx.cardview.widget.CardView
         android:id="@+id/card_login_image"
         android:layout_width="match_parent"
@@ -28,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/login_screen_image"/>
+            android:src="@drawable/login_screen_image" />
 
     </androidx.cardview.widget.CardView>
 
@@ -36,33 +35,13 @@
         android:id="@+id/app_logo_login"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/login_icon"
-        app:layout_constraintStart_toStartOf="@id/card_login_image"
-        app:layout_constraintEnd_toEndOf="@id/card_login_image"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:scaleType="centerInside"
-        app:layout_constraintTop_toTopOf="@id/card_login_image"
+        android:scaleType="centerCrop"
+        android:padding="@dimen/_20sdp"
+        android:src="@drawable/news_logo"
         app:layout_constraintBottom_toBottomOf="@id/card_login_image"
-        />
-
-    <TextView
-        android:id="@+id/title_txt"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/title_otp"
-        android:textColor="@color/text_color_gray"
-        android:fontFamily="@font/roboto_regular"
-        android:textStyle="normal"
-        android:textSize="@dimen/video_page_text_size_xxxlarge"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="6dp"
-        android:gravity="start"
         app:layout_constraintEnd_toEndOf="@id/card_login_image"
-        app:layout_constraintStart_toStartOf="@id/app_logo_login"
-        app:layout_constraintTop_toBottomOf="@id/app_logo_login"
-        android:layout_marginTop="5dp"
-        />
+        app:layout_constraintStart_toStartOf="@id/card_login_image"
+        app:layout_constraintTop_toTopOf="@id/card_login_image" />
 
     <TextView
         android:id="@+id/text_email_new"
@@ -99,8 +78,9 @@
             android:autofillHints="name"
             android:background="@null"
             android:fontFamily="sans-serif"
-            android:inputType="textPersonName"
             android:hint="@string/enter_your_name"
+            android:importantForAutofill="no"
+            android:inputType="textNoSuggestions"
             android:maxLines="1"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
@@ -162,10 +142,10 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginEnd="10dp"
-            android:padding="3dp"
-            android:visibility="gone"
             android:indeterminateTint="@color/white"
             android:indeterminateTintMode="src_in"
+            android:padding="3dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/email_edit_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/email_edit_text" />

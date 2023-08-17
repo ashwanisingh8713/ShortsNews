@@ -47,10 +47,10 @@ class ProfileActivity : AppCompatActivity() {
         window.navigationBarColor = Color.parseColor("#000000")
         val from = intent.getStringExtra("fromActivity")
         if (AppPreference.isUserLoggedIn) {
-            if (from !=null && from == "MainActivity"){
+            if (from != null && from == "MainActivity") {
                 profileFragment()
-            } else{
-                if(AppPreference.isLanguageSelected) {
+            } else {
+                if (AppPreference.isLanguageSelected) {
                     launchMainActivityIntent()
                 } else {
                     languagesFragment()
@@ -60,25 +60,6 @@ class ProfileActivity : AppCompatActivity() {
             loginFragment()
         }
         listenFragmentUpdate()
-    }
-    override fun onStop() {
-        super.onStop()
-        Log.i("lifecycle","Profile activity OnStop")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("lifecycle","Profile activity OnDestroy")
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        Log.i("lifecycle"," Profile activity OnDetach From Window")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.i("lifecycle","Profile activity onPause")
     }
 
 
@@ -100,21 +81,20 @@ class ProfileActivity : AppCompatActivity() {
     }
 
 
-
     private fun loginFragment() {
-        Log.i("lifecycle","Profile activity on login fragment called")
+        Log.i("lifecycle", "Profile activity on login fragment called")
         val fra = LoginFragment()
         supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fra)
             .addToBackStack("login").commit()
     }
 
     private fun popOtpFragment() {
-        Log.i("lifecycle","Profile activity on pop otp fragment called")
+        Log.i("lifecycle", "Profile activity on pop otp fragment called")
         supportFragmentManager.popBackStack()
     }
 
     private fun otpFragment(bundle: Bundle) {
-        Log.i("lifecycle","Profile activity on OTP fragment launch called")
+        Log.i("lifecycle", "Profile activity on OTP fragment launch called")
         val fragment = OtpFragment()
         fragment.arguments = bundle
         supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fragment)
@@ -123,7 +103,7 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun profileFragment() {
-        Log.i("lifecycle","Profile activity on new Profile fragment called")
+        Log.i("lifecycle", "Profile activity on new Profile fragment called")
         val fragment = NewProfileFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
             .commit()
@@ -131,7 +111,7 @@ class ProfileActivity : AppCompatActivity() {
 
     @SuppressLint("CommitTransaction")
     private fun languagesFragment() {
-        Log.i("lifecycle","Profile activity on language fragment called")
+        Log.i("lifecycle", "Profile activity on language fragment called")
         val fragment = LanguageFragment()
         val bundle = Bundle()
         bundle.putString("from", AppConstants.FROM_PROFILE)
@@ -142,7 +122,7 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun launchMainActivityIntent() {
-        Log.i("lifecycle","Profile activity on main activity called")
+        Log.i("lifecycle", "Profile activity on main activity called")
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         this.finish()
@@ -150,8 +130,8 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.i("lifecycle","Profile activity on resume called")
-        if (AppPreference.isProfileDeleted){
+        Log.i("lifecycle", "Profile activity on resume called")
+        if (AppPreference.isProfileDeleted) {
             AppPreference.clear()
             val i = Intent(this, ProfileActivity::class.java)
             i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -159,16 +139,24 @@ class ProfileActivity : AppCompatActivity() {
 
         }
     }
+
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        Log.i("lifecycle","Profile activity on backPressed called")
+        Log.i("lifecycle", "Profile activity on backPressed called")
         val fragmentManager: FragmentManager = supportFragmentManager
-        if (fragmentManager.backStackEntryCount > 1) {
-            // If there are fragments in the back stack, pop the top fragment
-            fragmentManager.popBackStack()
+        if (fragmentManager.backStackEntryCount > 0) {
+            // If there are fragments in the back stack, and if it is login fragment so closing container activity
+            val topFragment = supportFragmentManager.findFragmentById(R.id.fragment_containerProfile)
+            if (topFragment is LoginFragment){
+                finish()
+            } else {
+                // If there are fragments in the back stack, pop the top fragment
+                fragmentManager.popBackStack()
+            }
+
         } else {
             // If there are no fragments in the back stack, finish the activity
-            Log.i("lifecycle","Profile activity on backPressed activity finish called")
+            Log.i("lifecycle", "Profile activity on backPressed activity finish called")
             onBackPressedDispatcher.onBackPressed()
             finish()
         }

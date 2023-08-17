@@ -88,8 +88,8 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
                     }
                     AppPreference.isUpdateNeeded = true
                     requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_containerProfile, channelVideosFragment)
-                        .addToBackStack(null).commit()
+                        .add(R.id.fragment_containerProfile, channelVideosFragment)
+                        .addToBackStack("channel").commit()
                 } else {
                     // No Internet Snack bar: Fire
                     NoConnection.noConnectionSnackBarInfinite(binding.root,

@@ -81,6 +81,7 @@ class PlainVideoActivity : AppCompatActivity() {
         val bundle = Bundle()
         bundle.putInt(CategoryConstants.KEY_SelectedPlay, it.selectedPosition)
         bundle.putBoolean("logged_in", AppPreference.isUserLoggedIn)
+        bundle.putString("directFrom","PlainActivity")
         fragment.arguments = bundle
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.fragment_container, fragment)

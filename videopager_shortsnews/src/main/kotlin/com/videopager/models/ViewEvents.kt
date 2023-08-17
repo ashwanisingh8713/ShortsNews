@@ -30,5 +30,3 @@ internal data class OnPageSettledEvent(val page: Int) : ViewEvent()
 internal object PauseVideoEvent : ViewEvent()
 
 internal data class FromNotificationInsertVideoEvent(val videoId: String, val type: String, val previewUrl:String, val videoUrl:String) : ViewEvent()
-//internal data class InsertVideoEvent(val videoId: String, val type: String, val previewUrl:String, val videoUrl:String) : ViewEvent()
-//internal  data class NotificationVideoPlayerSettleEvent(val position: Int, val videoId: String): ViewEvent()

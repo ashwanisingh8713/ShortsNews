@@ -96,9 +96,8 @@ internal fun ViewPager2.loadMoreVideoData(): Flow<Unit> = callbackFlow {
              * changed from index 0 to 2, but from the user perspective they are on the same page.
              */
             if (scrollState == ViewPager2.SCROLL_STATE_IDLE) return
-
-            if((adapter?.itemCount?.minus(2)) == position) {
-                trySend(Unit)
+                if ((adapter?.itemCount?.minus(2)) == position) {
+                    trySend(Unit)
             }
 
         }

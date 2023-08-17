@@ -97,9 +97,9 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 Log.i("kamlesh","OTPFragment onSuccess ::: $it")
                 it.let {
                     sendFcmTokenToServer()
-                    binding.progressBarOtp.visibility = View.GONE
                     saveUserPreference(it)
                     delay(500)
+                    binding.progressBarOtp.visibility = View.GONE
                     val bundle = Bundle()
                     bundle.putString("name","kamlesh")
                     userViewModel.updateFragment(UserViewModel.LANGUAGES,bundle )

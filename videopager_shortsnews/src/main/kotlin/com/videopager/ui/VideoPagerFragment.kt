@@ -56,6 +56,7 @@ class VideoPagerFragment(
     private var isFirstVideoInfoLoaded = false
     private var selectedPlay = 0
     private var isNotificationVideoCame:Boolean = false
+    private var redirectFrom:String? = null
 
 
 
@@ -64,6 +65,7 @@ class VideoPagerFragment(
         arguments?.let {
             isUserLoggedIn = arguments?.getBoolean("logged_in")!!
             selectedPlay = arguments?.getInt(CategoryConstants.KEY_SelectedPlay)!!
+            redirectFrom= arguments?.getString("directFrom")
         }
     }
 
@@ -198,15 +200,6 @@ class VideoPagerFragment(
                     is MediaItemTransitionEffect-> {
                         binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1)
                     }
-//                    is NotificationEffect -> {
-//                        CoroutineScope(Dispatchers.IO).launch {
-//                            delay(500)
-//                            Log.i("notification_position","Notification Position :: ${effect.position}")
-//                            viewModel.processEvent(OnPageSettledEvent(effect.position+1))
-//                            delay(500)
-//                            viewModel.processEvent(VideoInfoEvent(effect.videoId, effect.position+1))
-//                        }
-//                    }
                     else -> {}
                 }
             }
@@ -291,15 +284,18 @@ class VideoPagerFragment(
                         Tag,
                         "VideoFrom :: ${viewModel.videoFrom}, CategoryId :: ${viewModel.categoryId}, Page :: ${viewModel.page}"
                     )
-                    viewModel.processEvent(
-                        LoadVideoDataEvent(
-                            categoryId = viewModel.categoryId,
-                            videoFrom = viewModel.videoFrom,
-                            page = viewModel.page,
-                            perPage = VideoPagerViewModel.perPage,
-                            languages = viewModel.languages
+                    // For handling load more video case to not load more video when it is redirected from plainVideo activity
+                    if (redirectFrom == null) {
+                        viewModel.processEvent(
+                            LoadVideoDataEvent(
+                                categoryId = viewModel.categoryId,
+                                videoFrom = viewModel.videoFrom,
+                                page = viewModel.page,
+                                perPage = VideoPagerViewModel.perPage,
+                                languages = viewModel.languages
+                            )
                         )
-                    )
+                    }
                 }
                 NoFurtherEvent
             }
