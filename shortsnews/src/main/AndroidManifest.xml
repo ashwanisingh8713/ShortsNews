@@ -75,7 +75,8 @@
             android:name=".PlainVideoActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.News">
+            android:theme="@style/Theme.News"
+            android:windowSoftInputMode="adjustResize">
 
         </activity>
 

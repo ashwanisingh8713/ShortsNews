@@ -55,9 +55,8 @@ class VideoPagerFragment(
     private var isUserLoggedIn = false
     private var isFirstVideoInfoLoaded = false
     private var selectedPlay = 0
-    private var isNotificationVideoCame:Boolean = false
-    private var redirectFrom:String? = null
-
+    private var isNotificationVideoCame: Boolean = false
+    private var redirectFrom: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +64,7 @@ class VideoPagerFragment(
         arguments?.let {
             isUserLoggedIn = arguments?.getBoolean("logged_in")!!
             selectedPlay = arguments?.getInt(CategoryConstants.KEY_SelectedPlay)!!
-            redirectFrom= arguments?.getString("directFrom")
+            redirectFrom = arguments?.getString("directFrom")
         }
     }
 
@@ -114,7 +113,7 @@ class VideoPagerFragment(
                 // Can't query any ViewHolders if the adapter has no pages
                 if (pagerAdapter.currentList.isNotEmpty()) {
 
-                    if(isNotificationVideoCame || viewModel.videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || viewModel.videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA) {
+                    if (isNotificationVideoCame || viewModel.videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || viewModel.videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA) {
                         viewModel.processEvent(OnPageSettledEvent(state.page))
                         isNotificationVideoCame = false
                     }
@@ -137,7 +136,7 @@ class VideoPagerFragment(
                     binding.viewPager.isUserInputEnabled = true
 
                     if (!isFirstVideoInfoLoaded) {
-                        binding.viewPager.setCurrentItem(selectedPlay,true)
+                        binding.viewPager.setCurrentItem(selectedPlay, true)
                         val data = pagerAdapter.getVideoData(selectedPlay)
                         viewModel.processEvent(VideoInfoEvent(data.id, selectedPlay))
                         isFirstVideoInfoLoaded = true
@@ -151,6 +150,7 @@ class VideoPagerFragment(
                     is BookmarkEffect -> {
                         pagerAdapter.refreshBookmarkUI(effect.position)
                     }
+
                     is CommentEffect -> {
                         //adapter.refreshUI(0)
                         // Pass Data to Bottom sheet dialog fragment
@@ -160,19 +160,23 @@ class VideoPagerFragment(
                             effect.position
                         )
                     }
+
                     is LikeEffect -> {
                         pagerAdapter.refreshLikeUI(effect.position)
                     }
+
                     is FollowEffect -> {
 //                        pagerAdapter.refreshFollowUI(effect.position)
                         sharedEventViewModel.followResponse(pagerAdapter.getVideoData(effect.position))
                     }
+
                     is PageEffect -> {
                         pagerAdapter.renderEffect(
                             binding.viewPager.currentItem,
                             effect
                         )
                     }
+
                     is PlayerErrorEffect -> {
                         Snackbar.make(
                             binding.root,
@@ -180,12 +184,14 @@ class VideoPagerFragment(
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
+
                     is GetVideoInfoEffect -> {
-                        if(effect.videoInfo.id.isNotEmpty()) {
+                        if (effect.videoInfo.id.isNotEmpty()) {
                             pagerAdapter.getInfoRefreshUI(effect.position)
                         }
                         sharedEventViewModel.shareVideoInfo(effect.videoInfo)
                     }
+
                     is GetYoutubeUriEffect -> {
                         // TODO, Nothing,
                     }
@@ -194,12 +200,15 @@ class VideoPagerFragment(
                         pagerAdapter.getInfoRefreshUI(effect.position)
                         commentFragment.updateCommentAdapter(effect.data)
                     }
+
                     is YoutubeUriErrorEffect -> {
                         Log.i("", "")
                     }
-                    is MediaItemTransitionEffect-> {
+
+                    is MediaItemTransitionEffect -> {
                         binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1)
                     }
+
                     else -> {}
                 }
             }
@@ -219,11 +228,10 @@ class VideoPagerFragment(
     }
 
 
-
     override fun onResume() {
         super.onResume()
 
-        if(pagerAdapter.itemCount > 0) {
+        if (pagerAdapter.itemCount > 0) {
             val data = pagerAdapter.getVideoData(binding.viewPager.currentItem)
             viewModel.processEvent(VideoInfoEvent(data.id, binding.viewPager.currentItem))
         }
@@ -271,12 +279,15 @@ class VideoPagerFragment(
                     currentItem
                 }
                 val nextVideoCacheData = pagerAdapter.getVideoData(nextVideoCacheIndex)
-                sharedEventViewModel.cacheVideoData(nextVideoCacheData.mediaUri, nextVideoCacheData.id)
+                sharedEventViewModel.cacheVideoData(
+                    nextVideoCacheData.mediaUri,
+                    nextVideoCacheData.id
+                )
 
                 NoFurtherEvent
             },
             loadMoreVideoData().map {
-                if(isInternetConnected) {
+                if (isInternetConnected) {
                     val Tag = "PagePreload"
                     Log.i(Tag, "")
                     Log.i(Tag, "########### NEW PAGE REQUEST IS SENT TO SERVER #################")
@@ -299,9 +310,7 @@ class VideoPagerFragment(
                 }
                 NoFurtherEvent
             }
-
-
-            )
+        )
     }
 
 
@@ -326,17 +335,22 @@ class VideoPagerFragment(
                         FollowClickEvent(videoData.channel_id, currentItem)
                     }
                 }
+
                 ChannelClick -> {
-                    if(isInternetConnected) {
+                    if (isInternetConnected) {
                         val currentItem = binding.viewPager.currentItem
                         val videoData = pagerAdapter.getVideoData(currentItem)
                         ChannelClickEvent
                     } else {
-                        NoConnection.noConnectionSnackBarInfinite(view, requireActivity() as AppCompatActivity)
+                        NoConnection.noConnectionSnackBarInfinite(
+                            view,
+                            requireActivity() as AppCompatActivity
+                        )
                         NoFurtherEvent
                     }
 
                 }
+
                 ShareClick -> {
                     val currentItem = binding.viewPager.currentItem
                     val videoData = pagerAdapter.getVideoData(currentItem)
@@ -352,8 +366,9 @@ class VideoPagerFragment(
                     activity?.startActivity(Intent.createChooser(chooserIntent, "Share Via"))
                     ShareClickEvent
                 }
+
                 CommentClick -> {
-                    if(isInternetConnected) {
+                    if (isInternetConnected) {
                         if (!isUserLoggedIn) {
                             sharedEventViewModel.launchLoginEvent(true)
                             NoFurtherEvent
@@ -364,12 +379,16 @@ class VideoPagerFragment(
                             CommentClickEvent(videoData.id, currentItem)
                         }
                     } else {
-                        NoConnection.noConnectionSnackBarInfinite(view, requireActivity() as AppCompatActivity)
+                        NoConnection.noConnectionSnackBarInfinite(
+                            view,
+                            requireActivity() as AppCompatActivity
+                        )
                         NoFurtherEvent
                     }
                 }
+
                 LikeClick -> {
-                    if(isInternetConnected) {
+                    if (isInternetConnected) {
                         if (!isUserLoggedIn) {
                             sharedEventViewModel.launchLoginEvent(true)
                             NoFurtherEvent
@@ -380,12 +399,16 @@ class VideoPagerFragment(
                             LikeClickEvent(videoData.id, currentItem)
                         }
                     } else {
-                        NoConnection.noConnectionSnackBarInfinite(view, requireActivity() as AppCompatActivity)
+                        NoConnection.noConnectionSnackBarInfinite(
+                            view,
+                            requireActivity() as AppCompatActivity
+                        )
                         NoFurtherEvent
                     }
                 }
+
                 BookmarkClick -> {
-                    if(isInternetConnected) {
+                    if (isInternetConnected) {
                         if (!isUserLoggedIn) {
                             sharedEventViewModel.launchLoginEvent(true)
                             NoFurtherEvent
@@ -396,10 +419,14 @@ class VideoPagerFragment(
                             BookmarkClickEvent(videoId = videoData.id, currentItem)
                         }
                     } else {
-                        NoConnection.noConnectionSnackBarInfinite(view, requireActivity() as AppCompatActivity)
+                        NoConnection.noConnectionSnackBarInfinite(
+                            view,
+                            requireActivity() as AppCompatActivity
+                        )
                         NoFurtherEvent
                     }
                 }
+
                 TrackInfoClick -> {
                     downloadTracker = DemoUtil.getDownloadTracker(requireActivity())
                     val renderersFactory = DemoUtil.buildRenderersFactory(requireActivity())
@@ -410,6 +437,7 @@ class VideoPagerFragment(
                     )
                     NoFurtherEvent
                 }
+
                 else -> NoFurtherEvent
 
             }
@@ -423,7 +451,7 @@ class VideoPagerFragment(
         lifecycleScope.launch {
             sharedEventViewModel.cacheUserStatus.filterNotNull().collectLatest {
                 isUserLoggedIn = it.first
-                Log.i("newDataUser","User logged in status ${it.first}")
+                Log.i("newDataUser", "User logged in status ${it.first}")
             }
         }
 
@@ -459,11 +487,10 @@ class VideoPagerFragment(
     private fun progressBarValue(position: Long, player: ExoPlayer): Int {
         val PROGRESS_BAR_MAX = 100
         val duration = player.duration
-        val value = if (duration == C.TIME_UNSET || duration == 0L) 0 else (position * PROGRESS_BAR_MAX / duration)
+        val value =
+            if (duration == C.TIME_UNSET || duration == 0L) 0 else (position * PROGRESS_BAR_MAX / duration)
         return value.toInt()
     }
-
-
 
 
     private val updateProgressAction = Runnable { updateProgress() }
@@ -480,6 +507,7 @@ class VideoPagerFragment(
         handler.postDelayed(updateProgressAction, 100)
 
     }
+
     @RequiresApi(Build.VERSION_CODES.S)
     private fun Fragment.vibratePhone() {
         val vib = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -496,10 +524,17 @@ class VideoPagerFragment(
 
     private val handler = Handler(Looper.myLooper()!!)
 
-     fun getNotificationData(videoId:String, previewUrl:String, videoUrl:String) {
-         isNotificationVideoCame = true
-         viewModel.processEvent(FromNotificationInsertVideoEvent(videoId = videoId, previewUrl = previewUrl, videoUrl = videoUrl, type = "GN"))
+    fun getNotificationData(videoId: String, previewUrl: String, videoUrl: String) {
+        isNotificationVideoCame = true
+        viewModel.processEvent(
+            FromNotificationInsertVideoEvent(
+                videoId = videoId,
+                previewUrl = previewUrl,
+                videoUrl = videoUrl,
+                type = "GN"
+            )
+        )
 //         viewModel.processEvent(InsertVideoEvent(videoId = videoId, previewUrl = previewUrl, videoUrl = videoUrl, type = "GN"))
 //         viewModel.processEvent(NotificationVideoPlayerSettleEvent( viewModel.playerView?.player?.currentMediaItemIndex ?:0, videoId))
-     }
+    }
 }
