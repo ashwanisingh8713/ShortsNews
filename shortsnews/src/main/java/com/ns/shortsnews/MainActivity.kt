@@ -88,10 +88,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         setContentView(binding.root)
         Log.i("lifecycle","Main activity OnCreate")
 
-        if (intent?.extras != null){
-            Log.i("intent_newLaunch","get intent data on Create Main activity" + intent.extras.toString())
-            getNotificationIntentExtras(intent)
-        }
+//        if (intent?.extras != null){
+//            Log.i("intent_newLaunch","get intent data on Create Main activity" + intent.extras.toString())
+//            getNotificationIntentExtras(intent)
+//        }
         standardBottomSheetBehavior =
             BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
 
@@ -175,23 +175,23 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-    @SuppressLint("MissingSuperCall")
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        Log.i("intent_newLaunch","newIntent MainActivity :: " + intent?.extras.toString())
-        if (intent?.extras != null){
-            getNotificationIntentExtras(intent)
-        }
-    }
+//    @SuppressLint("MissingSuperCall")
+//    override fun onNewIntent(intent: Intent?) {
+//        super.onNewIntent(intent)
+//        Log.i("intent_newLaunch","newIntent MainActivity :: " + intent?.extras.toString())
+//        if (intent?.extras != null){
+//            getNotificationIntentExtras(intent)
+//        }
+//    }
 
-    private fun getNotificationIntentExtras(intent: Intent?) {
-        val id =intent?.getStringExtra("videoId").toString()
-        val type =intent?.getStringExtra("type").toString()
-        val previewUrl =intent?.getStringExtra("preview_url").toString()
-        val video_url =intent?.getStringExtra("video_url").toString()
-        Log.i("intent_newLaunch","Main activity intent data :: id : $id type : $type preview:: $previewUrl  videoUrl:: $video_url")
-        notificationDataFromIntent(id,previewUrl,video_url)
-    }
+//    private fun getNotificationIntentExtras(intent: Intent?) {
+//        val id =intent?.getStringExtra("videoId").toString()
+//        val type =intent?.getStringExtra("type").toString()
+//        val previewUrl =intent?.getStringExtra("preview_url").toString()
+//        val video_url =intent?.getStringExtra("video_url").toString()
+//        Log.i("intent_newLaunch","Main activity intent data :: id : $id type : $type preview:: $previewUrl  videoUrl:: $video_url")
+////        notificationDataFromIntent(id,previewUrl,video_url)
+//    }
 
     // Notification permission launcher
     private fun askNotificationPermission(){
@@ -227,21 +227,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             AppPreference.isUserLoggedIn,
             AppPreference.userToken
         )
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.i("lifecycle","Main activity OnStop")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("lifecycle","Main activity OnDestroy")
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        Log.i("lifecycle"," Main activity OnDetach From Window")
     }
 
     override fun onPause() {
@@ -756,9 +741,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
 
 
-    private fun notificationDataFromIntent(videoId:String, previewUrl:String, mediaUri:String){
-        videoPagerFragment?.getNotificationData(videoId,previewUrl,mediaUri)
-    }
+//    private fun notificationDataFromIntent(videoId:String, previewUrl:String, mediaUri:String){
+//        videoPagerFragment?.getNotificationData(videoId,previewUrl,mediaUri)
+//    }
 
 
 }

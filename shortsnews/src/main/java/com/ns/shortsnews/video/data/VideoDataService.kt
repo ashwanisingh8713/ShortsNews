@@ -16,6 +16,9 @@ interface VideoDataService {
     @GET("videos")
     suspend fun getChannelVideos(@Query("channel") category: String): VideoDataResponse
 
+    @GET("notifications")
+    suspend fun getNotificationVideos(): VideoDataResponse
+
     @GET("my-bookmarks")
     suspend fun getBookmarkVideos(): VideoDataResponse
 

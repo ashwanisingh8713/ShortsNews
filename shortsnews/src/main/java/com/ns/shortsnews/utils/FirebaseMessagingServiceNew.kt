@@ -15,7 +15,10 @@ import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.ns.shortsnews.MainActivity
+import com.ns.shortsnews.PlainVideoActivity
 import com.ns.shortsnews.R
+import com.ns.shortsnews.data.model.VideoClikedItem
+import com.videopager.utils.CategoryConstants
 
 
 const val channelId = "notification_channel"
@@ -33,7 +36,6 @@ class FirebaseMessagingServiceNew : FirebaseMessagingService() {
             Log.d("intent_newLaunch", "Message data payload: ${remoteMessage.data}")
         }
         if (remoteMessage.notification != null) {
-//            remoteMessage.notification!!.title?.let {
             remoteMessage.notification!!.body?.let { it1 ->
                 Log.i("intent_newLaunch", "Received notification data ::  ${remoteMessage.data}")
                 generateNotification(
@@ -41,29 +43,25 @@ class FirebaseMessagingServiceNew : FirebaseMessagingService() {
                     remoteMessage.notification?.body.toString(), remoteMessage.data
                 )
             }
-//            }
         }
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
     fun generateNotification(title: String, body: String, notificationData: Map<String, String>) {
+        val videoId = notificationData[AppConstants.ID]!!
+        val type = notificationData[AppConstants.TYPE]!!
+        val previewUrl = notificationData[AppConstants.VIDEO_PREVIEW_URL]!!
+        val videoUrl = notificationData[AppConstants.VIDEO_URL]!!
+        Log.i("intent_newLaunch", " on generate notification id: $videoId type:$type previewUrl: $previewUrl videoUrl:$videoUrl")
 
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(applicationContext, PlainVideoActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        intent.putExtra("videoId", notificationData["id"])
-        intent.putExtra("type", notificationData["type"])
-        intent.putExtra("preview_url", notificationData["videoPreviewUrl"])
-        intent.putExtra("video_url", notificationData["video_url"])
-
-        Log.i(
-            "intent_newLaunch", "intent data is in firebase notification class:: id ::" +
-                    " ${
-                        intent.getStringExtra("videoId") + "preview :: ${
-                            intent.getStringExtra("videoPreviewUrl")
-                                    + "video ${intent.getStringExtra("video_url")}"
-                        }"
-                    }"
-        )
+        intent.putExtra(AppConstants.ID, videoId)
+        intent.putExtra(AppConstants.TYPE, type)
+        intent.putExtra(AppConstants.VIDEO_PREVIEW_URL, previewUrl)
+        intent.putExtra(AppConstants.VIDEO_URL, videoUrl)
+        intent.putExtra(PlainVideoActivity.KEY_VIDEO_CLICKED_ITEM,VideoClikedItem("",
+            0, CategoryConstants.NOTIFICATION_VIDEO_DATA))
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             this,
             0,

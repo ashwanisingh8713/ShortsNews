@@ -127,7 +127,7 @@ internal class VideoPagerViewModel(
             if (page == 1) {
                 delay(1000)
             }
-            if(videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA) {
+            if(videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA || videoFrom == CategoryConstants.NOTIFICATION_VIDEO_DATA) {
                 states.value.page = selectedPlay
             }
 

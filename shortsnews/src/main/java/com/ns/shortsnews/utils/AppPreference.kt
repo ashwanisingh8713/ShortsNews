@@ -31,6 +31,9 @@ object AppPreference {
     private const val MAIN_ACTIVITY_LAUNCHED = "main_activity_launched"
     private const val NOTIFICATION_TOKEN = "notification_token"
     private const val VIDEO_CATEGORIES = "video_category"
+    private const val NOTIFICATION_VIDEO_ID = "video_id"
+    private const val NOTIFICATION_VIDEO_URL = "video_url"
+    private const val NOTIFICATION_VIDEO_PREVIEW = "video_preview"
 
 
     fun init(context: Context) {
@@ -57,6 +60,26 @@ object AppPreference {
         this.putBoolean(IS_PROFILE_UPDATED, value)
         this.apply()
     }
+
+    var notificationVideoId:String?
+        get() = preference.getString(NOTIFICATION_VIDEO_ID, EMPTY_STRING)
+        set(value) = preference.edit{
+            this.putString(NOTIFICATION_VIDEO_ID, value)
+            this.apply()
+        }
+    var notificationVideoPreview:String?
+        get() = preference.getString(NOTIFICATION_VIDEO_PREVIEW, EMPTY_STRING)
+        set(value) = preference.edit{
+            this.putString(NOTIFICATION_VIDEO_PREVIEW, value)
+            this.apply()
+        }
+
+    var notificationVideoUrl:String?
+        get() = preference.getString(NOTIFICATION_VIDEO_URL, EMPTY_STRING)
+        set(value) = preference.edit{
+            this.putString(NOTIFICATION_VIDEO_URL, value)
+            this.apply()
+        }
 
     //Function for getting and setting profile image
     var userProfilePic: String?

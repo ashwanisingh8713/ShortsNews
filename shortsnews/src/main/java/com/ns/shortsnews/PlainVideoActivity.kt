@@ -1,8 +1,11 @@
 package com.ns.shortsnews
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -26,13 +29,19 @@ import com.ns.shortsnews.ui.viewmodel.LanguageViewModel
 import com.ns.shortsnews.ui.viewmodel.LanguageViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
+import com.videopager.ui.VideoPagerFragment
 import com.videopager.utils.CategoryConstants
 import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 
 class PlainVideoActivity : AppCompatActivity() {
@@ -41,7 +50,13 @@ class PlainVideoActivity : AppCompatActivity() {
     private var languageListDB = emptyList<LanguageTable>()
     private val languageDao = ShortsDatabase.instance!!.languageDao()
     private val languageItemRepository = LanguageRepository(languageDao)
-    private val languageViewModel: LanguageViewModel by viewModels { LanguageViewModelFactory(languageItemRepository) }
+    private val languageViewModel: LanguageViewModel by viewModels {
+        LanguageViewModelFactory(
+            languageItemRepository
+        )
+    }
+    private var videoPagerFragment: VideoPagerFragment? = null
+
 
     companion object {
         const val KEY_VIDEO_CLICKED_ITEM = "videoClickedItem"
@@ -49,9 +64,12 @@ class PlainVideoActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i("intent_newLaunch", "newIntent PlainVideo onCreate before intent receive :: ")
 
-        val videoClickedItem  = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
+        val videoClickedItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(KEY_VIDEO_CLICKED_ITEM, VideoClikedItem::class.java)!!
+
         } else {
             intent.getParcelableExtra<VideoClikedItem>(KEY_VIDEO_CLICKED_ITEM)!!
         }
@@ -68,23 +86,37 @@ class PlainVideoActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         getSelectedLanguagesValues(videoClickedItem)
         registerVideoCache()
+        if (intent.getStringExtra(AppConstants.ID) != null) {
+            Timer().schedule(500) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    notificationDataFromIntent(
+                        intent.getStringExtra(AppConstants.ID).toString(),
+                        intent.getStringExtra(AppConstants.VIDEO_PREVIEW_URL).toString(),
+                        intent.getStringExtra(AppConstants.VIDEO_URL).toString()
+                    )
+                }
+            }
+        }
     }
-
-
 
     /**
      * Loads Home Fragment
      */
-    private fun loadVideoFragment(it: VideoClikedItem, languages:String) {
-        val fragment = AppConstants.makeVideoPagerInstance(requiredId = it.requiredId,
-            videoFrom = it.videoFrom, this@PlainVideoActivity, languages, selectedPlay = it.selectedPosition)
+    private fun loadVideoFragment(it: VideoClikedItem, languages: String) {
+        videoPagerFragment = AppConstants.makeVideoPagerInstance(
+            requiredId = it.requiredId,
+            videoFrom = it.videoFrom,
+            this@PlainVideoActivity,
+            languages,
+            selectedPlay = it.selectedPosition
+        )
         val bundle = Bundle()
         bundle.putInt(CategoryConstants.KEY_SelectedPlay, it.selectedPosition)
         bundle.putBoolean("logged_in", AppPreference.isUserLoggedIn)
-        bundle.putString("directFrom","PlainActivity")
-        fragment.arguments = bundle
+        bundle.putString("directFrom", "PlainActivity")
+        videoPagerFragment!!.arguments = bundle
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.fragment_container, fragment)
+        ft.replace(R.id.fragment_container, videoPagerFragment!!)
         ft.commit()
     }
 
@@ -95,9 +127,9 @@ class PlainVideoActivity : AppCompatActivity() {
             sharedEventViewModel.cacheVideoUrl.filterNotNull().collectLatest {
                 val url = it.first
                 val id = it.second
-                var videoUrls = Array(1){url}
-                var videoIds = Array(1){id}
-                VideoPreloadCoroutine.schedulePreloadWork(videoUrls=videoUrls, ids=videoIds)
+                var videoUrls = Array(1) { url }
+                var videoIds = Array(1) { id }
+                VideoPreloadCoroutine.schedulePreloadWork(videoUrls = videoUrls, ids = videoIds)
             }
         }
 
@@ -105,9 +137,9 @@ class PlainVideoActivity : AppCompatActivity() {
             sharedEventViewModel.cacheVideoUrl_2.filterNotNull().collectLatest {
                 val url = it.first
                 val id = it.second
-                var videoUrls = Array(1){url}
-                var videoIds = Array(1){id}
-                VideoPreloadCoroutine.schedulePreloadWork(videoUrls=videoUrls, ids=videoIds)
+                var videoUrls = Array(1) { url }
+                var videoIds = Array(1) { id }
+                VideoPreloadCoroutine.schedulePreloadWork(videoUrls = videoUrls, ids = videoIds)
             }
         }
     }
@@ -128,20 +160,50 @@ class PlainVideoActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingSuperCall")
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.extras != null) {
+            val videoId = intent.getStringExtra(AppConstants.ID)!!
+            val previewUrl = intent.getStringExtra(AppConstants.VIDEO_PREVIEW_URL)!!
+            val videoUrl = intent.getStringExtra(AppConstants.VIDEO_URL)!!
+            Log.i("intent_newLaunch", "$videoId$previewUrl$videoUrl")
+
+            Timer().schedule(500) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    getNotificationIntentExtras(videoId, previewUrl, videoUrl)
+                }
+            }
+
+
+        } else {
+            Log.i("intent_newLaunch", "newIntent PlainVideo activity extras is null :: ")
+        }
+    }
+
     private fun getSelectedLanguagesValues(videoClikedItem: VideoClikedItem) {
         var languageString = ""
         lifecycleScope.launch {
-            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
-                for (data in it){
-                    if (data.selected){
-                        languageString = languageString + data.id +","
+            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }
+                .collectLatest {
+                    for (data in it) {
+                        if (data.selected) {
+                            languageString = languageString + data.id + ","
+                        }
                     }
+                    Log.i("language", languageString)
+                    loadVideoFragment(videoClikedItem, languageString)
                 }
-                Log.i("language",languageString)
-                loadVideoFragment(videoClikedItem, languageString)
-            }
         }
+    }
 
+    private fun getNotificationIntentExtras(videoId: String, previewUrl: String, videoUrl: String) {
+        Log.i("intent_newLaunch", "in plaint video activity  getNotification${videoId}")
+        notificationDataFromIntent(videoId, previewUrl, videoUrl)
+    }
+
+    private fun notificationDataFromIntent(videoId: String, previewUrl: String, mediaUri: String) {
+        videoPagerFragment?.getNotificationData(videoId, previewUrl, mediaUri)
     }
 
 

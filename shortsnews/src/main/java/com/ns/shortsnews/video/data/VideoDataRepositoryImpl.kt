@@ -27,6 +27,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             val response = when (videoFrom) {
                 CategoryConstants.CHANNEL_VIDEO_DATA -> videoDataApiService.getChannelVideos(id)
                 CategoryConstants.BOOKMARK_VIDEO_DATA -> videoDataApiService.getBookmarkVideos()
+                CategoryConstants.NOTIFICATION_VIDEO_DATA -> videoDataApiService.getNotificationVideos()
                 CategoryConstants.DEFAULT_VIDEO_DATA -> {
                     Log.i("language",languages.toString())
                     videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
@@ -198,9 +199,4 @@ class VideoDataRepositoryImpl : VideoDataRepository {
             Log.i("kamels", "$ec")
         }
     }
-
-
-
-
-
 }

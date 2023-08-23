@@ -35,6 +35,14 @@ class AppConstants {
         const val FROM_EDIT_PROFILE = "from_edit_profile"
         const val FROM_PROFILE = "from_profile"
 
+        // PendingIntent
+
+        const val ID = "id"
+        const val TYPE = "type"
+        const val VIDEO_PREVIEW_URL = "videoPreviewUrl"
+        const val VIDEO_URL = "video_url"
+
+
 
         fun makeVideoPagerInstance(requiredId: String, videoFrom: String, context: Context, languages:String, selectedPlay:Int = 0): VideoPagerFragment {
             val appPlayerView =  ExoAppPlayerViewFactory().create(context)
