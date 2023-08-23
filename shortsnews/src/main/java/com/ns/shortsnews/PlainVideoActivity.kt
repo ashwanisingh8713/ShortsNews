@@ -87,7 +87,7 @@ class PlainVideoActivity : AppCompatActivity() {
         getSelectedLanguagesValues(videoClickedItem)
         registerVideoCache()
         if (intent.getStringExtra(AppConstants.ID) != null) {
-            Timer().schedule(500) {
+            Timer().schedule(1000) {
                 CoroutineScope(Dispatchers.Main).launch {
                     notificationDataFromIntent(
                         intent.getStringExtra(AppConstants.ID).toString(),
@@ -169,7 +169,7 @@ class PlainVideoActivity : AppCompatActivity() {
             val videoUrl = intent.getStringExtra(AppConstants.VIDEO_URL)!!
             Log.i("intent_newLaunch", "$videoId$previewUrl$videoUrl")
 
-            Timer().schedule(500) {
+            Timer().schedule(1000) {
                 CoroutineScope(Dispatchers.Main).launch {
                     getNotificationIntentExtras(videoId, previewUrl, videoUrl)
                 }
