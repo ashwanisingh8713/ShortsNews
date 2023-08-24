@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
+import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -54,7 +55,7 @@ class FirebaseMessagingServiceNew : FirebaseMessagingService() {
         val videoUrl = notificationData[AppConstants.VIDEO_URL]!!
         Log.i("intent_newLaunch", " on generate notification id: $videoId type:$type previewUrl: $previewUrl videoUrl:$videoUrl")
 
-        val intent = Intent(applicationContext, PlainVideoActivity::class.java)
+        val intent = Intent(this, PlainVideoActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         intent.putExtra(AppConstants.ID, videoId)
         intent.putExtra(AppConstants.TYPE, type)
@@ -66,11 +67,11 @@ class FirebaseMessagingServiceNew : FirebaseMessagingService() {
             this,
             0,
             intent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT else PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        var builder: androidx.core.app.NotificationCompat.Builder =
-            androidx.core.app.NotificationCompat.Builder(applicationContext, channelId)
+        var builder: NotificationCompat.Builder =
+            NotificationCompat.Builder(applicationContext, channelId)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(title)

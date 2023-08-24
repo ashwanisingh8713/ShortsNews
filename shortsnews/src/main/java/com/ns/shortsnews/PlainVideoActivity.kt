@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import org.koin.androidx.scope.activityScope
 import java.util.Timer
 import kotlin.concurrent.schedule
 
@@ -174,8 +175,6 @@ class PlainVideoActivity : AppCompatActivity() {
                     getNotificationIntentExtras(videoId, previewUrl, videoUrl)
                 }
             }
-
-
         } else {
             Log.i("intent_newLaunch", "newIntent PlainVideo activity extras is null :: ")
         }

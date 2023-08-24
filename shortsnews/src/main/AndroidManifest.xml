@@ -66,13 +66,13 @@
             android:name=".MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:persistent="true"
             android:theme="@style/Theme.News"
             android:windowSoftInputMode="adjustPan">
 
         </activity>
         <activity
             android:name=".PlainVideoActivity"
+            android:parentActivityName=".MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.News"
@@ -102,10 +102,10 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_launcher" />
+            android:resource="@drawable/notification_trans" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/white" />
+            android:resource="@color/colorPrimary" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
