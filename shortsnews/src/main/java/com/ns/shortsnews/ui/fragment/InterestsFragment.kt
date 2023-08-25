@@ -146,35 +146,54 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             mChip.iconStartPadding = 6F
             mChip.isChipIconVisible = true
             mChip.chipStrokeWidth = 4F
+            mChip.checkedIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
             binding.choiceChipGroup.isSingleSelection = false
             binding.choiceChipGroup.isClickable = true
             binding.choiceChipGroup.addView(mChip)
             if (chipData.selected) {
                 mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
-                mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                mChip.chipBackgroundColor =
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                mChip.setChipBackgroundColorResource(R.color.white)
                 mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                 mChip.isChecked = true
                 selectedNumbers++
             } else {
-                mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), com.videopager.R.color.black))
+                mChip.chipBackgroundColor = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        com.videopager.R.color.black
+                    )
+                )
                 mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
                 mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                 mChip.isChecked = false
                 mChip.chipStrokeWidth = 4F
-                mChip.chipStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                mChip.chipStrokeColor =
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
             }
 
             mChip.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
-                    mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                    mChip.chipBackgroundColor = ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                     selectedNumbers++
-//                    interestsViewModel.update(chipData.id, chipData.name, true, "")
                     updateSelectedItem(chipData.id, chipData.name, true, "")
 
                 } else {
-                    mChip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), com.videopager.R.color.black))
+                    mChip.chipBackgroundColor = ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            com.videopager.R.color.black
+                        )
+                    )
                     mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                     mChip.chipStrokeWidth = 4F
@@ -185,12 +204,10 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                         )
                     )
                     selectedNumbers--
-//                    interestsViewModel.update(chipData.id, chipData.name, false, "")
                     updateSelectedItem(chipData.id, chipData.name, false, "")
                 }
             }
         }
-//        updateSelectedItems()
     }
 
     @SuppressLint("SetTextI18n")

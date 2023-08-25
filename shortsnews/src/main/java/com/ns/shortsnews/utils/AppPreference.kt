@@ -34,6 +34,7 @@ object AppPreference {
     private const val NOTIFICATION_VIDEO_ID = "video_id"
     private const val NOTIFICATION_VIDEO_URL = "video_url"
     private const val NOTIFICATION_VIDEO_PREVIEW = "video_preview"
+    private const val IS_REFRESS_REQUIRED = "is_refresh_required"
 
 
     fun init(context: Context) {
@@ -135,6 +136,13 @@ object AppPreference {
         this.putString(LANGUAGES_SELECTED, value)
         this.apply()
     }
+
+    var isRefreshRequired:Boolean
+        get() = preference.getBoolean(IS_REFRESS_REQUIRED, false)
+        set(value) = preference.edit {
+            this.putBoolean(IS_REFRESS_REQUIRED, value)
+            this.apply()
+        }
 
     var categoryListStr:String?
         get() = preference.getString(VIDEO_CATEGORIES, EMPTY_STRING)

@@ -77,6 +77,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)
+        Log.i("language","$AppPreference.selectedLanguages!!")
+        selectedLanguages = AppPreference.selectedLanguages!!
         if (NetworkXProvider.isInternetConnected) {
             userViewModel.requestLanguagesApi()
         } else {
@@ -102,7 +104,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
 
         viewLifecycleOwner.lifecycleScope.launch() {
             userViewModel.LanguagesSuccessState.filterNotNull().collectLatest {
-                Log.i("kamlesh", "OTPFragment onSuccess ::: $it")
+                Log.i("kamlesh", "Language onSuccess ::: $it")
                 it.let {
                     binding.progressBarLanguages.visibility = View.GONE
                     if (it.isNotEmpty()) {
@@ -151,17 +153,24 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             }.collectLatest {
                 // Save category data in preference
                 AppPreference.saveCategoriesToPreference(categoryList = it.videoCategories)
+                Log.i("kamlesh", "Language category onSuccess ::: $it")
+
                 AppPreference.init(requireActivity())
-                val bundle = Bundle()
-                bundle.putString("name", /*it.name*/"")
-                userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
+                if (from == AppConstants.FROM_EDIT_PROFILE){
+                    activity?.finish()
+                } else {
+                    val bundle = Bundle()
+                    bundle.putString("name", /*it.name*/"")
+                    userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
+                }
+
             }
         }
 
 
         binding.submitButtonConst.setOnClickListener {
             if (selectedNumbers > 0) {
-                if (from == AppConstants.FROM_PROFILE) {
+                if (from == AppConstants.FROM_EDIT_PROFILE) {
                     if (selectedItemList.isNotEmpty()) {
                         for (item in selectedItemList) {
                             languageViewModel.update(
@@ -174,11 +183,16 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                         }
                         AppPreference.isLanguageSelected = true
                         AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
+                        AppPreference.isRefreshRequired = true
                         videoCategoryViewModel.loadVideoCategory(selectedLanguages)
+
                     }
 
                 } else {
                     if (selectedItemList.isNotEmpty()) {
+                        AppPreference.isLanguageSelected = true
+                        AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
+                        AppPreference.isRefreshRequired = false
                         for (item in selectedItemList) {
                             languageViewModel.update(
                                 item.id,
@@ -188,7 +202,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                                 ""
                             )
                         }
-                        activity?.finish()
+                        videoCategoryViewModel.loadVideoCategory(selectedLanguages)
                     }
                 }
             } else {
@@ -220,7 +234,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                 mChip.setChipBackgroundColorResource(R.color.white)
                 mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-//                languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
                 mChip.isChecked = true
                 selectedNumbers++
             } else {
@@ -236,7 +249,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 mChip.chipStrokeWidth = 4F
                 mChip.chipStrokeColor =
                     ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-//                languageViewModel.update(chipData.id, chipData.name,chipData.slug ,false,"")
             }
 
             mChip.setOnCheckedChangeListener { _, isChecked ->
@@ -248,8 +260,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                             R.color.white
                         )
                     )
+
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-//                    languageViewModel.update(chipData.id, chipData.name, chipData.slug,true, "")
                     updateSelectedItem(chipData.id, chipData.name, chipData.slug, true, "")
                     createSelectedLanguagesValue(chipData.id)
                     selectedNumbers++
@@ -269,7 +281,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                             R.color.white
                         )
                     )
-//                    languageViewModel.update(chipData.id, chipData.name,chipData.slug ,false,"")
                     updateSelectedItem(chipData.id, chipData.name, chipData.slug, false, "")
                     createSelectedLanguagesValue(chipData.id)
                     selectedNumbers--
@@ -326,6 +337,11 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
 
     private fun createSelectedLanguagesValue(id: String) {
         val tempValue = "$id,"
+        if (selectedLanguages.isNotEmpty()) {
+            if (selectedLanguages.last() != ',') {
+               selectedLanguages = selectedLanguages + ","
+            }
+        }
         var modifiedString = ""
         if (selectedLanguages.contains(tempValue)) {
             modifiedString = selectedLanguages.replace(tempValue, "")

@@ -68,17 +68,18 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-    private val channelInfoViewModel:ChannelInfoViewModel by viewModels {
+    private val channelInfoViewModel: ChannelInfoViewModel by viewModels {
         ChannelInfoViewModelFactory().apply {
             inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
         }
     }
-    private val followUnfollowViewModel:FollowUnfollowViewModel by viewModels {FollowUnfollowViewModelFactory().apply {
-        inject(FollowUnfollowUseCase(UserDataRepositoryImpl(get())))
-    }  }
+    private val followUnfollowViewModel: FollowUnfollowViewModel by viewModels {
+        FollowUnfollowViewModelFactory().apply {
+            inject(FollowUnfollowUseCase(UserDataRepositoryImpl(get())))
+        }
+    }
 
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
-    private var languageStringParams =""
     private var bottomSheetRecyclerAdapter: GridAdapter? = null
 
     @SuppressLint("ClickableViewAccessibility")
@@ -86,19 +87,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Log.i("lifecycle","Main activity OnCreate")
-
-//        if (intent?.extras != null){
-//            Log.i("intent_newLaunch","get intent data on Create Main activity" + intent.extras.toString())
-//            getNotificationIntentExtras(intent)
-//        }
+        AppPreference.init(this@MainActivity)
         standardBottomSheetBehavior =
             BottomSheetBehavior.from(binding.persistentBottomsheet.bottomSheet)
-
         standardBottomSheetBehavior.isDraggable = false
-
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         if (AppPreference.isUserLoggedIn) {
@@ -120,8 +113,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.profileIcon.setOnClickListener {
             launchProfileActivity()
         }
-
+        AppPreference.init(this@MainActivity)
         val videoCategories = AppPreference.categoryList
+        Log.i("kamlesh", "Language category onSuccess ::: $videoCategories")
+
 
         CoroutineScope(Dispatchers.IO).launch {
             delay(1000)
@@ -141,8 +136,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             )
             binding.recyclerView.adapter = categoryAdapter
             val defaultCate = videoCategories[0]
-            Log.i("lifecycle","OnCreate loadHomeFragment")
-            loadHomeFragment(defaultCate.id, languageStringParams)
+            Log.i("lifecycle", "OnCreate loadHomeFragment")
+            Log.i("language","$AppPreference.selectedLanguages!!")
+                    loadHomeFragment(defaultCate.id, AppPreference.selectedLanguages!!)
             hideTryAgainText()
         }
 
@@ -156,7 +152,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         launchLoginStateFlow()
         AppPreference.isMainActivityLaunched = true
     }
-    private fun listenFollowUnfollow(channelId:String) {
+
+    private fun listenFollowUnfollow(channelId: String) {
         followUnfollowViewModel.requestFollowUnfollowApi(channelId)
         lifecycleScope.launch {
             followUnfollowViewModel.FollowUnfollowSuccessState.filterNotNull().collectLatest {
@@ -174,30 +171,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
-
-//    @SuppressLint("MissingSuperCall")
-//    override fun onNewIntent(intent: Intent?) {
-//        super.onNewIntent(intent)
-//        Log.i("intent_newLaunch","newIntent MainActivity :: " + intent?.extras.toString())
-//        if (intent?.extras != null){
-//            getNotificationIntentExtras(intent)
-//        }
-//    }
-
-//    private fun getNotificationIntentExtras(intent: Intent?) {
-//        val id =intent?.getStringExtra("videoId").toString()
-//        val type =intent?.getStringExtra("type").toString()
-//        val previewUrl =intent?.getStringExtra("preview_url").toString()
-//        val video_url =intent?.getStringExtra("video_url").toString()
-//        Log.i("intent_newLaunch","Main activity intent data :: id : $id type : $type preview:: $previewUrl  videoUrl:: $video_url")
-////        notificationDataFromIntent(id,previewUrl,video_url)
-//    }
-
     // Notification permission launcher
-    private fun askNotificationPermission(){
+    private fun askNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this,android.Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
                 // FCM SDK (and your app) can post notifications.
             } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
                 // TODO: display an educational UI explaining to the user the features that will be enabled
@@ -208,7 +190,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 registerForActivityResult(
                     ActivityResultContracts.RequestPermission()
                 ) { isGranted ->
-                    if (isGranted){
+                    if (isGranted) {
                         // FCM SDK (and your app) can post notifications.
                     } else {
                         // TODO: Inform user that that your app will not show notifications.
@@ -221,7 +203,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
 
     private fun getSelectedLanguagesValuesOnClick(requiredId: String) {
-        Log.i("lifecycle","Main activity get selected language msg")
+        Log.i("lifecycle", "Main activity get selected language msg")
+        Log.i("language","$AppPreference.selectedLanguages!!")
         loadHomeFragment(requiredId, AppPreference.selectedLanguages!!)
         sharedEventViewModel.sendUserPreferenceData(
             AppPreference.isUserLoggedIn,
@@ -232,12 +215,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     override fun onPause() {
         super.onPause()
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        Log.i("lifecycle","Main activity onPause")
+        Log.i("lifecycle", "Main activity onPause")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.i("lifecycle","Main activity OnResume")
+        Log.i("lifecycle", "Main activity OnResume")
         sharedEventViewModel.sendUserPreferenceData(
             AppPreference.isUserLoggedIn,
             AppPreference.userToken
@@ -246,6 +229,14 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         if (AppPreference.isProfileUpdated) {
             binding.profileIcon.load(AppPreference.userProfilePic)
             AppPreference.isProfileUpdated = false
+        }
+        if (AppPreference.isRefreshRequired) {
+            AppPreference.isRefreshRequired = false
+            AppPreference.init(this@MainActivity)
+            finish();
+            overridePendingTransition(0, 0);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
         }
 
         // When Bottom Slider is opened and selected any video to play
@@ -286,8 +277,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     /**
      * Loads Home Fragment
      */
-    private fun loadHomeFragment(categoryType: String, languages:String) {
-        Log.i("lifecycle","Main activity Load Home fragment inside method")
+    private fun loadHomeFragment(categoryType: String, languages: String) {
+        Log.i("lifecycle", "Main activity Load Home fragment inside method")
         if (!supportFragmentManager.isStateSaved) {
             val ft = supportFragmentManager.beginTransaction()
             videoPagerFragment = AppConstants.makeVideoPagerInstance(
@@ -310,7 +301,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun launchLoginStateFlow() {
         lifecycleScope.launch {
             sharedEventViewModel.getLoginEventStatus.collectLatest {
-                Log.i("lifecycle","Main activity login flow called")
+                Log.i("lifecycle", "Main activity login flow called")
                 launchProfileActivity()
             }
         }
@@ -330,8 +321,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 )
                 binding.recyclerView.adapter = categoryAdapter
                 val defaultCate = it.videoCategories[0]
-                Log.i("lifecycle","Show category")
-                loadHomeFragment(defaultCate.id, languageStringParams)
+                Log.i("lifecycle", "Show category")
+                Log.i("language","$AppPreference.selectedLanguages!!")
+                loadHomeFragment(defaultCate.id, AppPreference.selectedLanguages!!)
                 hideTryAgainText()
             }
         }
@@ -353,8 +345,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.noNetworkParent.visibility = View.VISIBLE
         binding.tryAgain.visibility = View.VISIBLE
         binding.tryAgain.setOnClickListener {
-            if(NetworkXProvider.isInternetConnected) {
-                videoCategoryViewModel!!.loadVideoCategory(languageStringParams)
+            if (NetworkXProvider.isInternetConnected) {
+                Log.i("language","$AppPreference.selectedLanguages!!")
+                videoCategoryViewModel!!.loadVideoCategory(AppPreference.selectedLanguages!!)
                 showCategory()
                 if (AppPreference.userProfilePic == "") {
                     binding.profileIcon.setImageResource(R.drawable.profile_avatar)
@@ -366,7 +359,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             }
 
         }
-        if(!NetworkXProvider.isInternetConnected) {
+        if (!NetworkXProvider.isInternetConnected) {
             binding.tryAgain.visibility = View.VISIBLE
             binding.noNetworkImg.visibility = View.VISIBLE
             binding.tryAgain.text = getString(R.string.no_internet_category)
@@ -433,29 +426,30 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     }
 
                     BottomSheetBehavior.STATE_COLLAPSED -> {
-                        Log.i("BottomSlider","STATE_COLLAPSED")
+                        Log.i("BottomSlider", "STATE_COLLAPSED")
                         sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_COLLAPSED)
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
                             resources.getDrawable(R.drawable.slide_up_arrow_icon, null)
                         )
                     }
+
                     BottomSheetBehavior.STATE_DRAGGING -> {
-                        Log.i("BottomSlider","STATE_DRAGGING")
+                        Log.i("BottomSlider", "STATE_DRAGGING")
                         standardBottomSheetBehavior.setState(
                             BottomSheetBehavior.STATE_COLLAPSED
                         )
                     }
 
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> {
-                        Log.i("BottomSlider","STATE_HALF_EXPANDED")
+                        Log.i("BottomSlider", "STATE_HALF_EXPANDED")
                     }
 
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        Log.i("BottomSlider","STATE_HIDDEN")
+                        Log.i("BottomSlider", "STATE_HIDDEN")
                     }
 
                     BottomSheetBehavior.STATE_SETTLING -> {
-                        Log.i("BottomSlider","STATE_SETTLING")
+                        Log.i("BottomSlider", "STATE_SETTLING")
                     }
                 }
             }
@@ -464,7 +458,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         // Bottom Sheet Image Arrow CLick Listener to OPEN or CLOSE Drawer
         binding.persistentBottomsheet.imgDownArrow.setOnClickListener {
             if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                Log.i("BottomSlider","STATE_EXPANDED-2")
+                Log.i("BottomSlider", "STATE_EXPANDED-2")
                 standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
                 if (NetworkXProvider.isInternetConnected) {
@@ -510,10 +504,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
                 if (it.following) {
                     binding.persistentBottomsheet.following.text = getString(R.string.following)
-                    binding.persistentBottomsheet.followingExpanded.text = getString(R.string.following)
+                    binding.persistentBottomsheet.followingExpanded.text =
+                        getString(R.string.following)
                 } else {
                     binding.persistentBottomsheet.following.text = getString(R.string.follow)
-                    binding.persistentBottomsheet.followingExpanded.text =getString(R.string.follow)
+                    binding.persistentBottomsheet.followingExpanded.text =
+                        getString(R.string.follow)
                 }
 
                 val channelId = binding.persistentBottomsheet.following.tag
@@ -550,11 +546,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         lifecycleScope.launch {
             sharedEventViewModel.followResponse.filterNotNull().collectLatest {
                 if (it.following) {
-                    binding.persistentBottomsheet.following.text =getString(R.string.following)
-                    binding.persistentBottomsheet.followingExpanded.text = getString(R.string.following)
+                    binding.persistentBottomsheet.following.text = getString(R.string.following)
+                    binding.persistentBottomsheet.followingExpanded.text =
+                        getString(R.string.following)
                 } else {
                     binding.persistentBottomsheet.following.text = getString(R.string.follow)
-                    binding.persistentBottomsheet.followingExpanded.text = getString(R.string.follow)
+                    binding.persistentBottomsheet.followingExpanded.text =
+                        getString(R.string.follow)
                 }
 
             }
@@ -596,7 +594,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 channelId
             )
         )
-        bottomSheetRecyclerAdapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
+        bottomSheetRecyclerAdapter =
+            GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
 
         lifecycleScope.launch {
             videoDataViewModel.errorState.filterNotNull().collectLatest {
@@ -613,7 +612,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
                 it.let {
                     bottomSheetRecyclerAdapter?.updateVideoData(it.data)
-                    binding.persistentBottomsheet.channelRecyclerview.adapter = bottomSheetRecyclerAdapter
+                    binding.persistentBottomsheet.channelRecyclerview.adapter =
+                        bottomSheetRecyclerAdapter
                     standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             }
@@ -731,14 +731,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            Log.i("BottomSlider","STATE_EXPANDED-4")
+            Log.i("BottomSlider", "STATE_EXPANDED-4")
             standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             onBackPressedDispatcher.onBackPressed()
             this@MainActivity.finish()
         }
     }
-
 
 
 //    private fun notificationDataFromIntent(videoId:String, previewUrl:String, mediaUri:String){
