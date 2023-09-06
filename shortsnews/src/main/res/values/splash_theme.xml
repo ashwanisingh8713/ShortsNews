@@ -2,15 +2,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Splash Screen Theme. -->
     <style name="Theme.AppSplash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/black</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_splash</item>
+        <item name="windowSplashScreenBackground">@color/bolt_color</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_news</item>
         <item name="windowSplashScreenAnimationDuration">300</item>
         <item name="postSplashScreenTheme">@style/Theme.News</item>
-        <item name="android:windowBackground">@color/black</item>
+        <item name="android:windowBackground">@color/bolt_color</item>
 
         <!-- Status bar and Nav bar configs -->
-        <item name="android:statusBarColor" >@color/black</item>
-        <item name="android:navigationBarColor">@color/black</item>
+        <item name="android:statusBarColor" >@color/bolt_color</item>
+        <item name="android:navigationBarColor">@color/bolt_color</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

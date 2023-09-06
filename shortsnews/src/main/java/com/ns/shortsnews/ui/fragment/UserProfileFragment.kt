@@ -3,14 +3,16 @@ package com.ns.shortsnews.ui.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ns.shortsnews.R
-import com.ns.shortsnews.databinding.FragmentUserBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.databinding.FragmentUserBinding
 import com.ns.shortsnews.domain.usecase.user.UserProfileDataUseCase
 import com.ns.shortsnews.ui.viewmodel.UserProfileViewModel
 import com.ns.shortsnews.ui.viewmodel.UserProfileViewModelFactory
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
+
 
 class UserProfileFragment : Fragment(R.layout.fragment_user) {
     lateinit var binding:FragmentUserBinding
@@ -79,8 +82,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
             activity?.finish()
         }
         binding.logoutConLayout.setOnClickListener {
-            AppPreference.clear()
-            activity?.finish()
+           confirmDialog()
         }
     }
 
@@ -88,5 +90,21 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
         val intent = Intent(requireActivity(), com.ns.shortsnews.ui.activity.ContainerActivity::class.java)
         intent.putExtra("to",to)
         startActivity(intent)
+    }
+
+    private fun confirmDialog() {
+        val alertDialog = MaterialAlertDialogBuilder(requireActivity())
+        alertDialog.apply {
+            this.setTitle("Logout")
+            this.setMessage("Are you sure you want to logout?")
+            this.setPositiveButton("Logout") { dialog, _ ->
+                AppPreference.clear()
+                activity?.finish()
+            }
+            this.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            this.show()
+        }
     }
 }

@@ -42,7 +42,6 @@ import com.ns.shortsnews.ui.activity.LanguageContainer
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModel
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModelFactory
 import com.ns.shortsnews.utils.Alert
-import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
@@ -147,13 +146,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             }
         }
         binding.constLogout.setOnClickListener {
-            AppPreference.clear()
-            AppPreference.isProfileDeleted = true
-            lifecycleScope.launch {
-                ShortsDatabase.instance!!.languageDao().deleteLanguageData()
-                ShortsDatabase.instance!!.interestsDao().deleteInterestsData()
-                activity?.finish()
-            }
+           confirmLogoutDialog()
         }
 
         binding.profileImageEditIcon.setOnClickListener {
@@ -415,5 +408,27 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val inputManager =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    private fun confirmLogoutDialog() {
+
+        val alertDialog = MaterialAlertDialogBuilder(requireActivity())
+        alertDialog.apply {
+            this.setTitle("Logout")
+            this.setMessage("Are you sure you want to logout?")
+            this.setPositiveButton("Logout") { dialog, _ ->
+                AppPreference.clear()
+                AppPreference.isProfileDeleted = true
+                lifecycleScope.launch {
+                    ShortsDatabase.instance!!.languageDao().deleteLanguageData()
+                    ShortsDatabase.instance!!.interestsDao().deleteInterestsData()
+                    activity?.finish()
+                }
+            }
+            this.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            this.show()
+        }
     }
 }

@@ -232,17 +232,32 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
         if (AppPreference.isRefreshRequired) {
             AppPreference.isRefreshRequired = false
-            AppPreference.init(this@MainActivity)
-            finish();
-            overridePendingTransition(0, 0);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
+            AppPreference.init(this)
+            val videoCategories = AppPreference.categoryList
+            categoryAdapter.setData(videoCategories)
+            categoryAdapter = CategoryAdapter(
+                itemList = videoCategories,
+                itemListener = this@MainActivity
+            )
+            binding.recyclerView.adapter = categoryAdapter
+            val defaultCate = videoCategories[0]
+            loadHomeFragment(defaultCate.id, AppPreference.selectedLanguages!!)
+            hideTryAgainText()
         }
 
         // When Bottom Slider is opened and selected any video to play
         // then coming back it should collapse the slider and play the video
         // Playing video is happening using lifecycle
         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    private fun reloadActivity() {
+        AppPreference.isRefreshRequired = false
+        AppPreference.init(this@MainActivity)
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
 

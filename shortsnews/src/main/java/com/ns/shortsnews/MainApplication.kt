@@ -9,6 +9,9 @@ import coil.ImageLoaderFactory
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import com.ns.shortsnews.data.di.AppModule
 import com.ns.shortsnews.data.di.NetworkModule
 import com.ns.shortsnews.database.ShortsDatabase
@@ -24,7 +27,7 @@ import java.util.concurrent.Executors
 
 
 class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider {
-
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val cacheSize: Long = 1*1024 * 1024 * 1024 //1 Gb for cache
 
     init {
@@ -48,6 +51,7 @@ class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider 
         val context = applicationContext()
         NetworkXProvider.enable(SmartConfig(this, false, NetworkXLifecycle.Application))
         ShortsDatabase.getInstance(context)
+        firebaseAnalytics = Firebase.analytics
         AppPreference.init(context)
         startKoin {
             // declare used Android context

@@ -56,4 +56,8 @@ class CategoryAdapter(private var itemList: List<VideoCategory> = emptyList(), p
             }
         }
     }
+
+    fun setData(newCategoryData: List<VideoCategory>) {
+        itemList = newCategoryData
+    }
 }

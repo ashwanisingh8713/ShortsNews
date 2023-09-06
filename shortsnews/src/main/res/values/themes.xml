@@ -28,7 +28,7 @@
 
         <!-- Use windowSplashScreenAnimatedIcon to add either a drawable or an animated drawable.
         One of these is required.-->
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_news</item>
         <item name="windowSplashScreenAnimationDuration">1000</item>
 
         <!-- Set the theme of the Activity that directly follows your splash screen.-->

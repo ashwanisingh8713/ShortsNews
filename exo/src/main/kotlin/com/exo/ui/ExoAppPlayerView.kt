@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import com.exo.databinding.PlayerViewBinding
 import com.exo.players.ExoAppPlayer
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.player.players.AppPlayer
 import com.player.ui.AppPlayerView
@@ -20,7 +21,9 @@ class ExoAppPlayerView(layoutInflater: LayoutInflater) : AppPlayerView {
     }
 
     override fun attach(appPlayer: AppPlayer) {
+        binding.playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
         binding.playerView.player = (appPlayer as ExoAppPlayer).player
+
     }
 
     // ExoPlayer and PlayerView hold circular ref's to each other, so avoid leaking

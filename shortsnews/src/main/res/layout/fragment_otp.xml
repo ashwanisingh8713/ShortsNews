@@ -11,13 +11,13 @@
         android:id="@+id/app_logo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/news_logo"
-        android:scaleType="centerCrop"
-        android:padding="@dimen/_20sdp"
+        android:src="@drawable/app_logo"
+        android:scaleType="centerInside"
         android:adjustViewBounds="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
        />
 
     <TextView

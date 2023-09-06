@@ -72,7 +72,7 @@ class FirebaseMessagingServiceNew : FirebaseMessagingService() {
 
         var builder: NotificationCompat.Builder =
             NotificationCompat.Builder(applicationContext, channelId)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.ic_new_notification)
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(title)
                 .setContentText(body)
