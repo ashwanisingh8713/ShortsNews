@@ -1,17 +1,23 @@
 package com.ns.shortsnews
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
+import android.view.Window
 import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -81,6 +87,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     private var bottomSheetRecyclerAdapter: GridAdapter? = null
+    private var channelDescription = ""
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -148,9 +155,16 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         bottomSheetGetInfoListener()
         bottomSheetFollowingClick()
         registerVideoCache()
+        bottomSheetDescClick()
         askNotificationPermission()
         launchLoginStateFlow()
         AppPreference.isMainActivityLaunched = true
+    }
+
+    private fun bottomSheetDescClick() {
+        binding.persistentBottomsheet.channelDes.setOnClickListener {
+            showDialog(channelDescription)
+        }
     }
 
     private fun listenFollowUnfollow(channelId: String) {
@@ -582,6 +596,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             channelInfoViewModel.ChannelInfoSuccessState.filterNotNull().collectLatest {
                 binding.persistentBottomsheet.profileCount.text = it.data.follow_count
                 binding.persistentBottomsheet.channelDes.text = it.data.description
+                channelDescription = it.data.description
             }
         }
 
@@ -654,6 +669,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.persistentBottomsheet.bottomSheetHeader.alpha = 0.3f
     }
 
+
     // Bottom Sheet Following Click Listener
     private fun bottomSheetFollowingClick() {
 
@@ -669,6 +685,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
             }
         }
+
         binding.persistentBottomsheet.followingExpanded.setOnClickListener {
             if (NetworkXProvider.isInternetConnected) {
                 val channelId = binding.persistentBottomsheet.following.tag
@@ -758,6 +775,23 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 //    private fun notificationDataFromIntent(videoId:String, previewUrl:String, mediaUri:String){
 //        videoPagerFragment?.getNotificationData(videoId,previewUrl,mediaUri)
 //    }
+
+    private fun showDialog(title: String) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.description_alert_item)
+        val body = dialog.findViewById(R.id.alert_des) as TextView
+        body.text = title
+        val yesBtn = dialog.findViewById(R.id.location) as ImageView
+        yesBtn.setOnClickListener {
+            // delete data to DataStore
+            dialog.dismiss()
+        }
+        dialog.show()
+
+    }
 
 
 }

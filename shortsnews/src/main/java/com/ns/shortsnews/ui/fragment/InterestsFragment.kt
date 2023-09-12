@@ -26,6 +26,7 @@ import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
@@ -57,7 +58,8 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         binding.backButtonUser.setOnClickListener {
             activity?.finish()
         }
-        binding.submitButtonPers.setOnClickListener {
+        binding.submitButtonConst.setOnClickListener {
+            getSelectedVideoInterstCategory(selectedItemList)
             if (selectedItemList.isNotEmpty()){
                 for (item in selectedItemList){
                     interestsViewModel.update(item.id, item.name, item.selected, "")
@@ -143,7 +145,6 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             mChip.text = chipData.name
             mChip.isCheckable = true
             mChip.isClickable = true
-            mChip.iconStartPadding = 6F
             mChip.isChipIconVisible = true
             mChip.chipStrokeWidth = 4F
             mChip.checkedIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
@@ -271,6 +272,24 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                 categoryViewModel.loadVideoCategory(languageString)
             }
         }
+    }
+
+    fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
+        val unselectedCategory = mutableListOf<VideoCategory>()
+        val selectedCategory = mutableListOf<VideoCategory>()
+
+        for (item in categoryList){
+            if (item.selected){
+                selectedCategory.add(item)
+            } else {
+                unselectedCategory.add(item)
+            }
+        }
+       val  finalList:List<VideoCategory> = selectedCategory+unselectedCategory
+        AppPreference.saveCategoriesToPreference(finalList)
+        AppPreference.init(requireActivity())
+        AppPreference.isRefreshRequired = true
+
     }
 
 }

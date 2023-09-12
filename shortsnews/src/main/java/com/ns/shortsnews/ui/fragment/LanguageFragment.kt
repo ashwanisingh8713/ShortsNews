@@ -220,7 +220,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             mChip.text = chipData.name
             mChip.isCheckable = true
             mChip.isClickable = true
-            mChip.iconStartPadding = 6F
             mChip.isChipIconVisible = true
             mChip.chipStrokeWidth = 4F
             mChip.checkedIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)

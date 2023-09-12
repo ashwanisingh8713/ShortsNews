@@ -1,11 +1,17 @@
 package com.ns.shortsnews.ui.fragment
 
+import android.app.Dialog
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.view.Window
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -44,6 +50,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     private var channelId = ""
     private var channelTitle = ""
     private var channelUrl = ""
+    private var channelDes = ""
     private val channelInfoViewModel: ChannelInfoViewModel by activityViewModels {
         ChannelInfoViewModelFactory().apply {
             inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
@@ -88,6 +95,9 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         binding.following.setOnClickListener {
             listenFollowUnfollow(channelId)
         }
+        binding.channelDes.setOnClickListener {
+            showDialog(channelDes)
+        }
     }
 
     override fun onDetach() {
@@ -119,6 +129,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
                 binding.channelDes.text = it.data.description
                 binding.profileCount.text = it.data.follow_count
                 binding.following.visibility = View.VISIBLE
+                channelDes = it.data.description
                 if (it.data.following){
                     binding.following.text = "Following"
                 } else {
@@ -202,5 +213,22 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             }
 
         }
+    }
+
+    private fun showDialog(title: String) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.description_alert_item)
+        val body = dialog.findViewById(R.id.alert_des) as TextView
+        body.text = title
+        val yesBtn = dialog.findViewById(R.id.location) as ImageView
+        yesBtn.setOnClickListener {
+            // delete data to DataStore
+            dialog.dismiss()
+        }
+        dialog.show()
+
     }
 }

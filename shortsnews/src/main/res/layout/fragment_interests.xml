@@ -98,25 +98,35 @@
         android:layout_marginBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/submit_button_pers"
+        app:layout_constraintBottom_toTopOf="@id/submit_button_const"
         tools:ignore="HardcodedText" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/submit_button_pers"
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/submit_button_const"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
+        android:background="@drawable/follow_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+    <TextView
+        android:id="@+id/submitButtonPers"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/button_height"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:gravity="center"
+        android:text="@string/save"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:textSize="@dimen/video_page_text_size_xxlarge"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="50dp"
-        android:layout_marginStart="@dimen/margin_start"
-        android:layout_marginEnd="@dimen/margin_end"
-        android:backgroundTint="@color/button_background"
-        android:text="@string/submit_btn_text"
-        android:textColor="@color/white"
-        android:textSize="@dimen/button_text_size"
-        android:textAllCaps="false"
-        android:fontFamily="@font/roboto_regular"
-        app:cornerRadius="@dimen/button_corner_radius"/>
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
