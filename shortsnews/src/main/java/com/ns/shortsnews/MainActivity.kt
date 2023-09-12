@@ -784,7 +784,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         dialog.setContentView(R.layout.description_alert_item)
         val body = dialog.findViewById(R.id.alert_des) as TextView
         body.text = title
-        val yesBtn = dialog.findViewById(R.id.location) as ImageView
+        val yesBtn = dialog.findViewById(R.id.const_close_button) as ConstraintLayout
         yesBtn.setOnClickListener {
             // delete data to DataStore
             dialog.dismiss()

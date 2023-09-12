@@ -13,6 +13,7 @@ import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
@@ -223,7 +224,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         dialog.setContentView(R.layout.description_alert_item)
         val body = dialog.findViewById(R.id.alert_des) as TextView
         body.text = title
-        val yesBtn = dialog.findViewById(R.id.location) as ImageView
+        val yesBtn = dialog.findViewById(R.id.const_close_button) as ConstraintLayout
         yesBtn.setOnClickListener {
             // delete data to DataStore
             dialog.dismiss()
