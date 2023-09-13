@@ -211,6 +211,11 @@ object AppPreference {
             val categoryJsonString = categoryListStr
             val myListType = object : TypeToken<List<VideoCategory>>() {}.type
             categoryList = gson.fromJson<List<VideoCategory>>(categoryJsonString,myListType) as MutableList<VideoCategory>
+        } else {
+            val gson = Gson()
+            val categoryJsonString = categoryListStr
+            val myListType = object : TypeToken<List<VideoCategory>>() {}.type
+            categoryList = gson.fromJson<List<VideoCategory>>(categoryJsonString,myListType) as MutableList<VideoCategory>
         }
 
         return categoryList

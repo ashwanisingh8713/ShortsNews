@@ -22,7 +22,7 @@
         android:id="@+id/no_bookmarks_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="You have no bookmarks"
+        android:text="No bookmark Found"
         android:textColor="@color/white"
         android:textSize="@dimen/video_page_text_size_xxlarge"
         app:layout_constraintStart_toStartOf="parent"

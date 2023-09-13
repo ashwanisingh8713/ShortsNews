@@ -56,13 +56,11 @@
         android:id="@+id/profile_image_edit_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src="@drawable/profile_edit_icon"
-        app:layout_constraintStart_toStartOf="@id/profile_image_view_card"
+        android:src="@drawable/camera"
         app:layout_constraintEnd_toEndOf="@id/profile_image_view_card"
-        app:layout_constraintTop_toTopOf="@id/profile_image_view_card"
         app:layout_constraintBottom_toBottomOf="@id/profile_image_view_card"
+        android:layout_marginBottom="16dp"
         android:foregroundGravity="top"
-        android:padding="2dp"
         android:elevation="10dp"/>
 
     <EditText

@@ -23,6 +23,8 @@ import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppPreference
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -286,9 +288,15 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             }
         }
        val  finalList:List<VideoCategory> = selectedCategory+unselectedCategory
-        AppPreference.saveCategoriesToPreference(finalList)
-        AppPreference.init(requireActivity())
-        AppPreference.isRefreshRequired = true
+        CoroutineScope(Dispatchers.IO).launch {
+            AppPreference.saveCategoriesToPreference(finalList)
+            AppPreference.init(requireActivity())
+            AppPreference.isRefreshRequired = true
+            AppPreference.init(requireActivity())
+            Log.i("cat",AppPreference.categoryList.toString())
+
+        }
+
 
     }
 

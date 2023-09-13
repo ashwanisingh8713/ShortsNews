@@ -2,11 +2,16 @@ package com.videopager.ui.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.videopager.R
@@ -47,6 +52,17 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        }
+
+      binding.msgEditText.doAfterTextChanged {
+          if (it != null) {
+              if (it.isNotEmpty()){
+                 binding.noCommentText.visibility = View.GONE
+              } else {
+                  binding.noCommentText.visibility = View.VISIBLE
+              }
+          }
+
         }
     }
 
@@ -96,4 +112,11 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
     override fun getTheme(): Int {
         return R.style.AppBottomSheetDialogTheme
     }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        binding.msgEditText.text.clear()
+    }
+
+
 }

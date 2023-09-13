@@ -40,6 +40,7 @@
             android:id="@+id/msg_edit_text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:minHeight="48dp"
             android:layout_marginStart="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/send_image"

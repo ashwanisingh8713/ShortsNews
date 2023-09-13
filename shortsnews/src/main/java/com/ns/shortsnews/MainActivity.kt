@@ -246,7 +246,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
         if (AppPreference.isRefreshRequired) {
             AppPreference.isRefreshRequired = false
-            AppPreference.init(this)
+            AppPreference.init(this@MainActivity)
             val videoCategories = AppPreference.categoryList
             categoryAdapter.setData(videoCategories)
             categoryAdapter = CategoryAdapter(
@@ -263,15 +263,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         // then coming back it should collapse the slider and play the video
         // Playing video is happening using lifecycle
         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-    }
-
-    private fun reloadActivity() {
-        AppPreference.isRefreshRequired = false
-        AppPreference.init(this@MainActivity)
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
     }
 
 
