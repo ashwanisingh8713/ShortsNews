@@ -26,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnected
 import com.videopager.R
+import com.videopager.data.CommentData
 import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
@@ -67,6 +68,7 @@ class VideoPagerFragment(
             redirectFrom = arguments?.getString("directFrom")
         }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -186,6 +188,7 @@ class VideoPagerFragment(
                     }
 
                     is GetVideoInfoEffect -> {
+                        Log.i("kamlesh", "Video info data ${effect.videoInfo}")
                         if (effect.videoInfo.id.isNotEmpty()) {
                             pagerAdapter.getInfoRefreshUI(effect.position)
                         }
@@ -198,7 +201,10 @@ class VideoPagerFragment(
 
                     is PostCommentEffect -> {
                         pagerAdapter.getInfoRefreshUI(effect.position)
-                        commentFragment.updateCommentAdapter(effect.data)
+//                        commentFragment.updateCommentAdapter(effect.data)
+                        val currentItem = binding.viewPager.currentItem
+                        val videoData = pagerAdapter.getVideoData(currentItem)
+                        viewModel.processEvent(CommentClickEvent(videoData.id, currentItem))
                     }
 
                     is YoutubeUriErrorEffect -> {

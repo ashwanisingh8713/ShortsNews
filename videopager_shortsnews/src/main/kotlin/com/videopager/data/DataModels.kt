@@ -56,7 +56,7 @@ data class VideoInfoData(
     val channel_image:String = "",
     val channelTitle:String = "",
     val follow_count:String = "",
-    val description:String = ""
+    val description:String? = null
 )
 @JsonClass(generateAdapter = true)
 data class Following(

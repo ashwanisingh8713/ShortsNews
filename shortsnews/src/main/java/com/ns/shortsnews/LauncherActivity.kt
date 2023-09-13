@@ -19,18 +19,18 @@ class LauncherActivity : AppCompatActivity() {
             launchProfileActivity()
         } else {
             if (AppPreference.isLanguageSelected) {
-                if (intent?.extras != null){
-                    Log.i("intent_newLaunch","Launcher activity extras is there ")
-                    val videoId = intent.getStringExtra(AppConstants.ID)!!
-                    val type = intent.getStringExtra(AppConstants.TYPE)!!
-                    val previewUrl = intent.getStringExtra(AppConstants.VIDEO_PREVIEW_URL)!!
-                    val videoUrl = intent.getStringExtra(AppConstants.VIDEO_URL)!!
-                    Log.i("intent_newLaunch","Launcher activity extras is $videoId$videoUrl$previewUrl ")
-
-                    launchMainActivityWithExtras( videoId, type, previewUrl, videoUrl)
-                } else {
+//                if (intent?.extras != null){
+//                    Log.i("intent_newLaunch","Launcher activity extras is there ")
+//                    val videoId = intent.getStringExtra(AppConstants.ID)!!
+//                    val type = intent.getStringExtra(AppConstants.TYPE)!!
+//                    val previewUrl = intent.getStringExtra(AppConstants.VIDEO_PREVIEW_URL)!!
+//                    val videoUrl = intent.getStringExtra(AppConstants.VIDEO_URL)!!
+//                    Log.i("intent_newLaunch","Launcher activity extras is $videoId$videoUrl$previewUrl ")
+//
+//                    launchMainActivityWithExtras( videoId, type, previewUrl, videoUrl)
+//                } else {
                    launchMainActivity()
-                }
+//                }
             } else {
                 launchProfileActivity()
             }

@@ -10,35 +10,47 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.R
 import com.videopager.adapers.CommentAdapter
 import com.videopager.data.CommentData
 import com.videopager.data.PostCommentData
 import com.videopager.databinding.FragmentCommentsBinding
+import com.videopager.utils.NoConnection
+import com.videopager.vm.SharedEventViewModelFactory
+import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 
-class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
+class CommentsFragment() : BottomSheetDialogFragment(R.layout.fragment_comments) {
     lateinit var binding: FragmentCommentsBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var commentAdapter: CommentAdapter
     private val clicks = MutableSharedFlow<Triple<String, String, Int>>(extraBufferCapacity = 1)
+    private val sharedEventViewModel: VideoSharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
     fun clicks() = clicks.asSharedFlow()
     private var itemPosition: Int = 0
     private var itemVideoId: String = ""
     private var commentList = mutableListOf<CommentData>()
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCommentsBinding.bind(view)
         recyclerView = binding.commentRecyclerview
+
         binding.sendImage.setOnClickListener {
             val msg = binding.msgEditText.text.trim()
             if (msg.toString().isNotEmpty()) {
@@ -64,10 +76,13 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
           }
 
         }
+
     }
 
     fun setRecyclerData(videoId: String, commentsList: List<CommentData>, position: Int) {
-        Log.i("", "$commentsList")
+        // It emits value in VideoPagerFragment, when CommentFragment receives successful comments data
+        sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_EXPANDED)
+
         itemPosition = position
         itemVideoId = videoId
         commentList = commentsList as MutableList<CommentData>
@@ -115,8 +130,11 @@ class CommentsFragment : BottomSheetDialogFragment(R.layout.fragment_comments) {
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
+        // It emits value in VideoPagerFragment, when CommentFragment collapsed
+        sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_COLLAPSED)
         binding.msgEditText.text.clear()
     }
+
 
 
 }

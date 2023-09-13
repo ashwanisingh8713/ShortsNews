@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         bottomSheetFollowingClick()
         registerVideoCache()
         bottomSheetDescClick()
-        askNotificationPermission()
+//        askNotificationPermission()
         launchLoginStateFlow()
         AppPreference.isMainActivityLaunched = true
     }

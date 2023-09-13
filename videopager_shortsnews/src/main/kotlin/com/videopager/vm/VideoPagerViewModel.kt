@@ -8,6 +8,7 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.player.models.VideoData
 import com.player.players.AppPlayer
 import com.videopager.R
+import com.videopager.data.CommentData
 import com.videopager.data.VideoDataRepository
 import com.videopager.models.*
 import com.videopager.models.AnimationEffect
@@ -377,10 +378,13 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<VideoInfoEvent>.toVideoInfoResults(): Flow<GetVideoInfoResult> {
         return flatMapLatest { event ->
+            Log.i("kamlesh","VideoInfo event :: " + event.videoId)
             repository.getVideoInfo(event.videoId, event.position)
         }.mapLatest {
+            Log.i("kamlesh","VideoInfo event :: " + it.first+ "   ::" + it.second)
             Pair(it.first, it.second)
         }.map {
+            Log.i("kamlesh","VideoInfo result :: " + it.second + "   ::  " + it.first)
             GetVideoInfoResult(it.second, it.first)
         }
     }
