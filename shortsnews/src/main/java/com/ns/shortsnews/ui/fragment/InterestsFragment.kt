@@ -95,7 +95,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                             loadDataFromServer(it.videoCategories.toMutableList())
                             selectedItemList.addAll(it.videoCategories)
                         } else {
-                            val finalList: MutableList<VideoCategory> = compareDBServer(it.videoCategories.toMutableList(), interestsListDB.toMutableList())
+                            val finalList: MutableList<VideoCategory> = compareDBServer(it.videoCategories.toMutableList(), AppPreference.categoryList)
                             selectedItemList.addAll(finalList)
                             loadDataFromDB(finalList)
                         }
@@ -242,7 +242,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
     }
 
     private fun compareDBServer(interestsList: MutableList<VideoCategory>,
-                                interestsTableList:MutableList<InterestsTable> ):MutableList<VideoCategory>{
+                                interestsTableList:MutableList<VideoCategory> ):MutableList<VideoCategory>{
         var finalList:MutableList<VideoCategory> = mutableListOf()
         for (interestsData in interestsList){
             var matched:Boolean = false

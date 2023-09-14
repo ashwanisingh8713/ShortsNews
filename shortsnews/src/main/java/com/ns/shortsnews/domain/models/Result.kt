@@ -58,7 +58,8 @@ data class RegistrationResult(
 data class RegistrationData(
     val OTP_id: Int,
     val length: Int,
-    val email: String
+    val email: String,
+    val is_registered:Boolean
 )
 
 @JsonClass(generateAdapter = true)

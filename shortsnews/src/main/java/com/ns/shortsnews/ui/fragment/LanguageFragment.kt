@@ -152,9 +152,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 it.videoCategories.isNotEmpty()
             }.collectLatest {
                 // Save category data in preference
-                AppPreference.saveCategoriesToPreference(categoryList = it.videoCategories)
-                Log.i("kamlesh", "Language category onSuccess ::: $it")
-
+                val finalList:MutableList<VideoCategory> = comparePrefereceServer(it.videoCategories as MutableList<VideoCategory>,AppPreference.categoryList)
+                AppPreference.saveCategoriesToPreference(categoryList = finalList)
                 AppPreference.init(requireActivity())
                 if (from == AppConstants.FROM_EDIT_PROFILE){
                     activity?.finish()
@@ -184,6 +183,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                         AppPreference.isLanguageSelected = true
                         AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
                         AppPreference.isRefreshRequired = true
+                        AppPreference.isInterestUpdateNeeded = true
                         videoCategoryViewModel.loadVideoCategory(selectedLanguages)
 
                     }
@@ -329,6 +329,20 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     false,
                     ""
                 )
+            }
+        }
+        return finalList
+    }
+
+    private fun comparePrefereceServer(interestsList: MutableList<VideoCategory>,
+                                interestsTableList:MutableList<VideoCategory> ):MutableList<VideoCategory>{
+        var finalList:MutableList<VideoCategory> = mutableListOf()
+        for (interestsData in interestsList){
+            for (interestsTable in interestsTableList){
+                if (interestsData.id == interestsTable.id){
+                    var convertedData = VideoCategory(interestsTable.id,interestsTable.name,interestsTable.selected,interestsTable.icon)
+                    finalList.add(convertedData)
+                }
             }
         }
         return finalList

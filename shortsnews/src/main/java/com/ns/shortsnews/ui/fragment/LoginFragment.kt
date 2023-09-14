@@ -22,6 +22,10 @@ import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.*
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
+import com.videopager.utils.UtilsFunctions
+import com.videopager.utils.UtilsFunctions.hideKeyBord
+import com.videopager.utils.UtilsFunctions.isOnline
+import com.videopager.utils.UtilsFunctions.validateEmail
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -44,16 +48,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         binding = FragmentLoginBinding.bind(view)
         binding.sendImage.setOnClickListener{
                 val email = binding.emailEditText.text.toString()
-                val name = binding.nameEditText.text.toString()
-                if (email.isNotEmpty() && name.trim().isNotEmpty()) {
+                if (email.isNotEmpty()) {
                     if (validateEmail(email)) {
-                        val imm =
-                            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                        imm?.hideSoftInputFromWindow(view.windowToken, 0)
+                        hideKeyBord(requireActivity(), view)
                         val bundle: MutableMap<String, String> = mutableMapOf()
                         bundle["email"] = email
-                        bundle["name"] = name
-                         if (NetworkXProvider.isInternetConnected) {
+                         if (isOnline(requireActivity())) {
                             userViewModel.requestRegistrationApi(bundle)
                         } else {
                              // No Internet Snackbar: Fire
@@ -65,10 +65,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_EMAIL)
                     }
                 } else {
-                    if (name.isEmpty() || email.isEmpty()) {
+                    if (email.isEmpty()) {
                         Alert().showGravityToast(
                             requireActivity(),
-                            AppConstants.FILL_REQUIRED_FIELD
+                            AppConstants.FILL_EMAIL
                         )
                     }
                 }
@@ -79,20 +79,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                   binding.progressBarLogin.visibility = View.GONE
                   binding.sendImage.visibility = View.VISIBLE
                       Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
-                  Log.i("kamlesh","$it")
-
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.registrationSuccessState.filterNotNull().collectLatest {
                 it.let {
-                    Log.i("kamlesh","Registration Response ::: $it")
                     binding.progressBarLogin.visibility = View.GONE
                     binding.sendImage.visibility = View.VISIBLE
                     val bundle = Bundle()
                     bundle.putString("email", it.email)
                     bundle.putString("otp_id", it.OTP_id.toString())
+                    bundle.putBoolean("isUserRegistered",it.is_registered)
                     userViewModel.updateFragment(UserViewModel.OTP,bundle )
                 }
             }
@@ -100,18 +98,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.loadingState.filterNotNull().collectLatest {
-                Log.i("kamlesh","data :: $it")
                 if (it) {
                     binding.sendImage.visibility = View.GONE
                     binding.progressBarLogin.visibility = View.VISIBLE
                 }
             }
         }
-    }
-
-    private fun validateEmail(email:String):Boolean{
-        return if (email.isEmpty()){
-            false
-        } else Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }

@@ -26,6 +26,7 @@ import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.*
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
+import com.videopager.utils.UtilsFunctions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -36,78 +37,89 @@ import org.koin.android.ext.android.get
 class OtpFragment : Fragment(R.layout.fragment_otp) {
     lateinit var binding: FragmentOtpBinding
 
-    private val userViewModel: UserViewModel by activityViewModels  { UserViewModelFactory().apply {
-        inject(
-            UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
-            UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
-            LanguageDataUseCase(UserDataRepositoryImpl(get())),
-        )
-    }}
+    private val userViewModel: UserViewModel by activityViewModels {
+        UserViewModelFactory().apply {
+            inject(
+                UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
+                UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
+                LanguageDataUseCase(UserDataRepositoryImpl(get())),
+            )
+        }
+    }
     private val notificationViewModel: NotificationViewModel by viewModels {
         NotificationViewModelFactory().apply {
             inject(FCMTokenDataUseCase(UserDataRepositoryImpl(get())))
         }
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentOtpBinding.bind(view)
-        val  otpId:String? = arguments?.getString("otp_id")
+        val otpId: String? = arguments?.getString("otp_id")
         val emailId = arguments?.getString("email")
+        val isUserRegistered = arguments?.getBoolean("isUserRegistered")
+        isUserRegistered.let {
+            if (!isUserRegistered!!) {
+                binding.nameConLayout.visibility = View.VISIBLE
+            }
+        }
         binding.emailTxt.text = emailId
-//        binding.otpEditText.setText("123456")
         binding.submitButton.setOnClickListener {
-
-            val imm =
-                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            imm?.hideSoftInputFromWindow(view.windowToken, 0)
-                val otpValue = binding.otpEditText.text.toString()
-                if (otpValue.isNotEmpty() && otpValue.length == 6) {
-                    val data: MutableMap<String, String> = mutableMapOf()
-                    data["OTP"] = otpValue
-                    data["OTP_id"] = otpId.toString()
-                    if (NetworkXProvider.isInternetConnected) {
-                        userViewModel.requestOtpValidationApi(data)
-                    } else {
-                        // No Internet Snack bar: Fire
-                        NoConnection.noConnectionSnackBarInfinite(binding.root,
-                            requireContext() as AppCompatActivity
-                        )
-                    }
+            UtilsFunctions.hideKeyBord(requireActivity(), view)
+            val otpValue = binding.otpEditText.text.toString().trim()
+            val name = binding.nameEditText.text.toString().trim()
+            if (otpValue.isNotEmpty() && otpValue.length == 6 && name.isNotEmpty()) {
+                val data: MutableMap<String, String> = mutableMapOf()
+                data["OTP"] = otpValue
+                data["OTP_id"] = otpId.toString()
+                if (NetworkXProvider.isInternetConnected) {
+                    userViewModel.requestOtpValidationApi(data)
                 } else {
-                    if (otpValue.isEmpty()) {
-                        Alert().showGravityToast(requireActivity(), AppConstants.FILL_OTP)
-                    } else {
+                    // No Internet Snack bar: Fire
+                    NoConnection.noConnectionSnackBarInfinite(
+                        binding.root,
+                        requireContext() as AppCompatActivity
+                    )
+                }
+            } else {
+                if (otpValue.isEmpty() && name.isEmpty()) {
+                    Alert().showGravityToast(requireActivity(), AppConstants.FILL_NAME)
+                } else if (otpValue.isNotEmpty() || name.isEmpty()) {
+                    Alert().showGravityToast(requireActivity(), AppConstants.FILL_NAME)
+                } else if (otpValue.isEmpty() || name.isNotEmpty()) {
+                    Alert().showGravityToast(requireActivity(), AppConstants.FILL_OTP)
+                } else {
+                    if (otpValue.length < 6) {
                         Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_OTP)
                     }
                 }
+            }
 
         }
 
 
-        viewLifecycleOwner.lifecycleScope.launch(){
+        viewLifecycleOwner.lifecycleScope.launch() {
             userViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarOtp.visibility = View.GONE
-                    Log.i("kamlesh","OTPFragment onError ::: $it")
-                    binding.submitButton.visibility = View.VISIBLE
+                binding.submitButton.visibility = View.VISIBLE
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch(){
+        viewLifecycleOwner.lifecycleScope.launch() {
             userViewModel.otpSuccessState.filterNotNull().collectLatest {
-                Log.i("kamlesh","OTPFragment onSuccess ::: $it")
                 it.let {
                     sendFcmTokenToServer()
                     saveUserPreference(it)
                     delay(500)
                     binding.progressBarOtp.visibility = View.GONE
                     val bundle = Bundle()
-                    bundle.putString("name","kamlesh")
-                    userViewModel.updateFragment(UserViewModel.LANGUAGES,bundle )
+                    bundle.putBoolean("first_time_user", it.first_time_user)
+                    userViewModel.updateFragment(UserViewModel.LANGUAGES, bundle)
                 }
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch(){
+        viewLifecycleOwner.lifecycleScope.launch() {
             userViewModel.loadingState.filterNotNull().collectLatest {
                 if (it) {
                     binding.submitButton.visibility = View.GONE
@@ -117,8 +129,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
     }
 
-    private fun sendFcmTokenToServer()
-    {
+    private fun sendFcmTokenToServer() {
         val bundle: MutableMap<String, String> = mutableMapOf()
         bundle["platform"] = "Android"
         bundle["device_token"] = AppPreference.fcmToken.toString()
@@ -126,20 +137,20 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
         lifecycleScope.launch {
             notificationViewModel.SendNotificationSuccessState.filterNotNull().collectLatest {
-                if (it.status){
-                    Log.i("Token","Token Send ")
+                if (it.status) {
+                    Log.i("Token", "Token Send ")
                 }
             }
         }
 
         lifecycleScope.launch {
             notificationViewModel.errorState.filterNotNull().collectLatest {
-                Log.i("Token","Error in sending token $it")
+                Log.i("Token", "Error in sending token $it")
             }
         }
     }
 
-    private fun saveUserPreference(it: UserOtp){
+    private fun saveUserPreference(it: UserOtp) {
         AppPreference.userName = it.name
         AppPreference.userEmail = it.email
         AppPreference.userToken = it.access_token

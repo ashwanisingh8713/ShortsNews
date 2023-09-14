@@ -52,6 +52,7 @@ class CommentsFragment() : BottomSheetDialogFragment(R.layout.fragment_comments)
         recyclerView = binding.commentRecyclerview
 
         binding.sendImage.setOnClickListener {
+            binding.noCommentText.visibility = View.GONE
             val msg = binding.msgEditText.text.trim()
             if (msg.toString().isNotEmpty()) {
                 clicks.tryEmit(Triple(itemVideoId, msg.toString(), itemPosition))
@@ -65,17 +66,18 @@ class CommentsFragment() : BottomSheetDialogFragment(R.layout.fragment_comments)
                 ).show()
             }
         }
-
-      binding.msgEditText.doAfterTextChanged {
-          if (it != null) {
-              if (it.isNotEmpty()){
-                 binding.noCommentText.visibility = View.GONE
-              } else {
-                  binding.noCommentText.visibility = View.VISIBLE
-              }
-          }
-
+        if(binding.msgEditText.hasFocus()){
+            binding.noCommentText.visibility = View.GONE
         }
+
+//      binding.msgEditText.doAfterTextChanged {
+//          if (it != null) {
+//              if (it.isNotEmpty()){
+//                 binding.noCommentText.visibility = View.GONE
+//              }
+//          }
+//
+//        }
 
     }
 

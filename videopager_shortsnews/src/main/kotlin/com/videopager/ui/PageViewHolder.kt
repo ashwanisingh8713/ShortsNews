@@ -1,6 +1,7 @@
 package com.videopager.ui
 
 import android.util.Log
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -22,9 +23,7 @@ internal class PageViewHolder(
     private val animationEffect = FadeInThenOutAnimationEffect(binding.playPause)
 
     init {
-        binding.root.setOnClickListener {
-            click(Pair("", PlayPauseClick))
-        }
+        click(Pair("", PlayPauseClick))
     }
 
     fun bind(videoData: VideoData) {

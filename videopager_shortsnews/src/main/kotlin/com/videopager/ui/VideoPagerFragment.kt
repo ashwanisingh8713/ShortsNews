@@ -5,7 +5,10 @@ import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.os.*
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -32,6 +35,7 @@ import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
 import com.videopager.utils.CategoryConstants
+import com.videopager.utils.DoubleClickListener
 import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
@@ -145,6 +149,8 @@ class VideoPagerFragment(
                     }
                 }
             }
+
+
 
         val effects = viewModel.effects
             .onEach { effect ->

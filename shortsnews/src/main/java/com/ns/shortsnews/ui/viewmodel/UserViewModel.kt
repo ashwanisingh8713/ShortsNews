@@ -71,7 +71,7 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
                 override fun onSuccess(result: RegistrationResult) {
                     // Mapping the data model class, which will be used by UIs.
                     val userRegistration = UserRegistration().mapper(status = result.status, msg = result.msg,
-                    OTP_id = result.data!!.OTP_id, length = result.data.length, email = result.data.email)
+                    OTP_id = result.data!!.OTP_id, length = result.data.length, email = result.data.email, isUserRegistered = result.data.is_registered)
                     _registrationSuccessState.value = userRegistration
                     _loadingState.value = false
                 }

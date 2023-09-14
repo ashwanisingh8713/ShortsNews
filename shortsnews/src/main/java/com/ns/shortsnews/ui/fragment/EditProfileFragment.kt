@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -59,6 +61,9 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     private var isProfileEdited = false
     private var isProfileImageSelected = false
     private var deleteProfileSelect:Boolean = false
+    private var isAlreadyFieldAge = false
+    private var isAlreadyFieldAddress = false
+    private var isAlreadyFieldName = false
     private val updateProfileViewModel: UpdateProfileViewModel by activityViewModels {
         UpdateProfileViewModelFactory().apply {
             inject(UpdateUserUseCase(UserDataRepositoryImpl(get())), DeleteProfileUseCase(UserDataRepositoryImpl(get())))
@@ -69,26 +74,26 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         const val cameraPermission = Manifest.permission.CAMERA
     }
 
-    private val textWatcher = object : TextWatcher{
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-           Log.i("","")
-        }
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            isProfileEdited = true
-        }
-
-        override fun afterTextChanged(s: Editable?) {
-            binding.consParent.forEach { view ->
-                (view as? TextInputLayout)?.let {
-                    with(it){
-                        error = null
-                        isErrorEnabled = false
-                    }
-                }
-            }
-        }
-    }
+//    private val textWatcher = object : TextWatcher{
+//        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//           Log.i("","")
+//        }
+//
+//        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            isProfileEdited = true
+//        }
+//
+//        override fun afterTextChanged(s: Editable?) {
+//            binding.consParent.forEach { view ->
+//                (view as? TextInputLayout)?.let {
+//                    with(it){
+//                        error = null
+//                        isErrorEnabled = false
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -105,7 +110,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             binding.ageEditText.setText(userData.age)
             binding.locationEditText.setText(userData.location)
         }
-        addTextWatcherToEditTexts()
+//        addTextWatcherToEditTexts()
         binding.constLanguage.setOnClickListener {
             if (NetworkXProvider.isInternetConnected) {
                 languagesFragment()
@@ -116,25 +121,63 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 )
             }
         }
+        binding.ageEditText.addTextChangedListener (object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                isAlreadyFieldAge = count>0
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+               isProfileEdited = true
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                Log.i("","")
+            }
+
+        })
+        binding.nameEditText.addTextChangedListener (object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                isAlreadyFieldName = count>0
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+               isProfileEdited = true
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                Log.i("","")
+            }
+
+        })
+        binding.locationEditText.addTextChangedListener (object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                isAlreadyFieldAddress = count>0
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+               isProfileEdited = true
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+              Log.i("","")
+            }
+
+        })
 
         binding.backButton.setOnClickListener {
             it.hideKeyBoard()
             if (!isProfileEdited) {
                 activity?.finish()
             } else {
-
                 if (!isProfileImageSelected) {
-                    showUpdateProfileDialog(
-                            "Updating",
-                    "Want to Updating user information",
-                    getRequestBody(null, binding.nameEditText.text.toString()
-                        ,binding.ageEditText.text.toString(),
-                        binding.locationEditText.text.toString() )
-                    )
+                   applyConditionOnUpdateProfile()
                 } else {
                     showUpdateProfileDialog(
-                        "Updating",
-                        "Want to Updating user information",
+                        "Update Profile",
+                        "Updating your profile information",
                         getRequestBody(
                             bitmapToFile(mPhotoBitmap, "user") as File,
                             binding.nameEditText.text.toString(),
@@ -221,6 +264,23 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 }
             }
         }
+    }
+
+    private fun applyConditionOnUpdateProfile() {
+
+        if (isAlreadyFieldAge && binding.ageEditText.text.isEmpty() || isAlreadyFieldAddress&& binding.locationEditText.text.isEmpty() || isAlreadyFieldName && binding.nameEditText.text.isEmpty()){
+            Toast.makeText(requireActivity(),"Please fill required field", Toast.LENGTH_SHORT).show()
+        } else {
+            showUpdateProfileDialog(
+                "Update Profile",
+                "Updating your profile information",
+                getRequestBody(null, binding.nameEditText.text.toString()
+                    ,binding.ageEditText.text.toString(),
+                    binding.locationEditText.text.toString() )
+            )
+        }
+
+
     }
 
     private fun languagesFragment() {
@@ -333,7 +393,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         alertDialog.apply {
             this.setTitle(title)
             this.setMessage(msg)
-            this.setPositiveButton("Save") { dialog, _ ->
+            this.setPositiveButton("Update") { dialog, _ ->
                 if (NetworkXProvider.isInternetConnected) {
                     updateProfileViewModel.requestUpdateProfileApi(profileData)
                 } else {
@@ -398,11 +458,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         return builder.build()
     }
 
-    private fun addTextWatcherToEditTexts(){
-      binding.consParent.forEach {  view ->
-          (view as? EditText)?.addTextChangedListener( textWatcher )
-      }
-    }
+//    private fun addTextWatcherToEditTexts(){
+//      binding.consParent.forEach {  view ->
+//          (view as? EditText)?.addTextChangedListener( textWatcher )
+//      }
+//    }
 
     private fun View.hideKeyBoard() {
         val inputManager =

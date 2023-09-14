@@ -35,6 +35,7 @@ object AppPreference {
     private const val NOTIFICATION_VIDEO_URL = "video_url"
     private const val NOTIFICATION_VIDEO_PREVIEW = "video_preview"
     private const val IS_REFRESS_REQUIRED = "is_refresh_required"
+    private const val IS_INTEREST_UPDATE_NEEDED = "is_interest_update_needed"
 
 
     fun init(context: Context) {
@@ -157,6 +158,13 @@ object AppPreference {
         this.putBoolean(IS_LANGUAGE_SELECTED, value)
         this.apply()
     }
+
+    var isInterestUpdateNeeded:Boolean
+        get() = preference.getBoolean(IS_INTEREST_UPDATE_NEEDED, false)
+        set(value) = preference.edit{
+            this.putBoolean(IS_INTEREST_UPDATE_NEEDED, value)
+            this.apply()
+        }
 
     var isProfileDeleted:Boolean
     get() = preference.getBoolean(IS_PROFILE_DELETED, false)

@@ -52,44 +52,11 @@
         android:text="@string/log_in_with_email"
         android:textColor="@color/white"
         android:textSize="@dimen/video_page_text_size_large"
-        app:layout_constraintBottom_toTopOf="@id/name_con_layout"
+        app:layout_constraintBottom_toTopOf="@id/email_con_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/name_con_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_start"
-        android:layout_marginEnd="@dimen/margin_end"
-        android:layout_marginBottom="@dimen/forword_button_height"
-        android:background="@drawable/follow_background"
-        android:minHeight="50dp"
-        app:layout_constraintBottom_toTopOf="@id/email_con_layout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
 
-
-        <EditText
-            android:id="@+id/name_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginStart="10dp"
-            android:autofillHints="name"
-            android:background="@null"
-            android:fontFamily="sans-serif"
-            android:hint="@string/enter_your_name"
-            android:importantForAutofill="no"
-            android:inputType="textNoSuggestions"
-            android:maxLines="1"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:textSize="@dimen/video_page_text_size_medium"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
