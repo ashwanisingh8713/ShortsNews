@@ -72,7 +72,8 @@ data class VideoCategory(
     val id: String,
     var name: String,
     var selected:Boolean = false,
-    var icon: String = ""
+    var icon: String = "",
+    var default_select:Boolean
 )
 
 @JsonClass(generateAdapter = true)
@@ -120,7 +121,8 @@ data class LanguageData(
     var name:String = "",
     var slug:String = "",
     var isSelected:Boolean = false,
-    var icon: String = ""
+    var icon: String = "",
+    var default_select:Boolean
 )
 
 @JsonClass(generateAdapter = true)
@@ -196,7 +198,7 @@ data class LanguageTable(
     val slug:String = "",
 
     val selected:Boolean = false,
-    val icon:String = ""
+    val icon:String = "",
 )
 @Entity(tableName = "interests")
 data class InterestsTable(
@@ -206,6 +208,12 @@ data class InterestsTable(
     var name: String ="",
     var selected:Boolean = false,
     var icon: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class UpdateCategories(
+    val status:Boolean,
+    val msg:String
 )
 
 

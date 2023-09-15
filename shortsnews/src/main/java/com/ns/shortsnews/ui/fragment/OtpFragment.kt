@@ -22,6 +22,7 @@ import com.ns.shortsnews.domain.usecase.notification.FCMTokenDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
+import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.NotificationViewModel
 import com.ns.shortsnews.ui.viewmodel.NotificationViewModelFactory
@@ -64,7 +65,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
     private val videoCategoryViewModel: VideoCategoryViewModel by activityViewModels {
         VideoCategoryViewModelFactory().apply {
             inject(
-                VideoCategoryUseCase(VideoCategoryRepositoryImp(get()))
+                VideoCategoryUseCase(VideoCategoryRepositoryImp(get())),
+                UpdateVideoCategoriesUseCase(VideoCategoryRepositoryImp(get()))
             )
         }
     }
@@ -85,33 +87,60 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             UtilsFunctions.hideKeyBord(requireActivity(), view)
             val otpValue = binding.otpEditText.text.toString().trim()
             val name = binding.nameEditText.text.toString().trim()
-            if (otpValue.isNotEmpty() && otpValue.length == 6 && name.isNotEmpty()) {
-                val data: MutableMap<String, String> = mutableMapOf()
-                data["OTP"] = otpValue
-                data["OTP_id"] = otpId.toString()
-                if (NetworkXProvider.isInternetConnected) {
-                    userViewModel.requestOtpValidationApi(data)
+            if (isUserRegistered == false){
+                if (otpValue.isNotEmpty() && otpValue.length == 6 && name.isNotEmpty()) {
+                    val data: MutableMap<String, String> = mutableMapOf()
+                        data["OTP"] = otpValue
+                        data["OTP_id"] = otpId.toString()
+                        data["name"] = name
+
+                    if (NetworkXProvider.isInternetConnected) {
+                        userViewModel.requestOtpValidationApi(data)
+                    } else {
+                        // No Internet Snack bar: Fire
+                        NoConnection.noConnectionSnackBarInfinite(
+                            binding.root,
+                            requireContext() as AppCompatActivity
+                        )
+                    }
                 } else {
-                    // No Internet Snack bar: Fire
-                    NoConnection.noConnectionSnackBarInfinite(
-                        binding.root,
-                        requireContext() as AppCompatActivity
-                    )
-                }
-            } else {
-                if (otpValue.isEmpty() && name.isEmpty()) {
-                    Alert().showGravityToast(requireActivity(), AppConstants.FILL_NAME)
-                } else if (otpValue.isNotEmpty() || name.isEmpty()) {
-                    Alert().showGravityToast(requireActivity(), AppConstants.FILL_NAME)
-                } else if (otpValue.isEmpty() || name.isNotEmpty()) {
-                    Alert().showGravityToast(requireActivity(), AppConstants.FILL_OTP)
-                } else {
-                    if (otpValue.length < 6) {
-                        Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_OTP)
+                    if (otpValue.isEmpty() && name.isEmpty()) {
+                        Alert().showGravityToast(requireActivity(), AppConstants.FILL_NAME)
+                    } else if (otpValue.isNotEmpty() || name.isEmpty()) {
+                        Alert().showGravityToast(requireActivity(), AppConstants.FILL_NAME)
+                    } else if (otpValue.isEmpty() || name.isNotEmpty()) {
+                        Alert().showGravityToast(requireActivity(), AppConstants.FILL_OTP)
+                    } else {
+                        if (otpValue.length < 6) {
+                            Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_OTP)
+                        }
                     }
                 }
-            }
+            } else {
+                if (otpValue.isNotEmpty() && otpValue.length == 6) {
+                    val data: MutableMap<String, String> = mutableMapOf()
+                    data["OTP"] = otpValue
+                    data["OTP_id"] = otpId.toString()
+                    if (NetworkXProvider.isInternetConnected) {
+                        userViewModel.requestOtpValidationApi(data)
+                    } else {
+                        // No Internet Snack bar: Fire
+                        NoConnection.noConnectionSnackBarInfinite(
+                            binding.root,
+                            requireContext() as AppCompatActivity
+                        )
+                    }
+                } else {
+                    if (otpValue.isEmpty()) {
+                        Alert().showGravityToast(requireActivity(), AppConstants.FILL_OTP)
+                    } else {
+                        if (otpValue.length < 6) {
+                            Alert().showGravityToast(requireActivity(), AppConstants.FILL_VALID_OTP)
+                        }
+                    }
+                }
 
+            }
         }
 
 
@@ -133,7 +162,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                         userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
                     } else {
                         userViewModel.requestUserSelectionApi()
-                        userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, Bundle())
                     }
                 }
             }
@@ -155,9 +183,10 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 it.videoCategories.isNotEmpty()
             }.collectLatest {
                 //TODO update selected categories to list
-                val finalList:MutableList<VideoCategory> = comparewithUserSelection(it.videoCategories as MutableList<VideoCategory>,userSelectedCategory)
+                val finalList:MutableList<VideoCategory> = compareWithUserSelection(it.videoCategories as MutableList<VideoCategory>,userSelectedCategory)
                 AppPreference.saveCategoriesToPreference(categoryList = finalList)
                 AppPreference.init(requireActivity())
+                userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, Bundle())
             }
         }
 
@@ -171,14 +200,18 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
     }
 
-    private fun comparewithUserSelection(
+    private fun compareWithUserSelection(
         videoCategories: MutableList<VideoCategory>,
         userSelectedCategory: MutableList<String>
     ): MutableList<VideoCategory> {
-//        for (categoryId in userSelectedCategory){
-//            for()
-//        }
-        return mutableListOf()
+        for (categoryId in userSelectedCategory){
+           for (item in videoCategories){
+               if (categoryId== item.id){
+                   item.selected= true
+               }
+           }
+        }
+        return videoCategories
     }
 
 

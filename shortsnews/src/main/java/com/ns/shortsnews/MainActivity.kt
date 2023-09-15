@@ -39,6 +39,7 @@ import com.ns.shortsnews.databinding.ActivityMainBinding
 import com.ns.shortsnews.domain.models.Data
 import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
 import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
+import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.*
@@ -121,7 +122,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             delay(1000)
             videoCategoryViewModel =
                 ViewModelProvider(this@MainActivity, VideoCategoryViewModelFactory().apply {
-                    inject(VideoCategoryUseCase(VideoCategoryRepositoryImp(get())))
+                    inject(VideoCategoryUseCase(VideoCategoryRepositoryImp(get())), UpdateVideoCategoriesUseCase(VideoCategoryRepositoryImp(get())))
                 })[VideoCategoryViewModel::class.java]
         }
 

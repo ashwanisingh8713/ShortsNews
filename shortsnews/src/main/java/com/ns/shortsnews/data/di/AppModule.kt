@@ -5,5 +5,5 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val AppModule = module {
-  viewModel { UserViewModel(get(), get(), get()) }
+  viewModel { UserViewModel(get(), get(), get(), get()) }
 }

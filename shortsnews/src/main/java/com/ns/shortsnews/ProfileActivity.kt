@@ -9,11 +9,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.crashlytics.internal.model.CrashlyticsReport.Session.User
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.databinding.ActivityProfileBinding
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
+import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
 import com.ns.shortsnews.ui.fragment.*
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppConstants
@@ -34,6 +36,7 @@ class ProfileActivity : AppCompatActivity() {
                 UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
                 UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
+                UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
             )
         }
     }

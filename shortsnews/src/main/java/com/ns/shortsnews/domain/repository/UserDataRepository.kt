@@ -32,4 +32,5 @@ interface UserDataRepository {
     suspend fun getNotificationTokenStatus(data: Map<String, String>):StatusResult
 
     suspend fun getUserSelections():UserSelectionResult
+
 }

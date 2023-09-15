@@ -23,9 +23,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class UserViewModel constructor(private val userRegistrationUseCases: UserRegistrationDataUseCase,
-                                private val otpValidationDataUseCases: UserOtpValidationDataUseCase,
-                                private val languageDataUseCase: LanguageDataUseCase,
+class UserViewModel constructor(
+    private val userRegistrationUseCases: UserRegistrationDataUseCase,
+    private val otpValidationDataUseCases: UserOtpValidationDataUseCase,
+    private val languageDataUseCase: LanguageDataUseCase,
     private val userSelectionsDataUseCase: UserSelectionsDataUseCase
 ) : ViewModel() {
 
@@ -44,6 +45,7 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
 
     private val _fragmentStateFlow = MutableSharedFlow<Bundle?>()
     val fragmentStateFlow: SharedFlow<Bundle?> get() = _fragmentStateFlow
+
     // Registration
     private val _registrationSuccessState = MutableStateFlow<UserRegistration?>(null)
     val registrationSuccessState: StateFlow<UserRegistration?> get() = _registrationSuccessState
@@ -51,6 +53,7 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
     // Otp
     private val _otpSuccessState = MutableStateFlow<UserOtp?>(null)
     val otpSuccessState: StateFlow<UserOtp?> get() = _otpSuccessState
+
     //Language
     private val _languagesSuccessState = MutableStateFlow<List<LanguageData>>(emptyList())
     val LanguagesSuccessState: StateFlow<List<LanguageData>> get() = _languagesSuccessState
@@ -63,11 +66,11 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
 
     //User selections
     private val _userSelectionSuccessState = MutableStateFlow<UserSelectionsData?>(null)
-    val userSelectionSuccessState:StateFlow<UserSelectionsData?> get() = _userSelectionSuccessState
+    val userSelectionSuccessState: StateFlow<UserSelectionsData?> get() = _userSelectionSuccessState
 
 
-    fun updateFragment(fragmentType:String, bundle: Bundle) {
-        viewModelScope.launch{
+    fun updateFragment(fragmentType: String, bundle: Bundle) {
+        viewModelScope.launch {
             bundle.putString("fragmentType", fragmentType)
             _fragmentStateFlow.emit(bundle)
         }
@@ -79,8 +82,14 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
             object : UseCaseResponse<RegistrationResult> {
                 override fun onSuccess(result: RegistrationResult) {
                     // Mapping the data model class, which will be used by UIs.
-                    val userRegistration = UserRegistration().mapper(status = result.status, msg = result.msg,
-                    OTP_id = result.data!!.OTP_id, length = result.data.length, email = result.data.email, isUserRegistered = result.data.is_registered)
+                    val userRegistration = UserRegistration().mapper(
+                        status = result.status,
+                        msg = result.msg,
+                        OTP_id = result.data!!.OTP_id,
+                        length = result.data.length,
+                        email = result.data.email,
+                        isUserRegistered = result.data.is_registered
+                    )
                     _registrationSuccessState.value = userRegistration
                     _loadingState.value = false
                 }
@@ -102,11 +111,13 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
             object : UseCaseResponse<OTPResult> {
                 override fun onSuccess(result: OTPResult) {
                     val data = result.data
-                    val otpValidation = UserOtp().mapper(status = result.status, msg = result.msg,
+                    val otpValidation = UserOtp().mapper(
+                        status = result.status, msg = result.msg,
                         email = data!!.my_profile.email, access_token = data.access_token,
                         name = data.my_profile.name, first_time_user = data.first_time_user,
                         userProfileImage = data.my_profile.image, user_id = data.my_profile.user_id,
-                    age = data.my_profile.age, location = data.my_profile.location)
+                        age = data.my_profile.age, location = data.my_profile.location
+                    )
                     _otpSuccessState.value = otpValidation
                     _loadingState.value = false
                 }
@@ -124,10 +135,10 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
     }
 
     fun requestLanguagesApi() {
-        languageDataUseCase.invoke(viewModelScope,null,
+        languageDataUseCase.invoke(viewModelScope, null,
             object : UseCaseResponse<LanguagesResult> {
                 override fun onSuccess(type: LanguagesResult) {
-                    if(type.status)
+                    if (type.status)
                         _languagesSuccessState.value = type.data
                     else _errorState.value = "Empty from api server"
                     _loadingState.value = false
@@ -145,25 +156,28 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
         )
     }
 
-    fun requestUserSelectionApi(){
-       userSelectionsDataUseCase.invoke(viewModelScope, null,object : UseCaseResponse<UserSelectionResult>{
-           override fun onSuccess(result: UserSelectionResult) {
-               if (result.status)
-                   _userSelectionSuccessState.value = result.data
-                   else _errorState.value = "Empty from api server"
-                   _loadingState.value = false
+    fun requestUserSelectionApi() {
+        userSelectionsDataUseCase.invoke(
+            viewModelScope,
+            null,
+            object : UseCaseResponse<UserSelectionResult> {
+                override fun onSuccess(result: UserSelectionResult) {
+                    if (result.status)
+                        _userSelectionSuccessState.value = result.data
+                    else _errorState.value = "Empty from api server"
+                    _loadingState.value = false
 
-           }
+                }
 
-           override fun onError(apiError: ApiError) {
-              _errorState.value = apiError.getErrorMessage()
-               _loadingState.value = false
-           }
+                override fun onError(apiError: ApiError) {
+                    _errorState.value = apiError.getErrorMessage()
+                    _loadingState.value = false
+                }
 
-           override fun onLoading(isLoading: Boolean) {
-               _loadingState.value = true
-           }
+                override fun onLoading(isLoading: Boolean) {
+                    _loadingState.value = true
+                }
 
-       })
+            })
     }
 }

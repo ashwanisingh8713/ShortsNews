@@ -26,6 +26,9 @@ interface UserApiService {
     @GET("categories")
     suspend fun getVideoCategory(@Query("languages")languages:String): VideoCategoryResult
 
+    @POST("store-categories")
+    suspend fun updateCategory(@Body categories:String): UpdateCategories
+
     @GET("videos")
     suspend fun getChannelVideoData(@Query("channel")channel:String): VideoDataResponse
 

@@ -1,5 +1,6 @@
 package com.ns.shortsnews.domain.repository
 
+import com.ns.shortsnews.domain.models.UpdateCategories
 import com.ns.shortsnews.domain.models.VideoCategoryResult
 
 /**
@@ -7,4 +8,6 @@ import com.ns.shortsnews.domain.models.VideoCategoryResult
  */
 interface VideoCategoryRepository {
     suspend fun getVideoCategory(languages:String): VideoCategoryResult
+    suspend fun getUpdateCategories(categories:String): UpdateCategories
+
 }

@@ -6,6 +6,8 @@ import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.ns.shortsnews.domain.models.LanguageData
+import com.ns.shortsnews.domain.models.LanguageTable
 import com.ns.shortsnews.domain.models.VideoCategory
 
 object AppPreference {
@@ -37,9 +39,17 @@ object AppPreference {
     private const val IS_REFRESS_REQUIRED = "is_refresh_required"
     private const val IS_INTEREST_UPDATE_NEEDED = "is_interest_update_needed"
     private const val USER_SELECTIONS = "user_selection"
+    private const val SELECTED_LANGUAGES = "selected_languages_list"
 
 
     fun init(context: Context) {
+        preference = PreferenceManager.getDefaultSharedPreferences(context)
+        editor = preference.edit()
+        if (categoryListStr!!.isNotEmpty()) {
+            retrieveCategoriesFromPreference()
+        }
+    }
+    fun initLanguage(context: Context) {
         preference = PreferenceManager.getDefaultSharedPreferences(context)
         editor = preference.edit()
         if (categoryListStr!!.isNotEmpty()) {
@@ -160,6 +170,13 @@ object AppPreference {
             this.apply()
         }
 
+    var languageListStr:String?
+        get() = preference.getString(SELECTED_LANGUAGES, EMPTY_STRING)
+        set(value) = preference.edit{
+            this.putString(SELECTED_LANGUAGES, value)
+            this.apply()
+        }
+
     var isLanguageSelected:Boolean
     get() = preference.getBoolean(IS_LANGUAGE_SELECTED, false)
     set(value) = preference.edit {
@@ -215,6 +232,13 @@ object AppPreference {
         editor.clear().apply()
     }
 
+    var languages:String?
+        get() = preference.getString(LANGUAGES_SELECTED, EMPTY_STRING)
+        set(value) = preference.edit{
+            this.putString(LANGUAGES_SELECTED, value)
+            this.apply()
+        }
+
     fun saveCategoriesToPreference(categoryList:List<VideoCategory>) {
         val gson = Gson()
         val json = gson.toJson(categoryList)
@@ -235,6 +259,28 @@ object AppPreference {
         }
 
         return categoryList
+    }
+
+    fun saveLanguagesToPreference(categoryList:List<LanguageData>) {
+        val gson = Gson()
+        val json = gson.toJson(categoryList)
+        languageListStr = json.toString()
+    }
+    var languageList: MutableList<LanguageData> = mutableListOf<LanguageData>()
+    private fun retrieveLanguagesFromPreference():List<LanguageData> {
+        if(languageList.isEmpty()) {
+            val gson = Gson()
+            val languageJsonString = languageListStr
+            val myListType = object : TypeToken<List<LanguageData>>() {}.type
+            languageList = gson.fromJson<List<LanguageData>>(languageJsonString,myListType) as MutableList<LanguageData>
+        } else {
+            val gson = Gson()
+            val languageJsonString = languageListStr
+            val myListType = object : TypeToken<List<LanguageData>>() {}.type
+            languageList = gson.fromJson<List<LanguageData>>(languageJsonString,myListType) as MutableList<LanguageData>
+        }
+
+        return languageList
     }
 
 }

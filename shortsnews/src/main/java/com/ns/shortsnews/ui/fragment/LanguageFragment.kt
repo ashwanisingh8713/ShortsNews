@@ -5,15 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
 import com.ns.shortsnews.R
-import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.databinding.FragmentLanguageBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
@@ -26,9 +23,8 @@ import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
+import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
-import com.ns.shortsnews.ui.viewmodel.LanguageViewModel
-import com.ns.shortsnews.ui.viewmodel.LanguageViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModel
@@ -38,8 +34,6 @@ import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -55,7 +49,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
     private val videoCategoryViewModel: VideoCategoryViewModel by activityViewModels {
         VideoCategoryViewModelFactory().apply {
             inject(
-                VideoCategoryUseCase(VideoCategoryRepositoryImp(get()))
+                VideoCategoryUseCase(VideoCategoryRepositoryImp(get())),
+                UpdateVideoCategoriesUseCase(VideoCategoryRepositoryImp(get()))
             )
         }
     }
@@ -69,16 +64,17 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             )
         }
     }
-    private val languageViewModel: LanguageViewModel by activityViewModels {
-        LanguageViewModelFactory(
-            languageItemRepository
-        )
-    }
+//    private val languageViewModel: LanguageViewModel by activityViewModels {
+//        LanguageViewModelFactory(
+//            languageItemRepository
+//        )
+//    }
     private var selectedNumbers = 0
     private var selectedItemList = mutableListOf<LanguageData>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)
+        AppPreference.initLanguage(requireActivity())
         Log.i("language","$AppPreference.selectedLanguages!!")
         selectedLanguages = AppPreference.selectedLanguages!!
         if (NetworkXProvider.isInternetConnected) {
@@ -90,7 +86,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             )
         }
         from = arguments?.getString("from").toString()
-        Log.i("launchFrom", "Language fragment from $from")
         if (AppPreference.isLanguageSelected) {
             binding.continueButton.text = "Save"
         }
@@ -99,7 +94,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             userViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarLanguages.visibility = View.GONE
                 Log.i("kamlesh", "OTPFragment onError ::: $it")
-
             }
         }
 
@@ -110,14 +104,16 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 it.let {
                     binding.progressBarLanguages.visibility = View.GONE
                     if (it.isNotEmpty()) {
-                        if (languageViewModel.isEmpty()) {
-                            selectedItemList.addAll(it)
-                            loadDataFromServer(it)
-                        } else {
-                            val finalList: List<LanguageData> = compareDBServer(it, languageListDB)
-                            selectedItemList.addAll(finalList)
-                            loadDataFromDB(finalList)
-                        }
+                        setupChipGroup(it)
+                        selectedItemList.addAll(it)
+//                        if (languageViewModel.isEmpty()) {
+//                            selectedItemList.addAll(it)
+//                            loadDataFromServer(it)
+//                        } else {
+//                            val finalList: List<LanguageData> = compareDBServer(it, languageListDB)
+//                            selectedItemList.addAll(finalList)
+//                            loadDataFromDB(finalList)
+//                        }
                     }
                 }
             }
@@ -130,25 +126,25 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 }
             }
         }
-        viewLifecycleOwner.lifecycleScope.launch {
-            languageViewModel.sharedDeleteFromTable.filterNotNull().collectLatest {
-                Log.i("database", "Delete :: ${it.id}")
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            languageViewModel.sharedInsertInTable.filterNotNull().collectLatest {
-                Log.i("database", "Inserted :: ${it.id}")
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch() {
-            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }
-                .collectLatest {
-                    Log.i("database", "All data :: $it")
-                    languageListDB = it
-                }
-        }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            languageViewModel.sharedDeleteFromTable.filterNotNull().collectLatest {
+//                Log.i("database", "Delete :: ${it.id}")
+//            }
+//        }
+//
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            languageViewModel.sharedInsertInTable.filterNotNull().collectLatest {
+//                Log.i("database", "Inserted :: ${it.id}")
+//            }
+//        }
+//
+//        viewLifecycleOwner.lifecycleScope.launch() {
+//            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }
+//                .collectLatest {
+//                    Log.i("database", "All data :: $it")
+//                    languageListDB = it
+//                }
+//        }
         viewLifecycleOwner.lifecycleScope.launch {
             videoCategoryViewModel.videoCategorySuccessState.filterNotNull().filter {
                 it.videoCategories.isNotEmpty()
@@ -173,15 +169,15 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             if (selectedNumbers > 0) {
                 if (from == AppConstants.FROM_EDIT_PROFILE) {
                     if (selectedItemList.isNotEmpty()) {
-                        for (item in selectedItemList) {
-                            languageViewModel.update(
-                                item.id,
-                                item.name,
-                                item.slug,
-                                item.isSelected,
-                                ""
-                            )
-                        }
+//                        for (item in selectedItemList) {
+//                            languageViewModel.update(
+//                                item.id,
+//                                item.name,
+//                                item.slug,
+//                                item.isSelected,
+//                                "",
+//                            )
+//                        }
                         AppPreference.isLanguageSelected = true
                         AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
                         AppPreference.isRefreshRequired = true
@@ -195,15 +191,15 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                         AppPreference.isLanguageSelected = true
                         AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
                         AppPreference.isRefreshRequired = false
-                        for (item in selectedItemList) {
-                            languageViewModel.update(
-                                item.id,
-                                item.name,
-                                item.slug,
-                                item.isSelected,
-                                ""
-                            )
-                        }
+//                        for (item in selectedItemList) {
+//                            languageViewModel.update(
+//                                item.id,
+//                                item.name,
+//                                item.slug,
+//                                item.isSelected,
+//                                ""
+//                            )
+//                        }
                         videoCategoryViewModel.loadVideoCategory(selectedLanguages)
                     }
                 }
@@ -229,7 +225,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             binding.choiceChipGroup.isClickable = true
             binding.choiceChipGroup.addView(mChip)
 
-            if (chipData.isSelected) {
+            if (chipData.default_select) {
                 mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
                 mChip.chipBackgroundColor =
                     ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
@@ -263,7 +259,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     )
 
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                    updateSelectedItem(chipData.id, chipData.name, chipData.slug, true, "")
+                    updateSelectedItem(chipData.id, chipData.name, chipData.slug, true, "", true)
                     createSelectedLanguagesValue(chipData.id)
                     selectedNumbers++
                 } else {
@@ -282,7 +278,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                             R.color.white
                         )
                     )
-                    updateSelectedItem(chipData.id, chipData.name, chipData.slug, false, "")
+                    updateSelectedItem(chipData.id, chipData.name, chipData.slug, false, "", false)
                     createSelectedLanguagesValue(chipData.id)
                     selectedNumbers--
                 }
@@ -290,59 +286,59 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         }
     }
 
-    private fun loadDataFromDB(list: List<LanguageData>) {
-        setupChipGroup(list)
-    }
+//    private fun loadDataFromDB(list: List<LanguageData>) {
+//        setupChipGroup(list)
+//    }
 
-    private fun loadDataFromServer(list: List<LanguageData>) {
-        for (data in list) {
-            languageViewModel.insert(data.id, data.name, data.slug, false, "")
-        }
-        setupChipGroup(list)
-    }
+//    private fun loadDataFromServer(list: List<LanguageData>) {
+//        for (data in list) {
+//            languageViewModel.insert(data.id, data.name, data.slug, false, "")
+//        }
+//        setupChipGroup(list)
+//    }
 
-    private fun compareDBServer(
-        languageList: List<LanguageData>,
-        languageTableList: List<LanguageTable>
-    ): List<LanguageData> {
-        var finalList: MutableList<LanguageData> = mutableListOf()
-        for (languageData in languageList) {
-            var matched = false
-            for (languageTable in languageTableList) {
-                if (languageData.id == languageTable.id) {
-                    var convertedData = LanguageData(
-                        languageTable.id,
-                        languageTable.name,
-                        languageTable.slug,
-                        languageTable.selected,
-                        languageTable.icon
-                    )
-                    finalList.add(convertedData)
-                    matched = true
-                }
-            }
-            if (matched) {
-                matched = false
-            } else {
-                languageViewModel.delete(
-                    languageData.id,
-                    languageData.name,
-                    languageData.slug,
-                    false,
-                    ""
-                )
-            }
-        }
-        return finalList
-    }
+//    private fun compareDBServer(
+//        languageList: List<LanguageData>,
+//        languageTableList: List<LanguageTable>
+//    ): List<LanguageData> {
+//        var finalList: MutableList<LanguageData> = mutableListOf()
+//        for (languageData in languageList) {
+//            var matched = false
+//            for (languageTable in languageTableList) {
+//                if (languageData.id == languageTable.id) {
+//                    var convertedData = LanguageData(
+//                        languageTable.id,
+//                        languageTable.name,
+//                        languageTable.slug,
+//                        languageTable.selected,
+//                        languageTable.icon
+//                    )
+//                    finalList.add(convertedData)
+//                    matched = true
+//                }
+//            }
+//            if (matched) {
+//                matched = false
+//            } else {
+//                languageViewModel.delete(
+//                    languageData.id,
+//                    languageData.name,
+//                    languageData.slug,
+//                    false,
+//                    ""
+//                )
+//            }
+//        }
+//        return finalList
+//    }
 
     private fun comparePrefereceServer(interestsList: MutableList<VideoCategory>,
-                                interestsTableList:MutableList<VideoCategory> ):MutableList<VideoCategory>{
+                                       interestsDataList:MutableList<VideoCategory> ):MutableList<VideoCategory>{
         var finalList:MutableList<VideoCategory> = mutableListOf()
         for (interestsData in interestsList){
-            for (interestsTable in interestsTableList){
-                if (interestsData.id == interestsTable.id){
-                    var convertedData = VideoCategory(interestsTable.id,interestsTable.name,interestsTable.selected,interestsTable.icon)
+            for (interests in interestsDataList){
+                if (interestsData.id == interests.id){
+                    var convertedData = VideoCategory(interests.id,interests.name,interests.selected,interests.icon, interests.default_select)
                     finalList.add(convertedData)
                 }
             }
@@ -371,7 +367,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         name: String,
         slug: String,
         selected: Boolean,
-        icon: String
+        icon: String,
+        defaultSelected:Boolean
     ) {
         for (item in selectedItemList) {
             if (item.id == id) {
@@ -379,6 +376,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 item.name = name
                 item.slug = slug
                 item.icon = icon
+                item.default_select = defaultSelected
             }
         }
     }

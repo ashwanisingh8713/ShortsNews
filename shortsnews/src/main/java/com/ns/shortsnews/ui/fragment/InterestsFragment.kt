@@ -20,8 +20,11 @@ import com.ns.shortsnews.domain.models.InterestsTable
 import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.repository.InterestsRepository
 import com.ns.shortsnews.domain.repository.LanguageRepository
+import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.*
+import com.ns.shortsnews.utils.Alert
+import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,17 +48,19 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
     private val languageViewModel: LanguageViewModel by activityViewModels { LanguageViewModelFactory(languageItemRepository) }
 
     private var selectedNumbers = 0
-    private var countValue = 0
     private val categoryViewModel: VideoCategoryViewModel by activityViewModels { VideoCategoryViewModelFactory().apply {
-        inject(VideoCategoryUseCase(VideoCategoryRepositoryImp(get())))
+        inject(VideoCategoryUseCase(VideoCategoryRepositoryImp(get())), (UpdateVideoCategoriesUseCase(VideoCategoryRepositoryImp(get()))))
     } }
 
     private var selectedItemList = mutableListOf<VideoCategory>()
+    private var selectedCategoriesId = mutableListOf<String>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentInterestsBinding.bind(view)
-        getSelectedLanguagesValues()
+//        getSelectedLanguagesValues()
+
+        categoryViewModel.loadVideoCategory(AppPreference.selectedLanguages!!)
 
         binding.backButtonUser.setOnClickListener {
             activity?.finish()
@@ -63,10 +68,16 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         binding.submitButtonConst.setOnClickListener {
             getSelectedVideoInterstCategory(selectedItemList)
             if (selectedItemList.isNotEmpty()){
-                for (item in selectedItemList){
-                    interestsViewModel.update(item.id, item.name, item.selected, "")
-                }
-                activity?.finish()
+                getSelectedCategoriesId(selectedItemList)
+                val bundle: MutableMap<String, List<String>> = mutableMapOf()
+                bundle["categories"] = selectedCategoriesId
+                val data:String = "{\n" +
+                        "    \"categories\": [\n" +
+                        "        \"994\",\n" +
+                        "        \"22\"\n" +
+                        "    ]\n" +
+                        "}"
+                categoryViewModel.updateCategoriesApi(data)
             } else {
                 activity?.finish()
             }
@@ -90,15 +101,28 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                     Log.i("kamlesh", "Registration Response ::: $it")
                     binding.progressBarPer.visibility = View.GONE
                     if (it.videoCategories.isNotEmpty()) {
-                        countValue = it.videoCategories.size
-                        if (interestsViewModel.isEmpty()) {
-                            loadDataFromServer(it.videoCategories.toMutableList())
+//                        if (interestsViewModel.isEmpty()) {
+//                            loadDataFromServer(it.videoCategories.toMutableList())
+                        setupChipGroup(it.videoCategories as MutableList<VideoCategory>)
                             selectedItemList.addAll(it.videoCategories)
-                        } else {
-                            val finalList: MutableList<VideoCategory> = compareDBServer(it.videoCategories.toMutableList(), AppPreference.categoryList)
-                            selectedItemList.addAll(finalList)
-                            loadDataFromDB(finalList)
-                        }
+//                        } else {
+//                            val finalList: MutableList<VideoCategory> = compareDBServer(it.videoCategories.toMutableList(), AppPreference.categoryList)
+//                            selectedItemList.addAll(finalList)
+//                            loadDataFromDB(finalList)
+//                        }
+                    }
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            categoryViewModel.updateCategoriesSuccessState.filterNotNull().collectLatest {
+                it.let {
+                    if (it.status){
+                        Alert().showGravityToast(requireActivity(), "Category preferences successfully")
+                        activity?.finish()
+                    } else {
+                        binding.progressBarPer.visibility = View.GONE
+                        Alert().showGravityToast(requireActivity(), "Category preferences failed. Try again")
                     }
                 }
             }
@@ -106,35 +130,34 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             categoryViewModel.loadingState.filterNotNull().collectLatest {
-                Log.i("kamlesh","data :: $it")
                 if (it) {
                     binding.progressBarPer.visibility = View.VISIBLE
                 }
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            interestsViewModel.sharedDeleteFromTable.filterNotNull().collectLatest {
-                if (it != null){
-                    Log.i("database","Delete :: ${it.id}")
-                }
-            }
-        }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            interestsViewModel.sharedDeleteFromTable.filterNotNull().collectLatest {
+//                if (it != null){
+//                    Log.i("database","Delete :: ${it.id}")
+//                }
+//            }
+//        }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            interestsViewModel.sharedInsertInTable.filterNotNull().collectLatest {
-                if (it != null){
-                    Log.i("database","Inserted :: ${it.id}")
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch(){
-            interestsViewModel.getAllInterestedItems().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
-                Log.i("database", "All data :: $it")
-                interestsListDB = it
-            }
-        }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            interestsViewModel.sharedInsertInTable.filterNotNull().collectLatest {
+//                if (it != null){
+//                    Log.i("database","Inserted :: ${it.id}")
+//                }
+//            }
+//        }
+//
+//        viewLifecycleOwner.lifecycleScope.launch(){
+//            interestsViewModel.getAllInterestedItems().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
+//                Log.i("database", "All data :: $it")
+//                interestsListDB = it
+//            }
+//        }
     }
 
     @SuppressLint("InflateParams")
@@ -153,7 +176,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             binding.choiceChipGroup.isSingleSelection = false
             binding.choiceChipGroup.isClickable = true
             binding.choiceChipGroup.addView(mChip)
-            if (chipData.selected) {
+            if (chipData.default_select) {
                 mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
                 mChip.chipBackgroundColor =
                     ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
@@ -188,7 +211,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
 
                     mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                     selectedNumbers++
-                    updateSelectedItem(chipData.id, chipData.name, true, "")
+                    updateSelectedItem(chipData.id, chipData.name, true, "", isDefalultSelected = true)
 
                 } else {
                     mChip.chipBackgroundColor = ColorStateList.valueOf(
@@ -207,59 +230,66 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                         )
                     )
                     selectedNumbers--
-                    updateSelectedItem(chipData.id, chipData.name, false, "")
+                    updateSelectedItem(chipData.id, chipData.name, false, "", isDefalultSelected = false)
                 }
             }
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    fun updateSelectedItems(){
-        binding.selectedTxt.text = "Selected $selectedNumbers/$countValue categories"
-
-    }
-
-    private fun updateSelectedItem(id: String, name: String, selected: Boolean, icon: String) {
+    private fun updateSelectedItem(id: String, name: String, selected: Boolean, icon: String, isDefalultSelected:Boolean) {
         for (item in selectedItemList){
             if (item.id == id){
                 item.selected = selected
                 item.name = name
                 item.icon = icon
+                item.default_select = isDefalultSelected
             }
         }
     }
 
 
-    private fun loadDataFromDB( list: MutableList<VideoCategory>){
-        setupChipGroup(list)
-    }
+//    private fun loadDataFromDB( list: MutableList<VideoCategory>){
+//        setupChipGroup(list)
+//    }
 
-    private fun loadDataFromServer(list: MutableList<VideoCategory>) {
-        for (data in list){
-            interestsViewModel.insert(data.id,data.name,false,"")
-        }
-        setupChipGroup(list)
-    }
+//    private fun loadDataFromServer(list: MutableList<VideoCategory>) {
+//        for (data in list){
+//            interestsViewModel.insert(data.id,data.name,false,"")
+//        }
+//        setupChipGroup(list)
+//    }
 
-    private fun compareDBServer(interestsList: MutableList<VideoCategory>,
-                                interestsTableList:MutableList<VideoCategory> ):MutableList<VideoCategory>{
-        var finalList:MutableList<VideoCategory> = mutableListOf()
-        for (interestsData in interestsList){
-            var matched:Boolean = false
-            for (interestsTable in interestsTableList){
-                if (interestsData.id == interestsTable.id){
-                    var convertedData = VideoCategory(interestsTable.id,interestsTable.name,interestsTable.selected,interestsTable.icon)
-                    finalList.add(convertedData)
-                    matched = true
-                }
-            }
-            if (matched){
-                matched = false
-            } else {
-                interestsViewModel.delete(interestsData.id, interestsData.name, false, "")
+//    private fun compareDBServer(interestsList: MutableList<VideoCategory>,
+//                                interestsTableList:MutableList<VideoCategory> ):MutableList<VideoCategory>{
+//        var finalList:MutableList<VideoCategory> = mutableListOf()
+//        for (interestsData in interestsList){
+//            var matched:Boolean = false
+//            for (interestsTable in interestsTableList){
+//                if (interestsData.id == interestsTable.id){
+//                    var convertedData = VideoCategory(interestsTable.id,interestsTable.name,interestsTable.selected,interestsTable.icon)
+//                    finalList.add(convertedData)
+//                    matched = true
+//                }
+//            }
+//            if (matched){
+//                matched = false
+//            } else {
+//                interestsViewModel.delete(interestsData.id, interestsData.name, false, "")
+//            }
+//        }
+//        return finalList
+//    }
+
+    private fun getSelectedCategoriesId(categoriesList: List<VideoCategory>){
+        if (selectedCategoriesId.isNotEmpty()){
+            selectedCategoriesId.clear()
+        }
+        for (item in categoriesList){
+            if (item.default_select){
+                selectedCategoriesId.add(item.id)
             }
         }
-        return finalList
+
     }
 
     private fun getSelectedLanguagesValues() {
