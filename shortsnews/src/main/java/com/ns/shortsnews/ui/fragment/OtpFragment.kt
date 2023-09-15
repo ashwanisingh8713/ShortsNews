@@ -15,20 +15,27 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentOtpBinding
 import com.ns.shortsnews.data.mapper.UserOtp
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
+import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.notification.FCMTokenDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
+import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
+import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.NotificationViewModel
 import com.ns.shortsnews.ui.viewmodel.NotificationViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
+import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModel
+import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.*
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
 import com.videopager.utils.UtilsFunctions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -36,6 +43,7 @@ import org.koin.android.ext.android.get
 
 class OtpFragment : Fragment(R.layout.fragment_otp) {
     lateinit var binding: FragmentOtpBinding
+    private var userSelectedCategory:MutableList<String> = mutableListOf()
 
     private val userViewModel: UserViewModel by activityViewModels {
         UserViewModelFactory().apply {
@@ -43,12 +51,21 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
                 UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
+                UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
             )
         }
     }
     private val notificationViewModel: NotificationViewModel by viewModels {
         NotificationViewModelFactory().apply {
             inject(FCMTokenDataUseCase(UserDataRepositoryImpl(get())))
+        }
+    }
+
+    private val videoCategoryViewModel: VideoCategoryViewModel by activityViewModels {
+        VideoCategoryViewModelFactory().apply {
+            inject(
+                VideoCategoryUseCase(VideoCategoryRepositoryImp(get()))
+            )
         }
     }
 
@@ -112,10 +129,35 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     saveUserPreference(it)
                     delay(500)
                     binding.progressBarOtp.visibility = View.GONE
-                    val bundle = Bundle()
-                    bundle.putBoolean("first_time_user", it.first_time_user)
-                    userViewModel.updateFragment(UserViewModel.LANGUAGES, bundle)
+                    if (it.first_time_user) {
+                        userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
+                    } else {
+                        userViewModel.requestUserSelectionApi()
+                        userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, Bundle())
+                    }
                 }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            userViewModel.userSelectionSuccessState.filterNotNull().collectLatest {
+                it.let {
+                    AppPreference.selectedLanguages = it.languages.toString()
+                    AppPreference.userSelection = it.categories.toString()
+                    userSelectedCategory = it.categories
+                    videoCategoryViewModel.loadVideoCategory(it.languages.toString())
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            videoCategoryViewModel.videoCategorySuccessState.filterNotNull().filter {
+                it.videoCategories.isNotEmpty()
+            }.collectLatest {
+                //TODO update selected categories to list
+                val finalList:MutableList<VideoCategory> = comparewithUserSelection(it.videoCategories as MutableList<VideoCategory>,userSelectedCategory)
+                AppPreference.saveCategoriesToPreference(categoryList = finalList)
+                AppPreference.init(requireActivity())
             }
         }
 
@@ -128,6 +170,17 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             }
         }
     }
+
+    private fun comparewithUserSelection(
+        videoCategories: MutableList<VideoCategory>,
+        userSelectedCategory: MutableList<String>
+    ): MutableList<VideoCategory> {
+//        for (categoryId in userSelectedCategory){
+//            for()
+//        }
+        return mutableListOf()
+    }
+
 
     private fun sendFcmTokenToServer() {
         val bundle: MutableMap<String, String> = mutableMapOf()

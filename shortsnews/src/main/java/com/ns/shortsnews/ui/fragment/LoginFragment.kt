@@ -17,6 +17,7 @@ import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
+import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.*
@@ -39,6 +40,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
             UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
             LanguageDataUseCase(UserDataRepositoryImpl(get())),
+            UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
         )
     }}
 

@@ -55,4 +55,9 @@ class UserDataRepositoryImpl constructor(private val apiService: UserApiService)
     override suspend fun getNotificationTokenStatus(data: Map<String, String>): StatusResult {
         return apiService.sendFCMToken(data)
     }
+
+    override suspend fun getUserSelections(): UserSelectionResult {
+        return apiService.getUserSelections()
+    }
+
 }

@@ -123,6 +123,18 @@ data class LanguageData(
     var icon: String = ""
 )
 
+@JsonClass(generateAdapter = true)
+data class UserSelectionResult(
+    val data:UserSelectionsData,
+    val status:Boolean
+)
+
+@JsonClass(generateAdapter = true)
+data class UserSelectionsData(
+    val languages:MutableList<String>,
+    val categories:MutableList<String>,
+)
+
 
 @JsonClass(generateAdapter = true)
 data class VideoDataResponse(
@@ -195,5 +207,7 @@ data class InterestsTable(
     var selected:Boolean = false,
     var icon: String = ""
 )
+
+
 
 

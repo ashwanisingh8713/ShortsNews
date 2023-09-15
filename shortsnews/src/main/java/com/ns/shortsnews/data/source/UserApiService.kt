@@ -50,5 +50,7 @@ interface UserApiService {
     @POST("send-device-token")
     suspend fun sendFCMToken(@Body body: Map<String, String>):StatusResult
 
+    @GET("user-selections")
+    suspend fun getUserSelections():UserSelectionResult
 
 }

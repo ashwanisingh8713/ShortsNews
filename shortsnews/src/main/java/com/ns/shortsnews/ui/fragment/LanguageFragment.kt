@@ -25,6 +25,7 @@ import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
+import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.LanguageViewModel
 import com.ns.shortsnews.ui.viewmodel.LanguageViewModelFactory
@@ -64,6 +65,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
                 UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
+                UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
             )
         }
     }

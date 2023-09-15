@@ -10,10 +10,13 @@ import com.ns.shortsnews.domain.models.LanguageData
 import com.ns.shortsnews.domain.models.LanguagesResult
 import com.ns.shortsnews.domain.models.OTPResult
 import com.ns.shortsnews.domain.models.RegistrationResult
+import com.ns.shortsnews.domain.models.UserSelectionResult
+import com.ns.shortsnews.domain.models.UserSelectionsData
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
+import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -22,7 +25,8 @@ import kotlinx.coroutines.launch
 
 class UserViewModel constructor(private val userRegistrationUseCases: UserRegistrationDataUseCase,
                                 private val otpValidationDataUseCases: UserOtpValidationDataUseCase,
-                                private val languageDataUseCase: LanguageDataUseCase
+                                private val languageDataUseCase: LanguageDataUseCase,
+    private val userSelectionsDataUseCase: UserSelectionsDataUseCase
 ) : ViewModel() {
 
     companion object {
@@ -56,6 +60,11 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
 
     private val _loadingState = MutableStateFlow(false)
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
+
+    //User selections
+    private val _userSelectionSuccessState = MutableStateFlow<UserSelectionsData?>(null)
+    val userSelectionSuccessState:StateFlow<UserSelectionsData?> get() = _userSelectionSuccessState
+
 
     fun updateFragment(fragmentType:String, bundle: Bundle) {
         viewModelScope.launch{
@@ -134,5 +143,27 @@ class UserViewModel constructor(private val userRegistrationUseCases: UserRegist
                 }
             }
         )
+    }
+
+    fun requestUserSelectionApi(){
+       userSelectionsDataUseCase.invoke(viewModelScope, null,object : UseCaseResponse<UserSelectionResult>{
+           override fun onSuccess(result: UserSelectionResult) {
+               if (result.status)
+                   _userSelectionSuccessState.value = result.data
+                   else _errorState.value = "Empty from api server"
+                   _loadingState.value = false
+
+           }
+
+           override fun onError(apiError: ApiError) {
+              _errorState.value = apiError.getErrorMessage()
+               _loadingState.value = false
+           }
+
+           override fun onLoading(isLoading: Boolean) {
+               _loadingState.value = true
+           }
+
+       })
     }
 }

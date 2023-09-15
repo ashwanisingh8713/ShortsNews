@@ -67,18 +67,19 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private var videoPagerFragment: VideoPagerFragment? = null
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
     private var videoCategoryViewModel: VideoCategoryViewModel? = null
+
     private val videoDataViewModel: UserBookmarksViewModel by viewModels {
         BookmarksViewModelFactory().apply {
             inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
         }
     }
 
-
     private val channelInfoViewModel: ChannelInfoViewModel by viewModels {
         ChannelInfoViewModelFactory().apply {
             inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
         }
     }
+
     private val followUnfollowViewModel: FollowUnfollowViewModel by viewModels {
         FollowUnfollowViewModelFactory().apply {
             inject(FollowUnfollowUseCase(UserDataRepositoryImpl(get())))
@@ -101,13 +102,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-        if (AppPreference.isUserLoggedIn) {
-            if (AppPreference.userProfilePic == "") {
-                binding.profileIcon.setImageResource(R.drawable.profile_avatar)
-            } else {
-                binding.profileIcon.load(AppPreference.userProfilePic)
-            }
-        }
+
 
         // Disable Touch or Click event of BottomSheet for non clickable places
         binding.persistentBottomsheet.bottomSheet.setOnTouchListener(object : OnTouchListener {
@@ -120,10 +115,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.profileIcon.setOnClickListener {
             launchProfileActivity()
         }
-        AppPreference.init(this@MainActivity)
         val videoCategories = AppPreference.categoryList
-        Log.i("kamlesh", "Language category onSuccess ::: $videoCategories")
-
 
         CoroutineScope(Dispatchers.IO).launch {
             delay(1000)
@@ -143,7 +135,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             )
             binding.recyclerView.adapter = categoryAdapter
             val defaultCate = videoCategories[0]
-            Log.i("lifecycle", "OnCreate loadHomeFragment")
             Log.i("language","$AppPreference.selectedLanguages!!")
                     loadHomeFragment(defaultCate.id, AppPreference.selectedLanguages!!)
             hideTryAgainText()
@@ -158,7 +149,18 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         bottomSheetDescClick()
 //        askNotificationPermission()
         launchLoginStateFlow()
+        loadProfileImage()
         AppPreference.isMainActivityLaunched = true
+    }
+
+    private fun loadProfileImage() {
+        if (AppPreference.isUserLoggedIn) {
+            if (AppPreference.userProfilePic == "") {
+                binding.profileIcon.setImageResource(R.drawable.profile_avatar)
+            } else {
+                binding.profileIcon.load(AppPreference.userProfilePic)
+            }
+        }
     }
 
     private fun bottomSheetDescClick() {
@@ -174,11 +176,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 AppPreference.isFollowingUpdateNeeded = true
                 binding.persistentBottomsheet.profileCount.text = it.data.follow_count
                 if (it.data.following) {
-                    binding.persistentBottomsheet.following.text = "Following"
-                    binding.persistentBottomsheet.followingExpanded.text = "Following"
+                    binding.persistentBottomsheet.following.text = getString(R.string.following)
+                    binding.persistentBottomsheet.followingExpanded.text = getString(R.string.following)
                 } else {
-                    binding.persistentBottomsheet.following.text = "Follow"
-                    binding.persistentBottomsheet.followingExpanded.text = "Follow"
+                    binding.persistentBottomsheet.following.text = getString(R.string.follow)
+                    binding.persistentBottomsheet.followingExpanded.text = getString(R.string.follow)
                 }
 
             }
@@ -217,7 +219,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
 
     private fun getSelectedLanguagesValuesOnClick(requiredId: String) {
-        Log.i("lifecycle", "Main activity get selected language msg")
         Log.i("language","$AppPreference.selectedLanguages!!")
         loadHomeFragment(requiredId, AppPreference.selectedLanguages!!)
         sharedEventViewModel.sendUserPreferenceData(
@@ -229,12 +230,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     override fun onPause() {
         super.onPause()
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        Log.i("lifecycle", "Main activity onPause")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.i("lifecycle", "Main activity OnResume")
         sharedEventViewModel.sendUserPreferenceData(
             AppPreference.isUserLoggedIn,
             AppPreference.userToken
@@ -245,24 +244,28 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             AppPreference.isProfileUpdated = false
         }
         if (AppPreference.isRefreshRequired) {
-            AppPreference.isRefreshRequired = false
-            AppPreference.init(this@MainActivity)
-            val videoCategories = AppPreference.categoryList
-            categoryAdapter.setData(videoCategories)
-            categoryAdapter = CategoryAdapter(
-                itemList = videoCategories,
-                itemListener = this@MainActivity
-            )
-            binding.recyclerView.adapter = categoryAdapter
-            val defaultCate = videoCategories[0]
-            loadHomeFragment(defaultCate.id, AppPreference.selectedLanguages!!)
-            hideTryAgainText()
+           updateCategoryList()
         }
 
         // When Bottom Slider is opened and selected any video to play
         // then coming back it should collapse the slider and play the video
         // Playing video is happening using lifecycle
         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    private fun updateCategoryList() {
+        AppPreference.isRefreshRequired = false
+        AppPreference.init(this@MainActivity)
+        val videoCategories = AppPreference.categoryList
+        categoryAdapter.setData(videoCategories)
+        categoryAdapter = CategoryAdapter(
+            itemList = videoCategories,
+            itemListener = this@MainActivity
+        )
+        binding.recyclerView.adapter = categoryAdapter
+        val defaultCate = videoCategories[0]
+        loadHomeFragment(defaultCate.id, AppPreference.selectedLanguages!!)
+        hideTryAgainText()
     }
 
 
@@ -298,7 +301,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      * Loads Home Fragment
      */
     private fun loadHomeFragment(categoryType: String, languages: String) {
-        Log.i("lifecycle", "Main activity Load Home fragment inside method")
         if (!supportFragmentManager.isStateSaved) {
             val ft = supportFragmentManager.beginTransaction()
             videoPagerFragment = AppConstants.makeVideoPagerInstance(
