@@ -20,6 +20,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -44,9 +45,11 @@ import com.ns.shortsnews.ui.activity.LanguageContainer
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModel
 import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModelFactory
 import com.ns.shortsnews.utils.Alert
+import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
+import com.videopager.utils.UtilsFunctions
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -74,26 +77,30 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         const val cameraPermission = Manifest.permission.CAMERA
     }
 
-//    private val textWatcher = object : TextWatcher{
-//        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//           Log.i("","")
-//        }
-//
-//        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//            isProfileEdited = true
-//        }
-//
-//        override fun afterTextChanged(s: Editable?) {
-//            binding.consParent.forEach { view ->
-//                (view as? TextInputLayout)?.let {
-//                    with(it){
-//                        error = null
-//                        isErrorEnabled = false
-//                    }
-//                }
-//            }
-//        }
-//    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (!isProfileEdited) {
+                activity?.finish()
+            } else {
+                if (!isProfileImageSelected) {
+                    applyConditionOnUpdateProfile()
+                } else {
+                    showUpdateProfileDialog(
+                        "Update Profile",
+                        "Updating your profile information",
+                        getRequestBody(
+                            bitmapToFile(mPhotoBitmap, "user") as File,
+                            binding.nameEditText.text.toString(),
+                            binding.ageEditText.text.toString(),
+                            binding.locationEditText.text.toString()
+                        )
+                    )
+                }
+            }
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -110,7 +117,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             binding.ageEditText.setText(userData.age)
             binding.locationEditText.setText(userData.location)
         }
-//        addTextWatcherToEditTexts()
         binding.constLanguage.setOnClickListener {
             if (NetworkXProvider.isInternetConnected) {
                 languagesFragment()
@@ -457,12 +463,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
         return builder.build()
     }
-
-//    private fun addTextWatcherToEditTexts(){
-//      binding.consParent.forEach {  view ->
-//          (view as? EditText)?.addTextChangedListener( textWatcher )
-//      }
-//    }
 
     private fun View.hideKeyBoard() {
         val inputManager =
