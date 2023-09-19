@@ -161,6 +161,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     if (it.first_time_user) {
                         userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
                     } else {
+                        AppPreference.isLanguageSelected = true
                         userViewModel.requestUserSelectionApi()
                     }
                 }

@@ -28,6 +28,8 @@ import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.videopager.utils.CategoryConstants
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -82,11 +84,8 @@ class LauncherActivity : AppCompatActivity() {
                 it.videoCategories.isNotEmpty()
             }.collectLatest {
                 // Save category data in preference
-                val finalList:MutableList<VideoCategory> = comparePrefereceServer(it.videoCategories as MutableList<VideoCategory>,AppPreference.categoryList)
-                AppPreference.saveCategoriesToPreference(categoryList = finalList)
-                AppPreference.init(this@LauncherActivity)
-               launchMainActivity()
-
+                 getSelectedVideoInterstCategory(it.videoCategories as MutableList<VideoCategory>)
+                launchMainActivity()
             }
         }
 
@@ -159,27 +158,25 @@ class LauncherActivity : AppCompatActivity() {
 
     }
 
-    private fun comparePrefereceServer(interestsList: MutableList<VideoCategory>,
-                                       interestsDataList:MutableList<VideoCategory> ):MutableList<VideoCategory>{
-        var finalList:MutableList<VideoCategory> = mutableListOf()
-        if (interestsDataList.isEmpty()){
-            finalList.addAll(interestsList)
-        } else {
-            for (interestsData in interestsList) {
-                for (interests in interestsDataList) {
-                    if (interestsData.id == interests.id) {
-                        var convertedData = VideoCategory(
-                            interests.id,
-                            interests.name,
-                            interests.selected,
-                            interests.icon,
-                            interests.default_select
-                        )
-                        finalList.add(convertedData)
-                    }
-                }
+
+    private fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
+        val unselectedCategory = mutableListOf<VideoCategory>()
+        val selectedCategory = mutableListOf<VideoCategory>()
+
+        for (item in categoryList){
+            if (item.default_select){
+                selectedCategory.add(item)
+            } else {
+                unselectedCategory.add(item)
             }
         }
-        return finalList
+        val  finalList:List<VideoCategory> = selectedCategory+unselectedCategory
+        CoroutineScope(Dispatchers.IO).launch {
+            AppPreference.saveCategoriesToPreference(finalList)
+            AppPreference.init(this@LauncherActivity)
+            AppPreference.isRefreshRequired = true
+            AppPreference.init(this@LauncherActivity)
+            Log.i("cat",AppPreference.categoryList.toString())
+        }
     }
 }

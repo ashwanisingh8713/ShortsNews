@@ -119,9 +119,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 it.videoCategories.isNotEmpty()
             }.collectLatest {
                 // Save category data in preference
-//                val finalList:MutableList<VideoCategory> = comparePrefereceServer(it.videoCategories as MutableList<VideoCategory>,AppPreference.categoryList)
-//                AppPreference.saveCategoriesToPreference(categoryList = finalList)
-//                AppPreference.init(requireActivity())
                 getSelectedVideoInterstCategory(it.videoCategories as MutableList<VideoCategory>)
                 if (from == AppConstants.FROM_EDIT_PROFILE){
                     activity?.finish()
