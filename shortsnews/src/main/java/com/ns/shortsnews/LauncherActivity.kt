@@ -4,17 +4,93 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.data.model.VideoClikedItem
+import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
+import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
+import com.ns.shortsnews.domain.models.LanguageData
+import com.ns.shortsnews.domain.models.VideoCategory
+import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
+import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
+import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
+import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
+import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
+import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
+import com.ns.shortsnews.ui.viewmodel.UserViewModel
+import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
+import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModel
+import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.videopager.utils.CategoryConstants
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 
 class LauncherActivity : AppCompatActivity() {
+    private var selectedLanguages = ""
+
+    private val userViewModel: UserViewModel by viewModels {
+        UserViewModelFactory().apply {
+            inject(
+                UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
+                UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
+                LanguageDataUseCase(UserDataRepositoryImpl(get())),
+                UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
+            )
+        }
+    }
+
+    private val videoCategoryViewModel: VideoCategoryViewModel by viewModels {
+        VideoCategoryViewModelFactory().apply {
+            inject(
+                VideoCategoryUseCase(VideoCategoryRepositoryImp(get())),
+                UpdateVideoCategoriesUseCase(VideoCategoryRepositoryImp(get()))
+            )
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch() {
+            userViewModel.LanguagesSuccessState.filterNotNull().collectLatest {
+                Log.i("kamlesh", "Language onSuccess ::: $it")
+                it.let {
+                    if (it.isNotEmpty()) {
+                       videoCategoryViewModel.loadVideoCategory( filterSelectedLanguages(it))
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch() {
+            userViewModel.errorState.filterNotNull().collectLatest {
+                Log.i("kamlesh", "OTPFragment onError ::: $it")
+            }
+        }
+
+        lifecycleScope.launch {
+            videoCategoryViewModel.videoCategorySuccessState.filterNotNull().filter {
+                it.videoCategories.isNotEmpty()
+            }.collectLatest {
+                // Save category data in preference
+                val finalList:MutableList<VideoCategory> = comparePrefereceServer(it.videoCategories as MutableList<VideoCategory>,AppPreference.categoryList)
+                AppPreference.saveCategoriesToPreference(categoryList = finalList)
+                AppPreference.init(this@LauncherActivity)
+               launchMainActivity()
+
+            }
+        }
+
+
         if (!AppPreference.isUserLoggedIn){
             launchProfileActivity()
         } else {
@@ -29,12 +105,18 @@ class LauncherActivity : AppCompatActivity() {
 //
 //                    launchMainActivityWithExtras( videoId, type, previewUrl, videoUrl)
 //                } else {
-                   launchMainActivity()
+                if (  AppPreference.selectedLanguages!!.isEmpty()){
+                    userViewModel.requestLanguagesApi()
+                } else{
+                    launchMainActivity()
+                }
 //                }
             } else {
                 launchProfileActivity()
             }
         }
+
+
     }
 
     private fun launchMainActivityWithExtras( videoId:String, type:String, previewUrl:String, videoUrl: String) {
@@ -63,5 +145,41 @@ class LauncherActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
         this.finish()
+    }
+
+    private fun filterSelectedLanguages(languageList: List<LanguageData>): String{
+        var languageStr = ""
+        for (item in languageList){
+            if (item.default_select){
+                languageStr = languageStr+item.id+","
+            }
+        }
+        AppPreference.selectedLanguages = languageStr.dropLast(1)
+        return  languageStr
+
+    }
+
+    private fun comparePrefereceServer(interestsList: MutableList<VideoCategory>,
+                                       interestsDataList:MutableList<VideoCategory> ):MutableList<VideoCategory>{
+        var finalList:MutableList<VideoCategory> = mutableListOf()
+        if (interestsDataList.isEmpty()){
+            finalList.addAll(interestsList)
+        } else {
+            for (interestsData in interestsList) {
+                for (interests in interestsDataList) {
+                    if (interestsData.id == interests.id) {
+                        var convertedData = VideoCategory(
+                            interests.id,
+                            interests.name,
+                            interests.selected,
+                            interests.icon,
+                            interests.default_select
+                        )
+                        finalList.add(convertedData)
+                    }
+                }
+            }
+        }
+        return finalList
     }
 }

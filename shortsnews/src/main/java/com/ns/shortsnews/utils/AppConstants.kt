@@ -18,6 +18,7 @@ class AppConstants {
 
         const val  FILL_REQUIRED_FIELD = "Please fill the fields"
         const val  FILL_VALID_EMAIL = "Please enter valid email address "
+        const val AT_LEAST_SELECT_ONE = "Please select at-least one category"
         const val  FILL_EMAIL = "Please enter your email address "
         const val  FILL_OTP = "Please enter OTP"
         const val  FILL_NAME = "Please enter your name"

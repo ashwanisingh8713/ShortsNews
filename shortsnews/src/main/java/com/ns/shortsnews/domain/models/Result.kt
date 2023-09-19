@@ -216,6 +216,10 @@ data class UpdateCategories(
     val msg:String
 )
 
+@JsonClass(generateAdapter = true)
+data class Categories(
+    val data:List<String>
+)
 
 
 

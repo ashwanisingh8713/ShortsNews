@@ -5,11 +5,15 @@ import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.fragment.app.FragmentManager
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.ActivityContainerBinding
 import com.ns.shortsnews.domain.models.ProfileData
 import com.ns.shortsnews.ui.fragment.EditProfileFragment
 import com.ns.shortsnews.ui.fragment.InterestsFragment
+import com.ns.shortsnews.ui.fragment.LoginFragment
+import com.ns.shortsnews.utils.AppPreference
 
 class ContainerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityContainerBinding
@@ -54,4 +58,5 @@ class ContainerActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.fc, fragment)
             .commit()
     }
+
 }

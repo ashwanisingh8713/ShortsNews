@@ -23,7 +23,9 @@ internal class PageViewHolder(
     private val animationEffect = FadeInThenOutAnimationEffect(binding.playPause)
 
     init {
-        click(Pair("", PlayPauseClick))
+        binding.root.setOnClickListener {
+            click(Pair("", PlayPauseClick))
+        }
     }
 
     fun bind(videoData: VideoData) {

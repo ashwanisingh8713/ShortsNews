@@ -85,7 +85,7 @@ class PlainVideoActivity : AppCompatActivity() {
         setContentView(view)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-        getSelectedLanguagesValues(videoClickedItem)
+        loadVideoFragment(videoClickedItem, AppPreference.selectedLanguages!!)
         registerVideoCache()
         if (intent.getStringExtra(AppConstants.ID) != null) {
             Timer().schedule(1000) {
@@ -180,22 +180,6 @@ class PlainVideoActivity : AppCompatActivity() {
         }
     }
 
-    private fun getSelectedLanguagesValues(videoClikedItem: VideoClikedItem) {
-        var languageString = ""
-        lifecycleScope.launch {
-            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }
-                .collectLatest {
-                    for (data in it) {
-                        if (data.selected) {
-                            languageString = languageString + data.id + ","
-                        }
-                    }
-                    Log.i("language", languageString)
-                    loadVideoFragment(videoClikedItem, languageString)
-                }
-        }
-    }
-
     private fun getNotificationIntentExtras(videoId: String, previewUrl: String, videoUrl: String) {
         Log.i("intent_newLaunch", "in plaint video activity  getNotification${videoId}")
         notificationDataFromIntent(videoId, previewUrl, videoUrl)
@@ -204,6 +188,4 @@ class PlainVideoActivity : AppCompatActivity() {
     private fun notificationDataFromIntent(videoId: String, previewUrl: String, mediaUri: String) {
         videoPagerFragment?.getNotificationData(videoId, previewUrl, mediaUri)
     }
-
-
 }

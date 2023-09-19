@@ -1,5 +1,6 @@
 package com.ns.shortsnews.data.source
 
+import com.google.gson.JsonObject
 import com.ns.shortsnews.domain.models.*
 import com.videopager.data.Following
 import com.videopager.data.VideoInfo
@@ -27,7 +28,7 @@ interface UserApiService {
     suspend fun getVideoCategory(@Query("languages")languages:String): VideoCategoryResult
 
     @POST("store-categories")
-    suspend fun updateCategory(@Body categories:String): UpdateCategories
+    suspend fun updateCategory(@Body categories:Any): UpdateCategories
 
     @GET("videos")
     suspend fun getChannelVideoData(@Query("channel")channel:String): VideoDataResponse

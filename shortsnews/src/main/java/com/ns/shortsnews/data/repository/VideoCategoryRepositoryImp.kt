@@ -1,5 +1,6 @@
 package com.ns.shortsnews.data.repository
 
+import com.google.gson.JsonObject
 import com.ns.shortsnews.data.source.UserApiService
 import com.ns.shortsnews.domain.models.UpdateCategories
 import com.ns.shortsnews.domain.models.VideoCategoryResult
@@ -13,7 +14,7 @@ class VideoCategoryRepositoryImp(private val apiService: UserApiService): VideoC
         return apiService.getVideoCategory(languages)
     }
 
-    override suspend fun getUpdateCategories(categories: String): UpdateCategories {
+    override suspend fun getUpdateCategories(categories:Any): UpdateCategories {
         return apiService.updateCategory(categories)
     }
 }

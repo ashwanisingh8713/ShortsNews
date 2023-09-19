@@ -2,20 +2,26 @@ package com.ns.shortsnews.ui.fragment
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.content.res.TypedArray
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.ns.shortsnews.R
 import com.ns.shortsnews.data.mapper.UserVideoCategory
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.databinding.FragmentInterestsBinding
+import com.ns.shortsnews.domain.models.Categories
 import com.ns.shortsnews.domain.models.InterestsTable
 import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.repository.InterestsRepository
@@ -33,20 +39,13 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.android.ext.android.get
 
 
 class InterestsFragment : Fragment(R.layout.fragment_interests) {
     lateinit var binding: FragmentInterestsBinding
-    private var interestsListDB = emptyList<InterestsTable>()
-    private val interestsDao = ShortsDatabase.instance!!.interestsDao()
-    private val interestsRepository = InterestsRepository(interestsDao)
-    private val interestsViewModel: InterestsViewModel by activityViewModels { InterestsViewModelFactory(interestsRepository) }
-
-    private val languageDao = ShortsDatabase.instance!!.languageDao()
-    private val languageItemRepository = LanguageRepository(languageDao)
-    private val languageViewModel: LanguageViewModel by activityViewModels { LanguageViewModelFactory(languageItemRepository) }
-
     private var selectedNumbers = 0
     private val categoryViewModel: VideoCategoryViewModel by activityViewModels { VideoCategoryViewModelFactory().apply {
         inject(VideoCategoryUseCase(VideoCategoryRepositoryImp(get())), (UpdateVideoCategoriesUseCase(VideoCategoryRepositoryImp(get()))))
@@ -54,34 +53,61 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
 
     private var selectedItemList = mutableListOf<VideoCategory>()
     private var selectedCategoriesId = mutableListOf<String>()
+    private var isModified = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+         requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (selectedNumbers < 1){
+                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE)
+            } else {
+                if (isModified){
+                    Alert().showGravityToast(requireActivity(), "Please save selected preferences")
+                } else {
+                    activity?.finish()
+                }
+
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentInterestsBinding.bind(view)
-//        getSelectedLanguagesValues()
-
         categoryViewModel.loadVideoCategory(AppPreference.selectedLanguages!!)
-
         binding.backButtonUser.setOnClickListener {
-            activity?.finish()
-        }
-        binding.submitButtonConst.setOnClickListener {
-            getSelectedVideoInterstCategory(selectedItemList)
-            if (selectedItemList.isNotEmpty()){
-                getSelectedCategoriesId(selectedItemList)
-                val bundle: MutableMap<String, List<String>> = mutableMapOf()
-                bundle["categories"] = selectedCategoriesId
-                val data:String = "{\n" +
-                        "    \"categories\": [\n" +
-                        "        \"994\",\n" +
-                        "        \"22\"\n" +
-                        "    ]\n" +
-                        "}"
-                categoryViewModel.updateCategoriesApi(data)
+            if (selectedNumbers < 1){
+                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE)
             } else {
-                activity?.finish()
+                if (isModified){
+                    Alert().showGravityToast(requireActivity(), "Please save selected preferences")
+                } else {
+                    activity?.finish()
+                }
+
             }
         }
+
+
+
+        binding.submitButtonConst.setOnClickListener {
+            getSelectedVideoInterstCategory(selectedItemList)
+            if (selectedItemList.isNotEmpty() && selectedNumbers >= 1){
+                getSelectedCategoriesId(selectedItemList)
+                val data = HashMap<String, List<String>>()
+                data["categories"] = selectedCategoriesId
+                categoryViewModel.updateCategoriesApi(data)
+            } else {
+                if (selectedNumbers >= 1){
+                    Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE)
+                } else {
+                    activity?.finish()
+                }
+            }
+        }
+
+
         if(AppPreference.isLanguageSelected){
             binding.submitButtonPers.text = "Save"
         }
@@ -98,18 +124,10 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         viewLifecycleOwner.lifecycleScope.launch(){
             categoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
                 it.let {
-                    Log.i("kamlesh", "Registration Response ::: $it")
                     binding.progressBarPer.visibility = View.GONE
                     if (it.videoCategories.isNotEmpty()) {
-//                        if (interestsViewModel.isEmpty()) {
-//                            loadDataFromServer(it.videoCategories.toMutableList())
                         setupChipGroup(it.videoCategories as MutableList<VideoCategory>)
                             selectedItemList.addAll(it.videoCategories)
-//                        } else {
-//                            val finalList: MutableList<VideoCategory> = compareDBServer(it.videoCategories.toMutableList(), AppPreference.categoryList)
-//                            selectedItemList.addAll(finalList)
-//                            loadDataFromDB(finalList)
-//                        }
                     }
                 }
             }
@@ -119,6 +137,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                 it.let {
                     if (it.status){
                         Alert().showGravityToast(requireActivity(), "Category preferences successfully")
+                        AppPreference.isRefreshRequired = true
                         activity?.finish()
                     } else {
                         binding.progressBarPer.visibility = View.GONE
@@ -135,29 +154,6 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                 }
             }
         }
-
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            interestsViewModel.sharedDeleteFromTable.filterNotNull().collectLatest {
-//                if (it != null){
-//                    Log.i("database","Delete :: ${it.id}")
-//                }
-//            }
-//        }
-
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            interestsViewModel.sharedInsertInTable.filterNotNull().collectLatest {
-//                if (it != null){
-//                    Log.i("database","Inserted :: ${it.id}")
-//                }
-//            }
-//        }
-//
-//        viewLifecycleOwner.lifecycleScope.launch(){
-//            interestsViewModel.getAllInterestedItems().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
-//                Log.i("database", "All data :: $it")
-//                interestsListDB = it
-//            }
-//        }
     }
 
     @SuppressLint("InflateParams")
@@ -200,6 +196,9 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             }
 
             mChip.setOnCheckedChangeListener { buttonView, isChecked ->
+                isModified = true
+                AppPreference.isModified = true
+
                 if (isChecked) {
                     mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
                     mChip.chipBackgroundColor = ColorStateList.valueOf(
@@ -247,39 +246,6 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         }
     }
 
-
-//    private fun loadDataFromDB( list: MutableList<VideoCategory>){
-//        setupChipGroup(list)
-//    }
-
-//    private fun loadDataFromServer(list: MutableList<VideoCategory>) {
-//        for (data in list){
-//            interestsViewModel.insert(data.id,data.name,false,"")
-//        }
-//        setupChipGroup(list)
-//    }
-
-//    private fun compareDBServer(interestsList: MutableList<VideoCategory>,
-//                                interestsTableList:MutableList<VideoCategory> ):MutableList<VideoCategory>{
-//        var finalList:MutableList<VideoCategory> = mutableListOf()
-//        for (interestsData in interestsList){
-//            var matched:Boolean = false
-//            for (interestsTable in interestsTableList){
-//                if (interestsData.id == interestsTable.id){
-//                    var convertedData = VideoCategory(interestsTable.id,interestsTable.name,interestsTable.selected,interestsTable.icon)
-//                    finalList.add(convertedData)
-//                    matched = true
-//                }
-//            }
-//            if (matched){
-//                matched = false
-//            } else {
-//                interestsViewModel.delete(interestsData.id, interestsData.name, false, "")
-//            }
-//        }
-//        return finalList
-//    }
-
     private fun getSelectedCategoriesId(categoriesList: List<VideoCategory>){
         if (selectedCategoriesId.isNotEmpty()){
             selectedCategoriesId.clear()
@@ -292,26 +258,12 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
 
     }
 
-    private fun getSelectedLanguagesValues() {
-        var languageString = ""
-        lifecycleScope.launch {
-            languageViewModel.getAllLanguage().filterNotNull().filter { it.isNotEmpty() }.collectLatest {
-                for (data in it){
-                    if (data.selected){
-                        languageString = languageString + data.id +","
-                    }
-                }
-                categoryViewModel.loadVideoCategory(languageString)
-            }
-        }
-    }
-
-    fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
+    private fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
         val unselectedCategory = mutableListOf<VideoCategory>()
         val selectedCategory = mutableListOf<VideoCategory>()
 
         for (item in categoryList){
-            if (item.selected){
+            if (item.default_select){
                 selectedCategory.add(item)
             } else {
                 unselectedCategory.add(item)
@@ -326,8 +278,5 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             Log.i("cat",AppPreference.categoryList.toString())
 
         }
-
-
     }
-
 }

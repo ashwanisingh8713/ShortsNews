@@ -2,6 +2,7 @@ package com.ns.shortsnews.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonObject
 import com.ns.shortsnews.data.mapper.UserVideoCategory
 import com.ns.shortsnews.domain.exception.ApiError
 import com.ns.shortsnews.domain.models.UpdateCategories
@@ -53,14 +54,14 @@ class VideoCategoryViewModel(
                 }
 
                 override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = false
+                    _loadingState.value = true
                 }
 
             })
 
     }
 
-    fun updateCategoriesApi(categories: String) {
+    fun updateCategoriesApi(categories: Any) {
         updateVideoCategoriesUseCase.invoke(
             scope = viewModelScope,
             params = categories,

@@ -125,6 +125,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     inject(VideoCategoryUseCase(VideoCategoryRepositoryImp(get())), UpdateVideoCategoriesUseCase(VideoCategoryRepositoryImp(get())))
                 })[VideoCategoryViewModel::class.java]
         }
+        AppPreference.init(this@MainActivity)
 
         if (AppPreference.categoryListStr!!.isEmpty()) {
             showTryAgainText()
@@ -442,6 +443,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED -> {
+                        Log.i("BottomSlider", "STATE_DRAGGING")
                         sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_EXPANDED)
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
                             resources.getDrawable(R.drawable.slide_down_arrow_icon, null)

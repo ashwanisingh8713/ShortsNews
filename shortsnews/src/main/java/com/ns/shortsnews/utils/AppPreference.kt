@@ -37,6 +37,7 @@ object AppPreference {
     private const val NOTIFICATION_VIDEO_URL = "video_url"
     private const val NOTIFICATION_VIDEO_PREVIEW = "video_preview"
     private const val IS_REFRESS_REQUIRED = "is_refresh_required"
+    private const val IS_MODIFIED = "is_modified"
     private const val IS_INTEREST_UPDATE_NEEDED = "is_interest_update_needed"
     private const val USER_SELECTIONS = "user_selection"
     private const val SELECTED_LANGUAGES = "selected_languages_list"
@@ -282,5 +283,12 @@ object AppPreference {
 
         return languageList
     }
+
+    var isModified:Boolean
+        get() = preference.getBoolean(IS_MODIFIED, false)
+        set(value) = preference.edit {
+            this.putBoolean(IS_MODIFIED, value)
+            this.apply()
+        }
 
 }
