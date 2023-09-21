@@ -17,6 +17,7 @@ import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
+import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -60,6 +61,10 @@ class UserViewModel constructor(
 
     private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> get() = _errorState
+
+    // OTP Error State
+    private val _otpErrorState = MutableStateFlow<String?>(null)
+    val otpErrorState: StateFlow<String?> get() = _otpErrorState
 
     private val _loadingState = MutableStateFlow(false)
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
@@ -110,6 +115,11 @@ class UserViewModel constructor(
         otpValidationDataUseCases.invoke(viewModelScope, requestBody,
             object : UseCaseResponse<OTPResult> {
                 override fun onSuccess(result: OTPResult) {
+                    if(result.status == false) {
+                        _otpErrorState.value = result.msg
+                        _loadingState.value = false
+                        return
+                    }
                     val data = result.data
                     val otpValidation = UserOtp().mapper(
                         status = result.status, msg = result.msg,
@@ -123,7 +133,7 @@ class UserViewModel constructor(
                 }
 
                 override fun onError(apiError: ApiError) {
-                    _errorState.value = apiError.getErrorMessage()
+                    _otpErrorState.value = apiError.getErrorMessage()
                     _loadingState.value = false
                 }
 
@@ -162,15 +172,22 @@ class UserViewModel constructor(
             null,
             object : UseCaseResponse<UserSelectionResult> {
                 override fun onSuccess(result: UserSelectionResult) {
-                    if (result.status)
+                    if (result.status) {
+                        if(result.data.languages.isNotEmpty()) {
+                            AppPreference.isLanguageSelected = true
+                        }
                         _userSelectionSuccessState.value = result.data
-                    else _errorState.value = "Empty from api server"
+                    }
+                    else {
+                        _otpErrorState.value = "Empty from api server"
+                    }
+
                     _loadingState.value = false
 
                 }
 
                 override fun onError(apiError: ApiError) {
-                    _errorState.value = apiError.getErrorMessage()
+                    _otpErrorState.value = apiError.getErrorMessage()
                     _loadingState.value = false
                 }
 

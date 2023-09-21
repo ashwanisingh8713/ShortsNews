@@ -303,13 +303,16 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      * Loads Home Fragment
      */
     private fun loadHomeFragment(categoryType: String, languages: String) {
+        var updatedLanguage = languages.replace("[", "")
+        updatedLanguage = updatedLanguage.replace("]", "")
+        Log.i("languages", "languages :: $updatedLanguage")
         if (!supportFragmentManager.isStateSaved) {
             val ft = supportFragmentManager.beginTransaction()
             videoPagerFragment = AppConstants.makeVideoPagerInstance(
                 categoryType,
                 CategoryConstants.DEFAULT_VIDEO_DATA,
                 this@MainActivity,
-                languages = languages
+                languages = updatedLanguage
             )
             ft.replace(
                 R.id.fragment_container,

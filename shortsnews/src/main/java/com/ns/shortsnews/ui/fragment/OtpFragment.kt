@@ -106,9 +106,9 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 } else {
                     if (otpValue.isEmpty() && name.isEmpty()) {
                         Alert().showGravityToast(requireActivity(), AppConstants.FILL_NAME)
-                    } else if (otpValue.isNotEmpty() || name.isEmpty()) {
+                    } else if (name.isEmpty()) {
                         Alert().showGravityToast(requireActivity(), AppConstants.FILL_NAME)
-                    } else if (otpValue.isEmpty() || name.isNotEmpty()) {
+                    } else if (otpValue.isEmpty()) {
                         Alert().showGravityToast(requireActivity(), AppConstants.FILL_OTP)
                     } else {
                         if (otpValue.length < 6) {
@@ -145,7 +145,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
 
         viewLifecycleOwner.lifecycleScope.launch() {
-            userViewModel.errorState.filterNotNull().collectLatest {
+            userViewModel.otpErrorState.filterNotNull().collectLatest {
                 binding.progressBarOtp.visibility = View.GONE
                 binding.submitButton.visibility = View.VISIBLE
             }
@@ -157,11 +157,10 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     sendFcmTokenToServer()
                     saveUserPreference(it)
                     delay(500)
-                    binding.progressBarOtp.visibility = View.GONE
                     if (it.first_time_user) {
+                        binding.progressBarOtp.visibility = View.GONE
                         userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
                     } else {
-                        AppPreference.isLanguageSelected = true
                         userViewModel.requestUserSelectionApi()
                     }
                 }

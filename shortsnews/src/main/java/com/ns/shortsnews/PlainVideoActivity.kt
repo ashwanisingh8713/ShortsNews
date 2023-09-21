@@ -104,11 +104,13 @@ class PlainVideoActivity : AppCompatActivity() {
      * Loads Home Fragment
      */
     private fun loadVideoFragment(it: VideoClikedItem, languages: String) {
+        var updatedLanguage = languages.replace("[", "")
+        updatedLanguage = updatedLanguage.replace("]", "")
         videoPagerFragment = AppConstants.makeVideoPagerInstance(
             requiredId = it.requiredId,
             videoFrom = it.videoFrom,
             this@PlainVideoActivity,
-            languages,
+            languages = updatedLanguage,
             selectedPlay = it.selectedPosition
         )
         val bundle = Bundle()
