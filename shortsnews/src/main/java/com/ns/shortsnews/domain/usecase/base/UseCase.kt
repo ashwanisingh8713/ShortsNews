@@ -17,18 +17,18 @@ abstract class UseCase<Type, in Params>() where Type: Any {
             onResult?.onLoading(true)
             try {
                 val result = run(params)
-                onResult?.onLoading(false)
                 onResult?.onSuccess(result)
+                onResult?.onLoading(false)
             }
             catch (e: CancellationException) {
                 e.printStackTrace()
-                onResult?.onLoading(false)
                 onResult?.onError(traceErrorException(e))
+                onResult?.onLoading(false)
             }
             catch (e: Exception) {
                 e.printStackTrace()
-                onResult?.onLoading(false)
                 onResult?.onError(traceErrorException(e))
+                onResult?.onLoading(false)
             }
         }
 

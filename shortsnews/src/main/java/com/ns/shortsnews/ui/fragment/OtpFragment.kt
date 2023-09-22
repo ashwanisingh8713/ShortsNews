@@ -145,15 +145,13 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
 
 
-        viewLifecycleOwner.lifecycleScope.launch() {
+        viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.otpErrorState.filterNotNull().collectLatest {
-                binding.progressBarOtp.visibility = View.GONE
-                binding.submitButton.visibility = View.VISIBLE
-                Alert().showGravityToast(requireActivity(), AppConstants.API_ERROR)
+                Alert().showGravityToast(requireActivity(), it)
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch() {
+        viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.otpSuccessState.filterNotNull().collectLatest {
                 it.let {
 //                    sendFcmTokenToServer()
@@ -201,10 +199,13 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch() {
-            userViewModel.loadingState.filterNotNull().collectLatest {
+            userViewModel.otpLoadingState.collectLatest {
                 if (it) {
                     binding.submitButton.visibility = View.GONE
                     binding.progressBarOtp.visibility = View.VISIBLE
+                } else {
+                    binding.submitButton.visibility = View.VISIBLE
+                    binding.progressBarOtp.visibility = View.GONE
                 }
             }
         }

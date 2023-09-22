@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UserViewModel constructor(
@@ -66,8 +67,11 @@ class UserViewModel constructor(
     private val _otpErrorState = MutableStateFlow<String?>(null)
     val otpErrorState: StateFlow<String?> get() = _otpErrorState
 
+    private val _otpLoadingState = MutableStateFlow(false)
+    val otpLoadingState: StateFlow<Boolean> get() = _otpLoadingState
+
     private val _loadingState = MutableStateFlow(false)
-    val loadingState: MutableStateFlow<Boolean> get() = _loadingState
+    val loadingState: StateFlow<Boolean> get() = _loadingState
 
     //User selections
     private val _userSelectionSuccessState = MutableStateFlow<UserSelectionsData?>(null)
@@ -96,16 +100,14 @@ class UserViewModel constructor(
                         isUserRegistered = result.data.is_registered
                     )
                     _registrationSuccessState.value = userRegistration
-                    _loadingState.value = false
                 }
 
                 override fun onError(apiError: ApiError) {
                     _errorState.value = apiError.getErrorMessage()
-                    _loadingState.value = false
                 }
 
                 override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = true
+                    _loadingState.value = isLoading
                 }
             }
         )
@@ -116,8 +118,11 @@ class UserViewModel constructor(
             object : UseCaseResponse<OTPResult> {
                 override fun onSuccess(result: OTPResult) {
                     if(result.status == false) {
-                        _otpErrorState.value = result.msg
-                        _loadingState.value = false
+                        var msg = result.msg
+                        if(_otpErrorState.value == result.msg) {
+                            msg ="${result.msg} "
+                        }
+                        _otpErrorState.value = msg
                         return
                     }
                     val data = result.data
@@ -129,16 +134,14 @@ class UserViewModel constructor(
                         age = data.my_profile.age, location = data.my_profile.location
                     )
                     _otpSuccessState.value = otpValidation
-                    _loadingState.value = false
                 }
 
                 override fun onError(apiError: ApiError) {
                     _otpErrorState.value = apiError.getErrorMessage()
-                    _loadingState.value = false
                 }
 
                 override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = true
+                    _otpLoadingState.update { isLoading}
                 }
             }
         )
@@ -168,7 +171,7 @@ class UserViewModel constructor(
                 }
 
                 override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = true
+                    _loadingState.value = isLoading
                 }
             }
         )
@@ -200,7 +203,7 @@ class UserViewModel constructor(
                 }
 
                 override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = true
+                    _loadingState.value = isLoading
                 }
 
             })

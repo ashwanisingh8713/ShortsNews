@@ -6,14 +6,16 @@ import com.ns.shortsnews.domain.exception.ApiError
 import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
 import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
 import com.videopager.data.Following
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class FollowUnfollowViewModel(private val followUnfollowUseCse: FollowUnfollowUseCase): ViewModel() {
 
     // Profile
-    private val _followUnfollowSuccessState = MutableStateFlow<Following?>(null)
-    val FollowUnfollowSuccessState: StateFlow<Following?> get() = _followUnfollowSuccessState
+    private val _followUnfollowSuccessState = MutableSharedFlow<Following?>(replay = 0, extraBufferCapacity = 1)
+    val FollowUnfollowSuccessState: SharedFlow<Following?> get() = _followUnfollowSuccessState
 
     private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> get() = _errorState
@@ -26,7 +28,7 @@ class FollowUnfollowViewModel(private val followUnfollowUseCse: FollowUnfollowUs
         followUnfollowUseCse.invoke(viewModelScope, channelId,
             object : UseCaseResponse<Following> {
                 override fun onSuccess(type: Following) {
-                    _followUnfollowSuccessState.value = type
+                    _followUnfollowSuccessState.tryEmit(type)
                     _loadingState.value = false
                 }
 
