@@ -9,4 +9,19 @@
     tools:context=".LauncherActivity"
     >
 
+    <ProgressBar
+        android:id="@+id/progress_bar_launcher"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="10dp"
+        android:indeterminateTint="@color/white"
+        android:indeterminateTintMode="src_in"
+        android:padding="3dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+       />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

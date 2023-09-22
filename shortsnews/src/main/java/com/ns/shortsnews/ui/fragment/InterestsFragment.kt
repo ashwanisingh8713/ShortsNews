@@ -2,30 +2,19 @@ package com.ns.shortsnews.ui.fragment
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.content.res.TypedArray
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.addCallback
-import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.ns.shortsnews.R
-import com.ns.shortsnews.data.mapper.UserVideoCategory
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
-import com.ns.shortsnews.database.ShortsDatabase
 import com.ns.shortsnews.databinding.FragmentInterestsBinding
-import com.ns.shortsnews.domain.models.Categories
-import com.ns.shortsnews.domain.models.InterestsTable
 import com.ns.shortsnews.domain.models.VideoCategory
-import com.ns.shortsnews.domain.repository.InterestsRepository
-import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.*
@@ -35,12 +24,8 @@ import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.android.ext.android.get
 
 
@@ -60,7 +45,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
 
          requireActivity().onBackPressedDispatcher.addCallback(this) {
             if (selectedNumbers < 1){
-                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE)
+                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_CATEGORY)
             } else {
                 if (isModified){
                     Alert().showGravityToast(requireActivity(), "Please save selected preferences")
@@ -78,7 +63,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         categoryViewModel.loadVideoCategory()
         binding.backButtonUser.setOnClickListener {
             if (selectedNumbers < 1){
-                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE)
+                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_CATEGORY)
             } else {
                 if (isModified){
                     Alert().showGravityToast(requireActivity(), "Please save selected preferences")
@@ -93,7 +78,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         binding.submitButtonConst.setOnClickListener {
             getSelectedVideoInterstCategory(selectedItemList)
             if (selectedNumbers < 1){
-                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE)
+                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_CATEGORY)
             } else {
                 if (isModified){
                     getSelectedCategoriesId(selectedItemList)
@@ -134,7 +119,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             categoryViewModel.updateCategoriesSuccessState.filterNotNull().collectLatest {
                 it.let {
                     if (it.status){
-                        Alert().showGravityToast(requireActivity(), "Category preferences set successfully")
+                        Alert().showGravityToast(requireActivity(), AppConstants.CATEGORY_UPDATE_SUCCESS)
                         AppPreference.isRefreshRequired = true
                         activity?.finish()
                     } else {

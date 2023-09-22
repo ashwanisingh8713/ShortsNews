@@ -7,12 +7,14 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.data.model.VideoClikedItem
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
+import com.ns.shortsnews.databinding.ActivityLauncherBinding
 import com.ns.shortsnews.domain.models.LanguageData
 import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
@@ -37,6 +39,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
 class LauncherActivity : AppCompatActivity() {
+    lateinit var binding: ActivityLauncherBinding
 
     private val userViewModel: UserViewModel by viewModels {
         UserViewModelFactory().apply {
@@ -61,6 +64,11 @@ class LauncherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        binding = ActivityLauncherBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+
 
         lifecycleScope.launch() {
             userViewModel.LanguagesSuccessState.filterNotNull().collectLatest {
@@ -75,6 +83,12 @@ class LauncherActivity : AppCompatActivity() {
         lifecycleScope.launch() {
             userViewModel.errorState.filterNotNull().collectLatest {
                 Log.i("kamlesh", "OTPFragment onError ::: $it")
+            }
+        }
+        lifecycleScope.launch {
+            userViewModel.loadingState.filterNotNull().collectLatest {
+                Log.i("kamlesh", "Launcher activity loadingState ::: $it")
+                binding.progressBarLauncher.visibility = if (it) View.VISIBLE else View.GONE
             }
         }
 

@@ -149,7 +149,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             userViewModel.otpErrorState.filterNotNull().collectLatest {
                 binding.progressBarOtp.visibility = View.GONE
                 binding.submitButton.visibility = View.VISIBLE
-                Alert().showGravityToast(requireActivity(), it)
+                Alert().showGravityToast(requireActivity(), AppConstants.API_ERROR)
             }
         }
 
@@ -157,7 +157,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             userViewModel.otpSuccessState.filterNotNull().collectLatest {
                 it.let {
 //                    sendFcmTokenToServer()
-
+                    if (it.status) {
                         saveUserPreference(it)
                         delay(500)
                         if (it.first_time_user) {
@@ -165,6 +165,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                         } else {
                             userViewModel.requestUserSelectionApi()
                         }
+                    }
                 }
             }
         }
@@ -175,8 +176,16 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     val ml = it.languages.map {langid->
                         langid.trim()
                     }
-                    AppPreference.saveSelectedLanguagesToPreference(ml)
-                    videoCategoryViewModel.loadVideoCategory()
+                    if (ml.isEmpty()){
+                        Alert().showGravityToast(requireActivity(), AppConstants.TECH_ERROR)
+                        binding.submitButton.visibility = View.VISIBLE
+                        binding.progressBarOtp.visibility = View.GONE
+
+                    } else{
+                        AppPreference.saveSelectedLanguagesToPreference(ml)
+                        videoCategoryViewModel.loadVideoCategory()
+                    }
+
                 }
             }
         }

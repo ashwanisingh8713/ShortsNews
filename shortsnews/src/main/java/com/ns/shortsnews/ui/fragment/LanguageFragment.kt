@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
@@ -150,7 +151,15 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     }
                 }
             } else {
-                Alert().showGravityToast(requireActivity(), "Please select one language")
+                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_LANGUAGE)
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (selectedNumbers < 1){
+                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_LANGUAGE)
+            } else {
+             activity?.finish()
             }
         }
     }
