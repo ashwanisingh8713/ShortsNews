@@ -110,7 +110,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 return true
             }
-
         })
 
         binding.profileIcon.setOnClickListener {
@@ -127,10 +126,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
         AppPreference.init(this@MainActivity)
 
-        if (AppPreference.categoryListStr!!.isEmpty()) {
-            showTryAgainText()
-        } else {
+        val isInternetConnected = NetworkXProvider.isInternetConnected
 
+        if (AppPreference.categoryListStr!!.isEmpty() || !isInternetConnected) {
+            showTryAgainText()
+        } else  {
             categoryAdapter = CategoryAdapter(
                 itemList = videoCategories,
                 itemListener = this@MainActivity
@@ -302,22 +302,27 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      * Loads Home Fragment
      */
     private fun loadHomeFragment(categoryType: String) {
-//        var updatedLanguage = languages.replace("[", "")
-//        updatedLanguage = updatedLanguage.replace("]", "")
-        if (!supportFragmentManager.isStateSaved) {
-            val ft = supportFragmentManager.beginTransaction()
-            videoPagerFragment = AppConstants.makeVideoPagerInstance(
-                categoryType,
-                CategoryConstants.DEFAULT_VIDEO_DATA,
-                this@MainActivity,
-                languages = AppPreference.getSelectedLanguagesAsString()
-            )
-            ft.replace(
-                R.id.fragment_container,
-                videoPagerFragment!!
-            )
-            ft.commitAllowingStateLoss()
+        if (NetworkXProvider.isInternetConnected) {
+            if (!supportFragmentManager.isStateSaved) {
+                val ft = supportFragmentManager.beginTransaction()
+                videoPagerFragment = AppConstants.makeVideoPagerInstance(
+                    categoryType,
+                    CategoryConstants.DEFAULT_VIDEO_DATA,
+                    this@MainActivity,
+                    languages = AppPreference.getSelectedLanguagesAsString()
+                )
+                ft.replace(
+                    R.id.fragment_container,
+                    videoPagerFragment!!
+                )
+                ft.commitAllowingStateLoss()
+            }
+        } else {
+            // No Internet Snackbar: Fire
+            NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
+
         }
+
     }
 
     // It gets callback from VideoPagerFragment

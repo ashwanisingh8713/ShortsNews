@@ -104,11 +104,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                     activity?.finish()
                 }
             }
-
-
-
         }
-
 
         if(AppPreference.isLanguageSelected){
             binding.submitButtonPers.text = "Save"
@@ -138,7 +134,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             categoryViewModel.updateCategoriesSuccessState.filterNotNull().collectLatest {
                 it.let {
                     if (it.status){
-                        Alert().showGravityToast(requireActivity(), "Category preferences successfully")
+                        Alert().showGravityToast(requireActivity(), "Category preferences set successfully")
                         AppPreference.isRefreshRequired = true
                         activity?.finish()
                     } else {
