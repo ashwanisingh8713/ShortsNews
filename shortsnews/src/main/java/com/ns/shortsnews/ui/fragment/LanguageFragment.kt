@@ -14,10 +14,7 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentLanguageBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
-import com.ns.shortsnews.database.ShortsDatabase
-import com.ns.shortsnews.domain.repository.LanguageRepository
 import com.ns.shortsnews.domain.models.LanguageData
-import com.ns.shortsnews.domain.models.LanguageTable
 import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
@@ -45,7 +42,7 @@ import org.koin.android.ext.android.get
 class LanguageFragment : Fragment(R.layout.fragment_language) {
     lateinit var binding: FragmentLanguageBinding
     private var from: String = ""
-    private var selectedLanguages = ""
+    private var selectedLanguages = mutableListOf<String>()
     private val videoCategoryViewModel: VideoCategoryViewModel by activityViewModels {
         VideoCategoryViewModelFactory().apply {
             inject(
@@ -71,8 +68,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)
         AppPreference.initLanguage(requireActivity())
-        Log.i("language","$AppPreference.selectedLanguages!!")
-        selectedLanguages = AppPreference.selectedLanguages!!
+//        Log.i("language","$AppPreference.selectedLanguages!!")
+        selectedLanguages = AppPreference.getSelectedLanguages()
         if (NetworkXProvider.isInternetConnected) {
             userViewModel.requestLanguagesApi()
         } else {
@@ -138,18 +135,18 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 if (from == AppConstants.FROM_EDIT_PROFILE) {
                     if (selectedItemList.isNotEmpty()) {
                         AppPreference.isLanguageSelected = true
-                        AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
+                        AppPreference.saveSelectedLanguagesToPreference(selectedLanguages)
                         AppPreference.isRefreshRequired = true
                         AppPreference.isInterestUpdateNeeded = true
-                        videoCategoryViewModel.loadVideoCategory(AppPreference.selectedLanguages!!)
+                        videoCategoryViewModel.loadVideoCategory()
                     }
 
                 } else {
                     if (selectedItemList.isNotEmpty()) {
                         AppPreference.isLanguageSelected = true
-                        AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
+                        AppPreference.saveSelectedLanguagesToPreference(selectedLanguages)
                         AppPreference.isRefreshRequired = false
-                        videoCategoryViewModel.loadVideoCategory(AppPreference.selectedLanguages!!)
+                        videoCategoryViewModel.loadVideoCategory()
                     }
                 }
             } else {
@@ -280,8 +277,15 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         return finalList
     }
     private fun createSelectedLanguagesValue(id: String) {
-        val tempValue = "$id,"
-        if (selectedLanguages.isNotEmpty()) {
+
+        if(selectedLanguages.contains(id)) {
+            selectedLanguages.remove(id)
+        } else {
+            selectedLanguages.add(id)
+        }
+        var tempValue = "$id,"
+
+        /*if (selectedLanguages.isNotEmpty()) {
             if (selectedLanguages.last() != ',') {
                selectedLanguages = selectedLanguages + ","
             }
@@ -292,7 +296,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             selectedLanguages = modifiedString
         } else {
             selectedLanguages += tempValue
-        }
+        }*/
     }
 
     private fun updateSelectedItem(

@@ -85,7 +85,7 @@ class PlainVideoActivity : AppCompatActivity() {
         setContentView(view)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-        loadVideoFragment(videoClickedItem, AppPreference.selectedLanguages!!)
+        loadVideoFragment(videoClickedItem)
         registerVideoCache()
         if (intent.getStringExtra(AppConstants.ID) != null) {
             Timer().schedule(1000) {
@@ -103,14 +103,12 @@ class PlainVideoActivity : AppCompatActivity() {
     /**
      * Loads Home Fragment
      */
-    private fun loadVideoFragment(it: VideoClikedItem, languages: String) {
-        var updatedLanguage = languages.replace("[", "")
-        updatedLanguage = updatedLanguage.replace("]", "")
+    private fun loadVideoFragment(it: VideoClikedItem) {
         videoPagerFragment = AppConstants.makeVideoPagerInstance(
             requiredId = it.requiredId,
             videoFrom = it.videoFrom,
             this@PlainVideoActivity,
-            languages = updatedLanguage,
+            languages = AppPreference.getSelectedLanguagesAsString(),
             selectedPlay = it.selectedPosition
         )
         val bundle = Bundle()

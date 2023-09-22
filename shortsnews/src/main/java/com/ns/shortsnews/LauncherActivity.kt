@@ -37,7 +37,6 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
 class LauncherActivity : AppCompatActivity() {
-    private var selectedLanguages = ""
 
     private val userViewModel: UserViewModel by viewModels {
         UserViewModelFactory().apply {
@@ -68,7 +67,7 @@ class LauncherActivity : AppCompatActivity() {
                 Log.i("kamlesh", "Language onSuccess ::: $it")
                 it.let {
                     if (it.isNotEmpty()) {
-                        videoCategoryViewModel.loadVideoCategory(filterSelectedLanguages(it))
+                        videoCategoryViewModel.loadVideoCategory()
                     }
                 }
             }
@@ -103,7 +102,7 @@ class LauncherActivity : AppCompatActivity() {
 //
 //                    launchMainActivityWithExtras( videoId, type, previewUrl, videoUrl)
 //                } else {
-                if (AppPreference.selectedLanguages!!.isEmpty()) {
+                if (AppPreference.getSelectedLanguages()!!.isEmpty()) {
                     userViewModel.requestLanguagesApi()
                 } else {
                     launchMainActivity()
@@ -149,18 +148,6 @@ class LauncherActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
         this.finish()
-    }
-
-    private fun filterSelectedLanguages(languageList: List<LanguageData>): String {
-        var languageStr = ""
-        for (item in languageList) {
-            if (item.default_select) {
-                languageStr = languageStr + item.id + ","
-            }
-        }
-        AppPreference.selectedLanguages = languageStr.dropLast(1)
-        return languageStr
-
     }
 
 

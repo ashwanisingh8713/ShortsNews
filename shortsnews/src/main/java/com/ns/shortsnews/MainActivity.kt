@@ -137,8 +137,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             )
             binding.recyclerView.adapter = categoryAdapter
             val defaultCate = videoCategories[0]
-            Log.i("language","$AppPreference.selectedLanguages!!")
-                    loadHomeFragment(defaultCate.id, AppPreference.selectedLanguages!!)
+            loadHomeFragment(defaultCate.id)
             hideTryAgainText()
         }
 
@@ -222,7 +221,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     private fun getSelectedLanguagesValuesOnClick(requiredId: String) {
         Log.i("language","$AppPreference.selectedLanguages!!")
-        loadHomeFragment(requiredId, AppPreference.selectedLanguages!!)
+        loadHomeFragment(requiredId)
         sharedEventViewModel.sendUserPreferenceData(
             AppPreference.isUserLoggedIn,
             AppPreference.userToken
@@ -266,7 +265,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         )
         binding.recyclerView.adapter = categoryAdapter
         val defaultCate = videoCategories[0]
-        loadHomeFragment(defaultCate.id, AppPreference.selectedLanguages!!)
+        loadHomeFragment(defaultCate.id)
         hideTryAgainText()
     }
 
@@ -302,17 +301,16 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     /**
      * Loads Home Fragment
      */
-    private fun loadHomeFragment(categoryType: String, languages: String) {
-        var updatedLanguage = languages.replace("[", "")
-        updatedLanguage = updatedLanguage.replace("]", "")
-        Log.i("languages", "languages :: $updatedLanguage")
+    private fun loadHomeFragment(categoryType: String) {
+//        var updatedLanguage = languages.replace("[", "")
+//        updatedLanguage = updatedLanguage.replace("]", "")
         if (!supportFragmentManager.isStateSaved) {
             val ft = supportFragmentManager.beginTransaction()
             videoPagerFragment = AppConstants.makeVideoPagerInstance(
                 categoryType,
                 CategoryConstants.DEFAULT_VIDEO_DATA,
                 this@MainActivity,
-                languages = updatedLanguage
+                languages = AppPreference.getSelectedLanguagesAsString()
             )
             ft.replace(
                 R.id.fragment_container,
@@ -350,7 +348,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 val defaultCate = it.videoCategories[0]
                 Log.i("lifecycle", "Show category")
                 Log.i("language","$AppPreference.selectedLanguages!!")
-                loadHomeFragment(defaultCate.id, AppPreference.selectedLanguages!!)
+                loadHomeFragment(defaultCate.id)
                 hideTryAgainText()
             }
         }
@@ -374,7 +372,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.tryAgain.setOnClickListener {
             if (NetworkXProvider.isInternetConnected) {
                 Log.i("language","$AppPreference.selectedLanguages!!")
-                videoCategoryViewModel!!.loadVideoCategory(AppPreference.selectedLanguages!!)
+                videoCategoryViewModel!!.loadVideoCategory()
                 showCategory()
                 if (AppPreference.userProfilePic == "") {
                     binding.profileIcon.setImageResource(R.drawable.profile_avatar)

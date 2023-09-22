@@ -25,7 +25,7 @@ object AppPreference {
     private const val USER_PROFILE_IMAGE = "user_profile_image"
     private const val EMPTY_STRING = ""
     private const val IS_PROFILE_UPDATED = "is_profile_updated"
-    private const val LANGUAGES_SELECTED = "language_selected"
+    private const val LANGUAGES_SELECTED = "selected_languag"
     private const val IS_LANGUAGE_SELECTED = "is_language_selected"
     private const val IS_PROFILE_DELETED = "profile_cleared"
     private const val UPDATE_NEEDED = "update_needed"
@@ -48,6 +48,7 @@ object AppPreference {
             retrieveCategoriesFromPreference()
         }
     }
+
     fun initLanguage(context: Context) {
         preference = PreferenceManager.getDefaultSharedPreferences(context)
         editor = preference.edit()
@@ -65,13 +66,14 @@ object AppPreference {
             this.putBoolean(IS_USER_LOGGED_IN, value)
             this.apply()
         }
+
     //User Update profile status
-    var isProfileUpdated:Boolean
-    get() = preference.getBoolean(IS_PROFILE_UPDATED, false)
-    set(value) = preference.edit {
-        this.putBoolean(IS_PROFILE_UPDATED, value)
-        this.apply()
-    }
+    var isProfileUpdated: Boolean
+        get() = preference.getBoolean(IS_PROFILE_UPDATED, false)
+        set(value) = preference.edit {
+            this.putBoolean(IS_PROFILE_UPDATED, value)
+            this.apply()
+        }
 
     //Function for getting and setting profile image
     var userProfilePic: String?
@@ -96,6 +98,7 @@ object AppPreference {
             this.putString(USER_EMAIL, value)
             this.apply()
         }
+
     //Function for getting and setting user name
     var userName: String?
         get() = preference.getString(USER_NAME, EMPTY_STRING)
@@ -121,140 +124,182 @@ object AppPreference {
         }
 
     //Function for getting and setting user language selected by user
-    var selectedLanguages:String?
-    get() = preference.getString(LANGUAGES_SELECTED, EMPTY_STRING)
-    set(value) = preference.edit{
-        this.putString(LANGUAGES_SELECTED, value)
-        this.apply()
+    fun getSelectedLanguages(): MutableList<String> {
+        val language = preference.getString(LANGUAGES_SELECTED, EMPTY_STRING)
+        if(language!!.isEmpty()){
+            return mutableListOf<String>()
+        }
+        val gson = Gson()
+        val objectList = gson.fromJson(language, Array<String>::class.java).asList()
+
+        return objectList.toMutableList()
     }
-    var isRefreshRequired:Boolean
+
+    fun getSelectedLanguagesAsString(): String {
+        val language = preference.getString(LANGUAGES_SELECTED, EMPTY_STRING)
+        if(language!!.isEmpty()){
+            return ""
+        }
+//        val languageSet: Set<String> = setOf(*language!!.split(",")!!.toTypedArray())
+        val gson = Gson()
+        val objectList = gson.fromJson(language, Array<String>::class.java).asList()
+        val ll = objectList.toString().replace("[", "").replace("]", "")
+        return ll
+    }
+
+    fun saveSelectedLanguagesToPreference(languageSet: List<String>) {
+        val gson = Gson()
+        val json = gson.toJson(languageSet)
+        var languages = json.toString()
+        preference.edit().apply {
+            putString(LANGUAGES_SELECTED, languages)
+            commit()
+        }
+
+    }
+
+    var isRefreshRequired: Boolean
         get() = preference.getBoolean(IS_REFRESS_REQUIRED, false)
         set(value) = preference.edit {
             this.putBoolean(IS_REFRESS_REQUIRED, value)
             this.apply()
         }
 
-    var categoryListStr:String?
+    var categoryListStr: String?
         get() = preference.getString(VIDEO_CATEGORIES, EMPTY_STRING)
-        set(value) = preference.edit{
+        set(value) = preference.edit {
             this.putString(VIDEO_CATEGORIES, value)
             this.apply()
         }
 
-    var languageListStr:String?
+    var languageListStr: String?
         get() = preference.getString(SELECTED_LANGUAGES, EMPTY_STRING)
-        set(value) = preference.edit{
+        set(value) = preference.edit {
             this.putString(SELECTED_LANGUAGES, value)
             this.apply()
         }
 
-    var isLanguageSelected:Boolean
-    get() = preference.getBoolean(IS_LANGUAGE_SELECTED, false)
-    set(value) = preference.edit {
-        this.putBoolean(IS_LANGUAGE_SELECTED, value)
-        this.apply()
-    }
+    var isLanguageSelected: Boolean
+        get() = preference.getBoolean(IS_LANGUAGE_SELECTED, false)
+        set(value) = preference.edit {
+            this.putBoolean(IS_LANGUAGE_SELECTED, value)
+            this.apply()
+        }
 
-    var isInterestUpdateNeeded:Boolean
+    var isInterestUpdateNeeded: Boolean
         get() = preference.getBoolean(IS_INTEREST_UPDATE_NEEDED, false)
-        set(value) = preference.edit{
+        set(value) = preference.edit {
             this.putBoolean(IS_INTEREST_UPDATE_NEEDED, value)
             this.apply()
         }
 
-    var isProfileDeleted:Boolean
-    get() = preference.getBoolean(IS_PROFILE_DELETED, false)
-    set(value) = preference.edit {
-        this.putBoolean(IS_PROFILE_DELETED, value)
-        this.apply()
-    }
+    var isProfileDeleted: Boolean
+        get() = preference.getBoolean(IS_PROFILE_DELETED, false)
+        set(value) = preference.edit {
+            this.putBoolean(IS_PROFILE_DELETED, value)
+            this.apply()
+        }
 
-    var isUpdateNeeded:Boolean
-    get() = preference.getBoolean(UPDATE_NEEDED,false)
-    set(value) = preference.edit {
-        this.putBoolean(UPDATE_NEEDED, value)
-        this.apply()
-    }
+    var isUpdateNeeded: Boolean
+        get() = preference.getBoolean(UPDATE_NEEDED, false)
+        set(value) = preference.edit {
+            this.putBoolean(UPDATE_NEEDED, value)
+            this.apply()
+        }
 
-    var isFollowingUpdateNeeded:Boolean
-        get() = preference.getBoolean(FOLLOWING_UPDATE_NEEDED,false)
+    var isFollowingUpdateNeeded: Boolean
+        get() = preference.getBoolean(FOLLOWING_UPDATE_NEEDED, false)
         set(value) = preference.edit {
             this.putBoolean(FOLLOWING_UPDATE_NEEDED, value)
             this.apply()
         }
 
-    var isMainActivityLaunched:Boolean
-    get() = preference.getBoolean(MAIN_ACTIVITY_LAUNCHED, false)
-    set(value) = preference.edit {
-        this.putBoolean(MAIN_ACTIVITY_LAUNCHED, value)
-        this.apply()
-    }
-
-    var fcmToken:String?
-     get() = preference.getString(NOTIFICATION_TOKEN, EMPTY_STRING)
-    set(value) = preference.edit{
-        this.putString(NOTIFICATION_TOKEN, value)
-        this.apply()
-    }
-
-
-    // Clear preference on logout
-    fun clear(){
-        editor.clear().apply()
-    }
-
-    var languages:String?
-        get() = preference.getString(LANGUAGES_SELECTED, EMPTY_STRING)
-        set(value) = preference.edit{
-            this.putString(LANGUAGES_SELECTED, value)
+    var isMainActivityLaunched: Boolean
+        get() = preference.getBoolean(MAIN_ACTIVITY_LAUNCHED, false)
+        set(value) = preference.edit {
+            this.putBoolean(MAIN_ACTIVITY_LAUNCHED, value)
             this.apply()
         }
 
-    fun saveCategoriesToPreference(categoryList:List<VideoCategory>) {
+    var fcmToken: String?
+        get() = preference.getString(NOTIFICATION_TOKEN, EMPTY_STRING)
+        set(value) = preference.edit {
+            this.putString(NOTIFICATION_TOKEN, value)
+            this.apply()
+        }
+
+
+    // Clear preference on logout
+    fun clear() {
+        editor.clear().commit()
+    }
+
+    /*var languages: String?
+        get() = preference.getString(LANGUAGES_SELECTED, EMPTY_STRING)
+        set(value) = preference.edit {
+            this.putString(LANGUAGES_SELECTED, value)
+            this.apply()
+        }*/
+
+    fun saveCategoriesToPreference(categoryList: List<VideoCategory>) {
         val gson = Gson()
         val json = gson.toJson(categoryList)
         categoryListStr = json.toString()
     }
+
     var categoryList: MutableList<VideoCategory> = mutableListOf<VideoCategory>()
-    private fun retrieveCategoriesFromPreference():List<VideoCategory> {
-        if(categoryList.isEmpty()) {
+    private fun retrieveCategoriesFromPreference(): List<VideoCategory> {
+        if (categoryList.isEmpty()) {
             val gson = Gson()
             val categoryJsonString = categoryListStr
             val myListType = object : TypeToken<List<VideoCategory>>() {}.type
-            categoryList = gson.fromJson<List<VideoCategory>>(categoryJsonString,myListType) as MutableList<VideoCategory>
+            categoryList = gson.fromJson<List<VideoCategory>>(
+                categoryJsonString,
+                myListType
+            ) as MutableList<VideoCategory>
         } else {
             val gson = Gson()
             val categoryJsonString = categoryListStr
             val myListType = object : TypeToken<List<VideoCategory>>() {}.type
-            categoryList = gson.fromJson<List<VideoCategory>>(categoryJsonString,myListType) as MutableList<VideoCategory>
+            categoryList = gson.fromJson<List<VideoCategory>>(
+                categoryJsonString,
+                myListType
+            ) as MutableList<VideoCategory>
         }
 
         return categoryList
     }
 
-    fun saveLanguagesToPreference(categoryList:List<LanguageData>) {
-        val gson = Gson()
-        val json = gson.toJson(categoryList)
-        languageListStr = json.toString()
-    }
-    var languageList: MutableList<LanguageData> = mutableListOf<LanguageData>()
-    private fun retrieveLanguagesFromPreference():List<LanguageData> {
-        if(languageList.isEmpty()) {
-            val gson = Gson()
-            val languageJsonString = languageListStr
-            val myListType = object : TypeToken<List<LanguageData>>() {}.type
-            languageList = gson.fromJson<List<LanguageData>>(languageJsonString,myListType) as MutableList<LanguageData>
-        } else {
-            val gson = Gson()
-            val languageJsonString = languageListStr
-            val myListType = object : TypeToken<List<LanguageData>>() {}.type
-            languageList = gson.fromJson<List<LanguageData>>(languageJsonString,myListType) as MutableList<LanguageData>
-        }
+//    fun saveSelectedLanguages(categoryList: Set<String>) {
+//        val gson = Gson()
+//        val json = gson.toJson(categoryList)
+//        languageListStr = json.toString()
+//    }
+//
+//    var languageList: MutableList<LanguageData> = mutableListOf<LanguageData>()
+//    private fun retrieveLanguagesFromPreference(): List<LanguageData> {
+//        if (languageList.isEmpty()) {
+//            val gson = Gson()
+//            val languageJsonString = languageListStr
+//            val myListType = object : TypeToken<List<LanguageData>>() {}.type
+//            languageList = gson.fromJson<List<LanguageData>>(
+//                languageJsonString,
+//                myListType
+//            ) as MutableList<LanguageData>
+//        } else {
+//            val gson = Gson()
+//            val languageJsonString = languageListStr
+//            val myListType = object : TypeToken<List<LanguageData>>() {}.type
+//            languageList = gson.fromJson<List<LanguageData>>(
+//                languageJsonString,
+//                myListType
+//            ) as MutableList<LanguageData>
+//        }
+//
+//        return languageList
+//    }
 
-        return languageList
-    }
-
-    var isModified:Boolean
+    var isModified: Boolean
         get() = preference.getBoolean(IS_MODIFIED, false)
         set(value) = preference.edit {
             this.putBoolean(IS_MODIFIED, value)

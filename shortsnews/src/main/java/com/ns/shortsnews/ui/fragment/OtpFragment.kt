@@ -173,10 +173,11 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.userSelectionSuccessState.filterNotNull().collectLatest {
                 it.let {
-                    val languageValue = it.languages.toString()
-                    val finalLanguageValue = languageValue.substring(1, languageValue.length-1)
-                    AppPreference.selectedLanguages = finalLanguageValue.trim()
-                    videoCategoryViewModel.loadVideoCategory( AppPreference.selectedLanguages!!)
+                    val ml = it.languages.map {langid->
+                        langid.trim()
+                    }
+                    AppPreference.saveSelectedLanguagesToPreference(ml)
+                    videoCategoryViewModel.loadVideoCategory()
                 }
             }
         }

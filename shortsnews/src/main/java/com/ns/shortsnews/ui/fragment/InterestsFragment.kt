@@ -75,7 +75,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentInterestsBinding.bind(view)
-        categoryViewModel.loadVideoCategory(AppPreference.selectedLanguages!!)
+        categoryViewModel.loadVideoCategory()
         binding.backButtonUser.setOnClickListener {
             if (selectedNumbers < 1){
                 Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE)
@@ -85,7 +85,6 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                 } else {
                     activity?.finish()
                 }
-
             }
         }
 
@@ -93,18 +92,21 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
 
         binding.submitButtonConst.setOnClickListener {
             getSelectedVideoInterstCategory(selectedItemList)
-            if (selectedItemList.isNotEmpty() && selectedNumbers >= 1){
-                getSelectedCategoriesId(selectedItemList)
-                val data = HashMap<String, List<String>>()
-                data["categories"] = selectedCategoriesId
-                categoryViewModel.updateCategoriesApi(data)
+            if (selectedNumbers < 1){
+                Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE)
             } else {
-                if (selectedNumbers >= 1){
-                    Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE)
+                if (isModified){
+                    getSelectedCategoriesId(selectedItemList)
+                    val data = HashMap<String, List<String>>()
+                    data["categories"] = selectedCategoriesId
+                    categoryViewModel.updateCategoriesApi(data)
                 } else {
                     activity?.finish()
                 }
             }
+
+
+
         }
 
 

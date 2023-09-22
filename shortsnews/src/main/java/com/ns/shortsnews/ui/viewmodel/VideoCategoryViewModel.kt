@@ -10,6 +10,7 @@ import com.ns.shortsnews.domain.models.VideoCategoryResult
 import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
 import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
+import com.ns.shortsnews.utils.AppPreference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -33,7 +34,8 @@ class VideoCategoryViewModel(
     private val _loadingState = MutableStateFlow(true)
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
-    fun loadVideoCategory(languageString: String) {
+    fun loadVideoCategory() {
+        val languageString = AppPreference.getSelectedLanguagesAsString()
         videoCategoryUseCase.invoke(
             scope = viewModelScope,
             params = languageString,

@@ -148,8 +148,16 @@ class UserViewModel constructor(
         languageDataUseCase.invoke(viewModelScope, null,
             object : UseCaseResponse<LanguagesResult> {
                 override fun onSuccess(type: LanguagesResult) {
-                    if (type.status)
+                    if (type.status) {
+                        val languageStr = mutableListOf<String>()
+                        for (item in type.data) {
+                            if (item.default_select) {
+                                languageStr.add(item.id)
+                            }
+                        }
+                        AppPreference.saveSelectedLanguagesToPreference(languageStr)
                         _languagesSuccessState.value = type.data
+                    }
                     else _errorState.value = "Empty from api server"
                     _loadingState.value = false
                 }
