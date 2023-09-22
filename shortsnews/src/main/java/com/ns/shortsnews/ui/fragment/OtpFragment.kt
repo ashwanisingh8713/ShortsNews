@@ -122,7 +122,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     val data: MutableMap<String, String> = mutableMapOf()
                     data["OTP"] = otpValue
                     data["OTP_id"] = otpId.toString()
-                    if (NetworkXProvider.isInternetConnected) {
+                    if (UtilsFunctions.isOnline(requireActivity())) {
                         userViewModel.requestOtpValidationApi(data)
                     } else {
                         // No Internet Snack bar: Fire
@@ -161,7 +161,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                         saveUserPreference(it)
                         delay(500)
                         if (it.first_time_user) {
-                            binding.progressBarOtp.visibility = View.GONE
                             userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
                         } else {
                             userViewModel.requestUserSelectionApi()

@@ -87,8 +87,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.registrationSuccessState.filterNotNull().collectLatest {
                 it.let {
-                    binding.progressBarLogin.visibility = View.GONE
-                    binding.sendImage.visibility = View.VISIBLE
                     val bundle = Bundle()
                     bundle.putString("email", it.email)
                     bundle.putString("otp_id", it.OTP_id.toString())
@@ -103,6 +101,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 if (it) {
                     binding.sendImage.visibility = View.GONE
                     binding.progressBarLogin.visibility = View.VISIBLE
+                } else {
+                    binding.sendImage.visibility = View.VISIBLE
+                    binding.progressBarLogin.visibility = View.GONE
                 }
             }
         }
