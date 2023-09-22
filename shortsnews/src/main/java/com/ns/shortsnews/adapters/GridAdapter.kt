@@ -49,6 +49,16 @@ class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
         notifyDataSetChanged()
     }
 
+    fun removeUnBookmarkVideoData(newList: MutableList<Data>):List<Data> {
+
+        val sum = itemList+newList
+
+        return sum.groupBy { it.id }
+            .filter { it.value.size == 1 }
+            .flatMap { it.value }
+
+    }
+
     fun clearChannelData() {
         this.itemList.clear()
         channelId = ""

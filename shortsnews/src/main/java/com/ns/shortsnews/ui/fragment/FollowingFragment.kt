@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,8 +13,11 @@ import com.ns.shortsnews.adapters.ChannelsAdapter
 import com.ns.shortsnews.databinding.FragmentFollowingBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.domain.usecase.channel.ChannelsDataUseCase
+import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
 import com.ns.shortsnews.ui.viewmodel.ChannelsViewModel
 import com.ns.shortsnews.ui.viewmodel.ChannelsViewModelFactory
+import com.ns.shortsnews.ui.viewmodel.FollowUnfollowViewModel
+import com.ns.shortsnews.ui.viewmodel.FollowUnfollowViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModel
 import com.ns.shortsnews.ui.viewmodel.ProfileSharedViewModelFactory
 import com.ns.shortsnews.utils.AppPreference
@@ -31,9 +35,16 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
     private val channelsViewModel: ChannelsViewModel by activityViewModels { ChannelsViewModelFactory().apply {
         inject(ChannelsDataUseCase(UserDataRepositoryImpl(get())))
     } }
+
+    private val followUnfollowViewModel: FollowUnfollowViewModel by activityViewModels {
+        FollowUnfollowViewModelFactory().apply {
+            inject(FollowUnfollowUseCase(UserDataRepositoryImpl(get())))
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentFollowingBinding.bind(view)
+
         if (NetworkXProvider.isInternetConnected) {
             channelsViewModel.requestChannelListApi()
         } else {
@@ -42,6 +53,7 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
                 requireContext() as AppCompatActivity
             )
         }
+
         viewLifecycleOwner.lifecycleScope.launch(){
             channelsViewModel.errorState.filterNotNull().collectLatest {
                 binding.progressBarChannels.visibility = View.GONE
@@ -55,12 +67,15 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
             channelsViewModel.ChannelsSuccessState.filterNotNull().collectLatest {
                 Log.i("kamlesh","FollowingFragment onSuccess ::: $it")
                 it.let {
-                    binding.progressBarChannels.visibility = View.GONE
+                    binding.recyclerviewFollowing.visibility = View.VISIBLE
                     adapter = ChannelsAdapter(it.data)
                     adapter.clicksEvent()
                     binding.recyclerviewFollowing.adapter = adapter
+                    binding.progressBarChannels.visibility = View.GONE
                     if (it.data.isEmpty()){
                       binding.followingText.visibility = View.VISIBLE
+                    } else {
+                        binding.followingText.visibility = View.GONE
                     }
                 }
             }
@@ -70,10 +85,38 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
             channelsViewModel.loadingState.filterNotNull().collectLatest {
                 if (it) {
                     binding.progressBarChannels.visibility = View.VISIBLE
+                } else {
+                    binding.progressBarChannels.visibility = View.GONE
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            followUnfollowViewModel.FollowUnfollowSuccessState.filterNotNull().collectLatest {
+                if (NetworkXProvider.isInternetConnected) {
+                    channelsViewModel.requestChannelListApi()
+                } else {
+                    // No Internet Snack bar: Fire
+                    NoConnection.noConnectionSnackBarInfinite(binding.root,
+                        requireContext() as AppCompatActivity
+                    )
+                }
+
+            }
+        }
     }
+
+    /*override fun onResume() {
+        super.onResume()
+        if (NetworkXProvider.isInternetConnected) {
+            channelsViewModel.requestChannelListApi()
+        } else {
+            // No Internet Snack bar: Fire
+            NoConnection.noConnectionSnackBarInfinite(binding.root,
+                requireContext() as AppCompatActivity
+            )
+        }
+    }*/
 
     private fun ChannelsAdapter.clicksEvent() {
         viewLifecycleOwner.lifecycleScope.launch() {
