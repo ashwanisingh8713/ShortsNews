@@ -123,6 +123,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                 if (from == AppConstants.FROM_EDIT_PROFILE){
                     activity?.finish()
                 } else {
+                    AppPreference.isRefreshRequired = false
                     val bundle = Bundle()
                     bundle.putString("name", /*it.name*/"")
                     userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, bundle)
@@ -140,7 +141,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                         AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
                         AppPreference.isRefreshRequired = true
                         AppPreference.isInterestUpdateNeeded = true
-                        videoCategoryViewModel.loadVideoCategory(selectedLanguages)
+                        videoCategoryViewModel.loadVideoCategory(AppPreference.selectedLanguages!!)
                     }
 
                 } else {
@@ -148,7 +149,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                         AppPreference.isLanguageSelected = true
                         AppPreference.selectedLanguages = selectedLanguages.dropLast(1)
                         AppPreference.isRefreshRequired = false
-                        videoCategoryViewModel.loadVideoCategory(selectedLanguages)
+                        videoCategoryViewModel.loadVideoCategory(AppPreference.selectedLanguages!!)
                     }
                 }
             } else {

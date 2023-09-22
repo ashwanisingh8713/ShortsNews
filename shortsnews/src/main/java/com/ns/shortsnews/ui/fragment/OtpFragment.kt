@@ -34,6 +34,8 @@ import com.ns.shortsnews.utils.*
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
 import com.videopager.utils.UtilsFunctions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
@@ -44,7 +46,6 @@ import org.koin.android.ext.android.get
 
 class OtpFragment : Fragment(R.layout.fragment_otp) {
     lateinit var binding: FragmentOtpBinding
-    private var userSelectedCategory:MutableList<String> = mutableListOf()
 
     private val userViewModel: UserViewModel by activityViewModels {
         UserViewModelFactory().apply {
@@ -148,21 +149,23 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             userViewModel.otpErrorState.filterNotNull().collectLatest {
                 binding.progressBarOtp.visibility = View.GONE
                 binding.submitButton.visibility = View.VISIBLE
+                Alert().showGravityToast(requireActivity(), it)
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch() {
             userViewModel.otpSuccessState.filterNotNull().collectLatest {
                 it.let {
-                    sendFcmTokenToServer()
-                    saveUserPreference(it)
-                    delay(500)
-                    if (it.first_time_user) {
-                        binding.progressBarOtp.visibility = View.GONE
-                        userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
-                    } else {
-                        userViewModel.requestUserSelectionApi()
-                    }
+//                    sendFcmTokenToServer()
+
+                        saveUserPreference(it)
+                        delay(500)
+                        if (it.first_time_user) {
+                            binding.progressBarOtp.visibility = View.GONE
+                            userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
+                        } else {
+                            userViewModel.requestUserSelectionApi()
+                        }
                 }
             }
         }
@@ -170,10 +173,10 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.userSelectionSuccessState.filterNotNull().collectLatest {
                 it.let {
-                    AppPreference.selectedLanguages = it.languages.toString()
-                    AppPreference.userSelection = it.categories.toString()
-                    userSelectedCategory = it.categories
-                    videoCategoryViewModel.loadVideoCategory(it.languages.toString())
+                    val languageValue = it.languages.toString()
+                    val finalLanguageValue = languageValue.substring(1, languageValue.length-1)
+                    AppPreference.selectedLanguages = finalLanguageValue.trim()
+                    videoCategoryViewModel.loadVideoCategory( AppPreference.selectedLanguages!!)
                 }
             }
         }
@@ -183,10 +186,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 it.videoCategories.isNotEmpty()
             }.collectLatest {
                 //TODO update selected categories to list
-                val finalList:MutableList<VideoCategory> = compareWithUserSelection(it.videoCategories as MutableList<VideoCategory>,userSelectedCategory)
-                AppPreference.saveCategoriesToPreference(categoryList = finalList)
-                AppPreference.init(requireActivity())
-                userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, Bundle())
+                getSelectedVideoInterstCategory(it.videoCategories as MutableList<VideoCategory>)
+
             }
         }
 
@@ -200,18 +201,22 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
     }
 
-    private fun compareWithUserSelection(
-        videoCategories: MutableList<VideoCategory>,
-        userSelectedCategory: MutableList<String>
-    ): MutableList<VideoCategory> {
-        for (categoryId in userSelectedCategory){
-           for (item in videoCategories){
-               if (categoryId== item.id){
-                   item.selected= true
-               }
-           }
+    private fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
+        val unselectedCategory = mutableListOf<VideoCategory>()
+        val selectedCategory = mutableListOf<VideoCategory>()
+
+        for (item in categoryList){
+            if (item.default_select){
+                selectedCategory.add(item)
+            } else {
+                unselectedCategory.add(item)
+            }
         }
-        return videoCategories
+        val  finalList:List<VideoCategory> = selectedCategory+unselectedCategory
+        AppPreference.saveCategoriesToPreference(finalList)
+        AppPreference.init(requireActivity())
+        AppPreference.isRefreshRequired = false
+        userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, Bundle())
     }
 
 

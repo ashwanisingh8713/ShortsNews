@@ -33,14 +33,12 @@ object AppPreference {
     private const val MAIN_ACTIVITY_LAUNCHED = "main_activity_launched"
     private const val NOTIFICATION_TOKEN = "notification_token"
     private const val VIDEO_CATEGORIES = "video_category"
-    private const val NOTIFICATION_VIDEO_ID = "video_id"
-    private const val NOTIFICATION_VIDEO_URL = "video_url"
-    private const val NOTIFICATION_VIDEO_PREVIEW = "video_preview"
     private const val IS_REFRESS_REQUIRED = "is_refresh_required"
     private const val IS_MODIFIED = "is_modified"
     private const val IS_INTEREST_UPDATE_NEEDED = "is_interest_update_needed"
     private const val USER_SELECTIONS = "user_selection"
     private const val SELECTED_LANGUAGES = "selected_languages_list"
+    private const val IS_FRIST_TIME = "first_time"
 
 
     fun init(context: Context) {
@@ -74,26 +72,6 @@ object AppPreference {
         this.putBoolean(IS_PROFILE_UPDATED, value)
         this.apply()
     }
-
-    var notificationVideoId:String?
-        get() = preference.getString(NOTIFICATION_VIDEO_ID, EMPTY_STRING)
-        set(value) = preference.edit{
-            this.putString(NOTIFICATION_VIDEO_ID, value)
-            this.apply()
-        }
-    var notificationVideoPreview:String?
-        get() = preference.getString(NOTIFICATION_VIDEO_PREVIEW, EMPTY_STRING)
-        set(value) = preference.edit{
-            this.putString(NOTIFICATION_VIDEO_PREVIEW, value)
-            this.apply()
-        }
-
-    var notificationVideoUrl:String?
-        get() = preference.getString(NOTIFICATION_VIDEO_URL, EMPTY_STRING)
-        set(value) = preference.edit{
-            this.putString(NOTIFICATION_VIDEO_URL, value)
-            this.apply()
-        }
 
     //Function for getting and setting profile image
     var userProfilePic: String?
@@ -149,14 +127,6 @@ object AppPreference {
         this.putString(LANGUAGES_SELECTED, value)
         this.apply()
     }
-
-    var userSelection:String?
-        get() = preference.getString(USER_SELECTIONS, EMPTY_STRING)
-        set(value) = preference.edit {
-            this.putString(USER_SELECTIONS, value)
-            this.apply()
-        }
-
     var isRefreshRequired:Boolean
         get() = preference.getBoolean(IS_REFRESS_REQUIRED, false)
         set(value) = preference.edit {

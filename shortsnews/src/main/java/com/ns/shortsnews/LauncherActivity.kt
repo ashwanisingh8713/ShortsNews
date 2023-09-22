@@ -68,7 +68,7 @@ class LauncherActivity : AppCompatActivity() {
                 Log.i("kamlesh", "Language onSuccess ::: $it")
                 it.let {
                     if (it.isNotEmpty()) {
-                       videoCategoryViewModel.loadVideoCategory( filterSelectedLanguages(it))
+                        videoCategoryViewModel.loadVideoCategory(filterSelectedLanguages(it))
                     }
                 }
             }
@@ -84,13 +84,12 @@ class LauncherActivity : AppCompatActivity() {
                 it.videoCategories.isNotEmpty()
             }.collectLatest {
                 // Save category data in preference
-                 getSelectedVideoInterstCategory(it.videoCategories as MutableList<VideoCategory>)
-                launchMainActivity()
+                getSelectedVideoInterstCategory(it.videoCategories as MutableList<VideoCategory>)
             }
         }
 
 
-        if (!AppPreference.isUserLoggedIn){
+        if (!AppPreference.isUserLoggedIn) {
             launchProfileActivity()
         } else {
             if (AppPreference.isLanguageSelected) {
@@ -104,9 +103,9 @@ class LauncherActivity : AppCompatActivity() {
 //
 //                    launchMainActivityWithExtras( videoId, type, previewUrl, videoUrl)
 //                } else {
-                if (  AppPreference.selectedLanguages!!.isEmpty()){
+                if (AppPreference.selectedLanguages!!.isEmpty()) {
                     userViewModel.requestLanguagesApi()
-                } else{
+                } else {
                     launchMainActivity()
                 }
 //                }
@@ -118,10 +117,16 @@ class LauncherActivity : AppCompatActivity() {
 
     }
 
-    private fun launchMainActivityWithExtras( videoId:String, type:String, previewUrl:String, videoUrl: String) {
+    private fun launchMainActivityWithExtras(
+        videoId: String,
+        type: String,
+        previewUrl: String,
+        videoUrl: String
+    ) {
         val intent = Intent(this, PlainVideoActivity::class.java)
-        intent.putExtra(PlainVideoActivity.KEY_VIDEO_CLICKED_ITEM,
-            VideoClikedItem("",0, CategoryConstants.NOTIFICATION_VIDEO_DATA)
+        intent.putExtra(
+            PlainVideoActivity.KEY_VIDEO_CLICKED_ITEM,
+            VideoClikedItem("", 0, CategoryConstants.NOTIFICATION_VIDEO_DATA)
         )
         intent.putExtra(AppConstants.ID, videoId)
         intent.putExtra(AppConstants.TYPE, type)
@@ -133,50 +138,47 @@ class LauncherActivity : AppCompatActivity() {
         this.finish()
     }
 
-    private fun launchProfileActivity(){
-        val intent = Intent(this,ProfileActivity::class.java)
+    private fun launchProfileActivity() {
+        val intent = Intent(this, ProfileActivity::class.java)
         startActivity(intent)
         this.finish()
     }
 
-    private fun launchMainActivity(){
-        val intent = Intent(this,MainActivity::class.java)
+    private fun launchMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
         this.finish()
     }
 
-    private fun filterSelectedLanguages(languageList: List<LanguageData>): String{
+    private fun filterSelectedLanguages(languageList: List<LanguageData>): String {
         var languageStr = ""
-        for (item in languageList){
-            if (item.default_select){
-                languageStr = languageStr+item.id+","
+        for (item in languageList) {
+            if (item.default_select) {
+                languageStr = languageStr + item.id + ","
             }
         }
         AppPreference.selectedLanguages = languageStr.dropLast(1)
-        return  languageStr
+        return languageStr
 
     }
 
 
-    private fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
+    private fun getSelectedVideoInterstCategory(categoryList: MutableList<VideoCategory>) {
         val unselectedCategory = mutableListOf<VideoCategory>()
         val selectedCategory = mutableListOf<VideoCategory>()
 
-        for (item in categoryList){
-            if (item.default_select){
+        for (item in categoryList) {
+            if (item.default_select) {
                 selectedCategory.add(item)
             } else {
                 unselectedCategory.add(item)
             }
         }
-        val  finalList:List<VideoCategory> = selectedCategory+unselectedCategory
-        CoroutineScope(Dispatchers.IO).launch {
-            AppPreference.saveCategoriesToPreference(finalList)
-            AppPreference.init(this@LauncherActivity)
-            AppPreference.isRefreshRequired = true
-            AppPreference.init(this@LauncherActivity)
-            Log.i("cat",AppPreference.categoryList.toString())
-        }
+        val finalList: List<VideoCategory> = selectedCategory + unselectedCategory
+        AppPreference.saveCategoriesToPreference(finalList)
+        AppPreference.init(this@LauncherActivity)
+        AppPreference.isRefreshRequired = false
+        launchMainActivity()
     }
 }
