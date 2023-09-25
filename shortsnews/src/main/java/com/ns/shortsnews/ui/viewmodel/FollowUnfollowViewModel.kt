@@ -29,16 +29,14 @@ class FollowUnfollowViewModel(private val followUnfollowUseCse: FollowUnfollowUs
             object : UseCaseResponse<Following> {
                 override fun onSuccess(type: Following) {
                     _followUnfollowSuccessState.tryEmit(type)
-                    _loadingState.value = false
                 }
 
                 override fun onError(apiError: ApiError) {
                     _errorState.value = apiError.getErrorMessage()
-                    _loadingState.value = false
                 }
 
                 override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = true
+                    _loadingState.value = isLoading
                 }
             }
         )

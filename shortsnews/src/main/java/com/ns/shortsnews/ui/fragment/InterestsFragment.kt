@@ -99,7 +99,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         viewLifecycleOwner.lifecycleScope.launch(){
             categoryViewModel.errorState.filterNotNull().collectLatest {
                 if(it != "NA"){
-                    binding.progressBarPer.visibility = View.GONE
+                   Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
                 }
             }
         }
@@ -107,7 +107,6 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         viewLifecycleOwner.lifecycleScope.launch(){
             categoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
                 it.let {
-                    binding.progressBarPer.visibility = View.GONE
                     if (it.videoCategories.isNotEmpty()) {
                         setupChipGroup(it.videoCategories as MutableList<VideoCategory>)
                             selectedItemList.addAll(it.videoCategories)
@@ -123,7 +122,6 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                         AppPreference.isRefreshRequired = true
                         activity?.finish()
                     } else {
-                        binding.progressBarPer.visibility = View.GONE
                         Alert().showGravityToast(requireActivity(), "Category preferences failed. Try again")
                     }
                 }
@@ -134,6 +132,8 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             categoryViewModel.loadingState.filterNotNull().collectLatest {
                 if (it) {
                     binding.progressBarPer.visibility = View.VISIBLE
+                } else {
+                    binding.progressBarPer.visibility = View.GONE
                 }
             }
         }

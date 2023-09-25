@@ -50,7 +50,6 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             likesViewModel.errorState.filterNotNull().collectLatest {
-                binding.progressBar.visibility = View.GONE
                 Log.i("kamlesh","ProfileFragment onError ::: $it")
             }
         }
@@ -61,11 +60,8 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
                 it.let {
                     binding.likesRecyclerview.visibility = View.VISIBLE
                     adapter.updateVideoData(it.data)
-
-                    binding.progressBar.visibility = View.GONE
                     if (it.data.isEmpty()){
                         binding.noBookmarksText.visibility = View.VISIBLE
-                        binding.progressBar.visibility = View.GONE
                     } else {
                         binding.noBookmarksText.visibility = View.GONE
                     }

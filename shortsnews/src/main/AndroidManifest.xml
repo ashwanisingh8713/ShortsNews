@@ -29,6 +29,8 @@
         android:resizeableActivity="false"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppSplash"
+        android:allowBackup="false"
+        tools:replace="android:allowBackup"
         android:dataExtractionRules="@xml/data_extraction_rules"
         tools:ignore="DataExtractionRules">
         <activity

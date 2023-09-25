@@ -86,8 +86,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
 
         viewLifecycleOwner.lifecycleScope.launch() {
             userViewModel.errorState.filterNotNull().collectLatest {
-                binding.progressBarLanguages.visibility = View.GONE
-                Log.i("kamlesh", "OTPFragment onError ::: $it")
+                Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
             }
         }
 
@@ -96,7 +95,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             userViewModel.LanguagesSuccessState.filterNotNull().collectLatest {
                 Log.i("kamlesh", "Language onSuccess ::: $it")
                 it.let {
-                    binding.progressBarLanguages.visibility = View.GONE
                     if (it.isNotEmpty()) {
                         setupChipGroup(it)
                         selectedItemList.addAll(it)
@@ -109,6 +107,8 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
             userViewModel.loadingState.filterNotNull().collectLatest {
                 if (it) {
                     binding.progressBarLanguages.visibility = View.VISIBLE
+                } else {
+                    binding.progressBarLanguages.visibility = View.GONE
                 }
             }
         }
@@ -262,29 +262,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         }
     }
 
-    private fun comparePrefereceServer(interestsList: MutableList<VideoCategory>,
-                                       interestsDataList:MutableList<VideoCategory> ):MutableList<VideoCategory>{
-        var finalList:MutableList<VideoCategory> = mutableListOf()
-        if (interestsDataList.isEmpty()){
-            finalList.addAll(interestsList)
-        } else {
-            for (interestsData in interestsList) {
-                for (interests in interestsDataList) {
-                    if (interestsData.id == interests.id) {
-                        var convertedData = VideoCategory(
-                            interests.id,
-                            interests.name,
-                            interests.selected,
-                            interests.icon,
-                            interests.default_select
-                        )
-                        finalList.add(convertedData)
-                    }
-                }
-            }
-        }
-        return finalList
-    }
+
     private fun createSelectedLanguagesValue(id: String) {
 
         if(selectedLanguages.contains(id)) {
@@ -292,20 +270,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         } else {
             selectedLanguages.add(id)
         }
-        var tempValue = "$id,"
-
-        /*if (selectedLanguages.isNotEmpty()) {
-            if (selectedLanguages.last() != ',') {
-               selectedLanguages = selectedLanguages + ","
-            }
-        }
-        var modifiedString = ""
-        if (selectedLanguages.contains(tempValue)) {
-            modifiedString = selectedLanguages.replace(tempValue, "")
-            selectedLanguages = modifiedString
-        } else {
-            selectedLanguages += tempValue
-        }*/
     }
 
     private fun updateSelectedItem(

@@ -56,7 +56,6 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             channelsViewModel.errorState.filterNotNull().collectLatest {
-                binding.progressBarChannels.visibility = View.GONE
                 if(it != "NA"){
                     Log.i("kamlesh","FollowingFragment onError ::: $it")
                 }
@@ -71,7 +70,6 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
                     adapter = ChannelsAdapter(it.data)
                     adapter.clicksEvent()
                     binding.recyclerviewFollowing.adapter = adapter
-                    binding.progressBarChannels.visibility = View.GONE
                     if (it.data.isEmpty()){
                       binding.followingText.visibility = View.VISIBLE
                     } else {

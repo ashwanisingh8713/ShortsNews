@@ -42,7 +42,6 @@ class VideoCategoryViewModel(
             onResult = object :
                 UseCaseResponse<VideoCategoryResult> {
                 override fun onSuccess(result: VideoCategoryResult) {
-                    _loadingState.value = false
                     val userVideoCategory = UserVideoCategory().mapper(
                         status = result.status,
                         videoCategories = result.data
@@ -51,12 +50,11 @@ class VideoCategoryViewModel(
                 }
 
                 override fun onError(apiError: ApiError) {
-                    _loadingState.value = false
                     _errorState.value = "${apiError.getErrorMessage()}"
                 }
 
                 override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = true
+                    _loadingState.value = isLoading
                 }
 
             })
@@ -69,17 +67,15 @@ class VideoCategoryViewModel(
             params = categories,
             onResult = object : UseCaseResponse<UpdateCategories> {
                 override fun onSuccess(type: UpdateCategories) {
-                    _loadingState.value = false
                     _updateCategoriesSuccessState.value = type
                 }
 
                 override fun onError(apiError: ApiError) {
-                    _loadingState.value = false
                     _errorState.value = "${apiError.getErrorMessage()}"
                 }
 
                 override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = true
+                    _loadingState.value = isLoading
                 }
 
             })

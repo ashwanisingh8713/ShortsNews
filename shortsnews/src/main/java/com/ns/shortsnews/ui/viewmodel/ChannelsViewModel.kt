@@ -27,16 +27,14 @@ class ChannelsViewModel(private val channelsDataUseCase: ChannelsDataUseCase): V
             object : UseCaseResponse<ChannelsDataResult> {
                 override fun onSuccess(type: ChannelsDataResult) {
                     _channelsSuccessState.value = type
-                    _loadingState.value = false
                 }
 
                 override fun onError(apiError: ApiError) {
                     _errorState.value = apiError.getErrorMessage()
-                    _loadingState.value = false
                 }
 
                 override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = true
+                    _loadingState.value = isLoading
                 }
             }
         )
