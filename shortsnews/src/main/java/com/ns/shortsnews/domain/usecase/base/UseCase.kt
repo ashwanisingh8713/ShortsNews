@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 /**
  * Created by Ashwani Kumar Singh on 07,February,2023.
  */
-abstract class UseCase<Type, in Params>() where Type: Any {
+abstract class UseCase<Type, in Params> where Type: Any {
 
     abstract suspend fun run(params: Params? = null):Type
 

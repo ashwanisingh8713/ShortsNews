@@ -65,6 +65,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
                     binding.progressBar.visibility = View.GONE
                     if (it.data.isEmpty()){
                         binding.noBookmarksText.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.GONE
                     } else {
                         binding.noBookmarksText.visibility = View.GONE
                     }

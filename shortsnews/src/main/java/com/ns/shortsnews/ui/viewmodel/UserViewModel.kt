@@ -103,7 +103,13 @@ class UserViewModel constructor(
                 }
 
                 override fun onError(apiError: ApiError) {
-                    _errorState.value = apiError.getErrorMessage()
+                    var errorMsg = _errorState.value
+                    if(errorMsg == null || errorMsg == apiError.getErrorMessage()) {
+                        errorMsg = "${apiError.getErrorMessage()} "
+                    } else {
+                        errorMsg = "${apiError.getErrorMessage()}"
+                    }
+                    _errorState.value = errorMsg
                 }
 
                 override fun onLoading(isLoading: Boolean) {
@@ -137,7 +143,13 @@ class UserViewModel constructor(
                 }
 
                 override fun onError(apiError: ApiError) {
-                    _otpErrorState.value = apiError.getErrorMessage()
+                    var errorMsg = _errorState.value
+                    if(errorMsg == null || errorMsg == apiError.getErrorMessage()) {
+                        errorMsg = "${apiError.getErrorMessage()} "
+                    } else {
+                        errorMsg = "${apiError.getErrorMessage()}"
+                    }
+                    _errorState.value = errorMsg
                 }
 
                 override fun onLoading(isLoading: Boolean) {
@@ -162,12 +174,16 @@ class UserViewModel constructor(
                         _languagesSuccessState.value = type.data
                     }
                     else _errorState.value = "Empty from api server"
-                    _loadingState.value = false
                 }
 
                 override fun onError(apiError: ApiError) {
-                    _errorState.value = apiError.getErrorMessage()
-                    _loadingState.value = false
+                    var errorMsg = _errorState.value
+                    if(errorMsg == null || errorMsg == apiError.getErrorMessage()) {
+                        errorMsg = "${apiError.getErrorMessage()} "
+                    } else {
+                        errorMsg = "${apiError.getErrorMessage()}"
+                    }
+                    _errorState.value = errorMsg
                 }
 
                 override fun onLoading(isLoading: Boolean) {
@@ -193,13 +209,16 @@ class UserViewModel constructor(
                         _otpErrorState.value = "Empty from api server"
                     }
 
-                    _loadingState.value = false
-
                 }
 
                 override fun onError(apiError: ApiError) {
-                    _otpErrorState.value = apiError.getErrorMessage()
-                    _loadingState.value = false
+                    var errorMsg = _errorState.value
+                    if(errorMsg == null || errorMsg == apiError.getErrorMessage()) {
+                        errorMsg = "${apiError.getErrorMessage()} "
+                    } else {
+                        errorMsg = "${apiError.getErrorMessage()}"
+                    }
+                    _errorState.value = errorMsg
                 }
 
                 override fun onLoading(isLoading: Boolean) {

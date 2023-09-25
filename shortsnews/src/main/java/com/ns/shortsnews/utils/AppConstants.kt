@@ -28,14 +28,14 @@ class AppConstants {
         const val  OTP_VALIDATION_ERROR = "Error validating otp try again"
         const val  SPRINT_TWO = "Coming in sprint 2nd"
         const val  SPRINT_THREE = "Coming in phase 3rd"
-        const val API_ERROR = "Something went wrong"
+        const val API_ERROR = "Try Again."
         const val TECH_ERROR = "Technical error"
 
 
         // Toast MSG text
         const val CONNECTIVITY_ERROR_TITLE = "Connectivity Error"
         const val CONNECTIVITY_MSG = "Please ensure you have active internet connection."
-        const val API_ERROR_TITLE = "API error"
+        const val API_ERROR_TITLE = "Something went wrong"
 
         // Arguments values
         const val FROM_EDIT_PROFILE = "from_edit_profile"
