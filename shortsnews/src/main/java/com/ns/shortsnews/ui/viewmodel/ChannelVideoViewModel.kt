@@ -27,16 +27,14 @@ class ChannelVideoViewModel(private val channelsDataUseCase: VideoDataUseCase): 
             object : UseCaseResponse<VideoDataResponse> {
                 override fun onSuccess(type: VideoDataResponse) {
                     _channelVideoSuccessState.value = type
-                    _loadingState.value = false
                 }
 
                 override fun onError(apiError: ApiError) {
                     _errorState.value = apiError.getErrorMessage()
-                    _loadingState.value = false
                 }
 
                 override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = true
+                    _loadingState.value = isLoading
                 }
             }
         )

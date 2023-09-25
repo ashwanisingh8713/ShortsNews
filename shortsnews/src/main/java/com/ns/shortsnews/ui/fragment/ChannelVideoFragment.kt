@@ -85,7 +85,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             loader.enqueue(req)
         }
         binding.channelLogo.load(channelUrl)
-        channelsVideosViewModel.requestChannelVideoData(Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
+
         adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
         listenChannelVideos()
         binding.following.setOnClickListener {
@@ -94,6 +94,11 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         binding.channelDes.setOnClickListener {
             showDialog(channelDes)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        channelsVideosViewModel.requestChannelVideoData(Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
     }
 
     override fun onDetach() {
@@ -141,27 +146,26 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         viewLifecycleOwner.lifecycleScope.launch {
             channelsVideosViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
                 it.let {
+                    binding.noChannelDataText.visibility = View.GONE
                     binding.channelImageRecyclerview.visibility = View.VISIBLE
                     adapter.updateVideoData(it!!.data)
                     binding.channelImageRecyclerview.adapter = adapter
-
-                    withContext(Dispatchers.Main){
-                        binding.progressBar.visibility = View.GONE
-                    }
-
                 }
 
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
             channelsVideosViewModel.loadingState.filterNotNull().collectLatest {
-                binding.progressBar.visibility = View.GONE
+                if (it) {
+                    binding.progressBar.visibility = View.VISIBLE
+                } else {
+                    binding.progressBar.visibility = View.GONE
+                }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             channelsVideosViewModel.errorState.filterNotNull().collectLatest {
-                binding.progressBar.visibility = View.GONE
                 binding.noChannelDataText.visibility = View.VISIBLE
             }
         }
