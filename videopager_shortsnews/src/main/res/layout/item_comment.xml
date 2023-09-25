@@ -41,8 +41,7 @@
         tools:text="Pramodh"
         app:layout_constraintTop_toTopOf="@id/card_view_for_image"
         app:layout_constraintStart_toEndOf="@id/card_view_for_image"
-        android:layout_marginStart="20dp"/>
-
+        android:layout_marginStart="16dp"/>
     <TextView
         android:id="@+id/post_time"
         android:layout_width="wrap_content"
@@ -53,21 +52,27 @@
         tools:text="20min ago"
         app:layout_constraintTop_toTopOf="@id/card_view_for_image"
         app:layout_constraintStart_toEndOf="@id/profile_name"
-        android:layout_marginStart="5dp"/>
+        android:layout_marginStart="5dp" />
+    <LinearLayout
+        app:layout_constraintStart_toStartOf="@+id/profile_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_name"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_marginStart="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="8dp">
 
     <TextView
         android:id="@+id/comment_text"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:fontFamily="sans-serif"
         android:textColor="@color/white"
-        android:layout_marginTop="10dp"
         tools:text="The new AI is changing the world rapidly and it is also effecting the environment which is very danger for our future The new AI is changing the world rapidly and it is also effecting the environment which is very danger for our future "
-        app:layout_constraintTop_toBottomOf="@id/profile_name"
-        app:layout_constraintStart_toStartOf="@id/profile_name"
-        android:layout_marginStart="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
         />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

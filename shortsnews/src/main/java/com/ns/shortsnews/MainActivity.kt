@@ -376,13 +376,26 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.tryAgain.visibility = View.VISIBLE
         binding.tryAgain.setOnClickListener {
             if (NetworkXProvider.isInternetConnected) {
-                Log.i("language","$AppPreference.selectedLanguages!!")
-                videoCategoryViewModel!!.loadVideoCategory()
-                showCategory()
-                if (AppPreference.userProfilePic == "") {
-                    binding.profileIcon.setImageResource(R.drawable.profile_avatar)
+                if (AppPreference.categoryList.isEmpty()) {
+                    videoCategoryViewModel!!.loadVideoCategory()
+                    showCategory()
+                    if (AppPreference.userProfilePic == "") {
+                        binding.profileIcon.setImageResource(R.drawable.profile_avatar)
+                    } else {
+                        binding.profileIcon.load(AppPreference.userProfilePic)
+                    }
                 } else {
                     binding.profileIcon.load(AppPreference.userProfilePic)
+                    AppPreference.init(this@MainActivity)
+                    val videoCategories = AppPreference.categoryList
+                    categoryAdapter = CategoryAdapter(
+                        itemList = videoCategories,
+                        itemListener = this@MainActivity
+                    )
+                    binding.recyclerView.adapter = categoryAdapter
+                    val defaultCate = videoCategories[0]
+                    loadHomeFragment(defaultCate.id)
+                    hideTryAgainText()
                 }
             } else {
                 NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
