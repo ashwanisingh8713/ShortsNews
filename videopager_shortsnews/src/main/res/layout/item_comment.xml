@@ -71,7 +71,8 @@
         android:textSize="14sp"
         android:fontFamily="sans-serif"
         android:textColor="@color/white"
-        tools:text="The new AI is changing the world rapidly and it is also effecting the environment which is very danger for our future The new AI is changing the world rapidly and it is also effecting the environment which is very danger for our future "
+        android:gravity="start"
+        tools:text="The new update is awesome"
         />
     </LinearLayout>
 

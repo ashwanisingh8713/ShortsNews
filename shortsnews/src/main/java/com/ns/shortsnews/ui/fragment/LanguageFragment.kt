@@ -86,7 +86,9 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
 
         viewLifecycleOwner.lifecycleScope.launch() {
             userViewModel.errorState.filterNotNull().collectLatest {
-                Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
+               if (it != null){
+                   Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
+               }
             }
         }
 
