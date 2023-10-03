@@ -1,6 +1,10 @@
 package com.ns.shortsnews.ui.fragment
 
 import android.app.Dialog
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
@@ -16,6 +20,7 @@ import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.palette.graphics.Palette
 import coil.load
 import coil.request.ImageRequest
@@ -87,6 +92,9 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         binding.channelLogo.load(channelUrl)
 
         adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
+
+        channelsVideosViewModel.requestChannelVideoData(Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
+
         listenChannelVideos()
         binding.following.setOnClickListener {
             listenFollowUnfollow(channelId)
@@ -94,11 +102,16 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         binding.channelDes.setOnClickListener {
             showDialog(channelDes)
         }
+
+        // Initializing Broadcast Receiver to listen Like / UN Like
+        val broadcastReceiver = ChannelVideoBroadcast()
+        // Registering broadcast receiver to LocalBroadcastManager
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(broadcastReceiver, IntentFilter("BookmarkFragmentUpdated"));
     }
 
     override fun onResume() {
         super.onResume()
-        channelsVideosViewModel.requestChannelVideoData(Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
+
     }
 
     override fun onDetach() {
@@ -230,5 +243,21 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         }
         dialog.show()
 
+    }
+
+    private inner class ChannelVideoBroadcast: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if(intent != null) {
+                val actionType = intent.getStringExtra("actionType")!!
+                if(actionType == "LikeEffect") {
+                    adapter.updateLikeStatus(
+                        id = intent.getStringExtra("id")!!,
+                        liked = intent.getBooleanExtra("liked", false),
+                        likeCount = intent.getStringExtra("likeCount")!!
+                    )
+                }
+            }
+
+        }
     }
 }

@@ -46,17 +46,19 @@ class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
 
     fun updateVideoData(itemList: MutableList<Data>) {
         this.itemList = itemList
-        notifyDataSetChanged()
     }
 
-    fun removeUnBookmarkVideoData(newList: MutableList<Data>):List<Data> {
-
-        val sum = itemList+newList
-
-        return sum.groupBy { it.id }
-            .filter { it.value.size == 1 }
-            .flatMap { it.value }
-
+    fun updateLikeStatus(id: String, liked: Boolean, likeCount: String) {
+        val data = Data(id=id)
+        this.itemList.indexOf(data).takeIf {
+                it1-> it1>-1
+        }?.let {it1->
+            this.itemList.get(it1)?.let {
+                it.liked = liked
+                it.like_count = likeCount
+                notifyItemRangeChanged(it1, itemCount-1)
+            }
+        }
     }
 
     fun clearChannelData() {

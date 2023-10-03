@@ -3,6 +3,7 @@ package com.videopager.ui
 import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
@@ -13,6 +14,7 @@ import com.videopager.models.AnimationEffect
 import com.videopager.models.PageEffect
 import com.videopager.models.ResetAnimationsEffect
 import com.player.models.VideoData
+import com.videopager.R
 import com.videopager.ui.extensions.*
 
 internal class PageViewHolder(
@@ -34,20 +36,6 @@ internal class PageViewHolder(
 //            scale(Scale.FILL)
         }
 
-        /*binding.previewImage.load(
-            uri = videoData.previewImageUri,
-            imageLoader = imageLoader
-        )*/
-
-        val smapleMp4 = "https://file-examples.com/storage/fea582e6406477bb69e8a67/2017/04/file_example_MP4_480_1_5MG.mp4"
-
-        /*binding.previewImage.load(videoData.video_url_mp4) {
-            this.memoryCacheKey(videoData.video_url_mp4)
-//            videoFrameMillis(1000)
-            decoderFactory { result, options, _ ->
-                VideoFrameDecoder(result.source, options)
-            }
-        }*/
 
         binding.share.setOnClickListener{
             click(Pair(videoData.id, ShareClick))
@@ -65,6 +53,19 @@ internal class PageViewHolder(
         binding.msgCount.text = videoData.comment_count
         binding.likeTitle.text = videoData.like_count
         binding.videoIdText.text = videoData.id
+
+        if (videoData.liking){
+            binding.like.setColorFilter(ContextCompat.getColor(binding.like.context, R.color.red))
+        } else {
+            binding.like.setColorFilter(ContextCompat.getColor(binding.like.context, R.color.white))
+        }
+
+        if (videoData.saved){
+            binding.save.setColorFilter(ContextCompat.getColor(binding.save.context, R.color.red))
+        } else {
+            binding.save.setColorFilter(ContextCompat.getColor(binding.save.context, R.color.white))
+        }
+
         ConstraintSet().apply {
             clone(binding.root)
             // Optimize video preview / container size if aspect ratio is available. This can avoid

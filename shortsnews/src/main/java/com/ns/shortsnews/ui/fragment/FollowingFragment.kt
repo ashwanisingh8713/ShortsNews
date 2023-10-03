@@ -104,23 +104,12 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
         }
     }
 
-    /*override fun onResume() {
-        super.onResume()
-        if (NetworkXProvider.isInternetConnected) {
-            channelsViewModel.requestChannelListApi()
-        } else {
-            // No Internet Snack bar: Fire
-            NoConnection.noConnectionSnackBarInfinite(binding.root,
-                requireContext() as AppCompatActivity
-            )
-        }
-    }*/
 
     private fun ChannelsAdapter.clicksEvent() {
         viewLifecycleOwner.lifecycleScope.launch() {
             clicks().collectLatest {
                 if (NetworkXProvider.isInternetConnected) {
-                    var channelVideosFragment = ChannelVideosFragment().apply {
+                    val channelVideosFragment = ChannelVideosFragment().apply {
                         val bundle = Bundle()
                         bundle.putString("channelId", it.channel_id)
                         bundle.putString("channelTitle", it.channelTitle)

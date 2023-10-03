@@ -18,8 +18,7 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.databinding.FragmentBookmarkBinding
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
-import com.ns.shortsnews.ui.paging.PassengersAdapter
-import com.ns.shortsnews.ui.paging.PassengersLoadStateAdapter
+import com.ns.shortsnews.ui.paging.BookmarksAdapter
 import com.ns.shortsnews.ui.viewmodel.BookmarksViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserBookmarksViewModel
 import com.ns.shortsnews.utils.AppPreference
@@ -39,22 +38,20 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
         inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
     }}
 
-    private lateinit var passengersAdapter: PassengersAdapter
+    private lateinit var bookmarksAdapter: BookmarksAdapter
 
     private inner class BookmarkBroadcast: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if(intent != null) {
                 val actionType = intent.getStringExtra("actionType")!!
                 if(actionType == "LikeEffect") {
-                    passengersAdapter.updateLikeStatus(
+                    bookmarksAdapter.updateLikeStatus(
                         id = intent.getStringExtra("id")!!,
                         liked = intent.getBooleanExtra("liked", false),
                         likeCount = intent.getStringExtra("likeCount")!!
                     )
-//                    passengersAdapter.retry()
                 } else {
-                    passengersAdapter.refresh()
-//                    passengersAdapter.retry()
+                    bookmarksAdapter.refresh()
                 }
             }
 
@@ -68,23 +65,18 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
         binding = FragmentBookmarkBinding.bind(view)
 
 
-        passengersAdapter =
-            PassengersAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA, channelId = "")
+        bookmarksAdapter =
+            BookmarksAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA, channelId = "")
 
 
-        passengersAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.ALLOW
+        bookmarksAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.ALLOW
 
 
-        binding.likesRecyclerview.adapter = passengersAdapter.withLoadStateHeaderAndFooter(
-            header = PassengersLoadStateAdapter { passengersAdapter.retry() },
-            footer = PassengersLoadStateAdapter { passengersAdapter.retry() }
-        )
-
-
+        binding.likesRecyclerview.adapter = bookmarksAdapter
 
         // Item click listener
         viewLifecycleOwner.lifecycleScope.launch {
-            passengersAdapter.clicks().collectLatest {
+            bookmarksAdapter.clicks().collectLatest {
                 IntentLaunch.launchPlainVideoPlayer(it, requireActivity())
             }
         }
@@ -94,17 +86,16 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
 
                 binding.progressBar.visibility = View.GONE
                 binding.likesRecyclerview.visibility = View.VISIBLE
-                passengersAdapter.submitData(pagedData)
+                bookmarksAdapter.submitData(pagedData)
             }
         }
 
-        // Initializing Broadcast Receiver to listen Bookmark / UN Bookmark
+        // Initializing Broadcast Receiver to listen Bookmark/Like / UN Bookmark/ UN Like
         val broadcastReceiver = BookmarkBroadcast()
-
-
+        // Registering broadcast receiver to LocalBroadcastManager
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(broadcastReceiver, IntentFilter("BookmarkFragmentUpdated"));
 
-        passengersAdapter.addLoadStateListener { loadState ->
+        bookmarksAdapter.addLoadStateListener { loadState ->
 
             when {
                 loadState.refresh is LoadState.Loading -> {
@@ -112,7 +103,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
                 }
                 loadState.refresh is LoadState.NotLoading -> {
                     binding.progressBar.visibility = View.GONE
-                    if (passengersAdapter.itemCount < 1) {
+                    if (bookmarksAdapter.itemCount < 1) {
                         binding.noBookmarksText.visibility = View.VISIBLE
                     } else {
                         binding.noBookmarksText.visibility = View.GONE
@@ -130,7 +121,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
 
                 loadState.append is LoadState.NotLoading -> {
                     binding.progressBar.visibility = View.GONE
-                    if (passengersAdapter.itemCount < 1) {
+                    if (bookmarksAdapter.itemCount < 1) {
                         binding.noBookmarksText.visibility = View.VISIBLE
                     } else {
                         binding.noBookmarksText.visibility = View.GONE

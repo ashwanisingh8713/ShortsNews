@@ -1,7 +1,6 @@
 package com.ns.shortsnews.ui.paging
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
@@ -16,8 +15,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 
-class PassengersAdapter(private var videoFrom: String, private var channelId: String) :
-    PagingDataAdapter<Data, PassengersAdapter.GridViewHolder>(PassengersComparator) {
+class BookmarksAdapter(private var videoFrom: String, private var channelId: String) :
+    PagingDataAdapter<Data, BookmarksAdapter.BookmarkItemViewHolder>(BookmarksComparator) {
 
     private val clicks = MutableSharedFlow<VideoClikedItem>(extraBufferCapacity = 1)
     fun clicks() = clicks.asSharedFlow()
@@ -25,8 +24,8 @@ class PassengersAdapter(private var videoFrom: String, private var channelId: St
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): GridViewHolder {
-        return GridViewHolder(
+    ): BookmarkItemViewHolder {
+        return BookmarkItemViewHolder(
             ItemGridViewBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
@@ -34,24 +33,12 @@ class PassengersAdapter(private var videoFrom: String, private var channelId: St
     }
 
 
-    override fun onBindViewHolder(holder: GridViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BookmarkItemViewHolder, position: Int) {
         val item = getItem(position)
-        /*if(position==2) {
-            holder.itemView.visibility = View.GONE
-            holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
-        } else {
-            holder.itemView.visibility = View.VISIBLE
-            holder.itemView.layoutParams =
-                RecyclerView.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-
-        }*/
         item?.let { holder.bindPassenger(it) }
     }
 
-    inner class GridViewHolder(val binding:ItemGridViewBinding):RecyclerView.ViewHolder(binding.root) {
+    inner class BookmarkItemViewHolder(val binding:ItemGridViewBinding):RecyclerView.ViewHolder(binding.root) {
         fun bindPassenger(item: Data) = with(binding) {
             binding.imagePreview.load(item.preview)
             binding.likeCount.text = item.like_count
@@ -92,7 +79,7 @@ class PassengersAdapter(private var videoFrom: String, private var channelId: St
         }
     }
 
-    object PassengersComparator : DiffUtil.ItemCallback<Data>() {
+    object BookmarksComparator : DiffUtil.ItemCallback<Data>() {
         override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
             return (oldItem.id == newItem.id) && (oldItem.saved == newItem.saved)
         }
