@@ -125,4 +125,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
     // Gson
     implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Android Jetpack Paging 3.0
+    implementation "androidx.paging:paging-runtime:3.0.0-alpha06"
 }

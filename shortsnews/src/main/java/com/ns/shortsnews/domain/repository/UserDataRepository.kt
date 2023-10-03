@@ -3,6 +3,7 @@ package com.ns.shortsnews.domain.repository
 import com.ns.shortsnews.domain.models.*
 import com.videopager.data.Following
 import okhttp3.RequestBody
+import retrofit2.http.Query
 
 
 interface UserDataRepository {

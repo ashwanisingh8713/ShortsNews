@@ -636,7 +636,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         videoDataViewModel.requestVideoData(
             params = Pair(
                 CategoryConstants.CHANNEL_VIDEO_DATA,
-                channelId
+                channelId,
             )
         )
         bottomSheetRecyclerAdapter =

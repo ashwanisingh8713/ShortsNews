@@ -89,7 +89,7 @@ internal class PagerAdapter(
 
     suspend fun refreshLikeUI(position: Int) {
         val holder = awaitViewHolder(position)
-        var data  = getItem(position)
+        val data  = getItem(position)
         if (data.liking){
             holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.red))
             holder.binding.likeTitle.text = data.like_count
@@ -99,15 +99,13 @@ internal class PagerAdapter(
         }
     }
 
-    suspend fun refreshBookmarkUI(position: Int){
+    suspend fun refreshBookmarkUI(position: Int) {
         val holder = awaitViewHolder(position)
         var data  = getItem(position)
         if (data.saved){
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.red))
-//            holder.binding.saveTitle.text = data.saveCount
         } else {
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.white))
-//            holder.binding.saveTitle.text = data.saveCount
         }
     }
 

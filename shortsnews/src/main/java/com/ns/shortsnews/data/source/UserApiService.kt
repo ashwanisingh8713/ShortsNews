@@ -32,12 +32,17 @@ interface UserApiService {
 
     @GET("videos")
     suspend fun getChannelVideoData(@Query("channel")channel:String): VideoDataResponse
+    @GET("videos")
+    suspend fun getChannelVideoDataP(@Query("channel")channel:String, @Query("page")page:Int, @Query("perPage")perPage:Int): VideoDataResponse
 
     @GET("languages")
     suspend fun getLanguagesData(): LanguagesResult
-    //Likes list for profile screen
+
     @GET("my-bookmarks")
     suspend fun getBookmarksData(): VideoDataResponse
+
+    @GET("my-bookmarks")
+    suspend fun getBookmarksDataP(@Query("page")page:Int, @Query("perPage")perPage:Int): VideoDataResponse
 
     @POST("update-profile")
     suspend fun getUpdateProfile(@Body body: RequestBody): StatusResult

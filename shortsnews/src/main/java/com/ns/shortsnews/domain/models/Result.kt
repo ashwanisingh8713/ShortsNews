@@ -150,21 +150,35 @@ data class VideoDataResponse(
 @JsonClass(generateAdapter = true)
 data class Data(
     @Json(name = "title")
-    val title: String,
+    val title: String="",
     @Json(name = "video_url")
-    val videoUrl: String,
+    val videoUrl: String ="",
     @Json(name = "id")
     val id:String= "",
     @Json(name = "videoPreviewUrl")
     val preview:String?= "",
     val type: String = "",
     val channelTitle:String = "",
-    val like_count:String = "",
+    var like_count:String = "",
     val video_url_mp4:String = "",
     val width:Int = 608,
     val height:Int = 1080,
-    val liked:Boolean = false
-)
+    var liked:Boolean = false,
+    var saved:Boolean = true,
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is Data) {
+            other.id == id
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        super.hashCode()
+        return id.hashCode()
+    }
+}
 /*Kamlesh(Data class for like/unlike)*/
 
 @JsonClass(generateAdapter = true)

@@ -5,10 +5,7 @@ import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.os.*
 import android.util.Log
-import android.view.GestureDetector
-import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -17,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.viewpager2.widget.ViewPager2
 import coil.ImageLoader
@@ -29,20 +27,15 @@ import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnected
 import com.videopager.R
-import com.videopager.data.CommentData
 import com.videopager.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
 import com.videopager.utils.CategoryConstants
-import com.videopager.utils.DoubleClickListener
 import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
 import com.videopager.vm.VideoSharedEventViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -157,6 +150,8 @@ class VideoPagerFragment(
                 when (effect) {
                     is BookmarkEffect -> {
                         pagerAdapter.refreshBookmarkUI(effect.position)
+                        val videoData = pagerAdapter.getVideoData(effect.position)
+                        bookmarkBroadcast(id = videoData.id, videoData.saved)
                     }
 
                     is CommentEffect -> {
@@ -171,6 +166,9 @@ class VideoPagerFragment(
 
                     is LikeEffect -> {
                         pagerAdapter.refreshLikeUI(effect.position)
+                        pagerAdapter.refreshBookmarkUI(effect.position)
+                        val videoData = pagerAdapter.getVideoData(effect.position)
+                        likeBroadcast(id = videoData.id, videoData.liking, videoData.like_count)
                     }
 
                     is FollowEffect -> {
@@ -549,4 +547,25 @@ class VideoPagerFragment(
 //         viewModel.processEvent(InsertVideoEvent(videoId = videoId, previewUrl = previewUrl, videoUrl = videoUrl, type = "GN"))
 //         viewModel.processEvent(NotificationVideoPlayerSettleEvent( viewModel.playerView?.player?.currentMediaItemIndex ?:0, videoId))
     }
+
+    private fun bookmarkBroadcast(id: String, bookmark: Boolean) {
+        val intent = Intent("BookmarkFragmentUpdated")
+        intent.putExtra("actionType", "BookmarkEffect")
+        intent.putExtra("id", id)
+        intent.putExtra("bookmark", bookmark)
+        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+    }
+
+    private fun likeBroadcast(id: String, liked: Boolean, likeCount: String) {
+        val intent = Intent("BookmarkFragmentUpdated")
+        intent.putExtra("actionType", "LikeEffect")
+        intent.putExtra("id", id)
+        intent.putExtra("liked", liked)
+        intent.putExtra("likeCount", likeCount)
+        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+    }
+
+
+
+
 }

@@ -116,7 +116,7 @@ class LauncherActivity : AppCompatActivity() {
 //
 //                    launchMainActivityWithExtras( videoId, type, previewUrl, videoUrl)
 //                } else {
-                if (AppPreference.getSelectedLanguages()!!.isEmpty()) {
+                if (AppPreference.getSelectedLanguages().isEmpty()) {
                     userViewModel.requestLanguagesApi()
                 } else {
                     launchMainActivity()
