@@ -21,6 +21,7 @@ import coil.ImageLoader
 import com.exo.manager.DemoUtil
 import com.exo.manager.DownloadTracker
 import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.C.TrackType
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
@@ -399,6 +400,35 @@ class VideoPagerFragment(
 
                 LikeClick -> {
                     if (isInternetConnected) {
+
+                        val tracks = viewModel.states.value.appPlayer?.player?.currentTracks
+
+                        val trackSelector = viewModel.states.value.appPlayer?.player?.trackSelector
+
+                        Log.i("AshwaniXYZ", "trackSelector: $trackSelector")
+
+                        for (trackGroup in tracks!!.groups) {
+                            // Group level information.
+                            val trackType: @TrackType Int = trackGroup.type
+                            val trackInGroupIsSelected = trackGroup.isSelected
+                            val trackInGroupIsSupported = trackGroup.isSupported
+
+                            Log.i("AshwaniXYZ", "trackType: $trackType")
+                            Log.i("AshwaniXYZ", "trackInGroupIsSelected: $trackInGroupIsSelected")
+                            Log.i("AshwaniXYZ", "trackInGroupIsSupported: $trackInGroupIsSupported")
+
+                            for (i in 0 until trackGroup.length) {
+                                // Individual track information.
+                                val isSupported = trackGroup.isTrackSupported(i)
+                                val isSelected = trackGroup.isTrackSelected(i)
+                                val trackFormat = trackGroup.getTrackFormat(i)
+
+                                Log.i("AshwaniXYZ", "isSupported-$i: $isSupported")
+                                Log.i("AshwaniXYZ", "isSelected-$i: $isSelected")
+                                Log.i("AshwaniXYZ", "trackFormat-$i: $trackFormat")
+                            }
+                        }
+
                         if (!isUserLoggedIn) {
                             sharedEventViewModel.launchLoginEvent(true)
                             NoFurtherEvent
@@ -408,6 +438,9 @@ class VideoPagerFragment(
                             val videoData = pagerAdapter.getVideoData(currentItem)
                             LikeClickEvent(videoData.id, currentItem)
                         }
+
+
+
                     } else {
                         NoConnection.noConnectionSnackBarInfinite(
                             view,

@@ -87,6 +87,7 @@ internal class ExoAppPlayer(
         val listener = object : Player.Listener {
             override fun onTracksChanged(tracks: Tracks) {
                 super.onTracksChanged(tracks)
+                Log.i("AshwaniXYZ", "$tracks")
                 trySend(Unit)
             }
         }

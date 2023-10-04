@@ -201,15 +201,15 @@ public class DownloadTracker {
 
       // The content is DRM protected. We need to acquire an offline license.
       if (Util.SDK_INT < 18) {
-        Toast.makeText(context, R.string.error_drm_unsupported_before_api_18, Toast.LENGTH_LONG)
-            .show();
+//        Toast.makeText(context, R.string.error_drm_unsupported_before_api_18, Toast.LENGTH_LONG)
+//            .show();
         Log.e(TAG, "Downloading DRM protected content is not supported on API versions below 18");
         return;
       }
       // TODO(internal b/163107948): Support cases where DrmInitData are not in the manifest.
       if (!hasSchemaData(format.drmInitData)) {
-        Toast.makeText(context, R.string.download_start_error_offline_license, Toast.LENGTH_LONG)
-            .show();
+//        Toast.makeText(context, R.string.download_start_error_offline_license, Toast.LENGTH_LONG)
+//            .show();
         Log.e(
             TAG,
             "Downloading content where DRM scheme data is not located in the manifest is not"
@@ -233,7 +233,7 @@ public class DownloadTracker {
           isLiveContent ? R.string.download_live_unsupported : R.string.download_start_error;
       String logMessage =
           isLiveContent ? "Downloading live content unsupported" : "Failed to start download";
-      Toast.makeText(context, toastStringId, Toast.LENGTH_LONG).show();
+//      Toast.makeText(context, toastStringId, Toast.LENGTH_LONG).show();
       Log.e(TAG, logMessage, e);
     }
 
@@ -295,8 +295,8 @@ public class DownloadTracker {
     }
 
     private void onOfflineLicenseFetchedError(DrmSession.DrmSessionException e) {
-      Toast.makeText(context, R.string.download_start_error_offline_license, Toast.LENGTH_LONG)
-          .show();
+//      Toast.makeText(context, R.string.download_start_error_offline_license, Toast.LENGTH_LONG)
+//          .show();
       Log.e(TAG, "Failed to fetch offline DRM license", e);
     }
 

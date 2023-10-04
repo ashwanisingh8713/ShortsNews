@@ -1,7 +1,10 @@
 package com.exo.players
 
 import android.content.Context
+import android.media.metrics.NetworkEvent.NETWORK_TYPE_3G
 import com.exo.data.DiffingVideoDataUpdater
+import com.google.ads.interactivemedia.v3.internal.bnw.C
+import com.google.android.exoplayer2.C.NETWORK_TYPE_2G
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlayer
@@ -17,6 +20,7 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.FileDataSource
@@ -24,6 +28,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSink
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.EventLogger
+import com.google.android.exoplayer2.util.Util
 import com.player.players.AppPlayer
 import kotlinx.coroutines.Dispatchers
 
@@ -52,12 +57,16 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache, priv
             maxBufferMs,
             DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
             DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
-            .build();
+            .build()
+
+        val bandwidthMeter = DefaultBandwidthMeter.Builder(appContext)
+            .setInitialBitrateEstimate(NETWORK_TYPE_2G, 123456789).build()
 
         exoPlayer = ExoPlayer.Builder(appContext, renderersFactory)
             .setMediaSourceFactory(createMediaSourceFactory(playerView))
             .setTrackSelector(trackSelector)
             .setLoadControl(loadControl)
+            .setBandwidthMeter(bandwidthMeter)
             .build()
             .apply {
                 if (config.loopVideos) {
@@ -74,9 +83,16 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache, priv
     private var serverSideAdsLoader: ImaServerSideAdInsertionMediaSource.AdsLoader? = null
 
     private fun buildCacheDataSourceFactory(): DataSource.Factory {
+        val bandwidthMeter = DefaultBandwidthMeter.Builder(appContext)
+            .setInitialBitrateEstimate(NETWORK_TYPE_3G, 123456789).build()
+
+        val initialEstimateSlow: Long = bandwidthMeter.getBitrateEstimate()
+
         val cache = cache
         val cacheSink = CacheDataSink.Factory()
             .setCache(cache)
+
+//        val upstreamFactory = DefaultDataSource.Factory(appContext, DefaultHttpDataSource.Factory().apply {
         val upstreamFactory = DefaultDataSource.Factory(appContext, DefaultHttpDataSource.Factory().apply {
             setUserAgent("ShortsVideo")
 //            setConnectTimeoutMs(3000)
