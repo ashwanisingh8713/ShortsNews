@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="410dp"
+    android:layout_height="@dimen/_360sdp"
     android:background="@color/screen_background"
     tools:context=".ui.fragment.BookmarksFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/likes_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="410dp"
+        android:layout_height="@dimen/_350sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

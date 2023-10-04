@@ -2,6 +2,9 @@ package com.exo.players
 
 import android.content.Context
 import android.media.metrics.NetworkEvent.NETWORK_TYPE_3G
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import com.exo.data.DiffingVideoDataUpdater
 import com.google.ads.interactivemedia.v3.internal.bnw.C
 import com.google.android.exoplayer2.C.NETWORK_TYPE_2G
@@ -19,6 +22,7 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.exoplayer2.upstream.BandwidthMeter
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSource
@@ -59,8 +63,24 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache, priv
             DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
             .build()
 
+        // Bandwidth Meter
         val bandwidthMeter = DefaultBandwidthMeter.Builder(appContext)
             .setInitialBitrateEstimate(NETWORK_TYPE_2G, 123456789).build()
+
+        // Bandwidth Meter Listener
+        /*bandwidthMeter.addEventListener(object : Handler(Looper.myLooper()!!) {
+        }, object : BandwidthMeter.EventListener{
+            override fun onBandwidthSample(
+                elapsedMs: Int,
+                bytesTransferred: Long,
+                bitrateEstimate: Long
+            ) {
+                Log.i("AshwaniXYZ", "elapsedMs : $elapsedMs")
+                Log.i("AshwaniXYZ", "bytesTransferred : $bytesTransferred")
+                Log.i("AshwaniXYZ", "bitrateEstimate : $bitrateEstimate")
+            }
+
+        })*/
 
         exoPlayer = ExoPlayer.Builder(appContext, renderersFactory)
             .setMediaSourceFactory(createMediaSourceFactory(playerView))

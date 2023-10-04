@@ -99,6 +99,7 @@ internal class DiffingVideoDataUpdater(
         return map { mediaItem ->
             val defaultHttpDataSourceFactory = DefaultHttpDataSource.Factory()
             val mediaSource = DashMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mediaItem)
+
             mediaSource
         }
     }
