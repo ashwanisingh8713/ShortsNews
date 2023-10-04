@@ -401,7 +401,8 @@ class VideoPagerFragment(
                 LikeClick -> {
                     if (isInternetConnected) {
 
-                        val tracks = viewModel.states.value.appPlayer?.player?.currentTracks
+                        // This commented code provides info about Tracks
+                        /*val tracks = viewModel.states.value.appPlayer?.player?.currentTracks
 
                         val trackSelector = viewModel.states.value.appPlayer?.player?.trackSelector
 
@@ -427,7 +428,7 @@ class VideoPagerFragment(
                                 Log.i("AshwaniXYZ", "isSelected-$i: $isSelected")
                                 Log.i("AshwaniXYZ", "trackFormat-$i: $trackFormat")
                             }
-                        }
+                        }*/
 
                         if (!isUserLoggedIn) {
                             sharedEventViewModel.launchLoginEvent(true)
