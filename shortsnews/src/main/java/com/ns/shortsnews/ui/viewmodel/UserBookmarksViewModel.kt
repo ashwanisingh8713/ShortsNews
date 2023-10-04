@@ -39,8 +39,6 @@ class UserBookmarksViewModel(private val channelsDataUseCase: VideoDataUseCase):
     private val _loadingState = MutableStateFlow(true)
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
-
-
     val bookmarks = Pager(PagingConfig(pageSize = 10)) {
         BookmarkPaging(userApiService = getKoin().get<UserApiService>())
     }.flow.cachedIn(viewModelScope).map { it }

@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 
-class BookmarksAdapter(private var videoFrom: String, private var channelId: String) :
-    PagingDataAdapter<Data, BookmarksAdapter.BookmarkItemViewHolder>(BookmarksComparator) {
+class ChannelVideoAdapter(private var videoFrom: String, private var channelId: String) :
+    PagingDataAdapter<Data, ChannelVideoAdapter.ChannelItemViewHolder>(BookmarksComparator) {
 
     private val clicks = MutableSharedFlow<VideoClikedItem>(extraBufferCapacity = 1)
     fun clicks() = clicks.asSharedFlow()
@@ -24,8 +24,8 @@ class BookmarksAdapter(private var videoFrom: String, private var channelId: Str
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): BookmarkItemViewHolder {
-        return BookmarkItemViewHolder(
+    ): ChannelItemViewHolder {
+        return ChannelItemViewHolder(
             ItemGridViewBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
@@ -33,12 +33,12 @@ class BookmarksAdapter(private var videoFrom: String, private var channelId: Str
     }
 
 
-    override fun onBindViewHolder(holder: BookmarkItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ChannelItemViewHolder, position: Int) {
         val item = getItem(position)
         item?.let { holder.bindPassenger(it) }
     }
 
-    inner class BookmarkItemViewHolder(val binding:ItemGridViewBinding):RecyclerView.ViewHolder(binding.root) {
+    inner class ChannelItemViewHolder(val binding:ItemGridViewBinding):RecyclerView.ViewHolder(binding.root) {
         fun bindPassenger(item: Data) = with(binding) {
             binding.imagePreview.load(item.preview)
             binding.likeCount.text = item.like_count
@@ -48,9 +48,6 @@ class BookmarksAdapter(private var videoFrom: String, private var channelId: Str
                 binding.likeIcon.setColorFilter(ContextCompat.getColor(binding.likeIcon.context, R.color.white))
             }
             itemView.setOnClickListener{
-                clicks.tryEmit(VideoClikedItem(requiredId = channelId, selectedPosition = position, videoFrom = videoFrom))
-            }
-            binding.imagePreview.setOnClickListener{
                 clicks.tryEmit(VideoClikedItem(requiredId = channelId, selectedPosition = position, videoFrom = videoFrom))
             }
         }
@@ -65,8 +62,7 @@ class BookmarksAdapter(private var videoFrom: String, private var channelId: Str
             getItem(it1)?.let {
                 it.liked = liked
                 it.like_count = likeCount
-//                notifyItemRangeChanged(it1, itemCount-1)
-                notifyItemChanged(it1)
+                notifyItemRangeChanged(it1, itemCount-1)
             }
         }
     }

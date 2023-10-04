@@ -2,46 +2,33 @@ package com.ns.shortsnews.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import com.ns.shortsnews.data.source.UserApiService
 import com.ns.shortsnews.domain.exception.ApiError
 import com.ns.shortsnews.domain.models.VideoDataResponse
 import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
+import com.ns.shortsnews.ui.paging.ChannelVideoPaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import org.koin.java.KoinJavaComponent
 
-class ChannelVideoViewModel(private val channelsDataUseCase: VideoDataUseCase): ViewModel() {
-
-    // Profile
-    private val _channelVideoSuccessState = MutableStateFlow<VideoDataResponse?>(null)
-    val BookmarksSuccessState: StateFlow<VideoDataResponse?> get() = _channelVideoSuccessState
-
-    private val _errorState = MutableStateFlow<String?>(null)
-    val errorState: StateFlow<String?> get() = _errorState
-
-    private val _loadingState = MutableStateFlow(true)
-    val loadingState: MutableStateFlow<Boolean> get() = _loadingState
+class ChannelVideoViewModel(private val channelId: String): ViewModel() {
 
 
-    fun requestChannelVideoData(params: Pair<String, String>) {
-        channelsDataUseCase.invoke(viewModelScope, params,
-            object : UseCaseResponse<VideoDataResponse> {
-                override fun onSuccess(type: VideoDataResponse) {
-                    _channelVideoSuccessState.value = type
-                }
 
-                override fun onError(apiError: ApiError) {
-                    _errorState.value = apiError.getErrorMessage()
-                }
+    val channelVideoData = Pager(PagingConfig(pageSize = 10)) {
+        ChannelVideoPaging(channelId = channelId, userApiService = KoinJavaComponent.getKoin().get<UserApiService>())
+    }.flow.cachedIn(viewModelScope)
 
-                override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = isLoading
-                }
-            }
-        )
-    }
 
-    fun clearChannelVideos(){
-        _channelVideoSuccessState.value = null
-    }
+
+
+
 
 }

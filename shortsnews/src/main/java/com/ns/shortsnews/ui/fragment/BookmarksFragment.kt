@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -26,6 +27,7 @@ import com.ns.shortsnews.utils.IntentLaunch
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.CategoryConstants
 import com.videopager.utils.NoConnection
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -40,10 +42,13 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
 
     private lateinit var bookmarksAdapter: BookmarksAdapter
 
+    var position = 0
+
     private inner class BookmarkBroadcast: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if(intent != null) {
                 val actionType = intent.getStringExtra("actionType")!!
+                Log.i("AshwaniXYZ", "onReceive")
                 if(actionType == "LikeEffect") {
                     bookmarksAdapter.updateLikeStatus(
                         id = intent.getStringExtra("id")!!,
@@ -69,10 +74,19 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
             BookmarksAdapter(videoFrom = CategoryConstants.BOOKMARK_VIDEO_DATA, channelId = "")
 
 
+        binding.likesRecyclerview.adapter = bookmarksAdapter
         bookmarksAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.ALLOW
 
+        binding.likesRecyclerview.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val offset: Int = binding.likesRecyclerview.computeHorizontalScrollOffset()
+                if (offset % binding.likesRecyclerview.width == 0) {
+                    position = offset / binding.likesRecyclerview.width
 
-        binding.likesRecyclerview.adapter = bookmarksAdapter
+                }
+            }
+        })
 
         // Item click listener
         viewLifecycleOwner.lifecycleScope.launch {
@@ -81,9 +95,9 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
             }
         }
 
+        // Consumer to listen bookmarks
         viewLifecycleOwner.lifecycleScope.launch {
             bookmarksViewModel.bookmarks.collectLatest { pagedData ->
-
                 binding.progressBar.visibility = View.GONE
                 binding.likesRecyclerview.visibility = View.VISIBLE
                 bookmarksAdapter.submitData(pagedData)

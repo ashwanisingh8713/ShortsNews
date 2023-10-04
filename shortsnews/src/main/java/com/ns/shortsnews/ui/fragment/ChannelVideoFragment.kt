@@ -14,56 +14,53 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.Window
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.paging.LoadState
 import androidx.palette.graphics.Palette
+import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.request.ImageRequest
-import com.google.ads.interactivemedia.v3.internal.it
 import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.R
-import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.databinding.FragmentChannelVideosBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
 import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
-import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
+import com.ns.shortsnews.ui.paging.ChannelVideoAdapter
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
 import com.videopager.utils.CategoryConstants
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.get
 
 class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
     private lateinit var binding: FragmentChannelVideosBinding
-    lateinit var adapter: GridAdapter
+    lateinit var channelVideoAdapter: ChannelVideoAdapter
     private var channelId = ""
     private var channelTitle = ""
     private var channelUrl = ""
     private var channelDes = ""
+
     private val channelInfoViewModel: ChannelInfoViewModel by activityViewModels {
         ChannelInfoViewModelFactory().apply {
             inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
         }
     }
 
-    private val channelsVideosViewModel: ChannelVideoViewModel by activityViewModels { ChannelVideoViewModelFactory().apply {
-        inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
-    }}
     private val followUnfollowViewModel:FollowUnfollowViewModel by activityViewModels {FollowUnfollowViewModelFactory().apply {
         inject(FollowUnfollowUseCase(UserDataRepositoryImpl(get())))
     }  }
+
+    private lateinit var  channelsVideosViewModel2: ChannelVideoViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +68,9 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         channelId = arguments?.getString("channelId").toString()
         channelTitle = arguments?.getString("channelTitle").toString()
         channelUrl = arguments?.getString("channelUrl").toString()
+
+        val factory = ChannelVideoPagingViewModelFactory(channelId) // Factory
+        channelsVideosViewModel2 = ViewModelProvider(this, factory).get(ChannelVideoViewModel::class.java)
 
     }
 
@@ -91,22 +91,78 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         }
         binding.channelLogo.load(channelUrl)
 
-        adapter = GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
+        channelVideoAdapter = ChannelVideoAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
+        channelVideoAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.ALLOW
+        binding.channelImageRecyclerview.adapter = channelVideoAdapter
 
-        channelsVideosViewModel.requestChannelVideoData(Pair(CategoryConstants.CHANNEL_VIDEO_DATA, channelId))
-
-        listenChannelVideos()
         binding.following.setOnClickListener {
             listenFollowUnfollow(channelId)
         }
         binding.channelDes.setOnClickListener {
-            showDialog(channelDes)
+            descriptionDialog(channelDes)
         }
 
         // Initializing Broadcast Receiver to listen Like / UN Like
         val broadcastReceiver = ChannelVideoBroadcast()
         // Registering broadcast receiver to LocalBroadcastManager
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(broadcastReceiver, IntentFilter("BookmarkFragmentUpdated"));
+
+        channelVideoAdapter.addLoadStateListener { loadState ->
+
+            when {
+                loadState.refresh is LoadState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+                loadState.refresh is LoadState.NotLoading -> {
+                    binding.progressBar.visibility = View.GONE
+                    if (channelVideoAdapter.itemCount < 1) {
+                        binding.noChannelDataText.visibility = View.VISIBLE
+                    } else {
+                        binding.noChannelDataText.visibility = View.GONE
+                    }
+                }
+
+                loadState.refresh is LoadState.Error -> {
+                    binding.noChannelDataText.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.GONE
+                }
+
+                loadState.append is LoadState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+
+                loadState.append is LoadState.NotLoading -> {
+                    binding.progressBar.visibility = View.GONE
+                    if (channelVideoAdapter.itemCount < 1) {
+                        binding.noChannelDataText.visibility = View.VISIBLE
+                    } else {
+                        binding.noChannelDataText.visibility = View.GONE
+                    }
+                }
+
+                loadState.append is LoadState.Error -> {
+                    binding.noChannelDataText.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.GONE
+                }
+            }
+
+        }
+
+        // Item click listener
+        viewLifecycleOwner.lifecycleScope.launch {
+            channelVideoAdapter.clicks().collectLatest {
+                IntentLaunch.launchPlainVideoPlayer(it, requireActivity())
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            channelsVideosViewModel2.channelVideoData.collectLatest { pagedData ->
+                Log.i("AshwaniXYZ", "Received")
+                binding.channelImageRecyclerview.visibility = View.VISIBLE
+                channelVideoAdapter.submitData(pagedData)
+            }
+        }
+
     }
 
     override fun onResume() {
@@ -116,9 +172,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
     override fun onDetach() {
         super.onDetach()
-        channelsVideosViewModel.clearChannelVideos()
         channelInfoViewModel.clearChannelInfo()
-
     }
 
     private fun listenFollowUnfollow(channelId:String) {
@@ -134,9 +188,10 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
                 }
             }
         }
+
     }
 
-    private fun listenChannelInfo(){
+    private fun listenChannelInfo() {
         channelInfoViewModel.requestChannelInfoApi(channelId)
         viewLifecycleOwner.lifecycleScope.launch {
             channelInfoViewModel.ChannelInfoSuccessState.filterNotNull().collectLatest {
@@ -154,42 +209,6 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     }
 
 
-
-    private fun listenChannelVideos() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            channelsVideosViewModel.BookmarksSuccessState.filterNotNull().collectLatest {
-                it.let {
-                    binding.noChannelDataText.visibility = View.GONE
-                    binding.channelImageRecyclerview.visibility = View.VISIBLE
-                    adapter.updateVideoData(it!!.data)
-                    binding.channelImageRecyclerview.adapter = adapter
-                }
-
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            channelsVideosViewModel.loadingState.filterNotNull().collectLatest {
-                if (it) {
-                    binding.progressBar.visibility = View.VISIBLE
-                } else {
-                    binding.progressBar.visibility = View.GONE
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            channelsVideosViewModel.errorState.filterNotNull().collectLatest {
-                binding.noChannelDataText.visibility = View.VISIBLE
-            }
-        }
-
-        // Item click listener
-        viewLifecycleOwner.lifecycleScope.launch {
-            adapter.clicks().collectLatest {
-                IntentLaunch.launchPlainVideoPlayer(it, requireActivity())
-            }
-        }
-    }
 
     private fun bottomSheetHeaderBg(bitmap: Bitmap) {
         val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
@@ -228,7 +247,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         }
     }
 
-    private fun showDialog(title: String) {
+    private fun descriptionDialog(title: String) {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
@@ -250,7 +269,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             if(intent != null) {
                 val actionType = intent.getStringExtra("actionType")!!
                 if(actionType == "LikeEffect") {
-                    adapter.updateLikeStatus(
+                    channelVideoAdapter.updateLikeStatus(
                         id = intent.getStringExtra("id")!!,
                         liked = intent.getBooleanExtra("liked", false),
                         likeCount = intent.getStringExtra("likeCount")!!

@@ -10,7 +10,7 @@ import kotlin.coroutines.cancellation.CancellationException
 /**
  * Created by Ashwani Kumar Singh on 28,September,2023.
  */
-class BookmarkPaging(private val userApiService: UserApiService): PagingSource<Int, Data>() {
+class ChannelVideoPaging(private val channelId: String, private val userApiService: UserApiService): PagingSource<Int, Data>() {
 
     override fun getRefreshKey(state: PagingState<Int, Data>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -21,9 +21,9 @@ class BookmarkPaging(private val userApiService: UserApiService): PagingSource<I
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Data> {
         return try {
-            val perPage = 9
+            val perPage = 30
             val nextPageNumber = params.key ?: 1
-            val response = userApiService.getBookmarksDataP(page=nextPageNumber, perPage=perPage)
+            val response = userApiService.getChannelVideoDataP(channel = channelId, page = nextPageNumber, perPage = perPage)
             Log.i("AshwaniXYZ", "response: ${response.data}")
             LoadResult.Page(
                 data = response.data,
