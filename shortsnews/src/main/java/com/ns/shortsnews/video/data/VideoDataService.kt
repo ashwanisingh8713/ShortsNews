@@ -20,7 +20,7 @@ interface VideoDataService {
     suspend fun getNotificationVideos(): VideoDataResponse
 
     @GET("my-bookmarks")
-    suspend fun getBookmarkVideos(): VideoDataResponse
+    suspend fun getBookmarkVideos(@Query("page") page: Int, @Query("perPage") perPage: Int): VideoDataResponse
 
     @GET("like-unlike-video/{video_id}")
     suspend fun like(@Path("video_id") videoId: String): LikeUnlike

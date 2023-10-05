@@ -49,9 +49,10 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
             channelsViewModel.requestChannelListApi()
         } else {
             // No Internet Snack bar: Fire
-            NoConnection.noConnectionSnackBarInfinite(binding.root,
+            // It is crashing, when net not available so I commented it.
+            /*NoConnection.noConnectionSnackBarInfinite(binding.root,
                 requireContext() as AppCompatActivity
-            )
+            )*/
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){

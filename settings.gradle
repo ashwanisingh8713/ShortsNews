@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 
 }
 rootProject.name = "News"
-include ':videopager_shortsnews'
+//include ':videopager_shortsnews'
 include ':exo'
 include ':player'
 include ':shortsnews'

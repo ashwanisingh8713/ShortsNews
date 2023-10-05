@@ -21,14 +21,13 @@ import coil.ImageLoader
 import com.exo.manager.DemoUtil
 import com.exo.manager.DownloadTracker
 import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.C.TrackType
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.player.ui.AppPlayerView
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnected
-import com.videopager.R
-import com.videopager.databinding.VideoPagerFragmentBinding
+import com.ns.shortsnews.R
+import com.ns.shortsnews.databinding.VideoPagerFragmentBinding
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
@@ -67,6 +66,7 @@ class VideoPagerFragment(
             selectedPlay = arguments?.getInt(CategoryConstants.KEY_SelectedPlay)!!
             redirectFrom = arguments?.getString("directFrom")
         }
+
     }
 
 

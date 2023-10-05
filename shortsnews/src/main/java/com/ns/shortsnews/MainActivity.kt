@@ -630,7 +630,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-    // Get Channel Video Data
+    /**
+     * Bottom Sheet Channel Video Data
+     */
     private fun bottomSheetGetChannelVideoData(channelId: String) {
 
         videoDataViewModel.requestVideoData(

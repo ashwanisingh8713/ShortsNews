@@ -9,13 +9,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.ns.shortsnews.data.model.VideoClikedItem
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.databinding.ActivityLauncherBinding
-import com.ns.shortsnews.domain.models.LanguageData
 import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
@@ -27,11 +24,7 @@ import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModel
 import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModelFactory
-import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
-import com.videopager.utils.CategoryConstants
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull

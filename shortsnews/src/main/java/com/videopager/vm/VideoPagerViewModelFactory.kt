@@ -36,7 +36,8 @@ class VideoPagerViewModelFactory(
                     categoryId = requiredId,
                     videoFrom = videoFrom,
                     languages = languages,
-                    selectedPlay = selectedPlay
+                    selectedPlay = selectedPlay,
+                    loadedVideoData = emptyList()
                 ) as T
             }
         }

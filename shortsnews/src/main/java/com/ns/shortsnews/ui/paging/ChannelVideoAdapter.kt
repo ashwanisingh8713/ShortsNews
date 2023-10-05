@@ -7,11 +7,11 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.data.model.VideoClikedItem
 import com.ns.shortsnews.databinding.ItemGridViewBinding
-import com.ns.shortsnews.domain.models.Data
 import com.player.models.VideoData
-import com.videopager.R
+import com.ns.shortsnews.R
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -41,7 +41,9 @@ class ChannelVideoAdapter(private var videoFrom: String, private var channelId: 
 
     inner class ChannelItemViewHolder(val binding:ItemGridViewBinding):RecyclerView.ViewHolder(binding.root) {
         fun bindPassenger(item: VideoData) = with(binding) {
-            binding.imagePreview.load(item.previewImageUri)
+            binding.imagePreview.load(item.previewImageUri, MainApplication.instance!!.newImageLoader()) {
+//            scale(Scale.FILL)
+            }
             binding.likeCount.text = item.like_count
             if (item.liking) {
                 binding.likeIcon.setColorFilter(ContextCompat.getColor(binding.likeIcon.context, R.color.red))

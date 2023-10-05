@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.ItemGridViewBinding
 import com.ns.shortsnews.data.model.VideoClikedItem
 import com.ns.shortsnews.domain.models.Data
-import com.videopager.R
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -39,7 +39,7 @@ class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
                 }
             }
             holder.itemView.setOnClickListener{
-//                clicks.tryEmit(VideoClikedItem(requiredId = channelId, selectedPosition = position, videoFrom = videoFrom, loadedVideoData = sna))
+                clicks.tryEmit(VideoClikedItem(requiredId = channelId, selectedPosition = position, videoFrom = videoFrom, loadedVideoData = emptyList()))
             }
             }
     }

@@ -6,6 +6,7 @@ import androidx.work.Configuration
 import androidx.work.WorkManager
 import coil.ImageLoader
 import coil.ImageLoaderFactory
+import coil.request.CachePolicy
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -69,6 +70,8 @@ class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider 
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this)
             .crossfade(true)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .diskCachePolicy(CachePolicy.ENABLED)
             .components {
 //                add(VideoFrameDecoder.Factory())
             }

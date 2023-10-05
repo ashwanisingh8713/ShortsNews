@@ -5,7 +5,9 @@ import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.os.*
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -15,21 +17,23 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.savedstate.SavedStateRegistryOwner
 import androidx.viewpager2.widget.ViewPager2
-import coil.ImageLoader
+import coil.imageLoader
 import com.exo.manager.DemoUtil
 import com.exo.manager.DownloadTracker
 import com.exo.players.ExoAppPlayerFactory
+import com.exo.ui.ExoAppPlayerViewFactory
 import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.C.TrackType
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
-import com.player.ui.AppPlayerView
+import com.ns.shortsnews.MainApplication
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnected
-import com.videopager.R
-import com.videopager.databinding.VideoPagerFragmentBinding
+import com.ns.shortsnews.R
+import com.ns.shortsnews.data.model.VideoClikedItem
+import com.ns.shortsnews.databinding.VideoPagerFragmentBinding
+import com.ns.shortsnews.utils.AppPreference
+import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
@@ -37,18 +41,13 @@ import com.videopager.utils.CategoryConstants
 import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
-import com.videopager.vm.VideoPagerViewModelFactory
 import com.videopager.vm.VideoPagerViewModelFactory_2
 import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 
-class VideoPagerFragment_2(
-    private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
-    private val appPlayerView: AppPlayerView,
-    private val imageLoader: ImageLoader,
-) : Fragment(R.layout.video_pager_fragment) {
+class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
 
 //    private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
 
@@ -63,6 +62,8 @@ class VideoPagerFragment_2(
     private var isNotificationVideoCame: Boolean = false
     private var redirectFrom: String? = null
 
+    private lateinit var videoItems: VideoClikedItem
+
     private lateinit var viewModel: VideoPagerViewModel
 
 
@@ -72,22 +73,30 @@ class VideoPagerFragment_2(
             isUserLoggedIn = arguments?.getBoolean("logged_in")!!
             selectedPlay = arguments?.getInt(CategoryConstants.KEY_SelectedPlay)!!
             redirectFrom = arguments?.getString("directFrom")
+            videoItems = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                arguments?.getParcelable("videoItems", VideoClikedItem::class.java)!!
+            } else {
+                arguments?.getParcelable("videoItems")!!
+            }
         }
 
-        /*VideoPagerViewModelFactory(
+        // Initialising ViewModel Factory
+        val viewModelfactory = VideoPagerViewModelFactory_2(
             repository = VideoDataRepositoryImpl(),
             appPlayerFactory = ExoAppPlayerFactory(
-                context = context, cache = MainApplication.cache, currentMediaItemIndex = selectedPlay
+                context = requireContext(), cache = MainApplication.cache, currentMediaItemIndex = selectedPlay
             ),
-            requiredId = requiredId,
-            videoFrom = videoFrom,
-            languages = languages,
-            selectedPlay = selectedPlay
-        ).create(owner)
+            requiredId = videoItems.requiredId,
+            videoFrom = videoItems.videoFrom,
+            languages = AppPreference.getSelectedLanguagesAsString(),
+            selectedPlay = selectedPlay,
+            loadedVideoData = videoItems.loadedVideoData
+        ).create(this)
 
-        val factory = VideoPagerViewModelFactory_2(channelId)*/
+        //  Initialising ViewModel
+        viewModel = ViewModelProvider(this, viewModelfactory).get(VideoPagerViewModel::class.java)
+
     }
-
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,13 +105,15 @@ class VideoPagerFragment_2(
         // Listening user status via shared view Module from main activity preference utils
         registerSharedViewModel()
 
+        val appPlayerView =  ExoAppPlayerViewFactory().create(requireContext())
+
         viewModel.setVMContext(requireContext())
         viewModel.setPlayerVieww(appPlayerView.getPlayerView())
 
         binding = VideoPagerFragmentBinding.bind(view)
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
 //        val appPlayerView = appPlayerViewFactory.create(view.context)
-        pagerAdapter = PagerAdapter(imageLoader)
+        pagerAdapter = PagerAdapter(MainApplication.instance!!.newImageLoader())
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.isUserInputEnabled = false
         binding.viewPager.offscreenPageLimit = 5 // Preload neighbouring page image previews
@@ -329,7 +340,7 @@ class VideoPagerFragment_2(
                         "VideoFrom :: ${viewModel.videoFrom}, CategoryId :: ${viewModel.categoryId}, Page :: ${viewModel.page}"
                     )
                     // For handling load more video case to not load more video when it is redirected from plainVideo activity
-                    if (redirectFrom == null) {
+//                    if (redirectFrom == null) {
                         viewModel.processEvent(
                             LoadVideoDataEvent(
                                 categoryId = viewModel.categoryId,
@@ -339,7 +350,7 @@ class VideoPagerFragment_2(
                                 languages = viewModel.languages
                             )
                         )
-                    }
+//                    }
                 }
                 NoFurtherEvent
             }

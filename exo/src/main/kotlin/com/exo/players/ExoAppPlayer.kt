@@ -15,7 +15,7 @@ internal class ExoAppPlayer(
     private val updater: VideoDataUpdater,
     private val selectedVideoPlayIndex: Int
 ) : AppPlayer {
-    override val currentPlayerState: PlayerState get() = player.toPlayerState(selectedVideoPlayIndex)
+    override val currentPlayerState: PlayerState get() = player.toPlayerState()
     private var isPlayerSetUp = false
 
     override suspend fun setUpWith(videoData: List<VideoData>, playerState: PlayerState?) {
@@ -43,7 +43,7 @@ internal class ExoAppPlayer(
         val reconciledPlayerState = if (canRestoreSavedPlayerState) {
             requireNotNull(playerState)
         } else {
-            PlayerState.INITIAL
+            PlayerState.INITIAL.apply { currentMediaItemIndex = selectedVideoPlayIndex }
         }
 
         val windowIndex = currentMediaItems.indexOfFirst { mediaItem ->
@@ -147,26 +147,13 @@ internal class ExoAppPlayer(
     }
 
 
-    private fun Player.toPlayerState(selectedVideoPlayIndex: Int): PlayerState {
-        // This should be fixed
-        // If we give "selectedVideoPlayIndex" then it plays selected video
-        // But with pagination it is shuffling towards zero index
-        // To fix it we must read "currentMediaItemIndex" which belongs to ExoPlayer Media Index
-        return if(selectedVideoPlayIndex != 0) {
-            PlayerState(
-                currentMediaItemId = currentMediaItem?.mediaId,
-                currentMediaItemIndex = selectedVideoPlayIndex,
-                seekPositionMillis = currentPosition,
-                isPlaying = playWhenReady
-            )
-        } else {
-            PlayerState(
-                currentMediaItemId = currentMediaItem?.mediaId,
-                currentMediaItemIndex = currentMediaItemIndex,
-                seekPositionMillis = currentPosition,
-                isPlaying = playWhenReady
-            )
-        }
+    private fun Player.toPlayerState(): PlayerState {
+        return PlayerState(
+            currentMediaItemId = currentMediaItem?.mediaId,
+            currentMediaItemIndex = currentMediaItemIndex,
+            seekPositionMillis = currentPosition,
+            isPlaying = playWhenReady
+        )
     }
 
     override fun playMediaAt(position: Int) {

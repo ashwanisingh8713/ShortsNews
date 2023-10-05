@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
 import com.ns.shortsnews.R
+import com.ns.shortsnews.R.*
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.databinding.FragmentInterestsBinding
 import com.ns.shortsnews.domain.models.VideoCategory
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
 
-class InterestsFragment : Fragment(R.layout.fragment_interests) {
+class InterestsFragment : Fragment(layout.fragment_interests) {
     lateinit var binding: FragmentInterestsBinding
     private var selectedNumbers = 0
     private val categoryViewModel: VideoCategoryViewModel by activityViewModels { VideoCategoryViewModelFactory().apply {
@@ -145,37 +146,37 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
         for (chipData in optionList){
             idList.clear()
             val mChip =
-                this.layoutInflater.inflate(R.layout.item_chip_view, null, false) as Chip
+                this.layoutInflater.inflate(layout.item_chip_view, null, false) as Chip
             mChip.text = chipData.name
             mChip.isCheckable = true
             mChip.isClickable = true
             mChip.isChipIconVisible = true
             mChip.chipStrokeWidth = 4F
-            mChip.checkedIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
+            mChip.checkedIcon = ContextCompat.getDrawable(requireContext(), drawable.check)
             binding.choiceChipGroup.isSingleSelection = false
             binding.choiceChipGroup.isClickable = true
             binding.choiceChipGroup.addView(mChip)
             if (chipData.default_select) {
-                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
+                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), drawable.check)
                 mChip.chipBackgroundColor =
-                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-                mChip.setChipBackgroundColorResource(R.color.white)
-                mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), color.white))
+                mChip.setChipBackgroundColorResource(color.white)
+                mChip.setTextColor(ContextCompat.getColor(requireContext(), color.black))
                 mChip.isChecked = true
                 selectedNumbers++
             } else {
                 mChip.chipBackgroundColor = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         requireContext(),
-                        com.videopager.R.color.black
+                        color.black
                     )
                 )
-                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
-                mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), drawable.uncheck)
+                mChip.setTextColor(ContextCompat.getColor(requireContext(), color.white))
                 mChip.isChecked = false
                 mChip.chipStrokeWidth = 4F
                 mChip.chipStrokeColor =
-                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), color.white))
             }
 
             mChip.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -183,15 +184,15 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                 AppPreference.isModified = true
 
                 if (isChecked) {
-                    mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
+                    mChip.chipIcon = ContextCompat.getDrawable(requireContext(), drawable.check)
                     mChip.chipBackgroundColor = ColorStateList.valueOf(
                         ContextCompat.getColor(
                             requireContext(),
-                            R.color.white
+                            color.white
                         )
                     )
 
-                    mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                    mChip.setTextColor(ContextCompat.getColor(requireContext(), color.black))
                     selectedNumbers++
                     updateSelectedItem(chipData.id, chipData.name, true, "", isDefalultSelected = true)
 
@@ -199,16 +200,16 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                     mChip.chipBackgroundColor = ColorStateList.valueOf(
                         ContextCompat.getColor(
                             requireContext(),
-                            com.videopager.R.color.black
+                            R.color.black
                         )
                     )
-                    mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
-                    mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    mChip.chipIcon = ContextCompat.getDrawable(requireContext(), drawable.uncheck)
+                    mChip.setTextColor(ContextCompat.getColor(requireContext(), color.white))
                     mChip.chipStrokeWidth = 4F
                     mChip.chipStrokeColor = ColorStateList.valueOf(
                         ContextCompat.getColor(
                             requireContext(),
-                            R.color.white
+                            color.white
                         )
                     )
                     selectedNumbers--

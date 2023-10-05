@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
 import com.ns.shortsnews.R
+import com.ns.shortsnews.R.*
 import com.ns.shortsnews.databinding.FragmentLanguageBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
@@ -40,7 +41,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
-class LanguageFragment : Fragment(R.layout.fragment_language) {
+class LanguageFragment : Fragment(layout.fragment_language) {
     lateinit var binding: FragmentLanguageBinding
     private var from: String = ""
     private var selectedLanguages = mutableListOf<String>()
@@ -171,51 +172,51 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         for (chipData in optionList) {
             idList.clear()
             val mChip =
-                this.layoutInflater.inflate(R.layout.item_chip_view, null, false) as Chip
+                this.layoutInflater.inflate(layout.item_chip_view, null, false) as Chip
             mChip.text = chipData.name
             mChip.isCheckable = true
             mChip.isClickable = true
             mChip.isChipIconVisible = true
             mChip.chipStrokeWidth = 4F
-            mChip.checkedIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
+            mChip.checkedIcon = ContextCompat.getDrawable(requireContext(), drawable.check)
             binding.choiceChipGroup.isSingleSelection = false
             binding.choiceChipGroup.isClickable = true
             binding.choiceChipGroup.addView(mChip)
 
             if (chipData.default_select) {
-                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
+                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), drawable.check)
                 mChip.chipBackgroundColor =
-                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-                mChip.setChipBackgroundColorResource(R.color.white)
-                mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), color.white))
+                mChip.setChipBackgroundColorResource(color.white)
+                mChip.setTextColor(ContextCompat.getColor(requireContext(), color.black))
                 mChip.isChecked = true
                 selectedNumbers++
             } else {
                 mChip.chipBackgroundColor = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         requireContext(),
-                        com.videopager.R.color.black
+                        color.black
                     )
                 )
-                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
-                mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                mChip.chipIcon = ContextCompat.getDrawable(requireContext(), drawable.uncheck)
+                mChip.setTextColor(ContextCompat.getColor(requireContext(), color.white))
                 mChip.isChecked = false
                 mChip.chipStrokeWidth = 4F
                 mChip.chipStrokeColor =
-                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), color.white))
             }
 
             mChip.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.check)
+                    mChip.chipIcon = ContextCompat.getDrawable(requireContext(), drawable.check)
                     mChip.chipBackgroundColor = ColorStateList.valueOf(
                         ContextCompat.getColor(
                             requireContext(),
-                            R.color.white
+                            color.white
                         )
                     )
 
-                    mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                    mChip.setTextColor(ContextCompat.getColor(requireContext(), color.black))
                     updateSelectedItem(chipData.id, chipData.name, chipData.slug, true, "", true)
                     createSelectedLanguagesValue(chipData.id)
                     selectedNumbers++
@@ -223,16 +224,16 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
                     mChip.chipBackgroundColor = ColorStateList.valueOf(
                         ContextCompat.getColor(
                             requireContext(),
-                            com.videopager.R.color.black
+                            R.color.black
                         )
                     )
-                    mChip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.uncheck)
-                    mChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    mChip.chipIcon = ContextCompat.getDrawable(requireContext(), drawable.uncheck)
+                    mChip.setTextColor(ContextCompat.getColor(requireContext(), color.white))
                     mChip.chipStrokeWidth = 4F
                     mChip.chipStrokeColor = ColorStateList.valueOf(
                         ContextCompat.getColor(
                             requireContext(),
-                            R.color.white
+                            color.white
                         )
                     )
                     updateSelectedItem(chipData.id, chipData.name, chipData.slug, false, "", false)

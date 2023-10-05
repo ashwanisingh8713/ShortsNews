@@ -44,15 +44,13 @@ android {
 
 dependencies {
     implementation project(":player")
-    api project(":videopager_shortsnews")
+//    api project(":videopager_shortsnews")
     implementation project(":exo")
 //    implementation project(":app")
 
-    implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.firebase:firebase-messaging:23.2.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -74,15 +72,12 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1'
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.paging:paging-runtime-ktx:3.2.0-alpha04"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
     implementation 'com.intuit.ssp:ssp-android:1.1.0'
 
-    implementation "androidx.activity:activity-ktx:1.7.0"
-    implementation "androidx.fragment:fragment-ktx:1.5.6"
     // Only needed for RedditVideoDataRepository
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
@@ -92,7 +87,6 @@ dependencies {
     implementation("io.coil-kt:coil-svg:2.3.0")
 
     //Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 
     // Data store
@@ -128,4 +122,18 @@ dependencies {
 
     // Android Jetpack Paging 3.0
     implementation "androidx.paging:paging-runtime:3.0.0-alpha06"
+
+    implementation project(":player")
+    implementation project(":exo")
+
+    implementation "androidx.core:core-ktx:1.10.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+
+    implementation "androidx.viewpager2:viewpager2:1.1.0-beta01"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+    implementation "androidx.activity:activity-ktx:1.7.0"
+    implementation "androidx.fragment:fragment-ktx:1.5.7"
+
+    // Network X
+    implementation 'com.github.rommansabbir:NetworkX:4.2.0'
 }

@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.load
 import com.player.ui.AppPlayerView
-import com.videopager.databinding.PageItemBinding
+
 import com.videopager.models.AnimationEffect
 import com.videopager.models.PageEffect
 import com.videopager.models.ResetAnimationsEffect
 import com.player.models.VideoData
-import com.videopager.R
+import com.ns.shortsnews.R
+import com.ns.shortsnews.databinding.PageItemBinding
 import com.videopager.ui.extensions.*
 
 internal class PageViewHolder(

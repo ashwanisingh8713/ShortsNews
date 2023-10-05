@@ -27,5 +27,16 @@
     <dimen name="bottom_sheet_video_margin" tools:ignore="MissingDefaultResource">50dp</dimen>
     <dimen name="bottom_sheet_header_margin" tools:ignore="MissingDefaultResource">0dp</dimen>
 
+    <dimen name="play_pause_start_side_length">48dp</dimen>
+    <dimen name="play_pause_end_side_length">96dp</dimen>
+    <dimen name="video_page_text_size_small">10sp</dimen>
+    <dimen name="video_page_text_size_medium">12sp</dimen>
+    <dimen name="video_page_text_size_large">14sp</dimen>
+    <dimen name="video_page_text_size_xlarge">16sp</dimen>
+    <dimen name="video_page_text_size_xxlarge">18sp</dimen>
+    <dimen name="video_page_text_size_xxxlarge">24sp</dimen>
+    <dimen name="video_page_text_size_xxxxlarge">28sp</dimen>
+    <dimen name="video_page_bottom_margin">20dp</dimen>
+
 
 </resources>

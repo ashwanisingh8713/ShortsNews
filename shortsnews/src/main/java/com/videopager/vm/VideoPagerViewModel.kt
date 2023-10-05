@@ -7,8 +7,7 @@ import at.huber.me.YouTubeUri
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.player.models.VideoData
 import com.player.players.AppPlayer
-import com.videopager.R
-import com.videopager.data.CommentData
+import com.ns.shortsnews.R
 import com.videopager.data.VideoDataRepository
 import com.videopager.models.*
 import com.videopager.models.AnimationEffect
@@ -46,7 +45,8 @@ internal class VideoPagerViewModel(
     private val appPlayerFactory: AppPlayer.Factory,
     private val handle: PlayerSavedStateHandle,
     initialState: ViewState,
-    val categoryId: String, val videoFrom: String, val languages:String, private val selectedPlay:Int
+    val categoryId: String, val videoFrom: String, val languages:String, private val selectedPlay:Int,
+    private val loadedVideoData: List<VideoData>
 ) : MviViewModel<ViewEvent, ViewResult, ViewState, ViewEffect>(initialState) {
 
     companion object {
@@ -78,23 +78,29 @@ internal class VideoPagerViewModel(
     }
 
     public override fun onStart() {
-        processEvent(
-            LoadVideoDataEvent(
-                categoryId = categoryId,
-                videoFrom = videoFrom,
-                page = page,
-                perPage = perPage,
-                languages = languages
-
+        if(loadedVideoData.isNotEmpty()) {
+            processEvent(
+                PreLoadedVideoDataEvent()
             )
-        )
+        } else {
+            processEvent(
+                LoadVideoDataEvent(
+                    categoryId = categoryId,
+                    videoFrom = videoFrom,
+                    page = page,
+                    perPage = perPage,
+                    languages = languages
+
+                )
+            )
+        }
     }
 
     override fun Flow<ViewEvent>.toResults(): Flow<ViewResult> {
         // MVI boilerplate
         return merge(
             filterIsInstance<LoadVideoDataEvent>().toLoadVideoDataResults(),
-//            filterIsInstance<InsertVideoEvent>().toInsertVideoDataResults(),
+            filterIsInstance<PreLoadedVideoDataEvent>().toPreLoadedVideoDataResults(),
             filterIsInstance<PlayerLifecycleEvent>().toPlayerLifecycleResults(),
             filterIsInstance<TappedPlayerEvent>().toTappedPlayerResults(),
             filterIsInstance<OnPageSettledEvent>().toPageSettledResults(),
@@ -128,9 +134,9 @@ internal class VideoPagerViewModel(
             if (page == 1) {
                 delay(1000)
             }
-            if(videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA || videoFrom == CategoryConstants.NOTIFICATION_VIDEO_DATA) {
+            /*if(videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA || videoFrom == CategoryConstants.NOTIFICATION_VIDEO_DATA) {
                 states.value.page = selectedPlay
-            }
+            }*/
 
             val appPlayer = states.value.appPlayer
 
@@ -143,6 +149,28 @@ internal class VideoPagerViewModel(
             pageVideoData.addAll(videoData)
 
             page++
+
+            appPlayer?.setUpWith(pageVideoData, handle.get())
+            // Capture any updated index so UI page state can stay in sync. For example, a video
+            // may have been added to the page before the currently active one. That means the
+            // the current video/page index will have changed
+            val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
+            LoadVideoDataResult(pageVideoData, index)
+        }
+    }
+
+
+    private fun Flow<PreLoadedVideoDataEvent>.toPreLoadedVideoDataResults(): Flow<ViewResult> {
+        return map {
+            loadedVideoData
+        }.map { videoData ->
+//            states.value.page = selectedPlay
+            val appPlayer = states.value.appPlayer
+            // If the player exists, it should be updated with the latest video data that came in
+            var pageVideoData: MutableList<VideoData> = mutableListOf()
+            pageVideoData.addAll(videoData)
+
+            page = videoData[videoData.size-1].page++
 
             appPlayer?.setUpWith(pageVideoData, handle.get())
             // Capture any updated index so UI page state can stay in sync. For example, a video

@@ -1,7 +1,5 @@
 package com.videopager.ui.view
 
-import android.content.Context
-import android.util.AttributeSet
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2

@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.player.models.VideoData
 import com.player.ui.AppPlayerView
-import com.videopager.R
-import com.videopager.databinding.PageItemBinding
+import com.ns.shortsnews.R
+import com.ns.shortsnews.databinding.PageItemBinding
 import com.videopager.models.PageEffect
 import com.videopager.ui.extensions.ClickEvent
 import com.videopager.ui.extensions.TrackInfoClick

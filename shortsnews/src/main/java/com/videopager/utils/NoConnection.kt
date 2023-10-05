@@ -7,11 +7,10 @@ import android.provider.Settings
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.SnackbarLayout
-import com.videopager.R
+import com.ns.shortsnews.R
 
 /**
  * Created by Ashwani Kumar Singh on 13,June,2023.

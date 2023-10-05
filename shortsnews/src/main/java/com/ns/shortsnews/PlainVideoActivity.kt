@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -14,34 +13,21 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.savedstate.SavedStateRegistryOwner
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.databinding.ActivityPlainVideoBinding
 import com.ns.shortsnews.data.model.VideoClikedItem
-import com.ns.shortsnews.database.ShortsDatabase
-import com.ns.shortsnews.domain.models.LanguageTable
-import com.ns.shortsnews.domain.repository.LanguageRepository
-import com.ns.shortsnews.ui.viewmodel.LanguageViewModel
-import com.ns.shortsnews.ui.viewmodel.LanguageViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
-import com.videopager.ui.VideoPagerFragment
 import com.videopager.ui.VideoPagerFragment_2
 import com.videopager.utils.CategoryConstants
 import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import org.koin.androidx.scope.activityScope
 import java.util.Timer
 import kotlin.concurrent.schedule
 
@@ -49,7 +35,7 @@ import kotlin.concurrent.schedule
 class PlainVideoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlainVideoBinding
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
-    private var videoPagerFragment: VideoPagerFragment? = null
+    private var videoPagerFragment: VideoPagerFragment_2? = null
 
     companion object {
         const val KEY_VIDEO_CLICKED_ITEM = "videoClickedItem"
@@ -96,14 +82,14 @@ class PlainVideoActivity : AppCompatActivity() {
      * Loads Home Fragment
      */
     private fun loadVideoFragment(videoItems: VideoClikedItem) {
-        videoPagerFragment = AppConstants.makeVideoPagerInstance(
+        /*videoPagerFragment = AppConstants.makeVideoPagerInstance(
             requiredId = videoItems.requiredId,
             videoFrom = videoItems.videoFrom,
             this@PlainVideoActivity,
             languages = AppPreference.getSelectedLanguagesAsString(),
             selectedPlay = videoItems.selectedPosition
-        )
-//        videoPagerFragment = VideoPagerFragment_2()
+        )*/
+        videoPagerFragment = VideoPagerFragment_2()
         val bundle = Bundle()
         bundle.putInt(CategoryConstants.KEY_SelectedPlay, videoItems.selectedPosition)
         bundle.putBoolean("logged_in", AppPreference.isUserLoggedIn)

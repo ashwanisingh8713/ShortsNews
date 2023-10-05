@@ -12,28 +12,23 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
-import android.text.TextUtils
+import com.ns.shortsnews.R
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.forEach
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputLayout
-import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentEditProfileBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.database.ShortsDatabase
@@ -378,7 +373,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     @SuppressLint("InflateParams")
     private fun openBottomDialog() {
         val bottomSheetDialog =
-            BottomSheetDialog(requireActivity(), com.videopager.R.style.AppBottomSheetDialogTheme)
+            BottomSheetDialog(requireActivity(), R.style.AppBottomSheetDialogTheme)
         val bottomSheetView = LayoutInflater.from(requireActivity()).inflate(
             R.layout.bottom_sheet_layout, null
         )
