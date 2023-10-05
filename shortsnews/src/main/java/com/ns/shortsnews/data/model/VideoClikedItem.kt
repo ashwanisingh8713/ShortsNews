@@ -1,6 +1,7 @@
 package com.ns.shortsnews.data.model
 
 import android.os.Parcelable
+import com.player.models.VideoData
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -8,5 +9,5 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 data class VideoClikedItem(
-    val requiredId: String, val selectedPosition: Int, val videoFrom: String
+    val requiredId: String, val selectedPosition: Int, val videoFrom: String, val loadedVideoData: List<VideoData>
 ) : Parcelable

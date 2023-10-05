@@ -20,6 +20,7 @@ import androidx.viewpager2.widget.ViewPager2
 import coil.ImageLoader
 import com.exo.manager.DemoUtil
 import com.exo.manager.DownloadTracker
+import com.exo.players.ExoAppPlayerFactory
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.C.TrackType
 import com.google.android.exoplayer2.ExoPlayer
@@ -36,18 +37,21 @@ import com.videopager.utils.CategoryConstants
 import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
+import com.videopager.vm.VideoPagerViewModelFactory
+import com.videopager.vm.VideoPagerViewModelFactory_2
 import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 
-class VideoPagerFragment(
+class VideoPagerFragment_2(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
     private val appPlayerView: AppPlayerView,
     private val imageLoader: ImageLoader,
 ) : Fragment(R.layout.video_pager_fragment) {
 
-    private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
+//    private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
+
 
     private val sharedEventViewModel: VideoSharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
     lateinit var binding: VideoPagerFragmentBinding
@@ -59,6 +63,8 @@ class VideoPagerFragment(
     private var isNotificationVideoCame: Boolean = false
     private var redirectFrom: String? = null
 
+    private lateinit var viewModel: VideoPagerViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +73,19 @@ class VideoPagerFragment(
             selectedPlay = arguments?.getInt(CategoryConstants.KEY_SelectedPlay)!!
             redirectFrom = arguments?.getString("directFrom")
         }
+
+        /*VideoPagerViewModelFactory(
+            repository = VideoDataRepositoryImpl(),
+            appPlayerFactory = ExoAppPlayerFactory(
+                context = context, cache = MainApplication.cache, currentMediaItemIndex = selectedPlay
+            ),
+            requiredId = requiredId,
+            videoFrom = videoFrom,
+            languages = languages,
+            selectedPlay = selectedPlay
+        ).create(owner)
+
+        val factory = VideoPagerViewModelFactory_2(channelId)*/
     }
 
 

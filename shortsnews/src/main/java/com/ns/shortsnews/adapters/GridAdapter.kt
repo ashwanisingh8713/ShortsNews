@@ -39,7 +39,7 @@ class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
                 }
             }
             holder.itemView.setOnClickListener{
-                clicks.tryEmit(VideoClikedItem(requiredId = channelId, selectedPosition = position, videoFrom = videoFrom))
+//                clicks.tryEmit(VideoClikedItem(requiredId = channelId, selectedPosition = position, videoFrom = videoFrom, loadedVideoData = sna))
             }
             }
     }

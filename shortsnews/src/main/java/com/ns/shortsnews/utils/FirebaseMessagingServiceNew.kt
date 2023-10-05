@@ -62,7 +62,8 @@ class FirebaseMessagingServiceNew : FirebaseMessagingService() {
         intent.putExtra(AppConstants.VIDEO_PREVIEW_URL, previewUrl)
         intent.putExtra(AppConstants.VIDEO_URL, videoUrl)
         intent.putExtra(PlainVideoActivity.KEY_VIDEO_CLICKED_ITEM,VideoClikedItem("",
-            0, CategoryConstants.NOTIFICATION_VIDEO_DATA))
+            0, CategoryConstants.NOTIFICATION_VIDEO_DATA, emptyList()
+        ))
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             this,
             0,

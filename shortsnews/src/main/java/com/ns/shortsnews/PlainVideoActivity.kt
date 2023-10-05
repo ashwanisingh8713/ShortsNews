@@ -30,6 +30,7 @@ import com.ns.shortsnews.ui.viewmodel.LanguageViewModelFactory
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.videopager.ui.VideoPagerFragment
+import com.videopager.ui.VideoPagerFragment_2
 import com.videopager.utils.CategoryConstants
 import com.videopager.vm.VideoSharedEventViewModel
 import com.videopager.vm.SharedEventViewModelFactory
@@ -48,16 +49,7 @@ import kotlin.concurrent.schedule
 class PlainVideoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlainVideoBinding
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
-    private var languageListDB = emptyList<LanguageTable>()
-    private val languageDao = ShortsDatabase.instance!!.languageDao()
-    private val languageItemRepository = LanguageRepository(languageDao)
-    private val languageViewModel: LanguageViewModel by viewModels {
-        LanguageViewModelFactory(
-            languageItemRepository
-        )
-    }
     private var videoPagerFragment: VideoPagerFragment? = null
-
 
     companion object {
         const val KEY_VIDEO_CLICKED_ITEM = "videoClickedItem"
@@ -103,18 +95,20 @@ class PlainVideoActivity : AppCompatActivity() {
     /**
      * Loads Home Fragment
      */
-    private fun loadVideoFragment(it: VideoClikedItem) {
+    private fun loadVideoFragment(videoItems: VideoClikedItem) {
         videoPagerFragment = AppConstants.makeVideoPagerInstance(
-            requiredId = it.requiredId,
-            videoFrom = it.videoFrom,
+            requiredId = videoItems.requiredId,
+            videoFrom = videoItems.videoFrom,
             this@PlainVideoActivity,
             languages = AppPreference.getSelectedLanguagesAsString(),
-            selectedPlay = it.selectedPosition
+            selectedPlay = videoItems.selectedPosition
         )
+//        videoPagerFragment = VideoPagerFragment_2()
         val bundle = Bundle()
-        bundle.putInt(CategoryConstants.KEY_SelectedPlay, it.selectedPosition)
+        bundle.putInt(CategoryConstants.KEY_SelectedPlay, videoItems.selectedPosition)
         bundle.putBoolean("logged_in", AppPreference.isUserLoggedIn)
         bundle.putString("directFrom", "PlainActivity")
+        bundle.putParcelable("videoItems", videoItems)
         videoPagerFragment!!.arguments = bundle
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.fragment_container, videoPagerFragment!!)

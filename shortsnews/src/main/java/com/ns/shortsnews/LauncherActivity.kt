@@ -130,26 +130,6 @@ class LauncherActivity : AppCompatActivity() {
 
     }
 
-    private fun launchMainActivityWithExtras(
-        videoId: String,
-        type: String,
-        previewUrl: String,
-        videoUrl: String
-    ) {
-        val intent = Intent(this, PlainVideoActivity::class.java)
-        intent.putExtra(
-            PlainVideoActivity.KEY_VIDEO_CLICKED_ITEM,
-            VideoClikedItem("", 0, CategoryConstants.NOTIFICATION_VIDEO_DATA)
-        )
-        intent.putExtra(AppConstants.ID, videoId)
-        intent.putExtra(AppConstants.TYPE, type)
-        intent.putExtra(AppConstants.VIDEO_PREVIEW_URL, previewUrl)
-        intent.putExtra(AppConstants.VIDEO_URL, videoUrl)
-
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        startActivity(intent)
-        this.finish()
-    }
 
     private fun launchProfileActivity() {
         val intent = Intent(this, ProfileActivity::class.java)

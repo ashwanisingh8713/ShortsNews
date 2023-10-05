@@ -26,6 +26,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         val llVid = withContext(Dispatchers.IO) {
             val response = when (videoFrom) {
                 CategoryConstants.CHANNEL_VIDEO_DATA -> videoDataApiService.getChannelVideos(id)
+//                CategoryConstants.BOOKMARK_VIDEO_DATA -> videoDataApiService.getBookmarkVideos()
                 CategoryConstants.BOOKMARK_VIDEO_DATA -> videoDataApiService.getBookmarkVideos()
                 CategoryConstants.NOTIFICATION_VIDEO_DATA -> videoDataApiService.getNotificationVideos()
                 CategoryConstants.DEFAULT_VIDEO_DATA -> {
@@ -56,7 +57,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                     }
                     if (index < precachingAllowedCount) {
                         videoUrls[index] = post.videoUrl
-                        videoIds[index] = post.id
+                        videoIds[index] = post.id.toString()
                     }
                     VideoData(
                         id = post.id,
@@ -64,7 +65,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                         previewImageUri = post.preview!!,
                         aspectRatio = aspectRatio,
                         type = post.type,
-                        video_url_mp4 = post.video_url_mp4
+                        video_url_mp4 = post.video_url_mp4,
+                        page = response.page,
+                        perPage = response.perPage
                     )
                     /*if (post.type != "yt" || youtubeUriConversionCount <= conversionCount) {
                         if (index < precachingAllowedCount) {

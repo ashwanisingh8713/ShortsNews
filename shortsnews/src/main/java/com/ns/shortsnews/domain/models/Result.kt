@@ -143,7 +143,10 @@ data class VideoDataResponse(
     @Json(name = "data")
     val data: MutableList<Data> = mutableListOf(),
     @Json(name = "status")
-    val status: Boolean = false
+    val status: Boolean = false,
+    val total: Int = -1,
+    val page: Int = -1,
+    val perPage: Int = -1
 )
 
 /*(Kamlesh) Created new data class as per newsdx response */
