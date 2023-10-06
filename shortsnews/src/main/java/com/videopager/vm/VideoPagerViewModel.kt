@@ -134,10 +134,6 @@ internal class VideoPagerViewModel(
             /*if (page == 1) {
                 delay(1000)
             }*/
-            /*if(videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA || videoFrom == CategoryConstants.NOTIFICATION_VIDEO_DATA) {
-                states.value.page = selectedPlay
-            }*/
-
             val appPlayer = states.value.appPlayer
 
             // If the player exists, it should be updated with the latest video data that came in
@@ -148,11 +144,7 @@ internal class VideoPagerViewModel(
             }
             pageVideoData.addAll(videoData)
 
-//            page++
 //            Log.i("AshwaniXYZ", "<LoadVideoDataEvent> Index :: ${index}")
-
-            val playerState = appPlayer?.currentPlayerState ?:handle.get()
-
             appPlayer?.setUpWith(pageVideoData)
 
             // Capture any updated index so UI page state can stay in sync. For example, a video
@@ -163,10 +155,13 @@ internal class VideoPagerViewModel(
 
             if(appPlayer?.player == null) {
                 index = appPlayer?.player?.currentMediaItemIndex!!
+                Log.i("AshwaniXYZ", "<LoadVideoDataEvent> appPlayer?.player is NOT NULL so index = $index")
+            } else {
+                index = appPlayer?.player?.currentMediaItemIndex ?: 0
+                Log.i("AshwaniXYZ", "<LoadVideoDataEvent> appPlayer?.player is NULL so index = $index")
             }
 
-//            val index = appPlayer?.player?.currentMediaItemIndex ?: 0
-            Log.i("AshwaniXYZ", "<LoadVideoDataEvent> Index :: ${index}")
+//
             LoadVideoDataResult(pageVideoData, index)
         }
     }
@@ -270,9 +265,11 @@ internal class VideoPagerViewModel(
 //                NoOpResult
 //            },
             appPlayer.onMediaItemTransition().mapLatest {
+                Log.i("videoProgress", "createPlayer() onMediaItemTransition :: $it")
                 MediaItemTransitionResult(it)
             },
             appPlayer.onPlaybackStateChanged().mapLatest {
+                Log.i("videoProgress", "createPlayer() onPlaybackStateChanged :: $it")
                 videoProgressBarEvent(it)
                 NoOpResult
             }
@@ -309,9 +306,11 @@ internal class VideoPagerViewModel(
 //                NoOpResult
 //            },
             appPlayer.onMediaItemTransition().mapLatest {
+                Log.i("videoProgress", "resumePlayer() onMediaItemTransition :: $it")
                 MediaItemTransitionResult(it)
             },
             appPlayer.onPlaybackStateChanged().mapLatest {
+                Log.i("videoProgress", "resumePlayer() onPlaybackStateChanged :: $it")
                 videoProgressBarEvent(it)
                 NoOpResult
             }

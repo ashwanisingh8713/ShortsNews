@@ -49,7 +49,7 @@ internal class PagerAdapter(
     }
 
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
-        getItem(position).let(holder::bind)
+        getItem(position).let(holder::bindViewHolder)
         holder.binding.trackInfoBtn.setOnClickListener {
             clicks.tryEmit(Pair(getItem(position).id, TrackInfoClick))
         }

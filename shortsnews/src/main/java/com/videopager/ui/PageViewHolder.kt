@@ -28,7 +28,7 @@ internal class PageViewHolder(
         }
     }
 
-    fun bind(videoData: VideoData) {
+    fun bindViewHolder(videoData: VideoData) {
         Glide.with(MainApplication.instance!!).load(videoData.previewImageUri).into(binding.previewImage)
         binding.share.setOnClickListener{
             click(Pair(videoData.id, ShareClick))

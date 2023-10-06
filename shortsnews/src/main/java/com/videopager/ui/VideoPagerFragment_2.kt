@@ -118,6 +118,13 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         binding.viewPager.offscreenPageLimit = 5 // Preload neighbouring page image previews
         commentFragment = CommentsFragment()
 
+//        lifecycleScope.launch {
+//            viewModel.videoProgressBar.collectLatest {
+//                pagerAdapter.showPlayerFor(0)
+//                binding.progressBarVideoShorts.visibility = View.GONE
+//            }
+//        }
+
 
         val states = viewModel.states
             .onEach { state ->
@@ -143,25 +150,12 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
 
                 // Can't query any ViewHolders if the adapter has no pages
                 if (pagerAdapter.currentList.isNotEmpty()) {
-
-                    // To directly jump on selected video
-                    if (isNotificationVideoCame || viewModel.videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || viewModel.videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA) {
-//                        viewModel.processEvent(OnPageSettledEvent(state.page))
-                        isNotificationVideoCame = false
-                    }
-
                     // Set the player view on the active page. Note that ExoPlayer won't render
                     // any frames until the output view (here, appPlayerView) is on-screen
                     pagerAdapter.attachPlayerView(appPlayerView, state.page)
 
                     // If the player media is rendering frames, then show the player
-                    /*if (state.showPlayer) {
-                        pagerAdapter.showPlayerFor(state.page)
-                    }*/
-                    if (state.showPlayer && state.youtubeUriError) {
-                        pagerAdapter.showPlayerFor(state.page)
-                        binding.progressBarVideoShorts.visibility = View.VISIBLE
-                    } else if (state.showPlayer) {
+                    if (state.showPlayer) {
                         pagerAdapter.showPlayerFor(state.page)
                         binding.progressBarVideoShorts.visibility = View.GONE
                     }
@@ -180,6 +174,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
 
         val effects = viewModel.effects
             .onEach { effect ->
+                Log.i("AshwaniEffect", "$effect")
                 when (effect) {
                     is BookmarkEffect -> {
                         pagerAdapter.refreshBookmarkUI(effect.position)
@@ -230,10 +225,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                             pagerAdapter.getInfoRefreshUI(effect.position)
                         }
                         sharedEventViewModel.shareVideoInfo(effect.videoInfo)
-                    }
-
-                    is GetYoutubeUriEffect -> {
-                        // TODO, Nothing,
                     }
 
                     is PostCommentEffect -> {
