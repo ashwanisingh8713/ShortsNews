@@ -23,6 +23,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     ): Flow<MutableList<VideoData>> {
         var ll = mutableListOf<MutableList<VideoData>>()
 
+        Log.i("RequestTT","Languguage :: $languages.toString()")
+        Log.i("RequestTT","CategoryId :: $id")
+
         val llVid = withContext(Dispatchers.IO) {
             val response = when (videoFrom) {
                 CategoryConstants.CHANNEL_VIDEO_DATA -> {
@@ -36,11 +39,9 @@ class VideoDataRepositoryImpl : VideoDataRepository {
                     videoDataApiService.getNotificationVideos()
                 }
                 CategoryConstants.DEFAULT_VIDEO_DATA -> {
-                    Log.i("language",languages.toString())
                     videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
                 }
                 else -> {
-                    Log.i("language",languages.toString())
                     videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
                 }
             }

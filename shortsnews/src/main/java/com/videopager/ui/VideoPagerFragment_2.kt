@@ -90,8 +90,8 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
             videoFrom = videoItems.videoFrom,
             languages = AppPreference.getSelectedLanguagesAsString(),
             selectedPlay = videoItems.selectedPosition,
-//            loadedVideoData = videoItems.loadedVideoData
-            loadedVideoData = emptyList()
+            loadedVideoData = videoItems.loadedVideoData
+//            loadedVideoData = emptyList()
         ).create(this)
 
         //  Initialising ViewModel

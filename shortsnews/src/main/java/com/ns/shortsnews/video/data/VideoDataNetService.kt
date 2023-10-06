@@ -1,5 +1,6 @@
 package com.ns.shortsnews.video.data
 
+import android.util.Log
 import com.ns.shortsnews.BuildConfig
 import com.ns.shortsnews.utils.AppPreference
 import okhttp3.OkHttpClient
@@ -25,6 +26,7 @@ object VideoDataNetService {
                             .newBuilder().also {
                                 if (AppPreference.isUserLoggedIn) {
                                     val token = "Bearer ${AppPreference.userToken}"
+                                    Log.i("RequestTT","Token :: $token")
                                     if (token.isNotEmpty()) {
                                         it.addHeader("Authorization", token)
                                     }

@@ -270,6 +270,7 @@ class VideoPagerFragment(
 
             // Idling on a page after a scroll is a signal to try and change player playlist positions
             pageIdlings().map {
+                Log.i("AshwaniXYZ", "ViewPager2.viewEvents :: ${currentItem}")
                 OnPageSettledEvent(currentItem)
             },
             // A page change (which can happen before a page is idled upon) is a signal to pause media. This

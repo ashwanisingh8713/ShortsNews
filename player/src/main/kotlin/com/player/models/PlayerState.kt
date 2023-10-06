@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PlayerState(
-    val currentMediaItemId: String?,
+    var currentMediaItemId: String?,
     var currentMediaItemIndex: Int? = null,
     val seekPositionMillis: Long,
     val isPlaying: Boolean

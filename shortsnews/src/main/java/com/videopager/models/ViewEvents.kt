@@ -20,8 +20,6 @@ internal data class CommentClickEvent(val videoId: String, val position: Int) : 
 internal data class LikeClickEvent(val videoId: String, val position: Int) : ViewEvent()
 
 internal data class VideoInfoEvent(val videoId:String, val position:Int):ViewEvent()
-internal data class GetYoutubeUriEvent(val type: String, val position:Int):ViewEvent()
-internal data class GetYoutubeUriEvent_2(val type: String, val position:Int):ViewEvent()
 
 internal data class PostClickCommentEvent(val videoId: String, val comment: String, val position:Int): ViewEvent()
 internal object NoFurtherEvent : ViewEvent()

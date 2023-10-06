@@ -23,13 +23,26 @@ internal class ExoAppPlayer(
         updater.update(player = player, incoming = videoData)
 
         // Player should only have saved state restored to it one time per instance of this class.
-//        if (!isPlayerSetUp) {
-            setUpPlayerState(playerState)
+        if (!isPlayerSetUp) {
+            player.seekTo(selectedVideoPlayIndex, 0)
+            player.playWhenReady = true
+            Log.i("AshwaniXYZ", "seekToIndex :: $selectedVideoPlayIndex")
             isPlayerSetUp = true
-//        }
+        }
 
         player.prepare()
     }
+
+    override suspend fun resumeSetupWith(videoData: List<VideoData>, playerState: PlayerState?) {
+        /** Delegate video insertion, removing, moving, etc. to this [updater] */
+        updater.update(player = player, incoming = videoData)
+        if (!isPlayerSetUp) {
+            setUpPlayerState(playerState)
+            isPlayerSetUp = true
+        }
+        player.prepare()
+    }
+
 
     private fun setUpPlayerState(playerState: PlayerState?) {
         val currentMediaItems = player.currentMediaItems
@@ -58,11 +71,12 @@ internal class ExoAppPlayer(
         }
 
         Log.i("AshwaniXYZ", "windowIndex :: $windowIndex")
-        /*if (windowIndex != -1) {
+        if (windowIndex != -1) {
             player.seekTo(windowIndex, reconciledPlayerState.seekPositionMillis)
-        }*/
-        player.seekTo(playerState?.currentMediaItemIndex!!, 0)
+        }
         player.playWhenReady = reconciledPlayerState.isPlaying
+        Log.i("AshwaniXYZ", "seekToIndex :: $windowIndex")
+
     }
 
     // A signal that video content is immediately ready to play; any preview images
@@ -162,7 +176,7 @@ internal class ExoAppPlayer(
         // If we give "selectedVideoPlayIndex" then it plays selected video
         // But with pagination it is shuffling towards zero index
         // To fix it we must read "currentMediaItemIndex" which belongs to ExoPlayer Media Index
-        /*return if(selectedVideoPlayIndex != 0) {
+        return if(selectedVideoPlayIndex != 0) {
             PlayerState(
                 currentMediaItemId = currentMediaItem?.mediaId,
                 currentMediaItemIndex = selectedVideoPlayIndex,
@@ -176,14 +190,14 @@ internal class ExoAppPlayer(
                 seekPositionMillis = currentPosition,
                 isPlaying = playWhenReady
             )
-        }*/
+        }
 
-        return PlayerState(
+        /*return PlayerState(
             currentMediaItemId = currentMediaItem?.mediaId,
             currentMediaItemIndex = currentMediaItemIndex,
             seekPositionMillis = currentPosition,
             isPlaying = playWhenReady
-        )
+        )*/
     }
 
     override fun playMediaAt(position: Int) {

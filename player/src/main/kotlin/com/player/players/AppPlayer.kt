@@ -14,6 +14,8 @@ interface AppPlayer {
     val player: ExoPlayer
 
     suspend fun setUpWith(videoData: List<VideoData>, playerState: PlayerState?)
+
+    suspend fun resumeSetupWith(videoData: List<VideoData>, playerState: PlayerState?)
     fun onPlayerRendering(): Flow<Unit>
     fun errors(): Flow<Throwable>
     fun playMediaAt(position: Int)
