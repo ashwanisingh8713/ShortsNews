@@ -52,6 +52,9 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     private var channelTitle = ""
     private var channelUrl = ""
     private var channelDes = ""
+    private var from = ""
+    private var follow_count = ""
+    private var following: Boolean? = false
 
     private val channelInfoViewModel: ChannelInfoViewModel by activityViewModels {
         ChannelInfoViewModelFactory().apply {
@@ -71,6 +74,10 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         channelId = arguments?.getString("channelId").toString()
         channelTitle = arguments?.getString("channelTitle").toString()
         channelUrl = arguments?.getString("channelUrl").toString()
+        channelDes = arguments?.getString("channelDes").toString()
+        from = arguments?.getString("from").toString()
+        follow_count = arguments?.getString("follow_count").toString()
+        following = arguments?.getBoolean("following")
 
         val factory = ChannelVideoPagingViewModelFactory(channelId) // Factory
         channelsVideosViewModel2 = ViewModelProvider(this, factory).get(ChannelVideoViewModel::class.java)
@@ -80,47 +87,31 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentChannelVideosBinding.bind(view)
-        listenChannelInfo()
-
-        // Loading Channel Icon and Background Color from bitmap
-        /*if (channelUrl.isNotEmpty()) {
-            Glide.with(MainApplication.instance!!)
-                .asBitmap()
-                .load(channelUrl)
-                .listener(object : RequestListener<Bitmap> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: com.bumptech.glide.request.target.Target<Bitmap>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        Log.i("HeaderBg", "ChannelVideoFragment: Channel Icon Bitmap NOT loaded")
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        bitmap: Bitmap,
-                        model: Any,
-                        target: com.bumptech.glide.request.target.Target<Bitmap>?,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        lifecycleScope.launch {
-                            binding.channelLogo.setImageBitmap(bitmap)
-                            bottomSheetHeaderBg(bitmap)
-                        }
-
-                        return false
-                    }
-                }).submit()
-        }*/
-
-        if(MainActivity.channelVisibleBitmap != null) {
-            lifecycleScope.launch {
-                binding.channelLogo.setImageBitmap(MainActivity.channelVisibleBitmap)
-                bottomSheetHeaderBg(MainActivity.channelVisibleBitmap!!)
+        if(from == "MainActivity") {
+            // Loading Channel Icon and Background Color from bitmap
+            if(MainActivity.channelVisibleBitmap != null) {
+                lifecycleScope.launch {
+                    binding.channelLogo.setImageBitmap(MainActivity.channelVisibleBitmap)
+                    bottomSheetHeaderBg(MainActivity.channelVisibleBitmap!!)
+                }
             }
+
+            binding.channelDes.text = channelDes
+            binding.profileCount.text = follow_count
+            binding.following.visibility = View.VISIBLE
+            if (following!!){
+                binding.following.text = "Following"
+            } else {
+                binding.following.text = "Follow"
+            }
+
+        } else {
+            channelInfoViewModel.requestChannelInfoApi(channelId)
+            // Loading Channel Icon and Background Color from bitmap
+            channelLogoBitmap()
         }
+
+        listenChannelInfo()
 
 
         channelVideoAdapter = ChannelVideoAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
@@ -197,9 +188,38 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun channelLogoBitmap() {
+        if (channelUrl.isNotEmpty()) {
+            Glide.with(MainApplication.instance!!)
+                .asBitmap()
+                .load(channelUrl)
+                .listener(object : RequestListener<Bitmap> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Bitmap>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        Log.i("HeaderBg", "ChannelVideoFragment: Channel Icon Bitmap NOT loaded")
+                        return false
+                    }
 
+                    override fun onResourceReady(
+                        bitmap: Bitmap,
+                        model: Any,
+                        target: com.bumptech.glide.request.target.Target<Bitmap>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        lifecycleScope.launch {
+                            binding.channelLogo.setImageBitmap(bitmap)
+                            bottomSheetHeaderBg(bitmap)
+                        }
+
+                        return false
+                    }
+                }).submit()
+        }
     }
 
     override fun onDetach() {
@@ -224,7 +244,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     }
 
     private fun listenChannelInfo() {
-        channelInfoViewModel.requestChannelInfoApi(channelId)
+
         viewLifecycleOwner.lifecycleScope.launch {
             channelInfoViewModel.ChannelInfoSuccessState.filterNotNull().collectLatest {
                 binding.channelDes.text = it.data.description

@@ -22,8 +22,11 @@ class ChannelVideoPaging(private val channelId: String, private val userApiServi
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VideoData> {
         return try {
-            val perPage = 30
+            val perPage = 5
             val nextPageNumber = params.key ?: 1
+
+            Log.i("RequestTT","channel :: $channelId page :: $nextPageNumber")
+
             val response = userApiService.getChannelVideoDataP(channel = channelId, page = nextPageNumber, perPage = perPage)
             val videoData = response.data
                 .mapIndexed { index, post ->

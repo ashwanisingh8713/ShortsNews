@@ -604,6 +604,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             bundle.putString("channelId", videoInfoData.channel_id)
             bundle.putString("channelTitle", videoInfoData.title)
             bundle.putString("channelUrl", videoInfoData.channel_image)
+            bundle.putString("channelDes", videoInfoData.description)
+            bundle.putString("from", "MainActivity")
+            bundle.putString("follow_count", videoInfoData.follow_count)
+            bundle.putBoolean("following", videoInfoData.following)
             arguments = bundle
         }
         AppPreference.isUpdateNeeded = true
