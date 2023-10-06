@@ -31,6 +31,7 @@ import com.ns.shortsnews.MainApplication
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnected
 import com.ns.shortsnews.R
 import com.ns.shortsnews.data.model.VideoClikedItem
+import com.ns.shortsnews.data.source.UserApiService
 import com.ns.shortsnews.databinding.VideoPagerFragmentBinding
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
@@ -45,6 +46,7 @@ import com.videopager.vm.VideoPagerViewModelFactory_2
 import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent
 
 
 class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
@@ -82,7 +84,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
 
         // Initialising ViewModel Factory
         val viewModelfactory = VideoPagerViewModelFactory_2(
-            repository = VideoDataRepositoryImpl(),
+            repository = VideoDataRepositoryImpl(userApiService = KoinJavaComponent.getKoin().get<UserApiService>()),
             appPlayerFactory = ExoAppPlayerFactory(
                 context = requireContext(), cache = MainApplication.cache, currentMediaItemIndex = videoItems.selectedPosition
             ),

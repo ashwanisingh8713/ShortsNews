@@ -2,9 +2,8 @@ package com.ns.shortsnews.video.data
 
 import android.content.Context
 import android.util.Log
-import at.huber.me.YouTubeUri
 import com.ns.shortsnews.cache.HlsBulkPreloadCoroutine
-import com.ns.shortsnews.video.data.VideoDataNetService.videoDataApiService
+import com.ns.shortsnews.data.source.UserApiService
 import com.player.models.VideoData
 import com.videopager.data.*
 import com.videopager.utils.CategoryConstants
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
-class VideoDataRepositoryImpl : VideoDataRepository {
+class VideoDataRepositoryImpl(private val userApiService: UserApiService) : VideoDataRepository {
 
     override suspend fun videoData(
         id: String,
@@ -29,26 +28,24 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         val llVid = withContext(Dispatchers.IO) {
             val response = when (videoFrom) {
                 CategoryConstants.CHANNEL_VIDEO_DATA -> {
-                    videoDataApiService.getChannelVideos(id)
+                    userApiService.getChannelVideos(id)
                 }
 //                CategoryConstants.BOOKMARK_VIDEO_DATA -> videoDataApiService.getBookmarkVideos()
                 CategoryConstants.BOOKMARK_VIDEO_DATA -> {
-                    videoDataApiService.getBookmarkVideos(page= page, perPage = perPage)
+                    userApiService.getBookmarkVideos(page= page, perPage = perPage)
                 }
                 CategoryConstants.NOTIFICATION_VIDEO_DATA -> {
-                    videoDataApiService.getNotificationVideos()
+                    userApiService.getNotificationVideos()
                 }
                 CategoryConstants.DEFAULT_VIDEO_DATA -> {
-                    videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
+                    userApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
                 }
                 else -> {
-                    videoDataApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
+                    userApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
                 }
             }
 
-            val youtubeUriConversionCount = 2
             val precachingAllowedCount = response.data.size
-            var conversionCount = 0
             var videoUrls = Array(precachingAllowedCount) { "" }
             var videoIds = Array(precachingAllowedCount) { "" }
 
@@ -129,7 +126,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 
     override fun like(videoId: String, position: Int): Flow<Triple<String, Boolean, Int>> = flow {
         try {
-            val res = videoDataApiService.like(videoId)
+            val res = userApiService.like(videoId)
             emit(Triple(res.data.like_count, res.data.liked, position))
         } catch (ec: java.lang.Exception) {
             Log.i("kamels", "$ec")
@@ -139,7 +136,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 
     override fun save(videoId: String, position: Int): Flow<Triple<String, Boolean, Int>> = flow {
         try {
-            val res = videoDataApiService.save(videoId)
+            val res = userApiService.save(videoId)
             emit(Triple(res.data.saved_count, res.data.saved, position))
         } catch (ec: java.lang.Exception) {
             Log.i("kamels", "$ec")
@@ -149,7 +146,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 
     override fun follow(channel_id: String, position: Int): Flow<Pair<Following, Int>> = flow {
         try {
-            val data = videoDataApiService.follow(channel_id)
+            val data = userApiService.follow(channel_id)
             Log.i("getVideoInfo", "follow :: ${data.data.following} ")
             Log.i("getVideoInfo", "channel id :: ${data.data.channel_id} ")
             emit(Pair(data, position))
@@ -162,7 +159,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
     override fun comment(videoId: String, position: Int): Flow<Triple<String, Comments, Int>> =
         flow {
             try {
-                val data = videoDataApiService.comment(videoId)
+                val data = userApiService.comment(videoId)
                 emit(Triple(videoId, data, position))
             } catch (ec: java.lang.Exception) {
                 Log.i("kamels", "$ec")
@@ -175,7 +172,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
 
             Log.i("getVideoInfo", "getVideoInfo :: $position")
             try {
-                val data = videoDataApiService.getVideoInfo(videoId)
+                val data = userApiService.getVideoInfo(videoId)
                 if (data.status) {
                     emit(Pair(data.data, position))
                     Log.i("getVideoInfo", "getVideoInfo_id :: ${data.data.id}")
@@ -203,7 +200,7 @@ class VideoDataRepositoryImpl : VideoDataRepository {
         try {
             val body = mutableMapOf<String, String>()
             body["comment"] = comment
-            val data = videoDataApiService.getPostComment(videoId, body)
+            val data = userApiService.getPostComment(videoId, body)
             emit(Pair(data, position))
         } catch (ec: java.lang.Exception) {
             Log.i("kamels", "$ec")

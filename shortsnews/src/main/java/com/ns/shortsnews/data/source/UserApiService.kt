@@ -2,7 +2,10 @@ package com.ns.shortsnews.data.source
 
 import com.google.gson.JsonObject
 import com.ns.shortsnews.domain.models.*
+import com.videopager.data.BookMarkResult
+import com.videopager.data.Comments
 import com.videopager.data.Following
+import com.videopager.data.PostComment
 import com.videopager.data.VideoInfo
 import okhttp3.RequestBody
 import retrofit2.http.*
@@ -61,5 +64,38 @@ interface UserApiService {
 
     @GET("user-selections")
     suspend fun getUserSelections():UserSelectionResult
+
+    //////////
+
+    @GET("videos")
+    suspend fun getShortsVideos(@Query("category") category: String, @Query("page") page: Int,
+                                @Query("perPage") perPage: Int, @Query("languages")languages:String): VideoDataResponse
+
+    @GET("videos")
+    suspend fun getChannelVideos(@Query("channel") category: String): VideoDataResponse
+
+    @GET("notifications")
+    suspend fun getNotificationVideos(): VideoDataResponse
+
+    @GET("my-bookmarks")
+    suspend fun getBookmarkVideos(@Query("page") page: Int, @Query("perPage") perPage: Int): VideoDataResponse
+
+    @GET("like-unlike-video/{video_id}")
+    suspend fun like(@Path("video_id") videoId: String): LikeUnlike
+
+    @GET("bookmark-video/{video_id}")
+    suspend fun save(@Path("video_id") videoId: String): BookMarkResult
+
+    @GET("get-comments/{video_id}")
+    suspend fun comment(@Path("video_id") videoId: String): Comments
+
+    @GET("video-info/{video_id}")
+    suspend fun getVideoInfo(@Path("video_id") videoId: String): VideoInfo
+
+    @POST("comment-video/{video_id}")
+    suspend fun getPostComment(
+        @Path("video_id") videoId: String,
+        @Body comment: Map<String, String>
+    ): PostComment
 
 }
