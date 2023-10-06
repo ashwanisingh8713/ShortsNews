@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
@@ -16,7 +15,6 @@ import android.view.View
 import android.view.View.OnTouchListener
 import android.view.Window
 import android.view.WindowManager
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -32,23 +30,25 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.ns.shortsnews.adapters.CategoryAdapter
-import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.cache.HlsOneByOnePreloadCoroutine
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
 import com.ns.shortsnews.data.model.VideoClikedItem
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.databinding.ActivityMainBinding
-import com.ns.shortsnews.domain.models.Data
 import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
 import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
 import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
+import com.ns.shortsnews.ui.fragment.ChannelVideosFragment
+import com.ns.shortsnews.ui.paging.ChannelVideoAdapter
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
+import com.player.models.VideoData
 import com.rommansabbir.networkx.NetworkXProvider
+import com.videopager.data.VideoInfoData
 import com.videopager.ui.VideoPagerFragment_2
 import com.videopager.utils.CategoryConstants
 import com.videopager.utils.NoConnection
@@ -56,7 +56,6 @@ import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
@@ -73,12 +72,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
     private var videoCategoryViewModel: VideoCategoryViewModel? = null
 
-    private val videoDataViewModel: UserBookmarksViewModel by viewModels {
-        BookmarksViewModelFactory().apply {
-            inject(VideoDataUseCase(UserDataRepositoryImpl(get())))
-        }
-    }
-
     private val channelInfoViewModel: ChannelInfoViewModel by viewModels {
         ChannelInfoViewModelFactory().apply {
             inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
@@ -92,8 +85,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
-    private var bottomSheetRecyclerAdapter: GridAdapter? = null
+//    private var bottomSheetRecyclerAdapter: ChannelVideoAdapter? = null
     private var channelDescription = ""
+
+    private lateinit var  channelsVideosViewModel2: ChannelVideoViewModel
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,6 +110,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 return true
             }
         })
+
+        // Bottom Sheet Adapter Initialisation
+//        bottomSheetRecyclerAdapter =
+//            ChannelVideoAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = "")
 
         binding.profileIcon.setOnClickListener {
             launchProfileActivity()
@@ -169,57 +168,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
     private fun bottomSheetDescClick() {
-        binding.persistentBottomsheet.channelDes.setOnClickListener {
-            showDialog(channelDescription)
-        }
-    }
-
-    private fun listenFollowUnfollow(channelId: String) {
-        followUnfollowViewModel.requestFollowUnfollowApi(channelId)
-        lifecycleScope.launch {
-            followUnfollowViewModel.FollowUnfollowSuccessState.filterNotNull().collectLatest {
-                AppPreference.isFollowingUpdateNeeded = true
-                binding.persistentBottomsheet.profileCount.text = it.data.follow_count
-                if (it.data.following) {
-                    binding.persistentBottomsheet.following.text = getString(R.string.following)
-                    binding.persistentBottomsheet.followingExpanded.text = getString(R.string.following)
-                } else {
-                    binding.persistentBottomsheet.following.text = getString(R.string.follow)
-                    binding.persistentBottomsheet.followingExpanded.text = getString(R.string.follow)
-                }
-
-            }
-        }
-    }
-
-    // Notification permission launcher
-    private fun askNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.POST_NOTIFICATIONS
-                ) ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
-                // FCM SDK (and your app) can post notifications.
-            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
-                // TODO: display an educational UI explaining to the user the features that will be enabled
-                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
-                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
-                //       If the user selects "No thanks," allow the user to continue without notifications.
-            } else {
-                registerForActivityResult(
-                    ActivityResultContracts.RequestPermission()
-                ) { isGranted ->
-                    if (isGranted) {
-                        // FCM SDK (and your app) can post notifications.
-                    } else {
-                        // TODO: Inform user that that your app will not show notifications.
-                    }
-
-                }.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
+//        binding.persistentBottomsheet.channelDes.setOnClickListener {
+//            showDialog(channelDescription)
+//        }
     }
 
 
@@ -305,34 +256,17 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     /**
      * Loads Home Fragment
      */
-    private fun loadHomeFragment(categoryType: String) {
+    private fun loadHomeFragment(categoryId: String) {
         if (NetworkXProvider.isInternetConnected) {
-            /*if (!supportFragmentManager.isStateSaved) {
-                val ft = supportFragmentManager.beginTransaction()
-                videoPagerFragment = AppConstants.makeVideoPagerInstance(
-                    categoryType,
-                    CategoryConstants.DEFAULT_VIDEO_DATA,
-                    this@MainActivity,
-                    languages = AppPreference.getSelectedLanguagesAsString()
-                )
-                ft.replace(
-                    R.id.fragment_container,
-                    videoPagerFragment!!
-                )
-                ft.commitAllowingStateLoss()
-            }*/
-
-
-            val videoItems = VideoClikedItem(requiredId = categoryType, videoFrom = CategoryConstants.DEFAULT_VIDEO_DATA, selectedPosition = 0, loadedVideoData = emptyList())
+            val videoItems = VideoClikedItem(requiredId = categoryId, videoFrom = CategoryConstants.DEFAULT_VIDEO_DATA, selectedPosition = 0, loadedVideoData = emptyList())
             videoPagerFragment = VideoPagerFragment_2()
             val bundle = Bundle()
             bundle.putBoolean("logged_in", AppPreference.isUserLoggedIn)
-//            bundle.putString("directFrom", "PlainActivity")
             bundle.putParcelable("videoItems", videoItems)
             videoPagerFragment!!.arguments = bundle
             val ft = supportFragmentManager.beginTransaction()
             ft.replace(R.id.fragment_container, videoPagerFragment!!)
-            ft.commitAllowingStateLoss()
+            ft.commit()
 
         } else {
             // No Internet Snackbar: Fire
@@ -525,15 +459,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 if (NetworkXProvider.isInternetConnected) {
 
                     channelInfoViewModel.clearChannelInfo()
-                    videoDataViewModel.clearVideoData()
 
-                    val channelId = binding.persistentBottomsheet.imgDownArrow.tag?.toString()
-                    channelId?.let {
-                        if (channelId != "") {
+                    val videoInfoData = binding.persistentBottomsheet.imgDownArrow.tag
+                    val videoInfo = videoInfoData as VideoInfoData
+                    videoInfo.let {
+                        if (videoInfo.channel_id != "") {
                             binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
                             binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
-                            bottomSheetChannelInfo(channelId = channelId)
-                            bottomSheetGetChannelVideoData(channelId = channelId)
+                            bottomSheetChannelInfo(channelId = it.channel_id)
+                            bottomSheetGetChannelVideoData(videoInfoData = it)
                         }
                     }
                 } else {
@@ -565,56 +499,21 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
                 if (it.following) {
                     binding.persistentBottomsheet.following.text = getString(R.string.following)
-                    binding.persistentBottomsheet.followingExpanded.text =
-                        getString(R.string.following)
                 } else {
                     binding.persistentBottomsheet.following.text = getString(R.string.follow)
-                    binding.persistentBottomsheet.followingExpanded.text =
-                        getString(R.string.follow)
                 }
 
                 val channelId = binding.persistentBottomsheet.following.tag
 //                if(channelId != it.channel_id) {
                 binding.persistentBottomsheet.following.tag = it.channel_id
-                binding.persistentBottomsheet.imgDownArrow.tag = it.channel_id
+                binding.persistentBottomsheet.imgDownArrow.tag = it
 
                 if (it.channel_image.isNotEmpty()) {
                     // Loading Channel Icon and Background Color from bitmap
-                    Glide.with(MainApplication.instance!!)
-                        .asBitmap()
-                        .load(it.channel_image)
-                        .listener(object : RequestListener<Bitmap> {
-                            override fun onLoadFailed(
-                                e: GlideException?,
-                                model: Any?,
-                                target: com.bumptech.glide.request.target.Target<Bitmap>,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                Log.i("HeaderBg", "MainActivity: Channel Icon Bitmap NOT loaded")
-                                return false
-                            }
-
-                            override fun onResourceReady(
-                                bitmap: Bitmap,
-                                model: Any,
-                                target: com.bumptech.glide.request.target.Target<Bitmap>?,
-                                dataSource: DataSource,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                Log.i("HeaderBg", "MainActivity: Channel Icon Bitmap loaded")
-                                binding.persistentBottomsheet.clientImage.setImageBitmap(bitmap)
-                                binding.persistentBottomsheet.channelLogo.setImageBitmap(bitmap)
-                                lifecycleScope.launch {
-                                    bottomSheetHeaderBg(bitmap, it.channel_id)
-                                }
-                                return false
-                            }
-                        }).submit()
-
+                    loadBottomChannelLogoPallet(it)
                     binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
                 } else {
-                    binding.persistentBottomsheet.cardViewClientImage.visibility =
-                        View.INVISIBLE
+                    binding.persistentBottomsheet.cardViewClientImage.visibility = View.INVISIBLE
                 }
 //                }
             }
@@ -624,16 +523,51 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             sharedEventViewModel.followResponse.filterNotNull().collectLatest {
                 if (it.following) {
                     binding.persistentBottomsheet.following.text = getString(R.string.following)
-                    binding.persistentBottomsheet.followingExpanded.text =
-                        getString(R.string.following)
                 } else {
                     binding.persistentBottomsheet.following.text = getString(R.string.follow)
-                    binding.persistentBottomsheet.followingExpanded.text =
-                        getString(R.string.follow)
                 }
 
             }
         }
+    }
+
+    companion object {
+        var channelVisibleBitmap: Bitmap? = null
+    }
+    private fun loadBottomChannelLogoPallet(videoInfoData: VideoInfoData) {
+        Glide.with(MainApplication.instance!!)
+            .asBitmap()
+            .load(videoInfoData.channel_image)
+            .listener(object : RequestListener<Bitmap> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: com.bumptech.glide.request.target.Target<Bitmap>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    Log.i("HeaderBg", "MainActivity: Channel Icon Bitmap NOT loaded")
+                    return false
+                }
+
+                override fun onResourceReady(
+                    bitmap: Bitmap,
+                    model: Any,
+                    target: com.bumptech.glide.request.target.Target<Bitmap>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    Log.i("HeaderBg", "MainActivity: Channel Icon Bitmap loaded :: ")
+                    lifecycleScope.launch {
+                        channelVisibleBitmap = bitmap
+                        binding.persistentBottomsheet.clientImage.setImageBitmap(bitmap)
+                        Log.i("HeaderBg", "MainActivity: Channel Icon Bitmap loaded :: ${videoInfoData.channel_id}")
+                        bottomSheetHeaderBg(bitmap)
+                    }
+
+//                    binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
+                    return false
+                }
+            }).submit()
     }
 
     //Get Channel info by channelId
@@ -642,8 +576,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         channelInfoViewModel.requestChannelInfoApi(channelId)
         lifecycleScope.launch {
             channelInfoViewModel.ChannelInfoSuccessState.filterNotNull().collectLatest {
-                binding.persistentBottomsheet.profileCount.text = it.data.follow_count
-                binding.persistentBottomsheet.channelDes.text = it.data.description
                 channelDescription = it.data.description
             }
         }
@@ -666,54 +598,29 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     /**
      * Bottom Sheet Channel Video Data
      */
-    private fun bottomSheetGetChannelVideoData(channelId: String) {
-
-        videoDataViewModel.requestVideoData(
-            params = Pair(
-                CategoryConstants.CHANNEL_VIDEO_DATA,
-                channelId,
-            )
-        )
-        bottomSheetRecyclerAdapter =
-            GridAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
-
-        lifecycleScope.launch {
-            videoDataViewModel.errorState.filterNotNull().collectLatest {
-                binding.persistentBottomsheet.progressBar.visibility = View.GONE
-                binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
-            }
+    private fun bottomSheetGetChannelVideoData(videoInfoData: VideoInfoData) {
+        val channelVideosFragment = ChannelVideosFragment().apply {
+            val bundle = Bundle()
+            bundle.putString("channelId", videoInfoData.channel_id)
+            bundle.putString("channelTitle", videoInfoData.title)
+            bundle.putString("channelUrl", videoInfoData.channel_image)
+            arguments = bundle
         }
-
-        lifecycleScope.launch {
-            videoDataViewModel.videoDataState.filterNotNull().collectLatest {
-                bottomSheetRecyclerAdapter?.updateVideoData(mutableListOf<Data>())
-                delay(500) // To show the progress bar properly
-                binding.persistentBottomsheet.progressBar.visibility = View.GONE
-                binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
-                it.let {
-                    bottomSheetRecyclerAdapter?.updateVideoData(it.data)
-                    binding.persistentBottomsheet.channelRecyclerview.adapter =
-                        bottomSheetRecyclerAdapter
-                    standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                }
-            }
-        }
-
-        // Channel Item click listener
-        lifecycleScope.launch {
-            bottomSheetRecyclerAdapter!!.clicks().collectLatest {
-                IntentLaunch.launchPlainVideoPlayer(it, this@MainActivity)
-            }
-        }
-
+        AppPreference.isUpdateNeeded = true
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.channel_container, channelVideosFragment)
+            .commit()
+        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        binding.persistentBottomsheet.progressBar.visibility = View.GONE
+        binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
     }
 
     @SuppressLint("ResourceAsColor")
     private fun bottomSheetClearChannelId() {
         binding.persistentBottomsheet.following.tag = null
         binding.persistentBottomsheet.imgDownArrow.tag = null
-        videoDataViewModel.clearChannelVideoData()
-        bottomSheetRecyclerAdapter?.clearChannelData()
+//        videoDataViewModel.clearChannelVideoData()
+//        bottomSheetRecyclerAdapter?.clearChannelData()
         binding.persistentBottomsheet.clientImage.setImageBitmap(null)
         binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(R.color.black)
         binding.persistentBottomsheet.bottomSheetHeader.alpha = 0.3f
@@ -736,76 +643,49 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             }
         }
 
-        binding.persistentBottomsheet.followingExpanded.setOnClickListener {
-            if (NetworkXProvider.isInternetConnected) {
-                val channelId = binding.persistentBottomsheet.following.tag
-                channelId?.let {
-                    if (it != "") {
-                        listenFollowUnfollow(channelId.toString())
-                    }
-                }
-            } else {
-                NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
-            }
-        }
+
     }
 
     /*Bottom sheet pallet color using bitmap icon from response URL*/
-    private fun bottomSheetHeaderBg(bitmap: Bitmap, channelId: String) {
-        val headerTag = "HeaderBg"
-        Log.i(headerTag, "============= OUT :: $channelId")
+    private fun bottomSheetHeaderBg(bitmap: Bitmap) {
         binding.persistentBottomsheet.bottomSheetHeader.alpha = 1.0f
 
         val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
         Palette.from(mutableBitmap).generate { palette ->
 
-            Log.i(headerTag, "================= IN :: $channelId")
             val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
             lightVibrantSwatch?.let {
-                Log.i(headerTag, "lightVibrantSwatch :: $channelId")
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(
                     lightVibrantSwatch
                 )
-                binding.persistentBottomsheet.channelTopView.setBackgroundColor(lightVibrantSwatch)
             }
 
             val vibrantSwatch = palette?.vibrantSwatch?.rgb
             vibrantSwatch?.let {
-                Log.i(headerTag, "vibrantSwatch :: $channelId")
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(vibrantSwatch)
-                binding.persistentBottomsheet.channelTopView.setBackgroundColor(vibrantSwatch)
             }
 
             val lightMutedSwatch = palette?.lightMutedSwatch?.rgb
             lightMutedSwatch?.let {
-                Log.i(headerTag, "lightMutedSwatch :: $channelId")
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightMutedSwatch)
-                binding.persistentBottomsheet.channelTopView.setBackgroundColor(lightMutedSwatch)
             }
 
             val mutedSwatch = palette?.mutedSwatch?.rgb
             mutedSwatch?.let {
-                Log.i(headerTag, "mutedSwatch :: $channelId")
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(mutedSwatch)
-                binding.persistentBottomsheet.channelTopView.setBackgroundColor(mutedSwatch)
             }
 
             val darkMutedSwatch = palette?.darkMutedSwatch?.rgb
             darkMutedSwatch?.let {
-                Log.i(headerTag, "darkVibrantSwatch :: $channelId")
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkMutedSwatch)
-                binding.persistentBottomsheet.channelTopView.setBackgroundColor(darkMutedSwatch)
             }
 
             val darkVibrantSwatch = palette?.darkVibrantSwatch?.rgb
             darkVibrantSwatch?.let {
-                Log.i(headerTag, "darkVibrantSwatch :: $channelId")
-
                 binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(
                     darkVibrantSwatch
                 )
-                binding.persistentBottomsheet.channelTopView.setBackgroundColor(darkVibrantSwatch)
             }
 
         }

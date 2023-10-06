@@ -48,7 +48,6 @@ class PlainVideoActivity : AppCompatActivity() {
 
         val videoClickedItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(KEY_VIDEO_CLICKED_ITEM, VideoClikedItem::class.java)!!
-
         } else {
             intent.getParcelableExtra<VideoClikedItem>(KEY_VIDEO_CLICKED_ITEM)!!
         }

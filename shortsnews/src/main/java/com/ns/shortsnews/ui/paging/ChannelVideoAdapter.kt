@@ -19,6 +19,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 class ChannelVideoAdapter(private var videoFrom: String, private var channelId: String) :
     PagingDataAdapter<VideoData, ChannelVideoAdapter.ChannelItemViewHolder>(BookmarksComparator) {
 
+    var updatedChannelId: String = channelId
+        get() = field
+        set(value) { field = value }
+
     private val clicks = MutableSharedFlow<VideoClikedItem>(extraBufferCapacity = 1)
     fun clicks() = clicks.asSharedFlow()
 
@@ -49,7 +53,7 @@ class ChannelVideoAdapter(private var videoFrom: String, private var channelId: 
                 binding.likeIcon.setColorFilter(ContextCompat.getColor(binding.likeIcon.context, R.color.white))
             }
             itemView.setOnClickListener{
-                clicks.tryEmit(VideoClikedItem(requiredId = channelId, selectedPosition = position, videoFrom = videoFrom, loadedVideoData =snapshot().items))
+                clicks.tryEmit(VideoClikedItem(requiredId = updatedChannelId, selectedPosition = position, videoFrom = videoFrom, loadedVideoData =snapshot().items))
             }
         }
     }

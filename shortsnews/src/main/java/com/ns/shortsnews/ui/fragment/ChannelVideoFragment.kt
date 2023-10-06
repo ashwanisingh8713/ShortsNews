@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.ns.shortsnews.MainActivity
 import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentChannelVideosBinding
@@ -82,7 +83,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         listenChannelInfo()
 
         // Loading Channel Icon and Background Color from bitmap
-        if (channelUrl.isNotEmpty()) {
+        /*if (channelUrl.isNotEmpty()) {
             Glide.with(MainApplication.instance!!)
                 .asBitmap()
                 .load(channelUrl)
@@ -104,12 +105,23 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
                         dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
-                        Log.i("HeaderBg", "ChannelVideoFragment: Channel Icon Bitmap loaded")
-                        bottomSheetHeaderBg(bitmap)
+                        lifecycleScope.launch {
+                            binding.channelLogo.setImageBitmap(bitmap)
+                            bottomSheetHeaderBg(bitmap)
+                        }
+
                         return false
                     }
                 }).submit()
+        }*/
+
+        if(MainActivity.channelVisibleBitmap != null) {
+            lifecycleScope.launch {
+                binding.channelLogo.setImageBitmap(MainActivity.channelVisibleBitmap)
+                bottomSheetHeaderBg(MainActivity.channelVisibleBitmap!!)
+            }
         }
+
 
         channelVideoAdapter = ChannelVideoAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
         channelVideoAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.ALLOW

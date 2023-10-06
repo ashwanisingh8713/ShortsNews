@@ -20,10 +20,12 @@ import org.koin.java.KoinJavaComponent
 
 class ChannelVideoViewModel(private val channelId: String): ViewModel() {
 
-
+    var updatedChannelId: String = channelId
+        get() = field
+        set(value) { field = value }
 
     val channelVideoData = Pager(PagingConfig(pageSize = 10)) {
-        ChannelVideoPaging(channelId = channelId, userApiService = KoinJavaComponent.getKoin().get<UserApiService>())
+        ChannelVideoPaging(channelId = updatedChannelId, userApiService = KoinJavaComponent.getKoin().get<UserApiService>())
     }.flow.cachedIn(viewModelScope)
 
 

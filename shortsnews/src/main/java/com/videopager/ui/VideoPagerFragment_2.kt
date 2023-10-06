@@ -76,8 +76,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
             }
         }
 
-
-
         // Initialising ViewModel Factory
         val viewModelfactory = VideoPagerViewModelFactory_2(
             repository = VideoDataRepositoryImpl(userApiService = KoinJavaComponent.getKoin().get<UserApiService>()),
