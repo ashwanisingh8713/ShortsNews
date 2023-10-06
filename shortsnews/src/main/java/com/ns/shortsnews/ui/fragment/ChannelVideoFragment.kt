@@ -109,10 +109,15 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             channelInfoViewModel.requestChannelInfoApi(channelId)
             // Loading Channel Icon and Background Color from bitmap
             channelLogoBitmap()
+
+            // Initializing Broadcast Receiver to listen Like / UN Like
+            val broadcastReceiver = ChannelVideoBroadcast()
+            // Registering broadcast receiver to LocalBroadcastManager
+            LocalBroadcastManager.getInstance(requireContext()).registerReceiver(broadcastReceiver, IntentFilter("BookmarkFragmentUpdated"))
         }
 
+        // Listens Channel Info
         listenChannelInfo()
-
 
         channelVideoAdapter = ChannelVideoAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
         channelVideoAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.ALLOW
@@ -125,10 +130,6 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             descriptionDialog(channelDes)
         }
 
-        // Initializing Broadcast Receiver to listen Like / UN Like
-        val broadcastReceiver = ChannelVideoBroadcast()
-        // Registering broadcast receiver to LocalBroadcastManager
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(broadcastReceiver, IntentFilter("BookmarkFragmentUpdated"));
 
         channelVideoAdapter.addLoadStateListener { loadState ->
 
@@ -178,11 +179,13 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             }
         }
 
+
         viewLifecycleOwner.lifecycleScope.launch {
             channelsVideosViewModel2.channelVideoData.collectLatest { pagedData ->
-                Log.i("AshwaniXYZ", "channelVideoData Received")
-                binding.channelImageRecyclerview.visibility = View.VISIBLE
-                channelVideoAdapter.submitData(pagedData)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    binding.channelImageRecyclerview.visibility = View.VISIBLE
+                    channelVideoAdapter.submitData(pagedData)
+                }
             }
         }
 
