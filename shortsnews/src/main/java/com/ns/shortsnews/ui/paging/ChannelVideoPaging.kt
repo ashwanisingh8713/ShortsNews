@@ -25,7 +25,6 @@ class ChannelVideoPaging(private val channelId: String, private val userApiServi
             val perPage = 30
             val nextPageNumber = params.key ?: 1
             val response = userApiService.getChannelVideoDataP(channel = channelId, page = nextPageNumber, perPage = perPage)
-            Log.i("AshwaniXYZ", "response: ${response.data}")
             val videoData = response.data
                 .mapIndexed { index, post ->
                     val width = post?.width
@@ -55,10 +54,8 @@ class ChannelVideoPaging(private val channelId: String, private val userApiServi
             )
         } catch (ce: CancellationException) {
             // You can ignore or log this exception
-            Log.i("AshwaniXYZ", "Error: ${ce.localizedMessage}")
             LoadResult.Invalid()
         } catch (e: Exception) {
-            Log.i("AshwaniXYZ", "Error: ${e.localizedMessage}")
             LoadResult.Error(e)
         }
     }

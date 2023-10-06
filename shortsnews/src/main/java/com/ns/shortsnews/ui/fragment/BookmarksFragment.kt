@@ -48,7 +48,7 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
         override fun onReceive(context: Context?, intent: Intent?) {
             if(intent != null) {
                 val actionType = intent.getStringExtra("actionType")!!
-                Log.i("AshwaniXYZ", "onReceive")
+                Log.i("AshwaniXYZ", "BookmarkBroadcast, onReceive")
                 if(actionType == "LikeEffect") {
                     bookmarksAdapter.updateLikeStatus(
                         id = intent.getStringExtra("id")!!,

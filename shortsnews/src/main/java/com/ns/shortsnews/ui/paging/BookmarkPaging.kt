@@ -25,7 +25,6 @@ class BookmarkPaging(private val userApiService: UserApiService): PagingSource<I
             val perPage = 5
             val nextPageNumber = params.key ?: 1
             val response = userApiService.getBookmarksDataP(page=nextPageNumber, perPage=perPage)
-            Log.i("AshwaniXYZ", "response: ${response.data}")
 
             val videoData = response.data
                 .mapIndexed { index, post ->
@@ -57,10 +56,8 @@ class BookmarkPaging(private val userApiService: UserApiService): PagingSource<I
             )
         } catch (ce: CancellationException) {
             // You can ignore or log this exception
-            Log.i("AshwaniXYZ", "Error: ${ce.localizedMessage}")
             LoadResult.Invalid()
         } catch (e: Exception) {
-            Log.i("AshwaniXYZ", "Error: ${e.localizedMessage}")
             LoadResult.Error(e)
         }
     }

@@ -75,9 +75,9 @@ class ExoAppPlayerFactory(context: Context, private val cache: SimpleCache, priv
                 bytesTransferred: Long,
                 bitrateEstimate: Long
             ) {
-                Log.i("AshwaniXYZ", "elapsedMs : $elapsedMs")
-                Log.i("AshwaniXYZ", "bytesTransferred : $bytesTransferred")
-                Log.i("AshwaniXYZ", "bitrateEstimate : $bitrateEstimate")
+                Log.i("", "elapsedMs : $elapsedMs")
+                Log.i("", "bytesTransferred : $bytesTransferred")
+                Log.i("", "bitrateEstimate : $bitrateEstimate")
             }
 
         })*/

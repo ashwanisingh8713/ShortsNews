@@ -332,19 +332,16 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
             loadMoreVideoData().map {
                 if (isInternetConnected) {
                     val Tag = "PagePreload"
-                    Log.i(Tag, "")
-                    Log.i(Tag, "########### NEW PAGE REQUEST IS SENT TO SERVER #################")
-                    Log.i(
-                        Tag,
-                        "VideoFrom :: ${viewModel.videoFrom}, CategoryId :: ${viewModel.categoryId}, Page :: ${viewModel.page}"
-                    )
+                    Log.i("AshwaniXYZ", "")
+                    val loadedLastPage = viewModel.states.value.videoData!!.get(viewModel.states.value.videoData!!.size-1).page
+                    Log.i(Tag, "loadMoreVideoData() ${loadedLastPage+1}")
                     // For handling load more video case to not load more video when it is redirected from plainVideo activity
 //                    if (redirectFrom == null) {
                         viewModel.processEvent(
                             LoadVideoDataEvent(
                                 categoryId = viewModel.categoryId,
                                 videoFrom = viewModel.videoFrom,
-                                page = viewModel.page,
+                                page = loadedLastPage+1,
                                 perPage = VideoPagerViewModel.perPage,
                                 languages = viewModel.languages
                             )
@@ -432,36 +429,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
 
                 LikeClick -> {
                     if (isInternetConnected) {
-
-                        // This commented code provides info about Tracks
-                        /*val tracks = viewModel.states.value.appPlayer?.player?.currentTracks
-
-                        val trackSelector = viewModel.states.value.appPlayer?.player?.trackSelector
-
-                        Log.i("AshwaniXYZ", "trackSelector: $trackSelector")
-
-                        for (trackGroup in tracks!!.groups) {
-                            // Group level information.
-                            val trackType: @TrackType Int = trackGroup.type
-                            val trackInGroupIsSelected = trackGroup.isSelected
-                            val trackInGroupIsSupported = trackGroup.isSupported
-
-                            Log.i("AshwaniXYZ", "trackType: $trackType")
-                            Log.i("AshwaniXYZ", "trackInGroupIsSelected: $trackInGroupIsSelected")
-                            Log.i("AshwaniXYZ", "trackInGroupIsSupported: $trackInGroupIsSupported")
-
-                            for (i in 0 until trackGroup.length) {
-                                // Individual track information.
-                                val isSupported = trackGroup.isTrackSupported(i)
-                                val isSelected = trackGroup.isTrackSelected(i)
-                                val trackFormat = trackGroup.getTrackFormat(i)
-
-                                Log.i("AshwaniXYZ", "isSupported-$i: $isSupported")
-                                Log.i("AshwaniXYZ", "isSelected-$i: $isSelected")
-                                Log.i("AshwaniXYZ", "trackFormat-$i: $trackFormat")
-                            }
-                        }*/
-
                         if (!isUserLoggedIn) {
                             sharedEventViewModel.launchLoginEvent(true)
                             NoFurtherEvent
@@ -471,9 +438,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                             val videoData = pagerAdapter.getVideoData(currentItem)
                             LikeClickEvent(videoData.id, currentItem)
                         }
-
-
-
                     } else {
                         NoConnection.noConnectionSnackBarInfinite(
                             view,

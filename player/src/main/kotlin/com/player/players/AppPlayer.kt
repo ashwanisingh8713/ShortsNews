@@ -13,7 +13,7 @@ interface AppPlayer {
 
     val player: ExoPlayer
 
-    suspend fun setUpWith(videoData: List<VideoData>, playerState: PlayerState?)
+    suspend fun setUpWith(videoData: List<VideoData>)
 
     suspend fun resumeSetupWith(videoData: List<VideoData>, playerState: PlayerState?)
     fun onPlayerRendering(): Flow<Unit>

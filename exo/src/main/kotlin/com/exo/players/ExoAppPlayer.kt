@@ -18,7 +18,7 @@ internal class ExoAppPlayer(
     override val currentPlayerState: PlayerState get() = player.toPlayerState(selectedVideoPlayIndex)
     private var isPlayerSetUp = false
 
-    override suspend fun setUpWith(videoData: List<VideoData>, playerState: PlayerState?) {
+    override suspend fun setUpWith(videoData: List<VideoData>) {
         /** Delegate video insertion, removing, moving, etc. to this [updater] */
         updater.update(player = player, incoming = videoData)
 
@@ -26,7 +26,7 @@ internal class ExoAppPlayer(
         if (!isPlayerSetUp) {
             player.seekTo(selectedVideoPlayIndex, 0)
             player.playWhenReady = true
-            Log.i("AshwaniXYZ", "seekToIndex :: $selectedVideoPlayIndex")
+            Log.i("AshwaniXYZ", "setUpWith() seekToIndex :: $selectedVideoPlayIndex")
             isPlayerSetUp = true
         }
 
@@ -47,16 +47,12 @@ internal class ExoAppPlayer(
     private fun setUpPlayerState(playerState: PlayerState?) {
         val currentMediaItems = player.currentMediaItems
 
-//        Log.i("selectedPlay", "$currentMediaItems")
-        Log.i("AshwaniXYZ", "playerState :: $playerState")
-
          // When restoring saved state, the saved media item might be not be in the player's current
          // collection of media items. In that case, the saved media item cannot be restored.
         val canRestoreSavedPlayerState = playerState != null
             && currentMediaItems.any {
                 mediaItem -> mediaItem.mediaId == playerState.currentMediaItemId
             }
-        Log.i("AshwaniXYZ", "canRestoreSavedPlayerState :: $canRestoreSavedPlayerState")
 
         val reconciledPlayerState = if (canRestoreSavedPlayerState) {
             requireNotNull(playerState)
@@ -64,18 +60,15 @@ internal class ExoAppPlayer(
             PlayerState.INITIAL
         }
 
-        Log.i("AshwaniXYZ", "reconciledPlayerState :: ${reconciledPlayerState.currentMediaItemIndex}")
-
         val windowIndex = currentMediaItems.indexOfFirst { mediaItem ->
             mediaItem.mediaId == reconciledPlayerState.currentMediaItemId
         }
 
-        Log.i("AshwaniXYZ", "windowIndex :: $windowIndex")
         if (windowIndex != -1) {
             player.seekTo(windowIndex, reconciledPlayerState.seekPositionMillis)
         }
         player.playWhenReady = reconciledPlayerState.isPlaying
-        Log.i("AshwaniXYZ", "seekToIndex :: $windowIndex")
+        Log.i("AshwaniXYZ", "setUpPlayerState() windowIndex :: $windowIndex")
 
     }
 
@@ -111,7 +104,6 @@ internal class ExoAppPlayer(
         val listener = object : Player.Listener {
             override fun onTracksChanged(tracks: Tracks) {
                 super.onTracksChanged(tracks)
-                Log.i("AshwaniXYZ", "$tracks")
                 trySend(Unit)
             }
         }

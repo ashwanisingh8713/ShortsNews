@@ -3,8 +3,6 @@ package com.videopager.vm
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import androidx.viewpager2.widget.ViewPager2
-import at.huber.me.YouTubeUri
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.player.models.VideoData
 import com.player.players.AppPlayer
@@ -53,13 +51,13 @@ internal class VideoPagerViewModel(
         const val perPage = 5
     }
 
-    var page = 1
-    private set
+//    var page = 1
+//    private set
 
-    private var pager: ViewPager2? = null
-    private fun setPager(pager: ViewPager2) {
-        this.pager = pager
-    }
+//    private var pager: ViewPager2? = null
+//    private fun setPager(pager: ViewPager2) {
+//        this.pager = pager
+//    }
 
     private var _videoProgressBarEvent= MutableSharedFlow<Int>()
     val videoProgressBar = _videoProgressBarEvent.asSharedFlow()
@@ -92,7 +90,7 @@ internal class VideoPagerViewModel(
                 LoadVideoDataEvent(
                     categoryId = categoryId,
                     videoFrom = videoFrom,
-                    page = page,
+                    page = 1,
                     perPage = perPage,
                     languages = languages
 
@@ -128,14 +126,14 @@ internal class VideoPagerViewModel(
                 requiredId = event.categoryId,
                 context = context!!,
                 videoFrom = event.videoFrom,
-                page = page,
+                page = event.page,
                 perPage = perPage,
                 languages = languages
             )
         }.map { videoData ->
-            if (page == 1) {
+            /*if (page == 1) {
                 delay(1000)
-            }
+            }*/
             /*if(videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA || videoFrom == CategoryConstants.NOTIFICATION_VIDEO_DATA) {
                 states.value.page = selectedPlay
             }*/
@@ -150,19 +148,25 @@ internal class VideoPagerViewModel(
             }
             pageVideoData.addAll(videoData)
 
-            page++
+//            page++
+//            Log.i("AshwaniXYZ", "<LoadVideoDataEvent> Index :: ${index}")
 
             val playerState = appPlayer?.currentPlayerState ?:handle.get()
 
-            appPlayer?.setUpWith(pageVideoData, playerState)
+            appPlayer?.setUpWith(pageVideoData)
 
             // Capture any updated index so UI page state can stay in sync. For example, a video
             // may have been added to the page before the currently active one. That means the
             // the current video/page index will have changed
 //            val index = handle.get()?.currentMediaItemIndex ?: appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
-            val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
+            var index = 0
+
+            if(appPlayer?.player == null) {
+                index = appPlayer?.player?.currentMediaItemIndex!!
+            }
+
 //            val index = appPlayer?.player?.currentMediaItemIndex ?: 0
-            Log.i("AshwaniXYZ", "LoadVideoDataEvent Index :: ${index}")
+            Log.i("AshwaniXYZ", "<LoadVideoDataEvent> Index :: ${index}")
             LoadVideoDataResult(pageVideoData, index)
         }
     }
@@ -183,19 +187,19 @@ internal class VideoPagerViewModel(
             var pageVideoData: MutableList<VideoData> = mutableListOf()
             pageVideoData.addAll(videoData)
 
-            page = videoData[videoData.size-1].page++
+//            page = videoData[videoData.size-1].page++
 
             val ss = handle.get()
             ss?.currentMediaItemIndex = selectedPlay
             ss?.currentMediaItemId = pageVideoData.get(selectedPlay).id
 
-            appPlayer?.setUpWith(pageVideoData, ss)
+            appPlayer?.setUpWith(pageVideoData)
             // Capture any updated index so UI page state can stay in sync. For example, a video
             // may have been added to the page before the currently active one. That means the
             // the current video/page index will have changed
 //            val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
-            val index = appPlayer?.player?.currentMediaItemIndex ?: 0
-            Log.i("AshwaniXYZ", "PreLoadedVideoDataEvent Index :: ${index}")
+//            val index = appPlayer?.player?.currentMediaItemIndex ?: 0
+            Log.i("AshwaniXYZ", "<PreLoadedVideoDataEvent> Index :: ${selectedPlay}")
             LoadVideoDataResult(pageVideoData, selectedPlay)
         }
     }
@@ -246,7 +250,7 @@ internal class VideoPagerViewModel(
         // If video data already exists then the player should have that video data set on it. This
         // can happen because the player has a lifecycle tied to Activity starting/stopping.
 
-        states.value.videoData?.let { videoData -> appPlayer.setUpWith(videoData, handle.get()) }
+        states.value.videoData?.let { videoData -> appPlayer.setUpWith(videoData) }
         return merge(
             flowOf(CreatePlayerResult(appPlayer)),
             appPlayer.onPlayerRendering().map { OnPlayerRenderingResult },
@@ -277,7 +281,7 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun resumePlayer(): Flow<ViewResult> {
-        Log.i("AshwaniXYZ", "createPlayer()")
+        Log.i("AshwaniXYZ", "resumePlayer()")
         check(states.value.appPlayer == null) { "Tried to create a player when one already exists" }
 
         val config = AppPlayer.Factory.Config(loopVideos = true)
@@ -318,7 +322,7 @@ internal class VideoPagerViewModel(
         val appPlayer = requireNotNull(states.value.appPlayer)
         // Keep track of player state so that it can be restored across player recreations.
         handle.set(appPlayer.currentPlayerState)
-        Log.i("AshwaniXYZ", "tearDownPlayer appPlayer.currentPlayerState :: $appPlayer.currentPlayerState")
+        Log.i("AshwaniXYZ", "tearDownPlayer() appPlayer.currentPlayerState :: $appPlayer.currentPlayerState")
         // Videos are a heavy resource, so tear player down when the app is not in the foreground.
         appPlayer.release()
         return flowOf(TearDownPlayerResult)
@@ -412,7 +416,6 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<OnPageSettledEvent>.toPageSettledResults(): Flow<ViewResult> {
-        Log.i("AshwaniXYZ", "OnPageSettledEvent")
         return mapLatest { event ->
             if(states.value.appPlayer == null) {
                 Log.i("AshwaniXYZ", "OnPageSettledEvent :: IF")
@@ -422,8 +425,8 @@ internal class VideoPagerViewModel(
 //                handle.set(appPlayer.currentPlayerState)
                 // To Play directly at specific index
                 appPlayer.playMediaAt(event.page)
-                Log.i("AshwaniXYZ", "OnPageSettledEvent :: ELSE :: ${event.page}")
-                Log.i("AshwaniXYZ", "OnPageSettledEvent :: ELSE :: ${appPlayer.currentPlayerState.currentMediaItemIndex}")
+                Log.i("AshwaniXYZ", "<OnPageSettledEvent> :: ELSE 1 :: ${event.page}")
+                Log.i("AshwaniXYZ", "<OnPageSettledEvent> :: ELSE 2 :: ${appPlayer.currentPlayerState.currentMediaItemIndex}")
                 OnNewPageSettledResult(page = event.page)
             }
         }
@@ -460,7 +463,7 @@ internal class VideoPagerViewModel(
         GlobalScope.launch(Dispatchers.Main) {
             val appPlayer = states.value.appPlayer
             // If the player exists, it should be updated with the latest video data that came in
-            appPlayer?.setUpWith(states.value.videoData!!, handle.get())
+            appPlayer?.setUpWith(states.value.videoData!!)
         }
     }
 

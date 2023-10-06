@@ -56,6 +56,7 @@ import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
@@ -589,6 +590,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                                 target: com.bumptech.glide.request.target.Target<Bitmap>,
                                 isFirstResource: Boolean
                             ): Boolean {
+                                Log.i("HeaderBg", "MainActivity: Channel Icon Bitmap NOT loaded")
                                 return false
                             }
 
@@ -599,9 +601,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                                 dataSource: DataSource,
                                 isFirstResource: Boolean
                             ): Boolean {
+                                Log.i("HeaderBg", "MainActivity: Channel Icon Bitmap loaded")
                                 binding.persistentBottomsheet.clientImage.setImageBitmap(bitmap)
-                                bottomSheetHeaderBg(bitmap, it.channel_id)
                                 binding.persistentBottomsheet.channelLogo.setImageBitmap(bitmap)
+                                lifecycleScope.launch {
+                                    bottomSheetHeaderBg(bitmap, it.channel_id)
+                                }
                                 return false
                             }
                         }).submit()

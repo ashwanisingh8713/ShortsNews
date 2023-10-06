@@ -93,7 +93,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
                         target: com.bumptech.glide.request.target.Target<Bitmap>,
                         isFirstResource: Boolean
                     ): Boolean {
-
+                        Log.i("HeaderBg", "ChannelVideoFragment: Channel Icon Bitmap NOT loaded")
                         return false
                     }
 
@@ -104,6 +104,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
                         dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
+                        Log.i("HeaderBg", "ChannelVideoFragment: Channel Icon Bitmap loaded")
                         bottomSheetHeaderBg(bitmap)
                         return false
                     }
@@ -176,7 +177,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             channelsVideosViewModel2.channelVideoData.collectLatest { pagedData ->
-                Log.i("AshwaniXYZ", "Received")
+                Log.i("AshwaniXYZ", "channelVideoData Received")
                 binding.channelImageRecyclerview.visibility = View.VISIBLE
                 channelVideoAdapter.submitData(pagedData)
             }
