@@ -169,12 +169,12 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                     }
                     binding.viewPager.isUserInputEnabled = true
 
-                    /*if (!isFirstVideoInfoLoaded) {
-                        binding.viewPager.setCurrentItem(selectedPlay, true)
-                        val data = pagerAdapter.getVideoData(selectedPlay)
-                        viewModel.processEvent(VideoInfoEvent(data.id, selectedPlay))
+                    if (!isFirstVideoInfoLoaded) {
+                        binding.viewPager.setCurrentItem(videoItems.selectedPosition, true)
+                        val data = pagerAdapter.getVideoData(videoItems.selectedPosition)
+                        viewModel.processEvent(VideoInfoEvent(data.id, videoItems.selectedPosition))
                         isFirstVideoInfoLoaded = true
-                    }*/
+                    }
                 }
             }
 

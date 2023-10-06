@@ -33,6 +33,7 @@ import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.adapters.GridAdapter
 import com.ns.shortsnews.cache.HlsOneByOnePreloadCoroutine
 import com.ns.shortsnews.cache.VideoPreloadCoroutine
+import com.ns.shortsnews.data.model.VideoClikedItem
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.databinding.ActivityMainBinding
@@ -48,6 +49,7 @@ import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.ui.VideoPagerFragment
+import com.videopager.ui.VideoPagerFragment_2
 import com.videopager.utils.CategoryConstants
 import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
@@ -65,7 +67,8 @@ import org.koin.android.ext.android.get
 class MainActivity : AppCompatActivity(), onProfileItemClick {
     private lateinit var binding: ActivityMainBinding
     private lateinit var categoryAdapter: CategoryAdapter
-    private var videoPagerFragment: VideoPagerFragment? = null
+//    private var videoPagerFragment: VideoPagerFragment? = null
+    private var videoPagerFragment: VideoPagerFragment_2? = null
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
     private var videoCategoryViewModel: VideoCategoryViewModel? = null
 
@@ -303,7 +306,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
      */
     private fun loadHomeFragment(categoryType: String) {
         if (NetworkXProvider.isInternetConnected) {
-            if (!supportFragmentManager.isStateSaved) {
+            /*if (!supportFragmentManager.isStateSaved) {
                 val ft = supportFragmentManager.beginTransaction()
                 videoPagerFragment = AppConstants.makeVideoPagerInstance(
                     categoryType,
@@ -316,7 +319,20 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     videoPagerFragment!!
                 )
                 ft.commitAllowingStateLoss()
-            }
+            }*/
+
+
+            val videoItems = VideoClikedItem(requiredId = categoryType, videoFrom = CategoryConstants.DEFAULT_VIDEO_DATA, selectedPosition = 0, loadedVideoData = emptyList())
+            videoPagerFragment = VideoPagerFragment_2()
+            val bundle = Bundle()
+            bundle.putBoolean("logged_in", AppPreference.isUserLoggedIn)
+//            bundle.putString("directFrom", "PlainActivity")
+            bundle.putParcelable("videoItems", videoItems)
+            videoPagerFragment!!.arguments = bundle
+            val ft = supportFragmentManager.beginTransaction()
+            ft.replace(R.id.fragment_container, videoPagerFragment!!)
+            ft.commitAllowingStateLoss()
+
         } else {
             // No Internet Snackbar: Fire
             NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)

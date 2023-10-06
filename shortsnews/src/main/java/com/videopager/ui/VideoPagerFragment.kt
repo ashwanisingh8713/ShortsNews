@@ -45,18 +45,16 @@ class VideoPagerFragment(
     private val appPlayerView: AppPlayerView,
     private val imageLoader: ImageLoader,
 ) : Fragment(R.layout.video_pager_fragment) {
-
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
-
     private val sharedEventViewModel: VideoSharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
     lateinit var binding: VideoPagerFragmentBinding
     private lateinit var pagerAdapter: PagerAdapter
     private lateinit var commentFragment: CommentsFragment
     private var isUserLoggedIn = false
-    private var isFirstVideoInfoLoaded = false
     private var selectedPlay = 0
     private var isNotificationVideoCame: Boolean = false
     private var redirectFrom: String? = null
+    private var isFirstVideoInfoLoaded = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,12 +136,12 @@ class VideoPagerFragment(
                     }
                     binding.viewPager.isUserInputEnabled = true
 
-                    /*if (!isFirstVideoInfoLoaded) {
+                    if (!isFirstVideoInfoLoaded) {
                         binding.viewPager.setCurrentItem(selectedPlay, true)
                         val data = pagerAdapter.getVideoData(selectedPlay)
                         viewModel.processEvent(VideoInfoEvent(data.id, selectedPlay))
                         isFirstVideoInfoLoaded = true
-                    }*/
+                    }
                 }
             }
 
