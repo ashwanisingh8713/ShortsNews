@@ -25,7 +25,8 @@ internal class ExoAppPlayer(
         // Player should only have saved state restored to it one time per instance of this class.
         if (!isPlayerSetUp) {
             player.seekTo(selectedVideoPlayIndex, 0)
-            player.playWhenReady = true
+//            player.playWhenReady = true
+            player.playWhenReady = false
             Log.i("AshwaniXYZ", "setUpWith() seekToIndex :: $selectedVideoPlayIndex")
             isPlayerSetUp = true
         }

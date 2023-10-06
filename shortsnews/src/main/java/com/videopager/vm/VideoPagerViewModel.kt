@@ -64,7 +64,7 @@ internal class VideoPagerViewModel(
 
     fun videoProgressBarEvent(playBackState: Int) {
         viewModelScope.launch {
-            delay(1000)
+            Log.d("AshwaniPerformance", "VideoPagerViewModel playBackState :: $playBackState")
             _videoProgressBarEvent.emit(playBackState)
         }
     }
@@ -249,29 +249,22 @@ internal class VideoPagerViewModel(
         return merge(
             flowOf(CreatePlayerResult(appPlayer)),
             appPlayer.onPlayerRendering().map { OnPlayerRenderingResult },
-            appPlayer.errors().mapLatest {
-                if (it.message == "Source error") {
-                    OnYoutubeUriErrorResult
-                } else {
-                    PlayerErrorResult(it)
-                }
-            },
-//            appPlayer.onTracksChanged().mapLatest {
-////                Toast.makeText(context, "Track is changed", Toast.LENGTH_SHORT).show()
-//                NoOpResult
-//            },
-//            appPlayer.onTimelineChanged().mapLatest {
-////                Toast.makeText(context, "Track is changed", Toast.LENGTH_SHORT).show()
-//                NoOpResult
-//            },
+            appPlayer.errors().map(::PlayerErrorResult),
+
             appPlayer.onMediaItemTransition().mapLatest {
                 Log.i("videoProgress", "createPlayer() onMediaItemTransition :: $it")
                 MediaItemTransitionResult(it)
             },
             appPlayer.onPlaybackStateChanged().mapLatest {
                 Log.i("videoProgress", "createPlayer() onPlaybackStateChanged :: $it")
-                videoProgressBarEvent(it)
-                NoOpResult
+                if(it==3) { // Stat is Playing
+                    appPlayer.play()
+                    NoOpResult
+                } else {
+                    NoOpResult
+                }
+//                videoProgressBarEvent(it)
+
             }
         )
     }
@@ -290,13 +283,7 @@ internal class VideoPagerViewModel(
         return merge(
             flowOf(CreatePlayerResult(appPlayer)),
             appPlayer.onPlayerRendering().map { OnPlayerRenderingResult },
-            appPlayer.errors().mapLatest {
-                if (it.message == "Source error") {
-                    OnYoutubeUriErrorResult
-                } else {
-                    PlayerErrorResult(it)
-                }
-            },
+            appPlayer.errors().map(::PlayerErrorResult),
 //            appPlayer.onTracksChanged().mapLatest {
 ////                Toast.makeText(context, "Track is changed", Toast.LENGTH_SHORT).show()
 //                NoOpResult
@@ -479,7 +466,6 @@ internal class VideoPagerViewModel(
             is TearDownPlayerResult -> state.copy(appPlayer = null)
             is OnNewPageSettledResult -> state.copy(page = page, showPlayer = false)
             is OnPlayerRenderingResult -> state.copy(showPlayer = true, youtubeUriError = false)
-            is OnYoutubeUriErrorResult -> state.copy(showPlayer = true, youtubeUriError = true)
             is AttachPlayerToViewResult -> state.copy(attachPlayer = doAttach)
             else -> state
         }

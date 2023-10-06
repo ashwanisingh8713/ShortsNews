@@ -258,6 +258,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        // Update Progress in Bottom
         updateProgress()
     }
 
@@ -269,6 +270,8 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
             val data = pagerAdapter.getVideoData(binding.viewPager.currentItem)
             viewModel.processEvent(VideoInfoEvent(data.id, binding.viewPager.currentItem))
         }
+
+        Log.d("AshwaniPerformance", "VideoPagerFragment onResume()")
     }
 
     private fun Lifecycle.viewEvents(): Flow<ViewEvent> {

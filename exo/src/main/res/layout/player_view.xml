@@ -21,6 +21,6 @@
     app:show_vr_button="false"
     app:played_color="@android:color/holo_red_dark"
     app:scrubber_drawable="@drawable/bg_progressbar_play_video"
-    
+    app:surface_type="surface_view"
     />
     </FrameLayout>
