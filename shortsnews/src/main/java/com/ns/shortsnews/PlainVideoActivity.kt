@@ -91,7 +91,6 @@ class PlainVideoActivity : AppCompatActivity() {
         )*/
         videoPagerFragment = VideoPagerFragment_2()
         val bundle = Bundle()
-        bundle.putInt(CategoryConstants.KEY_SelectedPlay, videoItems.selectedPosition)
         bundle.putBoolean("logged_in", AppPreference.isUserLoggedIn)
         bundle.putString("directFrom", "PlainActivity")
         bundle.putParcelable("videoItems", videoItems)

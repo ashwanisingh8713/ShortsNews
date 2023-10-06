@@ -117,7 +117,7 @@ class VideoPagerFragment(
 
                     // To directly jump on selected video
                     if (isNotificationVideoCame || viewModel.videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || viewModel.videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA) {
-                        viewModel.processEvent(OnPageSettledEvent(state.page))
+//                        viewModel.processEvent(OnPageSettledEvent(state.page))
                         isNotificationVideoCame = false
                     }
 
@@ -138,12 +138,12 @@ class VideoPagerFragment(
                     }
                     binding.viewPager.isUserInputEnabled = true
 
-                    if (!isFirstVideoInfoLoaded) {
+                    /*if (!isFirstVideoInfoLoaded) {
                         binding.viewPager.setCurrentItem(selectedPlay, true)
                         val data = pagerAdapter.getVideoData(selectedPlay)
                         viewModel.processEvent(VideoInfoEvent(data.id, selectedPlay))
                         isFirstVideoInfoLoaded = true
-                    }
+                    }*/
                 }
             }
 

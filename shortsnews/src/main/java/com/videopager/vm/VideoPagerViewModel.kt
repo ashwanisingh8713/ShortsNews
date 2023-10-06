@@ -30,7 +30,6 @@ import com.videopager.models.ViewEffect
 import com.videopager.models.ViewEvent
 import com.videopager.models.ViewResult
 import com.videopager.ui.extensions.ViewState
-import com.videopager.utils.CategoryConstants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.*
@@ -105,14 +104,11 @@ internal class VideoPagerViewModel(
             filterIsInstance<TappedPlayerEvent>().toTappedPlayerResults(),
             filterIsInstance<OnPageSettledEvent>().toPageSettledResults(),
             filterIsInstance<PauseVideoEvent>().toPauseVideoResults(),
-            filterIsInstance<FromNotificationInsertVideoEvent>().toFromNotificationVideoResults(),
             filterIsInstance<FollowClickEvent>().toFollowClickResults(),
             filterIsInstance<CommentClickEvent>().toCommentClickResults(),
             filterIsInstance<LikeClickEvent>().toLikeClickResults(),
             filterIsInstance<PostClickCommentEvent>().toPostCommentResults(),
             filterIsInstance<VideoInfoEvent>().toVideoInfoResults(),
-            filterIsInstance<GetYoutubeUriEvent>().toYoutubeUriResults(),
-            filterIsInstance<GetYoutubeUriEvent_2>().toYoutubeUriResults_2(),
             filterIsInstance<BookmarkClickEvent>().toSaveClickResult(),
 //            filterIsInstance<NotificationVideoPlayerSettleEvent>().toNotificationClickResult(),
         )
@@ -150,12 +146,17 @@ internal class VideoPagerViewModel(
 
             page++
 
-            appPlayer?.setUpWith(pageVideoData, handle.get())
+            val playerState = appPlayer?.currentPlayerState ?:handle.get()
+
+            appPlayer?.setUpWith(pageVideoData, playerState)
+
             // Capture any updated index so UI page state can stay in sync. For example, a video
             // may have been added to the page before the currently active one. That means the
             // the current video/page index will have changed
-            val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
-            LoadVideoDataResult(pageVideoData, index)
+            val index = handle.get()?.currentMediaItemIndex ?: appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
+//            val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
+            Log.i("AshwaniXYZ", "LoadVideoDataEvent :: ${index}")
+            LoadVideoDataResult(pageVideoData, index+1)
         }
     }
 
@@ -164,6 +165,7 @@ internal class VideoPagerViewModel(
         return map {
             loadedVideoData
         }.map { videoData ->
+//            delay(1000)
 //            states.value.page = selectedPlay
             val appPlayer = states.value.appPlayer
             // If the player exists, it should be updated with the latest video data that came in
@@ -253,6 +255,7 @@ internal class VideoPagerViewModel(
         val appPlayer = requireNotNull(states.value.appPlayer)
         // Keep track of player state so that it can be restored across player recreations.
         handle.set(appPlayer.currentPlayerState)
+        Log.i("selectedPlay", "tearDownPlayer appPlayer.currentPlayerState :: $appPlayer.currentPlayerState")
         // Videos are a heavy resource, so tear player down when the app is not in the foreground.
         appPlayer.release()
         return flowOf(TearDownPlayerResult)
@@ -348,11 +351,15 @@ internal class VideoPagerViewModel(
     private fun Flow<OnPageSettledEvent>.toPageSettledResults(): Flow<ViewResult> {
         return mapLatest { event ->
             if(states.value.appPlayer == null) {
+                Log.i("AshwaniXYZ", "OnPageSettledEvent :: IF")
                 NoOpResult
             } else {
                 val appPlayer = requireNotNull(states.value.appPlayer)
+                handle.set(appPlayer.currentPlayerState)
                 // To Play directly at specific index
                 appPlayer.playMediaAt(event.page)
+                Log.i("AshwaniXYZ", "OnPageSettledEvent :: ELSE :: ${event.page}")
+                Log.i("AshwaniXYZ", "OnPageSettledEvent :: ELSE :: ${appPlayer.currentPlayerState.currentMediaItemIndex}")
                 OnNewPageSettledResult(page = event.page)
             }
         }
@@ -370,40 +377,6 @@ internal class VideoPagerViewModel(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<FromNotificationInsertVideoEvent>.toFromNotificationVideoResults(): Flow<ViewResult> {
-        return map {event->
-            if(states.value.appPlayer != null) {
-                val appPlayer = requireNotNull(states.value.appPlayer)
-                appPlayer.pause()
-            }
-
-            val videoData = VideoData(
-                id = event.videoId, mediaUri = event.videoUrl, previewImageUri = event.previewUrl
-            )
-            var pageVideoData: MutableList<VideoData> = mutableListOf()
-            // It should add all existing videos in newly created collection
-            if (states.value.videoData != null) {
-                // It should add all existing videos in newly created collection
-                pageVideoData.addAll(states.value.videoData!!)
-            }
-
-            val appPlayer = states.value.appPlayer
-            val index = appPlayer?.currentPlayerState?.currentMediaItemIndex ?: 0
-            var upComingIndex = index
-            if (upComingIndex !=0) {
-                upComingIndex++
-            }
-
-            states.value.page = upComingIndex
-
-            // Here, We are inserting new video data
-            pageVideoData.add(upComingIndex, videoData)
-            appPlayer?.setUpWith(pageVideoData, handle.get())
-            FromNotificationInsertVideoDataResult(pageVideoData, upComingIndex )
-        }
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<VideoInfoEvent>.toVideoInfoResults(): Flow<GetVideoInfoResult> {
         return flatMapLatest { event ->
             Log.i("kamlesh","VideoInfo event :: " + event.videoId)
@@ -417,46 +390,6 @@ internal class VideoPagerViewModel(
         }
     }
 
-    private fun Flow<GetYoutubeUriEvent>.toYoutubeUriResults(): Flow<GetYoutubeUriResult> {
-        return mapLatest { event ->
-            getYoutubeUri(event.position)
-        }.map {
-            GetYoutubeUriResult(it.first, it.second)
-        }
-    }
-
-    private fun Flow<GetYoutubeUriEvent_2>.toYoutubeUriResults_2(): Flow<GetYoutubeUriResult_2> {
-        return mapLatest { event ->
-            getYoutubeUri(event.position)
-        }.map {
-            GetYoutubeUriResult_2(it.first, it.second)
-        }
-    }
-
-
-    private suspend fun getYoutubeUri(index: Int): Pair<String, String> =
-        withContext(Dispatchers.IO) {
-            var uri = ""
-            var videoId = ""
-            var requestedIndex = index
-            var videoData = states.value.videoData?.get(requestedIndex)!!
-            videoId = videoData.id
-            uri = videoData.mediaUri
-            if (videoData.type == "yt") {
-                val youTubeUri = YouTubeUri(context)
-                var ytFiles = youTubeUri.getStreamUrls(videoData.mediaUri)
-
-                if (ytFiles != null && ytFiles.indexOfKey(YouTubeUri.iTag) >= 0) {
-                    uri = ytFiles[YouTubeUri.iTag].url
-                    videoData.mediaUri = uri
-                    videoData.type = "converted"
-                    setUpWithPlayer()
-                }
-            }
-            return@withContext Pair(uri, videoId)
-
-
-        }
 
     @OptIn(DelicateCoroutinesApi::class)
     fun setUpWithPlayer() {

@@ -15,7 +15,7 @@ internal class ExoAppPlayer(
     private val updater: VideoDataUpdater,
     private val selectedVideoPlayIndex: Int
 ) : AppPlayer {
-    override val currentPlayerState: PlayerState get() = player.toPlayerState()
+    override val currentPlayerState: PlayerState get() = player.toPlayerState(selectedVideoPlayIndex)
     private var isPlayerSetUp = false
 
     override suspend fun setUpWith(videoData: List<VideoData>, playerState: PlayerState?) {
@@ -23,11 +23,10 @@ internal class ExoAppPlayer(
         updater.update(player = player, incoming = videoData)
 
         // Player should only have saved state restored to it one time per instance of this class.
-        if (!isPlayerSetUp) {
+//        if (!isPlayerSetUp) {
             setUpPlayerState(playerState)
             isPlayerSetUp = true
-            Log.i("Ashwani", "setUpWith() :: true")
-        }
+//        }
 
         player.prepare()
     }
@@ -35,23 +34,34 @@ internal class ExoAppPlayer(
     private fun setUpPlayerState(playerState: PlayerState?) {
         val currentMediaItems = player.currentMediaItems
 
+//        Log.i("selectedPlay", "$currentMediaItems")
+        Log.i("AshwaniXYZ", "playerState :: $playerState")
+
          // When restoring saved state, the saved media item might be not be in the player's current
          // collection of media items. In that case, the saved media item cannot be restored.
         val canRestoreSavedPlayerState = playerState != null
-            && currentMediaItems.any { mediaItem -> mediaItem.mediaId == playerState.currentMediaItemId }
+            && currentMediaItems.any {
+                mediaItem -> mediaItem.mediaId == playerState.currentMediaItemId
+            }
+        Log.i("AshwaniXYZ", "canRestoreSavedPlayerState :: $canRestoreSavedPlayerState")
 
         val reconciledPlayerState = if (canRestoreSavedPlayerState) {
             requireNotNull(playerState)
         } else {
-            PlayerState.INITIAL.apply { currentMediaItemIndex = selectedVideoPlayIndex }
+            PlayerState.INITIAL
         }
+
+        Log.i("AshwaniXYZ", "reconciledPlayerState :: ${reconciledPlayerState.currentMediaItemIndex}")
 
         val windowIndex = currentMediaItems.indexOfFirst { mediaItem ->
             mediaItem.mediaId == reconciledPlayerState.currentMediaItemId
         }
-        if (windowIndex != -1) {
+
+        Log.i("AshwaniXYZ", "windowIndex :: $windowIndex")
+        /*if (windowIndex != -1) {
             player.seekTo(windowIndex, reconciledPlayerState.seekPositionMillis)
-        }
+        }*/
+        player.seekTo(playerState?.currentMediaItemIndex!!, 0)
         player.playWhenReady = reconciledPlayerState.isPlaying
     }
 
@@ -147,7 +157,27 @@ internal class ExoAppPlayer(
     }
 
 
-    private fun Player.toPlayerState(): PlayerState {
+    private fun Player.toPlayerState(selectedVideoPlayIndex: Int): PlayerState {
+        // This should be fixed
+        // If we give "selectedVideoPlayIndex" then it plays selected video
+        // But with pagination it is shuffling towards zero index
+        // To fix it we must read "currentMediaItemIndex" which belongs to ExoPlayer Media Index
+        /*return if(selectedVideoPlayIndex != 0) {
+            PlayerState(
+                currentMediaItemId = currentMediaItem?.mediaId,
+                currentMediaItemIndex = selectedVideoPlayIndex,
+                seekPositionMillis = currentPosition,
+                isPlaying = playWhenReady
+            )
+        } else {
+            PlayerState(
+                currentMediaItemId = currentMediaItem?.mediaId,
+                currentMediaItemIndex = currentMediaItemIndex,
+                seekPositionMillis = currentPosition,
+                isPlaying = playWhenReady
+            )
+        }*/
+
         return PlayerState(
             currentMediaItemId = currentMediaItem?.mediaId,
             currentMediaItemIndex = currentMediaItemIndex,

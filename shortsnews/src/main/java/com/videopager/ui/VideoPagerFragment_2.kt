@@ -58,7 +58,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
     private lateinit var commentFragment: CommentsFragment
     private var isUserLoggedIn = false
     private var isFirstVideoInfoLoaded = false
-    private var selectedPlay = 0
     private var isNotificationVideoCame: Boolean = false
     private var redirectFrom: String? = null
 
@@ -71,7 +70,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             isUserLoggedIn = arguments?.getBoolean("logged_in")!!
-            selectedPlay = arguments?.getInt(CategoryConstants.KEY_SelectedPlay)!!
             redirectFrom = arguments?.getString("directFrom")
             videoItems = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 arguments?.getParcelable("videoItems", VideoClikedItem::class.java)!!
@@ -80,17 +78,20 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
             }
         }
 
+
+
         // Initialising ViewModel Factory
         val viewModelfactory = VideoPagerViewModelFactory_2(
             repository = VideoDataRepositoryImpl(),
             appPlayerFactory = ExoAppPlayerFactory(
-                context = requireContext(), cache = MainApplication.cache, currentMediaItemIndex = selectedPlay
+                context = requireContext(), cache = MainApplication.cache, currentMediaItemIndex = videoItems.selectedPosition
             ),
             requiredId = videoItems.requiredId,
             videoFrom = videoItems.videoFrom,
             languages = AppPreference.getSelectedLanguagesAsString(),
-            selectedPlay = selectedPlay,
-            loadedVideoData = videoItems.loadedVideoData
+            selectedPlay = videoItems.selectedPosition,
+//            loadedVideoData = videoItems.loadedVideoData
+            loadedVideoData = emptyList()
         ).create(this)
 
         //  Initialising ViewModel
@@ -147,7 +148,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
 
                     // To directly jump on selected video
                     if (isNotificationVideoCame || viewModel.videoFrom == CategoryConstants.CHANNEL_VIDEO_DATA || viewModel.videoFrom == CategoryConstants.BOOKMARK_VIDEO_DATA) {
-                        viewModel.processEvent(OnPageSettledEvent(state.page))
+//                        viewModel.processEvent(OnPageSettledEvent(state.page))
                         isNotificationVideoCame = false
                     }
 
@@ -168,12 +169,12 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                     }
                     binding.viewPager.isUserInputEnabled = true
 
-                    if (!isFirstVideoInfoLoaded) {
+                    /*if (!isFirstVideoInfoLoaded) {
                         binding.viewPager.setCurrentItem(selectedPlay, true)
                         val data = pagerAdapter.getVideoData(selectedPlay)
                         viewModel.processEvent(VideoInfoEvent(data.id, selectedPlay))
                         isFirstVideoInfoLoaded = true
-                    }
+                    }*/
                 }
             }
 
