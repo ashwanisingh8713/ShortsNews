@@ -1,13 +1,11 @@
 package com.videopager.ui
 
-import android.util.Log
-import android.view.View
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import coil.ImageLoader
-import coil.load
+import com.bumptech.glide.Glide
+import com.ns.shortsnews.MainApplication
 import com.player.ui.AppPlayerView
 
 import com.videopager.models.AnimationEffect
@@ -20,7 +18,6 @@ import com.videopager.ui.extensions.*
 
 internal class PageViewHolder(
     val binding: PageItemBinding,
-    private val imageLoader: ImageLoader,
     private val click: (pair: Pair<String, ClickEvent>) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     private val animationEffect = FadeInThenOutAnimationEffect(binding.playPause)
@@ -32,12 +29,7 @@ internal class PageViewHolder(
     }
 
     fun bind(videoData: VideoData) {
-        Log.i("ImageTa", "${videoData.id} :: ${videoData.previewImageUri}")
-        binding.previewImage.load(videoData.previewImageUri,imageLoader) {
-//            scale(Scale.FILL)
-        }
-
-
+        Glide.with(MainApplication.instance!!).load(videoData.previewImageUri).into(binding.previewImage)
         binding.share.setOnClickListener{
             click(Pair(videoData.id, ShareClick))
         }

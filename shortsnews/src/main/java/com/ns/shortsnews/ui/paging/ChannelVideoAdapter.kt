@@ -6,7 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
+import com.bumptech.glide.Glide
 import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.data.model.VideoClikedItem
 import com.ns.shortsnews.databinding.ItemGridViewBinding
@@ -41,9 +41,7 @@ class ChannelVideoAdapter(private var videoFrom: String, private var channelId: 
 
     inner class ChannelItemViewHolder(val binding:ItemGridViewBinding):RecyclerView.ViewHolder(binding.root) {
         fun bindPassenger(item: VideoData) = with(binding) {
-            binding.imagePreview.load(item.previewImageUri, MainApplication.instance!!.newImageLoader()) {
-//            scale(Scale.FILL)
-            }
+            Glide.with(MainApplication.instance!!).load(item.previewImageUri).into(binding.imagePreview)
             binding.likeCount.text = item.like_count
             if (item.liking) {
                 binding.likeIcon.setColorFilter(ContextCompat.getColor(binding.likeIcon.context, R.color.red))

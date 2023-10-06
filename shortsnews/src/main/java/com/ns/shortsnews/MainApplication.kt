@@ -4,9 +4,6 @@ import android.app.Application
 import android.content.Context
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.request.CachePolicy
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -27,7 +24,7 @@ import org.koin.core.logger.Level
 import java.util.concurrent.Executors
 
 
-class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider {
+class MainApplication:Application(), Configuration.Provider {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val cacheSize: Long = 1*1024 * 1024 * 1024 //1 Gb for cache
 
@@ -67,7 +64,7 @@ class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider 
 
     }
 
-    override fun newImageLoader(): ImageLoader {
+    /*override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this)
             .crossfade(true)
             .memoryCachePolicy(CachePolicy.ENABLED)
@@ -76,7 +73,7 @@ class MainApplication:Application(), ImageLoaderFactory, Configuration.Provider 
 //                add(VideoFrameDecoder.Factory())
             }
             .build()
-    }
+    }*/
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()

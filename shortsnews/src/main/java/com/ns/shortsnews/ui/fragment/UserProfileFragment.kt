@@ -4,12 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import coil.load
+import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.R
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.databinding.FragmentUserBinding
@@ -50,7 +50,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user) {
                 it.let {
                     binding.progressBarProfile.visibility = View.GONE
                     binding.nestedParentView.visibility = View.VISIBLE
-                    binding.profileImageView.load(it.data.image)
+                    Glide.with(MainApplication.instance!!).load(it.data.image).into(binding.profileImageView)
                     binding.userNameTxt.text = it.data.name
                     AppPreference.userProfilePic = it.data.image
                 }

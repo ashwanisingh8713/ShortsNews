@@ -4,11 +4,10 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
+import com.bumptech.glide.Glide
+import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.databinding.ItemFollowingBinding
 import com.ns.shortsnews.domain.models.ChannelListData
-import com.ns.shortsnews.utils.Alert
-import com.ns.shortsnews.utils.AppConstants
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -31,16 +30,15 @@ class ChannelsAdapter(private var itemList: List<ChannelListData> = emptyList())
 
     @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: MyViewHolder, @SuppressLint("RecyclerView") position: Int) {
-        with(holder){
+       with(holder){
             with(itemList[position]){
-               binding.clientIcon.load(this.channel_image)
+                Glide.with(MainApplication.instance!!).load(this.channel_image).into(binding.clientIcon)
                 binding.channelName.text = this.channelTitle
                 binding.root.setOnClickListener{
                     clicks.tryEmit(this)
                 }
             }
         }
-
     }
 
 

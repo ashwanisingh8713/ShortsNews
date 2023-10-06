@@ -26,8 +26,10 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
-import coil.load
-import coil.request.ImageRequest
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.adapters.GridAdapter
@@ -44,11 +46,9 @@ import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseC
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.viewmodel.*
-import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
 import com.rommansabbir.networkx.NetworkXProvider
-import com.videopager.ui.VideoPagerFragment
 import com.videopager.ui.VideoPagerFragment_2
 import com.videopager.utils.CategoryConstants
 import com.videopager.utils.NoConnection
@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             if (AppPreference.userProfilePic == "") {
                 binding.profileIcon.setImageResource(R.drawable.profile_avatar)
             } else {
-                binding.profileIcon.load(AppPreference.userProfilePic)
+                Glide.with(MainApplication.instance!!).load(AppPreference.userProfilePic).into(binding.profileIcon)
             }
         }
     }
@@ -244,7 +244,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         )
 
         if (AppPreference.isProfileUpdated) {
-            binding.profileIcon.load(AppPreference.userProfilePic)
+            Glide.with(MainApplication.instance!!).load(AppPreference.userProfilePic).into(binding.profileIcon)
             AppPreference.isProfileUpdated = false
         }
         if (AppPreference.isRefreshRequired) {
@@ -398,10 +398,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     if (AppPreference.userProfilePic == "") {
                         binding.profileIcon.setImageResource(R.drawable.profile_avatar)
                     } else {
-                        binding.profileIcon.load(AppPreference.userProfilePic)
+                        Glide.with(MainApplication.instance!!).load(AppPreference.userProfilePic).into(binding.profileIcon)
                     }
                 } else {
-                    binding.profileIcon.load(AppPreference.userProfilePic)
+                    Glide.with(MainApplication.instance!!).load(AppPreference.userProfilePic).into(binding.profileIcon)
                     AppPreference.init(this@MainActivity)
                     val videoCategories = AppPreference.categoryList
                     categoryAdapter = CategoryAdapter(
@@ -573,27 +573,39 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 }
 
                 val channelId = binding.persistentBottomsheet.following.tag
-
 //                if(channelId != it.channel_id) {
                 binding.persistentBottomsheet.following.tag = it.channel_id
                 binding.persistentBottomsheet.imgDownArrow.tag = it.channel_id
 
                 if (it.channel_image.isNotEmpty()) {
-                    val loader = MainApplication.instance!!.newImageLoader()
-                    val req = ImageRequest.Builder(MainApplication.applicationContext())
-                        .data(it.channel_image) // demo link
-                        .target { result ->
-                            val bitmap = (result as BitmapDrawable).bitmap
-                            binding.persistentBottomsheet.clientImage.setImageBitmap(bitmap)
-                            bottomSheetHeaderBg(bitmap, it.channel_id)
-                            binding.persistentBottomsheet.channelLogo.setImageBitmap(bitmap)
-                        }
-                        .build()
+                    // Loading Channel Icon and Background Color from bitmap
+                    Glide.with(MainApplication.instance!!)
+                        .asBitmap()
+                        .load(it.channel_image)
+                        .listener(object : RequestListener<Bitmap> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: com.bumptech.glide.request.target.Target<Bitmap>,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                return false
+                            }
 
-                    loader.enqueue(req)
-                    /* binding.persistentBottomsheet.clientImage.load(
-                         it.channel_image
-                     )*/
+                            override fun onResourceReady(
+                                bitmap: Bitmap,
+                                model: Any,
+                                target: com.bumptech.glide.request.target.Target<Bitmap>?,
+                                dataSource: DataSource,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                binding.persistentBottomsheet.clientImage.setImageBitmap(bitmap)
+                                bottomSheetHeaderBg(bitmap, it.channel_id)
+                                binding.persistentBottomsheet.channelLogo.setImageBitmap(bitmap)
+                                return false
+                            }
+                        }).submit()
+
                     binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
                 } else {
                     binding.persistentBottomsheet.cardViewClientImage.visibility =
@@ -735,13 +747,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     /*Bottom sheet pallet color using bitmap icon from response URL*/
     private fun bottomSheetHeaderBg(bitmap: Bitmap, channelId: String) {
+        val headerTag = "HeaderBg"
+        Log.i(headerTag, "============= OUT :: $channelId")
         binding.persistentBottomsheet.bottomSheetHeader.alpha = 1.0f
 
-        val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
+        val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
         Palette.from(mutableBitmap).generate { palette ->
-            val headerTag = "HeaderBg"
-            Log.i(headerTag, "============================== :: $channelId")
+
+            Log.i(headerTag, "================= IN :: $channelId")
             val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
             lightVibrantSwatch?.let {
                 Log.i(headerTag, "lightVibrantSwatch :: $channelId")

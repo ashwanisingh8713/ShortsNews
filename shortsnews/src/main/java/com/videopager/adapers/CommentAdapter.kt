@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
+import com.bumptech.glide.Glide
+import com.ns.shortsnews.MainApplication
 import com.videopager.data.CommentData
 import com.ns.shortsnews.databinding.ItemCommentBinding
 
@@ -26,7 +27,7 @@ class CommentAdapter (private var commentsList: MutableList<CommentData>): Recyc
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         with(holder){
             with(commentsList[position]){
-                binding.profileIcon.load(this.user_image)
+                Glide.with(MainApplication.instance!!).load(this.user_image).into(binding.profileIcon)
                 binding.profileName.text = this.user_name
                 binding.postTime.text = this.created_at
                 binding.commentText.text = this.comment

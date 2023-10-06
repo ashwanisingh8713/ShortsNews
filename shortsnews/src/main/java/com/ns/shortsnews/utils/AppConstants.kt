@@ -1,13 +1,5 @@
 package com.ns.shortsnews.utils
 
-import android.content.Context
-import coil.imageLoader
-import com.exo.players.ExoAppPlayerFactory
-import com.exo.ui.ExoAppPlayerViewFactory
-import com.ns.shortsnews.MainApplication
-import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
-import com.videopager.ui.VideoPagerFragment
-import com.videopager.vm.VideoPagerViewModelFactory
 
 class AppConstants {
 

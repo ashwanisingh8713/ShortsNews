@@ -10,8 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
-import coil.load
+import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
+import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.R
 import com.ns.shortsnews.adapters.NewProfilePagerAdapter
 import com.ns.shortsnews.databinding.FragmentNewProfileBinding
@@ -112,7 +113,7 @@ class NewProfileFragment : Fragment(R.layout.fragment_new_profile) {
                 Log.i("kamlesh", "ProfileFragment onSuccess ::: $it")
                 it.let {
                     binding.progressBarProfile.visibility = View.GONE
-                    binding.profileImageView.load(it.data.image)
+                    Glide.with(MainApplication.instance!!).load(it.data.image).into(binding.profileImageView)
                     binding.userNameTxt.text = it.data.name
                     profileData = it.data
                     saveUserInformation(it.data)

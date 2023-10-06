@@ -23,8 +23,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.paging.LoadState
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import coil.request.ImageRequest
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.FragmentChannelVideosBinding
@@ -78,18 +80,35 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentChannelVideosBinding.bind(view)
         listenChannelInfo()
-        if (channelUrl.isNotEmpty()){
-            val loader = MainApplication.instance!!.newImageLoader()
-            val req = ImageRequest.Builder(MainApplication.applicationContext()).data(channelUrl)
-                .target { result ->
-                    val bitmap = (result as BitmapDrawable).bitmap
-                    bottomSheetHeaderBg(bitmap)
-                }
-                .build()
 
-            loader.enqueue(req)
+        // Loading Channel Icon and Background Color from bitmap
+        if (channelUrl.isNotEmpty()) {
+            Glide.with(MainApplication.instance!!)
+                .asBitmap()
+                .load(channelUrl)
+                .listener(object : RequestListener<Bitmap> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Bitmap>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        bitmap: Bitmap,
+                        model: Any,
+                        target: com.bumptech.glide.request.target.Target<Bitmap>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        bottomSheetHeaderBg(bitmap)
+                        return false
+                    }
+                }).submit()
         }
-        binding.channelLogo.load(channelUrl)
 
         channelVideoAdapter = ChannelVideoAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
         channelVideoAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.ALLOW
@@ -211,9 +230,12 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
 
     private fun bottomSheetHeaderBg(bitmap: Bitmap) {
-        val mutableBitmap = bitmap.copy(Bitmap.Config.RGBA_F16, true)
+        val headerTag = "HeaderBg"
+        Log.i(headerTag, "============= OUT :: $channelId")
+        val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
         Palette.from(mutableBitmap).generate { palette ->
+            Log.i(headerTag, "============= IN :: $channelId")
             val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
             lightVibrantSwatch?.let {
                binding.channelTopView.setBackgroundColor(lightVibrantSwatch)

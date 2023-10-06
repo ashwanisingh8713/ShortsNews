@@ -5,20 +5,16 @@ import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.os.*
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.widget.ViewPager2
-import coil.imageLoader
 import com.exo.manager.DemoUtil
 import com.exo.manager.DownloadTracker
 import com.exo.players.ExoAppPlayerFactory
@@ -116,7 +112,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         binding = VideoPagerFragmentBinding.bind(view)
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
 //        val appPlayerView = appPlayerViewFactory.create(view.context)
-        pagerAdapter = PagerAdapter(MainApplication.instance!!.newImageLoader())
+        pagerAdapter = PagerAdapter()
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.isUserInputEnabled = false
         binding.viewPager.offscreenPageLimit = 5 // Preload neighbouring page image previews

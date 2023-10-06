@@ -26,9 +26,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import coil.load
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.databinding.FragmentEditProfileBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.database.ShortsDatabase
@@ -107,7 +108,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             arguments?.getParcelable("profile")
         }
         if (userData != null){
-            binding.profileImageView.load(userData.image)
+            Glide.with(MainApplication.instance!!).load(userData.image).into(binding.profileImageView)
             binding.nameEditText.setText(userData.name)
             binding.ageEditText.setText(userData.age)
             binding.locationEditText.setText(userData.location)

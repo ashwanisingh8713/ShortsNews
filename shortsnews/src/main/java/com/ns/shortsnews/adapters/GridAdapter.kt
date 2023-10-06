@@ -4,7 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
+import com.bumptech.glide.Glide
+import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.ItemGridViewBinding
 import com.ns.shortsnews.data.model.VideoClikedItem
@@ -30,7 +31,7 @@ class GridAdapter(private var itemList: MutableList<Data> = mutableListOf(),
     override fun onBindViewHolder(holder: GridViewHolder, position: Int) {
         with(holder){
             with(itemList){
-                binding.imagePreview.load(this[position].preview)
+                Glide.with(MainApplication.instance!!).load(this[position].preview).into(binding.imagePreview)
                 binding.likeCount.text = this[position].like_count
                 if (this[position].liked){
                     holder.binding.likeIcon.setColorFilter(ContextCompat.getColor(holder.binding.likeIcon.context, R.color.red))

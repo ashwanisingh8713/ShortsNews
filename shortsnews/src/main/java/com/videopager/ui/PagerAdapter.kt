@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.ImageLoader
 import com.player.models.VideoData
 import com.player.ui.AppPlayerView
 import com.ns.shortsnews.R
@@ -32,7 +31,6 @@ import kotlinx.coroutines.isActive
  * be visible. It's called when the ExoPlayer instance has started rendering its first frame.
  */
 internal class PagerAdapter(
-    private val imageLoader: ImageLoader
 ) : ListAdapter<VideoData, PageViewHolder>(VideoDataDiffCallback) {
     private var recyclerView: RecyclerView? = null
     // Extra buffer capacity so that emissions can be sent outside a coroutine
@@ -43,7 +41,7 @@ internal class PagerAdapter(
         return LayoutInflater.from(parent.context)
             .let { inflater -> PageItemBinding.inflate(inflater, parent, false) }
             .let { binding ->
-                PageViewHolder(binding, imageLoader) {pair ->
+                PageViewHolder(binding) {pair ->
                     clicks.tryEmit(pair)
                 }
 

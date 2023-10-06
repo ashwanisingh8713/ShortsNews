@@ -17,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.viewpager2.widget.ViewPager2
-import coil.ImageLoader
 import com.exo.manager.DemoUtil
 import com.exo.manager.DownloadTracker
 import com.google.android.exoplayer2.C
@@ -43,7 +42,6 @@ import kotlinx.coroutines.launch
 class VideoPagerFragment(
     private val viewModelFactory: (SavedStateRegistryOwner) -> ViewModelProvider.Factory,
     private val appPlayerView: AppPlayerView,
-    private val imageLoader: ImageLoader,
 ) : Fragment(R.layout.video_pager_fragment) {
     private val viewModel: VideoPagerViewModel by viewModels { viewModelFactory(this) }
     private val sharedEventViewModel: VideoSharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
@@ -81,7 +79,7 @@ class VideoPagerFragment(
         binding = VideoPagerFragmentBinding.bind(view)
         // This single player view instance gets attached to the ViewHolder of the active ViewPager page
 //        val appPlayerView = appPlayerViewFactory.create(view.context)
-        pagerAdapter = PagerAdapter(imageLoader)
+        pagerAdapter = PagerAdapter()
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.isUserInputEnabled = false
         binding.viewPager.offscreenPageLimit = 5 // Preload neighbouring page image previews
