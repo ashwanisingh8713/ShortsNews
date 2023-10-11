@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.*
 import android.util.Log
 import android.view.View
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -23,6 +25,7 @@ import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
+import com.ns.shortsnews.MainActivity
 import com.ns.shortsnews.MainApplication
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnected
 import com.ns.shortsnews.R
@@ -34,13 +37,15 @@ import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
-import com.videopager.utils.CategoryConstants
 import com.videopager.utils.NoConnection
 import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoPagerViewModel
 import com.videopager.vm.VideoPagerViewModelFactory_2
 import com.videopager.vm.VideoSharedEventViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 
@@ -62,6 +67,14 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
     private lateinit var videoItems: VideoClikedItem
 
     private lateinit var viewModel: VideoPagerViewModel
+    private var seekbar: SeekBar? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is MainActivity) {
+            seekbar = context.getSeekbar()
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -261,8 +274,15 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         merge(states, effects, events)
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        // This is Important to set / check because we are using two seekbar
+        // one in MainActivity, because Thumb was truncating due to bottom sliding sheet.
+        // and another in VideoPagerFragment
+        seekbar = seekbar?:binding.videoSeekbar.apply { visibility = View.VISIBLE }
         // Update Progress in Bottom
-        updateProgress()
+        seekbar?.let {
+            setupSeekbarProgress(it)
+        }
+
     }
 
 
@@ -521,6 +541,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         }
     }
 
+
     private fun progressBarValue(position: Long, player: ExoPlayer): Int {
         val PROGRESS_BAR_MAX = 100
         val duration = player.duration
@@ -530,21 +551,69 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
     }
 
 
-    private val updateProgressAction = Runnable { updateProgress() }
+    private var progressBarJob: Job? = null
 
-    private fun updateProgress() {
-        val player = viewModel.states.value.appPlayer?.player
-        player?.let {
-            val duration: Long = player.duration
-            val bufferedPosition = player.bufferedPosition
-            var position: Long = player.currentPosition
-            binding.videoSeekbar.progress = progressBarValue(position, player)
-            binding.videoSeekbar.secondaryProgress = progressBarValue(bufferedPosition, player)
-        }
-        handler.postDelayed(updateProgressAction, 100)
+    /**
+     * Setup Seekbar progress
+     */
+    private fun setupSeekbarProgress(seekbar: SeekBar) {
+
+        progressBarJobUpdater(seekbar)
+
+        seekbar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+//                if(fromUser) {
+//                    val player = viewModel.states.value.appPlayer?.player
+                // When we seekTo player, then onPlaybackStateChanged is called, with playingState = 3
+//                    player?.seekTo(progress.toLong() * player.duration / 100)
+//                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                progressBarJob?.cancel()
+                Log.i("JOBCan", "CANCELLED")
+                seekBar?.let{it.thumb.alpha = 255}
+                val player = viewModel.states.value.appPlayer?.player
+                player?.pause()
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                val player = viewModel.states.value.appPlayer?.player
+                val progress = seekBar?.progress ?: 0
+                // When we seekTo player, then onPlaybackStateChanged is called, with playingState = 3
+                player?.seekTo(progress.toLong() * player.duration / 100)
+                seekBar?.let { progressBarJobUpdater(it) }
+            }
+
+        })
 
     }
 
+    /**
+     * Coroutine Job for Seekbar progress updater
+     */
+    private fun progressBarJobUpdater(seekbar: SeekBar) {
+        progressBarJob?.cancel()
+        seekbar.thumb.alpha = 0
+        progressBarJob = viewLifecycleOwner.lifecycleScope.launch {
+            while (isActive) {
+                val player = viewModel.states.value.appPlayer?.player
+                player?.let {
+                    val duration: Long = player.duration
+                    val position: Long = player.currentPosition
+                    seekbar.progress = progressBarValue(position, player)
+                    seekbar.secondaryProgress = progressBarValue(duration, player)
+                    Log.i("JOBCan", "DOING")
+                }
+                delay(100)
+            }
+        }
+    }
+
+
+    /**
+     * Vibrate phone for
+     */
     @RequiresApi(Build.VERSION_CODES.S)
     private fun Fragment.vibratePhone() {
         val vib = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -559,7 +628,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
     }
 
 
-    private val handler = Handler(Looper.myLooper()!!)
 
     fun getNotificationData(videoId: String, previewUrl: String, videoUrl: String) {
         isNotificationVideoCame = true

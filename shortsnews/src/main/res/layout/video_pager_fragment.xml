@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@android:color/black">
+    android:background="@android:color/black"
+    >
 
 
     <androidx.viewpager2.widget.ViewPager2
@@ -30,20 +31,19 @@
     <!-- Start Video Seekbar
         https://stackoverflow.com/questions/16516540/seek-bar-increase-height
          -->
-    <androidx.appcompat.widget.AppCompatSeekBar
+    <SeekBar
         android:id="@+id/video_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="0dp"
-        android:paddingEnd="0dp"
-        android:maxHeight="2.0dp"
-        android:minHeight="2.0dp"
-        android:thumb="@null"
-        android:progressDrawable="@drawable/sb_progress_drawable"
-        android:thumbTint="@android:color/transparent"
+        android:layout_marginStart="-15dp"
+        android:layout_marginEnd="-15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:progressDrawable="@drawable/sb_progress"
+        android:thumb="@drawable/sb_thumb"
+        android:splitTrack="false"
+        android:visibility="gone"
         />
     <!-- End Video Seekbar -->
 

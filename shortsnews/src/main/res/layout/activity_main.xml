@@ -1,116 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/screen_background"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/bottom_sheet_video_margin"
-        android:focusable="true"
+        android:background="@color/screen_background"
         tools:context=".MainActivity">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-
-        <!-- Start Category RecyclerView -->
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="@dimen/video_page_bottom_margin"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_marginBottom="@dimen/bottom_sheet_video_margin"
+            android:focusable="true"
+            tools:context=".MainActivity">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_category" />
+                android:layout_height="match_parent" />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/no_network_parent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:gravity="center">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/no_network_img"
-                    android:layout_width="250dp"
-                    android:layout_height="250dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/no_network"/>
+            <!-- Start Category RecyclerView -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="@dimen/video_page_bottom_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-                <TextView
-                    android:id="@+id/try_again"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_category" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/no_network_parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:lineSpacingExtra="2dp"
-                    android:padding="9dp"
-                    android:paddingStart="?listPreferredItemPaddingStart"
-                    android:paddingEnd="?listPreferredItemPaddingEnd"
-                    android:text="@string/no_internet_category"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/no_network_img"
+                        android:layout_width="250dp"
+                        android:layout_height="250dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/no_network" />
+
+                    <TextView
+                        android:id="@+id/try_again"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:lineSpacingExtra="2dp"
+                        android:padding="9dp"
+                        android:paddingStart="?listPreferredItemPaddingStart"
+                        android:paddingEnd="?listPreferredItemPaddingEnd"
+                        android:text="@string/no_internet_category"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
 
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-        </FrameLayout>
-        <!-- End Category RecyclerView -->
+            </FrameLayout>
+            <!-- End Category RecyclerView -->
 
-        <!-- Start Profile Icon -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_view_for_image"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="12dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="50dp"
-            app:cardElevation="@null"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="@color/white"
-            app:strokeWidth="1dp">
+            <!-- Start Profile Icon -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_for_image"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="12dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="@null"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeColor="@color/white"
+                app:strokeWidth="1dp">
 
-            <ImageView
-                android:id="@+id/profile_icon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:elevation="2dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile_avatar" />
+                <ImageView
+                    android:id="@+id/profile_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:elevation="2dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_avatar" />
 
-        </com.google.android.material.card.MaterialCardView>
-        <!-- End Profile Icon -->
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <!-- End Profile Icon -->
 
 
-    <include
-        android:id="@+id/persistent_bottomsheet"
-        layout="@layout/activity_main_bottomsheet_2" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <include
+            android:id="@+id/persistent_bottomsheet"
+            layout="@layout/activity_main_bottomsheet_2" />
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <SeekBar
+        android:id="@+id/video_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="-15dp"
+        android:layout_marginEnd="-15dp"
+        android:progressDrawable="@drawable/sb_progress"
+        android:splitTrack="false"
+        android:thumb="@drawable/sb_thumb"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="40dp"/>
+
+</FrameLayout>

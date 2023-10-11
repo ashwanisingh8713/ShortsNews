@@ -15,6 +15,7 @@ import android.view.View
 import android.view.View.OnTouchListener
 import android.view.Window
 import android.view.WindowManager
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -252,6 +253,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
+    fun getSeekbar(): SeekBar {
+        return binding.videoSeekbar
+    }
 
     /**
      * Loads Home Fragment
@@ -393,6 +397,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
+    private fun showSeekbar() {
+        binding.videoSeekbar.visibility = View.VISIBLE
+    }
+    private fun hideSeekbar() {
+        binding.videoSeekbar.visibility = View.GONE
+    }
+
     // It is having Bottom Sheet Implementation
     private fun bottomSheetDialog() {
         standardBottomSheetBehavior.addBottomSheetCallback(object :
@@ -413,6 +424,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED -> {
+                        hideSeekbar()
                         Log.i("BottomSlider", "STATE_DRAGGING")
                         sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_EXPANDED)
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
@@ -421,6 +433,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     }
 
                     BottomSheetBehavior.STATE_COLLAPSED -> {
+                        showSeekbar()
                         Log.i("BottomSlider", "STATE_COLLAPSED")
                         sharedEventViewModel.sendSliderState(BottomSheetBehavior.STATE_COLLAPSED)
                         binding.persistentBottomsheet.imgDownArrow.setImageDrawable(
@@ -453,7 +466,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         // Bottom Sheet Image Arrow CLick Listener to OPEN or CLOSE Drawer
         binding.persistentBottomsheet.imgDownArrow.setOnClickListener {
             if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                Log.i("BottomSlider", "STATE_EXPANDED-2")
                 standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
                 if (NetworkXProvider.isInternetConnected) {
@@ -617,6 +629,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         binding.persistentBottomsheet.progressBar.visibility = View.GONE
         binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
+
+        hideSeekbar()
     }
 
     @SuppressLint("ResourceAsColor")
