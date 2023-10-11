@@ -1,4 +1,4 @@
-package com.ns.mytest
+package com.mytest
 
 /**
  * Created by Ashwani Kumar Singh on 26,September,2023.

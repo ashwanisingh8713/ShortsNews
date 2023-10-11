@@ -237,8 +237,13 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                         Log.i("", "")
                     }
 
-                    is MediaItemTransitionEffect -> {
-                        binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1)
+                    is MediaItemTransitionEffect -> { // Auto Scroll to next video
+                        val currentItem = binding.viewPager.currentItem
+                        if(currentItem < pagerAdapter.itemCount-1 ) {
+                            binding.viewPager.setCurrentItem(currentItem + 1)
+                        } else {
+                            binding.viewPager.setCurrentItem(0, false)
+                        }
                     }
 
                     else -> {}

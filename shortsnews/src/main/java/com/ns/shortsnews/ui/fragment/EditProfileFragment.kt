@@ -30,6 +30,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ns.shortsnews.MainApplication
+import com.ns.shortsnews.ProfileActivity
 import com.ns.shortsnews.databinding.FragmentEditProfileBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.database.ShortsDatabase
@@ -43,6 +44,7 @@ import com.ns.shortsnews.ui.viewmodel.UpdateProfileViewModelFactory
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
+import com.ns.shortsnews.utils.IntentLaunch
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
 import com.videopager.utils.UtilsFunctions
@@ -258,11 +260,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             updateProfileViewModel.DeleteProfileSuccessState.filterNotNull().collectLatest {
                 if (it.status){
                     binding.progressBar.visibility = View.GONE
-                    AppPreference.clear()
-                    AppPreference.isProfileDeleted = true
-                    ShortsDatabase.instance!!.languageDao().deleteLanguageData()
-                    ShortsDatabase.instance!!.interestsDao().deleteInterestsData()
-                    activity?.finish()
+                    // Relaunch Login Activity
+                    IntentLaunch.loginActivityIntent(requireActivity())
                 }
             }
         }
@@ -474,12 +473,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             this.setMessage("Are you sure you want to logout?")
             this.setPositiveButton("Logout") { dialog, _ ->
                 AppPreference.clear()
-                AppPreference.isProfileDeleted = true
-                lifecycleScope.launch {
-                    ShortsDatabase.instance!!.languageDao().deleteLanguageData()
-                    ShortsDatabase.instance!!.interestsDao().deleteInterestsData()
-                    activity?.finish()
-                }
+                // Relaunch Login Activity
+                IntentLaunch.loginActivityIntent(requireActivity())
             }
             this.setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()

@@ -193,13 +193,6 @@ object AppPreference {
             this.apply()
         }
 
-    var isProfileDeleted: Boolean
-        get() = preference.getBoolean(IS_PROFILE_DELETED, false)
-        set(value) = preference.edit {
-            this.putBoolean(IS_PROFILE_DELETED, value)
-            this.apply()
-        }
-
     var isUpdateNeeded: Boolean
         get() = preference.getBoolean(UPDATE_NEEDED, false)
         set(value) = preference.edit {

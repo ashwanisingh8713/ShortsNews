@@ -1,4 +1,4 @@
-package com.ns.mytest
+package com.mytest
 
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope

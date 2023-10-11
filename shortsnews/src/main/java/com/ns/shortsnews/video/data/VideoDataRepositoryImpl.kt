@@ -2,8 +2,12 @@ package com.ns.shortsnews.video.data
 
 import android.content.Context
 import android.util.Log
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.cache.HlsBulkPreloadCoroutine
 import com.ns.shortsnews.data.source.UserApiService
+import com.ns.shortsnews.utils.AppPreference
+import com.ns.shortsnews.utils.IntentLaunch
 import com.player.models.VideoData
 import com.videopager.data.*
 import com.videopager.utils.CategoryConstants
@@ -12,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 
 class VideoDataRepositoryImpl(private val userApiService: UserApiService) : VideoDataRepository {
 
@@ -26,57 +31,56 @@ class VideoDataRepositoryImpl(private val userApiService: UserApiService) : Vide
         Log.i("RequestTT","CategoryId :: $id")
 
         val llVid = withContext(Dispatchers.IO) {
-            val response = when (videoFrom) {
-                CategoryConstants.CHANNEL_VIDEO_DATA -> {
-                    userApiService.getChannelVideos(id)
-                }
-//                CategoryConstants.BOOKMARK_VIDEO_DATA -> videoDataApiService.getBookmarkVideos()
-                CategoryConstants.BOOKMARK_VIDEO_DATA -> {
-                    userApiService.getBookmarkVideos(page= page, perPage = perPage)
-                }
-                CategoryConstants.NOTIFICATION_VIDEO_DATA -> {
-                    userApiService.getNotificationVideos()
-                }
-                CategoryConstants.DEFAULT_VIDEO_DATA -> {
-                    userApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
-                }
-                else -> {
-                    userApiService.getShortsVideos(category = id, page= page, perPage = perPage, languages = languages)
-                }
-            }
-
-            val precachingAllowedCount = response.data.size
-            var videoUrls = Array(precachingAllowedCount) { "" }
-            var videoIds = Array(precachingAllowedCount) { "" }
-
-
-            val videoData = response.data
-                .mapIndexed { index, post ->
-                    val width = post?.width
-                    val height = post?.height
-                    val aspectRatio = if (width != null && height != null) {
-                        width.toFloat() / height.toFloat()
-                    } else {
-                        null
+            try {
+                val response = when (videoFrom) {
+                    CategoryConstants.CHANNEL_VIDEO_DATA -> {
+                        userApiService.getChannelVideos(id)
                     }
-                    if (index < precachingAllowedCount) {
-                        videoUrls[index] = post.videoUrl
-                        videoIds[index] = post.id.toString()
+
+                    CategoryConstants.BOOKMARK_VIDEO_DATA -> {
+                        userApiService.getBookmarkVideos(page = page, perPage = perPage)
                     }
-                    VideoData(
-                        id = post.id,
-                        mediaUri = post.videoUrl,
-                        previewImageUri = post.preview!!,
-                        aspectRatio = aspectRatio,
-                        type = post.type,
-                        video_url_mp4 = post.video_url_mp4,
-                        page = response.page,
-                        perPage = response.perPage
-                    )
-                    /*if (post.type != "yt" || youtubeUriConversionCount <= conversionCount) {
+
+                    CategoryConstants.NOTIFICATION_VIDEO_DATA -> {
+                        userApiService.getNotificationVideos()
+                    }
+
+                    CategoryConstants.DEFAULT_VIDEO_DATA -> {
+                        userApiService.getShortsVideos(
+                            category = id,
+                            page = page,
+                            perPage = perPage,
+                            languages = languages
+                        )
+                    }
+
+                    else -> {
+                        userApiService.getShortsVideos(
+                            category = id,
+                            page = page,
+                            perPage = perPage,
+                            languages = languages
+                        )
+                    }
+                }
+
+                val precachingAllowedCount = response.data.size
+                var videoUrls = Array(precachingAllowedCount) { "" }
+                var videoIds = Array(precachingAllowedCount) { "" }
+
+
+                val videoData = response.data
+                    .mapIndexed { index, post ->
+                        val width = post?.width
+                        val height = post?.height
+                        val aspectRatio = if (width != null && height != null) {
+                            width.toFloat() / height.toFloat()
+                        } else {
+                            null
+                        }
                         if (index < precachingAllowedCount) {
                             videoUrls[index] = post.videoUrl
-                            videoIds[index] = post.id
+                            videoIds[index] = post.id.toString()
                         }
                         VideoData(
                             id = post.id,
@@ -84,40 +88,31 @@ class VideoDataRepositoryImpl(private val userApiService: UserApiService) : Vide
                             previewImageUri = post.preview!!,
                             aspectRatio = aspectRatio,
                             type = post.type,
-                            video_url_mp4 = post.video_url_mp4
+                            video_url_mp4 = post.video_url_mp4,
+                            page = response.page,
+                            perPage = response.perPage
                         )
-                    } else {
-                        val youTubeUri = YouTubeUri(context)
-                        var ytFiles = youTubeUri.getStreamUrls(post.videoUrl)
-                        var finalUri18 = ""
-                        if (ytFiles != null && ytFiles.contains(YouTubeUri.iTag)) {
-                            finalUri18 = ytFiles[YouTubeUri.iTag].url
-                            conversionCount++
-                        }
-                        if (index < precachingAllowedCount) {
-                            videoUrls[index] = finalUri18
-                            videoIds[index] = post.id
-                        }
-                        VideoData(
-                            id = post.id,
-                            mediaUri = finalUri18,
-                            previewImageUri = post.preview!!,
-                            aspectRatio = aspectRatio,
-                            type = "yt",
-                            video_url_mp4 = post.video_url_mp4
-                        )
-                    }*/
-                }.filter {
-                    it.mediaUri.isNotBlank()
+
+                    }.filter {
+                        it.mediaUri.isNotBlank()
+                    }
+
+                // Preload Video urls
+                HlsBulkPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
+
+                Log.i("Conv_TIME", "VideoDataRepositoryImpl")
+
+                ll.add(videoData as MutableList)
+                ll
+            } catch (ec: Exception) {
+                val httpCode = (ec as HttpException).code()
+                if(httpCode == 401) {
+                    Log.i("Logout", "401")
+                    // Logout
+                    IntentLaunch.logoutInfoDialog()
                 }
-
-            // Preload Video urls
-            HlsBulkPreloadCoroutine.schedulePreloadWork(videoUrls, videoIds)
-
-            Log.i("Conv_TIME", "VideoDataRepositoryImpl")
-
-            ll.add(videoData as MutableList)
-            ll
+                ll
+            }
         }
 
         return llVid.asFlow()

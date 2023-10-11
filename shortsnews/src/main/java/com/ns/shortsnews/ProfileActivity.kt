@@ -131,17 +131,6 @@ class ProfileActivity : AppCompatActivity() {
         this.finish()
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.i("lifecycle", "Profile activity on resume called")
-        if (AppPreference.isProfileDeleted) {
-            AppPreference.clear()
-            val i = Intent(this, ProfileActivity::class.java)
-            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(i)
-
-        }
-    }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
