@@ -271,7 +271,7 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun resumePlayer(): Flow<ViewResult> {
-        Log.i("AshwaniXYZ", "resumePlayer()")
+
         check(states.value.appPlayer == null) { "Tried to create a player when one already exists" }
 
         val config = AppPlayer.Factory.Config(loopVideos = true)

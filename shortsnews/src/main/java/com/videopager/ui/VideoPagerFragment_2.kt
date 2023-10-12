@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -246,9 +247,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                         viewModel.processEvent(CommentClickEvent(videoData.id, currentItem))
                     }
 
-                    is YoutubeUriErrorEffect -> {
-                        Log.i("", "")
-                    }
 
                     is MediaItemTransitionEffect -> { // Auto Scroll to next video
                         val currentItem = binding.viewPager.currentItem
@@ -434,6 +432,26 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                             val currentItem = binding.viewPager.currentItem
                             val videoData = pagerAdapter.getVideoData(currentItem)
                             CommentClickEvent(videoData.id, currentItem)
+                        }
+                    } else {
+                        NoConnection.noConnectionSnackBarInfinite(
+                            view,
+                            requireActivity() as AppCompatActivity
+                        )
+                        NoFurtherEvent
+                    }
+                }
+
+                DoubleTapClick -> { // This is performing same as LikeClick
+                    if (isInternetConnected) {
+                        if (!isUserLoggedIn) {
+                            sharedEventViewModel.launchLoginEvent(true)
+                            NoFurtherEvent
+                        } else {
+                            vibratePhone()
+                            val currentItem = binding.viewPager.currentItem
+                            val videoData = pagerAdapter.getVideoData(currentItem)
+                            LikeClickEvent(videoData.id, currentItem)
                         }
                     } else {
                         NoConnection.noConnectionSnackBarInfinite(

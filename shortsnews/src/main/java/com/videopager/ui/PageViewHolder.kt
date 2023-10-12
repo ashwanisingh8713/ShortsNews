@@ -1,19 +1,20 @@
 package com.videopager.ui
 
+import android.util.Log
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ns.shortsnews.MainApplication
+import com.ns.shortsnews.R
+import com.ns.shortsnews.callbacks.OnSwipeTouchListener
+import com.ns.shortsnews.databinding.PageItemBinding
+import com.player.models.VideoData
 import com.player.ui.AppPlayerView
-
 import com.videopager.models.AnimationEffect
 import com.videopager.models.PageEffect
 import com.videopager.models.ResetAnimationsEffect
-import com.player.models.VideoData
-import com.ns.shortsnews.R
-import com.ns.shortsnews.databinding.PageItemBinding
 import com.videopager.ui.extensions.*
 
 internal class PageViewHolder(
@@ -23,9 +24,21 @@ internal class PageViewHolder(
     private val animationEffect = FadeInThenOutAnimationEffect(binding.playPause)
 
     init {
-        binding.root.setOnClickListener {
+        /*binding.root.setOnClickListener {
+            click(Pair("", PlayPauseClick))
+        }*/
+
+        val singleTap :()->Unit = {
             click(Pair("", PlayPauseClick))
         }
+
+        val doubleTap:()-> Unit =  {
+            Log.d("AOnSwipeTouchListener", "onDoubleTap")
+            click(Pair("", DoubleTapClick))
+        }
+
+
+        binding.root.setOnTouchListener(OnSwipeTouchListener(binding.root.context, singleTap = singleTap, doubleTap = doubleTap))
     }
 
     fun bindViewHolder(videoData: VideoData) {
