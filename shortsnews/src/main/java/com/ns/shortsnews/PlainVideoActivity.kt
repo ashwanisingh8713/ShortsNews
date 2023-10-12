@@ -81,13 +81,6 @@ class PlainVideoActivity : AppCompatActivity() {
      * Loads Home Fragment
      */
     private fun loadVideoFragment(videoItems: VideoClikedItem) {
-        /*videoPagerFragment = AppConstants.makeVideoPagerInstance(
-            requiredId = videoItems.requiredId,
-            videoFrom = videoItems.videoFrom,
-            this@PlainVideoActivity,
-            languages = AppPreference.getSelectedLanguagesAsString(),
-            selectedPlay = videoItems.selectedPosition
-        )*/
         videoPagerFragment = VideoPagerFragment_2()
         val bundle = Bundle()
         bundle.putBoolean("logged_in", AppPreference.isUserLoggedIn)
