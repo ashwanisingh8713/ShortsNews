@@ -45,7 +45,8 @@ class ChannelVideoPaging(private val channelId: String, private val userApiServi
                         type = post.type,
                         video_url_mp4 = post.video_url_mp4,
                         page = response.page,
-                        perPage = response.perPage
+                        perPage = response.perPage,
+                        liking = post.liked,
                     )
                 }.filter {
                     it.mediaUri.isNotBlank()

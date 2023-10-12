@@ -65,6 +65,22 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     private var isAlreadyFieldAge = false
     private var isAlreadyFieldAddress = false
     private var isAlreadyFieldName = false
+
+    val dialog_title_default = "Update Profile"
+    val dialog_msg_default = "Updating your profile information"
+    val positiveBtnText = "Update"
+    val negativeBtnText = "Cancel"
+
+    val profile_dialog_title = "Update Profile"
+    val profile_dialog_msg = "Do you want to update your profile information before logout?"
+    var isProcessForLogout = false
+    val profile_positiveBtnText = "Update & Logout"
+    val profile_negativeBtnText = "Cancel & Logout"
+
+    val dialog_title_logout = "Logout"
+    val dialog_msg_logout = "Are you sure want to logout?"
+
+
     private val updateProfileViewModel: UpdateProfileViewModel by activityViewModels {
         UpdateProfileViewModelFactory().apply {
             inject(UpdateUserUseCase(UserDataRepositoryImpl(get())), DeleteProfileUseCase(UserDataRepositoryImpl(get())))
@@ -79,21 +95,24 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         super.onCreate(savedInstanceState)
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
+            isProcessForLogout = false
             if (!isProfileEdited) {
                 activity?.finish()
             } else {
                 if (!isProfileImageSelected) {
-                    applyConditionOnUpdateProfile()
+                    applyConditionOnUpdateProfile(title = dialog_title_default, msg = dialog_msg_default)
                 } else {
                     showUpdateProfileDialog(
-                        "Update Profile",
-                        "Updating your profile information",
-                        getRequestBody(
+                        title = dialog_title_default,
+                        msg = dialog_msg_default,
+                        profileData = getRequestBody(
                             bitmapToFile(mPhotoBitmap, "user") as File,
                             binding.nameEditText.text.toString(),
                             binding.ageEditText.text.toString(),
                             binding.locationEditText.text.toString()
-                        )
+                        ),
+                        positiveBtnText = positiveBtnText,
+                        negativeBtnText = negativeBtnText
                     )
                 }
             }
@@ -173,16 +192,42 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         binding.backButton.setOnClickListener {
             it.hideKeyBoard()
+            isProcessForLogout = false
             if (!isProfileEdited) {
                 activity?.finish()
             } else {
                 if (!isProfileImageSelected) {
-                   applyConditionOnUpdateProfile()
+                   applyConditionOnUpdateProfile(title = dialog_title_default, msg = dialog_msg_default)
                 } else {
                     showUpdateProfileDialog(
-                        "Update Profile",
-                        "Updating your profile information",
-                        getRequestBody(
+                        title = dialog_title_default, msg = dialog_msg_default,
+                        profileData = getRequestBody(
+                            bitmapToFile(mPhotoBitmap, "user") as File,
+                            binding.nameEditText.text.toString(),
+                            binding.ageEditText.text.toString(),
+                            binding.locationEditText.text.toString()
+                        ),
+                        positiveBtnText = positiveBtnText,
+                        negativeBtnText = negativeBtnText
+                    )
+                }
+            }
+        }
+        binding.constLogout.setOnClickListener {
+            isProcessForLogout = true
+            if (!isProfileEdited) {
+                confirmLogoutDialog()
+            } else {
+                if (!isProfileImageSelected) {
+                    applyConditionOnUpdateProfile(title = profile_dialog_title, msg = profile_dialog_msg, positiveBtnText = profile_positiveBtnText,
+                        negativeBtnText = profile_negativeBtnText)
+                } else {
+                    showUpdateProfileDialog(
+                        title = profile_dialog_title,
+                        msg = profile_dialog_msg,
+                        positiveBtnText = profile_positiveBtnText,
+                        negativeBtnText = profile_negativeBtnText,
+                        profileData = getRequestBody(
                             bitmapToFile(mPhotoBitmap, "user") as File,
                             binding.nameEditText.text.toString(),
                             binding.ageEditText.text.toString(),
@@ -191,9 +236,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     )
                 }
             }
-        }
-        binding.constLogout.setOnClickListener {
-           confirmLogoutDialog()
+
+
         }
 
         binding.profileImageEditIcon.setOnClickListener {
@@ -247,11 +291,17 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             }
         }
 
+        // Callback receiver after update profile
         viewLifecycleOwner.lifecycleScope.launch {
             updateProfileViewModel.UpdateProfileSuccessState.filterNotNull().collectLatest {
                 if (it.status) {
-                    AppPreference.isProfileUpdated = true
-                    activity?.finish()
+                    if(isProcessForLogout) {
+                        // Relaunch Login Activity
+                        IntentLaunch.loginActivityIntent(requireActivity())
+                    } else {
+                        AppPreference.isProfileUpdated = true
+                        activity?.finish()
+                    }
                 }
             }
         }
@@ -267,15 +317,18 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
     }
 
-    private fun applyConditionOnUpdateProfile() {
 
+
+    private fun applyConditionOnUpdateProfile(title: String, msg: String, positiveBtnText: String = "Update", negativeBtnText: String = "Cancel") {
         if (isAlreadyFieldAge && binding.ageEditText.text.isEmpty() || isAlreadyFieldAddress&& binding.locationEditText.text.isEmpty() || isAlreadyFieldName && binding.nameEditText.text.isEmpty()){
             Toast.makeText(requireActivity(),"Please fill required field", Toast.LENGTH_SHORT).show()
         } else {
             showUpdateProfileDialog(
-                "Update Profile",
-                "Updating your profile information",
-                getRequestBody(null, binding.nameEditText.text.toString()
+                title = title,
+                msg = msg,
+                positiveBtnText = positiveBtnText,
+                negativeBtnText = negativeBtnText,
+                profileData = getRequestBody(null, binding.nameEditText.text.toString()
                     ,binding.ageEditText.text.toString(),
                     binding.locationEditText.text.toString() )
             )
@@ -389,12 +442,21 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
     }
 
-    private fun showUpdateProfileDialog(title: String, msg: String, profileData: RequestBody) {
+    private fun showUpdateProfileDialog(title: String, msg: String, profileData: RequestBody, positiveBtnText: String, negativeBtnText: String) {
         val alertDialog = MaterialAlertDialogBuilder(requireContext())
         alertDialog.apply {
             this.setTitle(title)
             this.setMessage(msg)
-            this.setPositiveButton("Update") { dialog, _ ->
+            this.setPositiveButton(positiveBtnText) { dialog, _ ->
+
+                val age = binding.ageEditText.text.toString().toInt()
+                if(age < 1 || age > 100) {
+                    Toast.makeText(requireContext(), "Age should be greater than 0", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                    return@setPositiveButton
+                }
+
+                // Updating Profile
                 if (NetworkXProvider.isInternetConnected) {
                     updateProfileViewModel.requestUpdateProfileApi(profileData)
                 } else {
@@ -404,9 +466,20 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     )
                 }
             }
-            this.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-                activity?.finish()
+            this.setNegativeButton(negativeBtnText) { dialog, _ ->
+                if(isProcessForLogout) {
+                    isProcessForLogout = false
+                    IntentLaunch.loginActivityIntent(requireActivity())
+                    dialog.dismiss()
+                } else {
+                    activity?.finish()
+                }
+            }
+
+            // We should not make isProcessForLogout = false in SetOnDismissListener
+            // Because, it is being used in callback after update profile, then logout
+            this.setOnDismissListener{
+
             }
             this.show()
         }
@@ -465,14 +538,14 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 
-    private fun confirmLogoutDialog() {
 
+
+    private fun confirmLogoutDialog() {
         val alertDialog = MaterialAlertDialogBuilder(requireActivity())
         alertDialog.apply {
-            this.setTitle("Logout")
-            this.setMessage("Are you sure you want to logout?")
+            this.setTitle(dialog_title_logout)
+            this.setMessage(dialog_msg_logout)
             this.setPositiveButton("Logout") { dialog, _ ->
-                AppPreference.clear()
                 // Relaunch Login Activity
                 IntentLaunch.loginActivityIntent(requireActivity())
             }

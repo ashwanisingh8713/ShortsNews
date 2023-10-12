@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
@@ -87,8 +86,9 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentChannelVideosBinding.bind(view)
+
         if(from == "MainActivity") {
-            // Loading Channel Icon and Background Color from bitmap
+            // Here, we are getting channel info and channel icon bitmap from MainActivity which is already loaded
             if(MainActivity.channelVisibleBitmap != null) {
                 lifecycleScope.launch {
                     binding.channelLogo.setImageBitmap(MainActivity.channelVisibleBitmap)
@@ -105,7 +105,8 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
                 binding.following.text = "Follow"
             }
 
-        } else {
+        } else { // This Else condition is being called from Profile-> Following Channel List Screen
+            // Making Channel Info API call
             channelInfoViewModel.requestChannelInfoApi(channelId)
             // Loading Channel Icon and Background Color from bitmap
             channelLogoBitmap()
@@ -188,6 +189,8 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
                 }
             }
         }
+
+
 
     }
 

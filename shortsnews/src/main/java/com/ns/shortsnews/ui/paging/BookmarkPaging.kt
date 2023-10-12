@@ -43,7 +43,8 @@ class BookmarkPaging(private val userApiService: UserApiService): PagingSource<I
                         type = post.type,
                         video_url_mp4 = post.video_url_mp4,
                         page = response.page,
-                        perPage = response.perPage
+                        perPage = response.perPage,
+                        liking = post.liked,
                     )
                 }.filter {
                     it.mediaUri.isNotBlank()
