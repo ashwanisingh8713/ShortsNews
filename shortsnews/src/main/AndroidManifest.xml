@@ -38,6 +38,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.News"
+            android:configChanges="uiMode"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,18 +48,21 @@
         </activity>
         <activity
             android:name=".ui.activity.LanguageContainer"
+            android:configChanges="uiMode"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.News"
             />
         <activity
             android:name=".ui.activity.ContainerActivity"
+            android:configChanges="uiMode"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.News"
             />
         <activity
             android:name=".ProfileActivity"
+            android:configChanges="uiMode"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.News"
@@ -66,6 +70,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:configChanges="uiMode"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.News"
@@ -74,6 +79,7 @@
         </activity>
         <activity
             android:name=".PlainVideoActivity"
+            android:configChanges="uiMode"
             android:parentActivityName=".MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
