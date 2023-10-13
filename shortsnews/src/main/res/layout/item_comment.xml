@@ -72,7 +72,8 @@
         android:fontFamily="sans-serif"
         android:textColor="@color/white"
         android:gravity="start"
-        tools:text="The new update is awesome"
+        android:ems="22"
+        tools:text="The new update is awesome, The new update is awesome"
         />
     </LinearLayout>
 
