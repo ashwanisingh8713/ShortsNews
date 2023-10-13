@@ -90,16 +90,27 @@ class UserViewModel constructor(
         userRegistrationUseCases.invoke(viewModelScope, requestBody,
             object : UseCaseResponse<RegistrationResult> {
                 override fun onSuccess(result: RegistrationResult) {
-                    // Mapping the data model class, which will be used by UIs.
-                    val userRegistration = UserRegistration().mapper(
-                        status = result.status,
-                        msg = result.msg,
-                        OTP_id = result.data!!.OTP_id,
-                        length = result.data.length,
-                        email = result.data.email,
-                        isUserRegistered = result.data.is_registered
-                    )
-                    _registrationSuccessState.value = userRegistration
+                    if(result.status == false) {
+                        var msg = result.msg
+                        if(_errorState.value == result.msg) {
+                            msg ="${result.msg} "
+                        } else {
+                            msg = "${result.msg}"
+                        }
+                        _errorState.value = msg
+                        return
+                    } else {
+                        // Mapping the data model class, which will be used by UIs.
+                        val userRegistration = UserRegistration().mapper(
+                            status = result.status,
+                            msg = result.msg,
+                            OTP_id = result.data!!.OTP_id,
+                            length = result.data.length,
+                            email = result.data.email,
+                            isUserRegistered = result.data.is_registered
+                        )
+                        _registrationSuccessState.value = userRegistration
+                    }
                 }
 
                 override fun onError(apiError: ApiError) {

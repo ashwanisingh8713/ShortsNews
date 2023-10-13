@@ -80,7 +80,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             userViewModel.errorState.filterNotNull().collectLatest {
                   binding.progressBarLogin.visibility = View.GONE
                   binding.sendImage.visibility = View.VISIBLE
-                      Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
+                      Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, it, requireActivity())
             }
         }
 

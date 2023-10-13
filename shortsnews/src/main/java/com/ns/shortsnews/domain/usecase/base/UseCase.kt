@@ -37,13 +37,15 @@ abstract class UseCase<Type, in Params> where Type: Any {
                 }
             }
             catch (e: Exception) {
-                e.printStackTrace()
-                val httpCode = (e as HttpException).code()
-                if(httpCode == 401) {
-                    Log.i("Logout", "401")
-                    // Logout
-                    IntentLaunch.logoutInfoDialog()
-                } else {
+                if(e is HttpException) {
+                    val httpCode = e.code()
+                    if(httpCode == 401) {
+                        Log.i("Logout", "401")
+                        // Logout
+                        IntentLaunch.logoutInfoDialog()
+                    }
+                }
+                else {
                     onResult?.onError(traceErrorException(e))
                     onResult?.onLoading(false)
                 }
