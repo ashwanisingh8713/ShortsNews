@@ -45,11 +45,7 @@ class VideoSharedEventViewModel:ViewModel() {
     private var _cacheVideoUrl_2= MutableSharedFlow<Pair<String, String>>()
     val cacheVideoUrl_2 = _cacheVideoUrl_2.asSharedFlow()
 
-    fun cacheVideoData_2(uri: String, id: String) {
-        viewModelScope.launch {
-            _cacheVideoUrl_2.emit(Pair(uri, id))
-        }
-    }
+
 
 
     private var _videoInfo= MutableSharedFlow<VideoInfoData?>()
@@ -67,15 +63,6 @@ class VideoSharedEventViewModel:ViewModel() {
     fun followRequest(channelId: String?) {
         viewModelScope.launch {
             _followRequest.emit(channelId)
-        }
-    }
-
-    private var _followResponse= MutableSharedFlow<VideoData>()
-    val followResponse = _followResponse.asSharedFlow()
-
-    fun followResponse(videoData: VideoData) {
-        viewModelScope.launch {
-            _followResponse.emit(videoData)
         }
     }
 

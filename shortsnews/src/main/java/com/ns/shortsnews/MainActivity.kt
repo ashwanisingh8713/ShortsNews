@@ -150,6 +150,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         // Register GetInfo Listener
         bottomSheetGetInfoListener()
         bottomSheetFollowingClick()
+        listenFollowUnfollow()
         registerVideoCache()
         bottomSheetDescClick()
 //        askNotificationPermission()
@@ -515,8 +516,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     binding.persistentBottomsheet.following.text = getString(R.string.follow)
                 }
 
-                val channelId = binding.persistentBottomsheet.following.tag
-//                if(channelId != it.channel_id) {
                 binding.persistentBottomsheet.following.tag = it.channel_id
                 binding.persistentBottomsheet.imgDownArrow.tag = it
 
@@ -527,20 +526,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 } else {
                     binding.persistentBottomsheet.cardViewClientImage.visibility = View.INVISIBLE
                 }
-//                }
             }
         }
 
-        lifecycleScope.launch {
-            sharedEventViewModel.followResponse.filterNotNull().collectLatest {
-                if (it.following) {
-                    binding.persistentBottomsheet.following.text = getString(R.string.following)
-                } else {
-                    binding.persistentBottomsheet.following.text = getString(R.string.follow)
-                }
-
-            }
-        }
     }
 
     companion object {
@@ -637,8 +625,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun bottomSheetClearChannelId() {
         binding.persistentBottomsheet.following.tag = null
         binding.persistentBottomsheet.imgDownArrow.tag = null
-//        videoDataViewModel.clearChannelVideoData()
-//        bottomSheetRecyclerAdapter?.clearChannelData()
         binding.persistentBottomsheet.clientImage.setImageBitmap(null)
         binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(R.color.black)
         binding.persistentBottomsheet.bottomSheetHeader.alpha = 0.3f
@@ -648,20 +634,48 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     // Bottom Sheet Following Click Listener
     private fun bottomSheetFollowingClick() {
 
+        // BottomSheet, Collapsed Follow/UnFollow
         binding.persistentBottomsheet.following.setOnClickListener {
             if (NetworkXProvider.isInternetConnected) {
                 val channelId = binding.persistentBottomsheet.following.tag
                 channelId?.let {
-                    if (it != "") {
-                        sharedEventViewModel.followRequest(channelId.toString())
+                    if(AppPreference.isUserLoggedIn) {
+                        followUnfollowViewModel.requestFollowUnfollowApi(channelId.toString())
+                    } else {
+                        IntentLaunch.loginActivityIntent(this@MainActivity)
                     }
+
                 }
             } else {
                 NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
             }
         }
 
+        /*binding.persistentBottomsheet.followingExpanded.setOnClickListener {
+            if (NetworkXProvider.isInternetConnected) {
+                val channelId = binding.persistentBottomsheet.following.tag
+                channelId?.let {
+                    if (it != "") {
+                        listenFollowUnfollow(channelId.toString())
+                    }
+                }
+            } else {
+                NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
+            }
+        }*/
+    }
 
+    private fun listenFollowUnfollow() {
+        lifecycleScope.launch {
+            followUnfollowViewModel.FollowUnfollowSuccessState.filterNotNull().collectLatest {
+                AppPreference.isFollowingUpdateNeeded = true
+                if (it.data.following) {
+                    binding.persistentBottomsheet.following.text = getString(R.string.following)
+                } else {
+                    binding.persistentBottomsheet.following.text = getString(R.string.follow)
+                }
+            }
+        }
     }
 
     /*Bottom sheet pallet color using bitmap icon from response URL*/

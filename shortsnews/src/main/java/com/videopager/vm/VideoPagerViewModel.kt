@@ -108,7 +108,6 @@ internal class VideoPagerViewModel(
             filterIsInstance<TappedPlayerEvent>().toTappedPlayerResults(),
             filterIsInstance<OnPageSettledEvent>().toPageSettledResults(),
             filterIsInstance<PauseVideoEvent>().toPauseVideoResults(),
-            filterIsInstance<FollowClickEvent>().toFollowClickResults(),
             filterIsInstance<CommentClickEvent>().toCommentClickResults(),
             filterIsInstance<LikeClickEvent>().toLikeClickResults(),
             filterIsInstance<PostClickCommentEvent>().toPostCommentResults(),
@@ -340,16 +339,6 @@ internal class VideoPagerViewModel(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<FollowClickEvent>.toFollowClickResults(): Flow<ViewResult> {
-        return flatMapLatest { event ->
-            repository.follow(event.channelId, event.position)
-        }.mapLatest { followResponse ->
-            states.value.videoData?.get(followResponse.second)?.following =
-                followResponse.first.data.following
-            FollowClickResult(followResponse.second, following = followResponse.first)
-        }
-    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<CommentClickEvent>.toCommentClickResults(): Flow<ViewResult> {
@@ -478,7 +467,6 @@ internal class VideoPagerViewModel(
             filterIsInstance<PlayerErrorResult>().toPlayerErrorEffects(),
             filterIsInstance<MediaItemTransitionResult>().toMediaItemTransitionEffects(),
 //            filterIsInstance<OnYoutubeUriErrorResult>().toYoutubeUriEffects(),
-            filterIsInstance<FollowClickResult>().toFollowViewEffect(),
             filterIsInstance<LikeClickResult>().toLikeViewEffect(),
             filterIsInstance<CommentClickResult>().toCommentViewEffect(),
             filterIsInstance<GetVideoInfoResult>().toGetVideoInfoEffect(),
@@ -510,11 +498,6 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<BookmarkClickResult>.toSaveViewEffect(): Flow<ViewEffect> {
         return mapLatest { result -> BookmarkEffect(result.position) }
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<FollowClickResult>.toFollowViewEffect(): Flow<ViewEffect> {
-        return mapLatest { result -> FollowEffect(result.position, result.following) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

@@ -120,12 +120,15 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         // Listens Channel Info
         listenChannelInfo()
 
+        // Listens Follow / UnFollow
+        listenFollowUnfollow()
+
         channelVideoAdapter = ChannelVideoAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = channelId)
         channelVideoAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.ALLOW
         binding.channelImageRecyclerview.adapter = channelVideoAdapter
 
         binding.following.setOnClickListener {
-            listenFollowUnfollow(channelId)
+            followUnfollowViewModel.requestFollowUnfollowApi(channelId)
         }
         binding.channelDes.setOnClickListener {
             descriptionDialog(channelDes)
@@ -233,8 +236,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         channelInfoViewModel.clearChannelInfo()
     }
 
-    private fun listenFollowUnfollow(channelId:String) {
-        followUnfollowViewModel.requestFollowUnfollowApi(channelId)
+    private fun listenFollowUnfollow() {
         viewLifecycleOwner.lifecycleScope.launch {
             followUnfollowViewModel.FollowUnfollowSuccessState.filterNotNull().collectLatest {
                 AppPreference.isFollowingUpdateNeeded = true
@@ -246,7 +248,6 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
                 }
             }
         }
-
     }
 
     private fun listenChannelInfo() {

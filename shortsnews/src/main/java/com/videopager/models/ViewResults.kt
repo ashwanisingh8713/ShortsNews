@@ -9,7 +9,6 @@ import com.videopager.data.*
 internal sealed class ViewResult
 
 internal object NoOpResult : ViewResult()
-internal data class FollowClickResult(val position: Int, val following: Following) : ViewResult()
 internal data class CommentClickResult( val videoId:String, val comments: Comments, val position: Int) : ViewResult()
 internal data class LikeClickResult(val position: Int): ViewResult()
 internal data class BookmarkClickResult(val position: Int): ViewResult()

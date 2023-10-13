@@ -6,7 +6,6 @@ package com.videopager.ui.extensions
 sealed class ClickEvent
 
 object ChannelClick: ClickEvent()
-object FollowClick: ClickEvent()
 object BookmarkClick: ClickEvent()
 object ShareClick: ClickEvent()
 object CommentClick: ClickEvent()

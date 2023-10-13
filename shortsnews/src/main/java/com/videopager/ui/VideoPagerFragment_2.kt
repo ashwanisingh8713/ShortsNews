@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -211,11 +210,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                         likeBroadcast(id = videoData.id, videoData.liking, videoData.like_count)
                     }
 
-                    is FollowEffect -> {
-//                        pagerAdapter.refreshFollowUI(effect.position)
-                        sharedEventViewModel.followResponse(pagerAdapter.getVideoData(effect.position))
-                    }
-
                     is PageEffect -> {
                         pagerAdapter.renderEffect(
                             binding.viewPager.currentItem,
@@ -380,16 +374,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         return clicks().map {
             when (it.second) {
                 PlayPauseClick -> TappedPlayerEvent
-                FollowClick -> {
-                    if (!isUserLoggedIn) {
-                        sharedEventViewModel.launchLoginEvent(true)
-                        NoFurtherEvent
-                    } else {
-                        val currentItem = binding.viewPager.currentItem
-                        val videoData = pagerAdapter.getVideoData(currentItem)
-                        FollowClickEvent(videoData.channel_id, currentItem)
-                    }
-                }
 
                 ChannelClick -> {
                     if (isInternetConnected) {
@@ -531,14 +515,12 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         }
 
         lifecycleScope.launch {
+            // It listens Follow/Unfollow update,
+            // When User is not logged in then it will launch login screen
+            // User is logged in
             sharedEventViewModel.followRequest.collectLatest {
                 if (!isUserLoggedIn) {
                     sharedEventViewModel.launchLoginEvent(true)
-                    NoFurtherEvent
-                } else {
-                    val currentItem = binding.viewPager.currentItem
-                    val videoData = pagerAdapter.getVideoData(currentItem)
-                    viewModel.processEvent(FollowClickEvent(videoData.channel_id, currentItem))
                 }
             }
         }

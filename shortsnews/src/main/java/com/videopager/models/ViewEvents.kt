@@ -13,7 +13,6 @@ internal sealed class PlayerLifecycleEvent : ViewEvent() {
 
 internal object TappedPlayerEvent : ViewEvent()
 internal object ChannelClickEvent : ViewEvent()
-internal data class FollowClickEvent(val channelId: String, val position: Int) : ViewEvent()
 internal data class BookmarkClickEvent(val videoId: String, val position: Int) : ViewEvent()
 internal object ShareClickEvent : ViewEvent()
 internal data class CommentClickEvent(val videoId: String, val position: Int) : ViewEvent()
