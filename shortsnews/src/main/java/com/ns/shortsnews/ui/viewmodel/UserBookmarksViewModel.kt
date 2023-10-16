@@ -44,7 +44,7 @@ class UserBookmarksViewModel(private val channelsDataUseCase: VideoDataUseCase):
     val bookmarks = Pager(config = PagingConfig(
     pageSize = 5,
     enablePlaceholders = false,
-    initialLoadSize = 2
+//    initialLoadSize = 2 // It loads only 2 items in the first load request
     ),
     pagingSourceFactory = {
         BookmarkPaging(userApiService = getKoin().get<UserApiService>())

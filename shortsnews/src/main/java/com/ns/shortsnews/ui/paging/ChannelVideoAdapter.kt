@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 
 class ChannelVideoAdapter(private var videoFrom: String, private var channelId: String) :
-    PagingDataAdapter<VideoData, ChannelVideoAdapter.ChannelItemViewHolder>(BookmarksComparator) {
+    PagingDataAdapter<VideoData, ChannelVideoAdapter.ChannelItemViewHolder>(ChannelVideoComparator) {
 
     var updatedChannelId: String = channelId
         get() = field
@@ -84,13 +84,14 @@ class ChannelVideoAdapter(private var videoFrom: String, private var channelId: 
         }
     }
 
-    object BookmarksComparator : DiffUtil.ItemCallback<VideoData>() {
+    object ChannelVideoComparator : DiffUtil.ItemCallback<VideoData>() {
         override fun areItemsTheSame(oldItem: VideoData, newItem: VideoData): Boolean {
-            return (oldItem.id == newItem.id) && (oldItem.saved == newItem.saved)
+            return (oldItem.id == newItem.id)// && (oldItem.saved == newItem.saved)
         }
 
         override fun areContentsTheSame(oldItem: VideoData, newItem: VideoData): Boolean {
-            return oldItem.id == newItem.id
+//            return oldItem.id == newItem.id
+            return oldItem == newItem
         }
     }
 
