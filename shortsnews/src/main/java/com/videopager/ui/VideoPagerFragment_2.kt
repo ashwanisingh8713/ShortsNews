@@ -218,11 +218,11 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                     }
 
                     is PlayerErrorEffect -> {
-                        Snackbar.make(
+                        /*Snackbar.make(
                             binding.root,
                             effect.throwable.message ?: "Error",
                             Snackbar.LENGTH_LONG
-                        ).show()
+                        ).show()*/
                     }
 
                     is GetVideoInfoEffect -> {

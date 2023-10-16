@@ -23,6 +23,8 @@ import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -137,6 +139,8 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
             categoryViewModel.updateCategoriesSuccessState.filterNotNull().collectLatest {
                 it.let {
                     if (it.status){
+                        // It is mandatory to show category as per selected position
+                        getSelectedVideoInterstCategory(selectedItemList)
                         Alert().showGravityToast(requireActivity(), AppConstants.CATEGORY_UPDATE_SUCCESS)
                         AppPreference.isRefreshRequired = true
                         activity?.finish()
@@ -260,7 +264,10 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
 
     }
 
-    /*private fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
+    /**
+     *  It is mandatory to show category as per selected position
+     */
+    private fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
         val unselectedCategory = mutableListOf<VideoCategory>()
         val selectedCategory = mutableListOf<VideoCategory>()
 
@@ -280,5 +287,5 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
             Log.i("cat",AppPreference.categoryList.toString())
 
         }
-    }*/
+    }
 }
