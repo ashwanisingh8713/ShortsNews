@@ -10,9 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
+import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.R
 import com.ns.shortsnews.R.*
+import com.ns.shortsnews.adapters.CategoryAdapter
 import com.ns.shortsnews.databinding.FragmentLanguageBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
@@ -70,15 +73,14 @@ class LanguageFragment : Fragment(layout.fragment_language) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)
         AppPreference.initLanguage(requireActivity())
-//        Log.i("language","$AppPreference.selectedLanguages!!")
+
+        // Get selected languages from preference
         selectedLanguages = AppPreference.getSelectedLanguages()
+
         if (NetworkXProvider.isInternetConnected) {
             userViewModel.requestLanguagesApi()
         } else {
-            NoConnection.noConnectionSnackBarInfinite(
-                binding.root,
-                requireContext() as AppCompatActivity
-            )
+            showTryAgainText()
         }
         from = arguments?.getString("from").toString()
         if (AppPreference.isLanguageSelected) {
@@ -87,11 +89,12 @@ class LanguageFragment : Fragment(layout.fragment_language) {
 
         viewLifecycleOwner.lifecycleScope.launch() {
             userViewModel.errorState.filterNotNull().collectLatest {
-               if (it != null){
-                   Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
-               }
+                hideTryAgainText()
+                Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
             }
         }
+
+
 
 
         viewLifecycleOwner.lifecycleScope.launch() {
@@ -121,7 +124,7 @@ class LanguageFragment : Fragment(layout.fragment_language) {
             }.collectLatest {
                 // Save category data in preference
                 getSelectedVideoInterstCategory(it.videoCategories as MutableList<VideoCategory>)
-                if (from == AppConstants.FROM_EDIT_PROFILE){
+                if (from == AppConstants.FROM_EDIT_PROFILE) {
                     activity?.finish()
                 } else {
                     AppPreference.isRefreshRequired = false
@@ -133,6 +136,13 @@ class LanguageFragment : Fragment(layout.fragment_language) {
             }
         }
 
+
+        // Video Category Error Listener
+        viewLifecycleOwner.lifecycleScope.launch() {
+            videoCategoryViewModel.errorState.filterNotNull().collectLatest {
+                    Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, it, requireActivity())
+            }
+        }
 
         binding.submitButtonConst.setOnClickListener {
             if (selectedNumbers > 0) {
@@ -147,9 +157,7 @@ class LanguageFragment : Fragment(layout.fragment_language) {
 
                 } else {
                     if (selectedItemList.isNotEmpty()) {
-                        AppPreference.isLanguageSelected = true
                         AppPreference.saveSelectedLanguagesToPreference(selectedLanguages)
-                        AppPreference.isRefreshRequired = false
                         videoCategoryViewModel.loadVideoCategory()
                     }
                 }
@@ -292,5 +300,26 @@ class LanguageFragment : Fragment(layout.fragment_language) {
                 item.default_select = defaultSelected
             }
         }
+    }
+
+    private fun showTryAgainText() {
+        binding.noNetworkParent.visibility = View.VISIBLE
+        binding.tryAgain.visibility = View.VISIBLE
+        binding.tryAgain.setOnClickListener {
+            if (NetworkXProvider.isInternetConnected) {
+                userViewModel.requestLanguagesApi()
+                hideTryAgainText()
+            } else {
+                NoConnection.noConnectionSnackBarInfinite(
+                    binding.root,
+                    requireContext() as AppCompatActivity
+                )
+            }
+        }
+    }
+
+    private fun hideTryAgainText() {
+        binding.tryAgain.visibility = View.GONE
+        binding.noNetworkImg.visibility = View.GONE
     }
 }

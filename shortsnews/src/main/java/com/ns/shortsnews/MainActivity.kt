@@ -5,19 +5,13 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
-import android.view.Window
 import android.view.WindowManager
 import android.widget.SeekBar
-import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -255,6 +249,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
     fun getSeekbar(): SeekBar {
+        binding.videoSeekbar.visibility = View.VISIBLE
         return binding.videoSeekbar
     }
 
@@ -651,18 +646,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             }
         }
 
-        /*binding.persistentBottomsheet.followingExpanded.setOnClickListener {
-            if (NetworkXProvider.isInternetConnected) {
-                val channelId = binding.persistentBottomsheet.following.tag
-                channelId?.let {
-                    if (it != "") {
-                        listenFollowUnfollow(channelId.toString())
-                    }
-                }
-            } else {
-                NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
-            }
-        }*/
     }
 
     private fun listenFollowUnfollow() {
@@ -736,26 +719,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
 
-//    private fun notificationDataFromIntent(videoId:String, previewUrl:String, mediaUri:String){
-//        videoPagerFragment?.getNotificationData(videoId,previewUrl,mediaUri)
-//    }
 
-    private fun showDialog(title: String) {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setContentView(R.layout.description_alert_item)
-        val body = dialog.findViewById(R.id.alert_des) as TextView
-        body.text = title
-        val yesBtn = dialog.findViewById(R.id.const_close_button) as ConstraintLayout
-        yesBtn.setOnClickListener {
-            // delete data to DataStore
-            dialog.dismiss()
-        }
-        dialog.show()
-
-    }
 
 
 }

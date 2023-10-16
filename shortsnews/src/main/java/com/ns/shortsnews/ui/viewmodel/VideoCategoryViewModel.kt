@@ -11,8 +11,11 @@ import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
 import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.utils.AppPreference
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 /**
  * Created by Ashwani Kumar Singh on 24,April,2023.
@@ -28,8 +31,8 @@ class VideoCategoryViewModel(
     private val _updateCategoriesSuccessState = MutableStateFlow<UpdateCategories?>(null)
     val updateCategoriesSuccessState: StateFlow<UpdateCategories?> get() = _updateCategoriesSuccessState
 
-    private val _errorState = MutableStateFlow<String?>(null)
-    val errorState: StateFlow<String?> get() = _errorState
+    val _errorState = MutableSharedFlow<String?>()
+    val errorState: SharedFlow<String?> get() = _errorState
 
     private val _loadingState = MutableStateFlow(true)
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
@@ -42,15 +45,25 @@ class VideoCategoryViewModel(
             onResult = object :
                 UseCaseResponse<VideoCategoryResult> {
                 override fun onSuccess(result: VideoCategoryResult) {
-                    val userVideoCategory = UserVideoCategory().mapper(
-                        status = result.status,
-                        videoCategories = result.data
-                    )
-                    _videoCategorySuccessState.value = userVideoCategory
+                    if(result.status) {
+                        AppPreference.isLanguageSelected = true
+                        AppPreference.isRefreshRequired = false
+                        val userVideoCategory = UserVideoCategory().mapper(
+                            status = result.status,
+                            videoCategories = result.data
+                        )
+                        _videoCategorySuccessState.value = userVideoCategory
+                    } else {
+                        _errorState.tryEmit("Something went wrong")
+                    }
+
                 }
 
                 override fun onError(apiError: ApiError) {
-                    _errorState.value = "${apiError.getErrorMessage()}"
+                    viewModelScope.launch {
+                        _errorState.emit(apiError.getErrorMessage())
+                    }
+
                 }
 
                 override fun onLoading(isLoading: Boolean) {
@@ -71,7 +84,7 @@ class VideoCategoryViewModel(
                 }
 
                 override fun onError(apiError: ApiError) {
-                    _errorState.value = "${apiError.getErrorMessage()}"
+                    _errorState.tryEmit(apiError.getErrorMessage())
                 }
 
                 override fun onLoading(isLoading: Boolean) {
