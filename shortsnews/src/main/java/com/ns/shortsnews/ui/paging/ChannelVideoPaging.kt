@@ -23,7 +23,7 @@ class ChannelVideoPaging(private val channelId: String, private val userApiServi
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VideoData> {
         return try {
-            val perPage = params.loadSize
+            val perPage = 5//params.loadSize, here I don't understand why it is taking 15 as loadSize
             val nextPageNumber = params.key ?: 1
 
             val response = userApiService.getChannelVideoDataP(channel = channelId, page = nextPageNumber, perPage = perPage)
@@ -50,7 +50,7 @@ class ChannelVideoPaging(private val channelId: String, private val userApiServi
                 }.filter {
                     it.mediaUri.isNotBlank()
                 }
-            Log.i("AshwaniXYZX", "ChannelVideoPaging :: Success :: ${videoData.size} :: PageNumber :: $nextPageNumber")
+            Log.i("AshwaniXYZX", "ChannelVideoPaging Success ::  ParPage = $perPage,  Received Count =  ${videoData.size}, PageNumber = $nextPageNumber")
             LoadResult.Page(
                 data = videoData,
                 prevKey = null,

@@ -29,7 +29,7 @@ class ChannelVideoViewModel(private val channelId: String): ViewModel() {
     val channelVideoData = Pager(config = PagingConfig(
         pageSize = 5,
         enablePlaceholders = false,
-//    initialLoadSize = 2 // It loads only 2 items in the first load request
+//        initialLoadSize = 5 // It loads only 2 items in the first load request
     ),
         pagingSourceFactory = {
             ChannelVideoPaging(channelId = updatedChannelId, userApiService = KoinJavaComponent.getKoin().get<UserApiService>())

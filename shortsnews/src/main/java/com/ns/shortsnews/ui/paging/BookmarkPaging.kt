@@ -28,7 +28,7 @@ class BookmarkPaging(private val userApiService: UserApiService): PagingSource<I
 
         return try {
 
-            val perPage = params.loadSize
+            val perPage = 5//params.loadSize, here I don't understand why it is taking 15 as loadSize
             val nextPageNumber = params.key ?: 1
             val response = userApiService.getBookmarksDataP(page=nextPageNumber, perPage=perPage)
 
@@ -55,7 +55,7 @@ class BookmarkPaging(private val userApiService: UserApiService): PagingSource<I
                 }.filter {
                     it.mediaUri.isNotBlank()
                 }
-//            Log.i("AshwaniXYZX", "BookmarkPaging :: Success :: ${videoData.size} :: PageNumber :: $nextPageNumber")
+            Log.i("AshwaniXYZX", "BookmarkPaging Success ::  ParPage = $perPage,  Received Count =  ${videoData.size}, PageNumber = $nextPageNumber")
 
             LoadResult.Page(
                 data = videoData,

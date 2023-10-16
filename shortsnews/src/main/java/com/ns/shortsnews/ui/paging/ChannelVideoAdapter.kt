@@ -86,12 +86,11 @@ class ChannelVideoAdapter(private var videoFrom: String, private var channelId: 
 
     object ChannelVideoComparator : DiffUtil.ItemCallback<VideoData>() {
         override fun areItemsTheSame(oldItem: VideoData, newItem: VideoData): Boolean {
-            return (oldItem.id == newItem.id)// && (oldItem.saved == newItem.saved)
+            return (oldItem.id == newItem.id) && (oldItem.saved == newItem.saved)
         }
 
         override fun areContentsTheSame(oldItem: VideoData, newItem: VideoData): Boolean {
-//            return oldItem.id == newItem.id
-            return oldItem == newItem
+            return oldItem.id == newItem.id
         }
     }
 
