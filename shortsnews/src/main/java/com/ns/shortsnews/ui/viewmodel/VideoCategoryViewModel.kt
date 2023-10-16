@@ -11,6 +11,7 @@ import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
 import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.utils.AppPreference
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -31,7 +32,7 @@ class VideoCategoryViewModel(
     private val _updateCategoriesSuccessState = MutableStateFlow<UpdateCategories?>(null)
     val updateCategoriesSuccessState: StateFlow<UpdateCategories?> get() = _updateCategoriesSuccessState
 
-    val _errorState = MutableSharedFlow<String?>()
+    val _errorState = MutableSharedFlow<String?>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val errorState: SharedFlow<String?> get() = _errorState
 
     private val _loadingState = MutableStateFlow(true)

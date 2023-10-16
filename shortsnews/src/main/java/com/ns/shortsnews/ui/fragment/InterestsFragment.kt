@@ -22,6 +22,7 @@ import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
+import com.rommansabbir.networkx.NetworkXProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -48,7 +49,7 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
             if (selectedNumbers < 1){
                 Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_CATEGORY)
             } else {
-                if (isModified){
+                if (isModified && NetworkXProvider.isInternetConnected){
                     Alert().showGravityToast(requireActivity(), "Please save selected preferences")
                 } else {
                     activity?.finish()
@@ -66,7 +67,7 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
             if (selectedNumbers < 1){
                 Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_CATEGORY)
             } else {
-                if (isModified){
+                if (isModified && NetworkXProvider.isInternetConnected) {
                     Alert().showGravityToast(requireActivity(), "Please save selected preferences")
                 } else {
                     activity?.finish()
@@ -74,10 +75,15 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
             }
         }
 
-
+        // Video Category Error Listener
+        viewLifecycleOwner.lifecycleScope.launch() {
+            categoryViewModel.errorState.filterNotNull().collectLatest {
+                Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, it, requireActivity())
+            }
+        }
 
         binding.submitButtonConst.setOnClickListener {
-            getSelectedVideoInterstCategory(selectedItemList)
+//            getSelectedVideoInterstCategory(selectedItemList)
             if (selectedNumbers < 1){
                 Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_CATEGORY)
             } else {
@@ -96,14 +102,6 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
             binding.submitButtonPers.text = "Save"
         }
 
-
-        viewLifecycleOwner.lifecycleScope.launch(){
-            categoryViewModel.errorState.filterNotNull().collectLatest {
-                if(it != "NA"){
-                   Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
-                }
-            }
-        }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             categoryViewModel.videoCategorySuccessState.filterNotNull().collectLatest {
@@ -242,7 +240,7 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
 
     }
 
-    private fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
+    /*private fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
         val unselectedCategory = mutableListOf<VideoCategory>()
         val selectedCategory = mutableListOf<VideoCategory>()
 
@@ -262,5 +260,5 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
             Log.i("cat",AppPreference.categoryList.toString())
 
         }
-    }
+    }*/
 }

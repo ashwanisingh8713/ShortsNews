@@ -87,15 +87,13 @@ class LanguageFragment : Fragment(layout.fragment_language) {
             binding.continueButton.text = "Save"
         }
 
+        // Language API Error Listener
         viewLifecycleOwner.lifecycleScope.launch() {
             userViewModel.errorState.filterNotNull().collectLatest {
                 hideTryAgainText()
                 Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, AppConstants.API_ERROR, requireActivity())
             }
         }
-
-
-
 
         viewLifecycleOwner.lifecycleScope.launch() {
             userViewModel.LanguagesSuccessState.filterNotNull().collectLatest {
@@ -138,7 +136,7 @@ class LanguageFragment : Fragment(layout.fragment_language) {
 
 
         // Video Category Error Listener
-        viewLifecycleOwner.lifecycleScope.launch() {
+        viewLifecycleOwner.lifecycleScope.launch {
             videoCategoryViewModel.errorState.filterNotNull().collectLatest {
                     Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, it, requireActivity())
             }
