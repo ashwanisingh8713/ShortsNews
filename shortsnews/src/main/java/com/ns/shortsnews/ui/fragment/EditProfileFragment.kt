@@ -449,11 +449,18 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             this.setMessage(msg)
             this.setPositiveButton(positiveBtnText) { dialog, _ ->
 
-                val age = binding.ageEditText.text.toString().toInt()
-                if(age < 1 || age > 100) {
-                    Toast.makeText(requireContext(), "Age should be greater than 0", Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                    return@setPositiveButton
+                val ageStr = binding.ageEditText.text.toString()
+                if(ageStr.isNotEmpty()) {
+                    val age = ageStr.toInt()
+                    if (age < 1 || age > 100) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Age should be greater than 0",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        dialog.dismiss()
+                        return@setPositiveButton
+                    }
                 }
 
                 // Updating Profile

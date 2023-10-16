@@ -15,6 +15,7 @@ import com.ns.shortsnews.R
 import com.ns.shortsnews.R.*
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.databinding.FragmentInterestsBinding
+import com.ns.shortsnews.domain.connectivity.isOnline
 import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
@@ -22,9 +23,6 @@ import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.Alert
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
-import com.rommansabbir.networkx.NetworkXProvider
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -49,8 +47,20 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
             if (selectedNumbers < 1){
                 Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_CATEGORY)
             } else {
-                if (isModified && NetworkXProvider.isInternetConnected){
-                    Alert().showGravityToast(requireActivity(), "Please save selected preferences")
+                if (isModified) {
+                    if(isOnline(requireActivity())) {
+                        Alert().showGravityToast(
+                            requireActivity(),
+                            "Please save selected preferences"
+                        )
+                    }
+                    else {
+                        Alert().showGravityToast(
+                            requireActivity(),
+                            "Selected preference is not saved."
+                        )
+                        activity?.finish()
+                    }
                 } else {
                     activity?.finish()
                 }
@@ -67,8 +77,19 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
             if (selectedNumbers < 1){
                 Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_CATEGORY)
             } else {
-                if (isModified && NetworkXProvider.isInternetConnected) {
-                    Alert().showGravityToast(requireActivity(), "Please save selected preferences")
+                if (isModified) {
+                    if(isOnline(requireActivity())) {
+                        Alert().showGravityToast(
+                            requireActivity(),
+                            "Please save selected preferences"
+                        )
+                    } else {
+                        Alert().showGravityToast(
+                            requireActivity(),
+                            "Selected preference is not saved."
+                        )
+                        activity?.finish()
+                    }
                 } else {
                     activity?.finish()
                 }
@@ -83,7 +104,6 @@ class InterestsFragment : Fragment(layout.fragment_interests) {
         }
 
         binding.submitButtonConst.setOnClickListener {
-//            getSelectedVideoInterstCategory(selectedItemList)
             if (selectedNumbers < 1){
                 Alert().showGravityToast(requireActivity(), AppConstants.AT_LEAST_SELECT_ONE_CATEGORY)
             } else {

@@ -7,23 +7,27 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.ActivityContainerBinding
 import com.ns.shortsnews.domain.models.ProfileData
 import com.ns.shortsnews.ui.fragment.EditProfileFragment
 import com.ns.shortsnews.ui.fragment.InterestsFragment
-import com.ns.shortsnews.ui.fragment.LoginFragment
-import com.ns.shortsnews.utils.AppPreference
+import com.rommansabbir.networkx.NetworkXProvider
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class ContainerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityContainerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityContainerBinding.inflate(layoutInflater)
         val view = binding.root
         window.statusBarColor = Color.parseColor("#000000")
         window.navigationBarColor = Color.parseColor("#000000")
+
         when(intent.getStringExtra("to")){
              "interests" -> {
                 launchPersonaliseFragment()
@@ -41,6 +45,7 @@ class ContainerActivity : AppCompatActivity() {
         }
 
         setContentView(view)
+
 
     }
     private fun launchPersonaliseFragment(){

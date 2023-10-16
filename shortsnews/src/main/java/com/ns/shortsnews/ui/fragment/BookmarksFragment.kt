@@ -159,9 +159,9 @@ class BookmarksFragment : Fragment(R.layout.fragment_bookmark) {
 
         } else {
             // No Internet Snack bar: Fire
-            NoConnection.noConnectionSnackBarInfinite(binding.root,
-                requireContext() as AppCompatActivity
-            )
+//            NoConnection.noConnectionSnackBarInfinite(binding.root,
+//                requireContext() as AppCompatActivity
+//            )
         }
     }
 
