@@ -1,5 +1,6 @@
 package com.ns.shortsnews.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -29,42 +30,28 @@ import org.koin.java.KoinJavaComponent.getKoin
 
 class UserBookmarksViewModel(private val channelsDataUseCase: VideoDataUseCase): ViewModel() {
 
-    // Profile
-    private val _videoDataSuccessState = MutableStateFlow<VideoDataResponse?>(null)
-    val videoDataState: StateFlow<VideoDataResponse?> get() = _videoDataSuccessState
-
-    private val _errorState = MutableStateFlow<String?>(null)
-    val errorState: StateFlow<String?> get() = _errorState
 
     private val _loadingState = MutableStateFlow(true)
     val loadingState: MutableStateFlow<Boolean> get() = _loadingState
 
-    val bookmarks = Pager(PagingConfig(pageSize = 10)) {
+    /*val bookmark = Pager(PagingConfig(pageSize = 10, initialLoadSize = 2)) {
         BookmarkPaging(userApiService = getKoin().get<UserApiService>())
-    }.flow.cachedIn(viewModelScope).map { it }
+    }.flow.cachedIn(viewModelScope).map {
+        Log.i("AshwaniXYZX", "PagerViewModel")
+        it
+    }*/
 
-    fun clearChannelVideoData() {
-        _videoDataSuccessState.value = null
+    val bookmarks = Pager(config = PagingConfig(
+    pageSize = 5,
+    enablePlaceholders = false,
+    initialLoadSize = 2
+    ),
+    pagingSourceFactory = {
+        BookmarkPaging(userApiService = getKoin().get<UserApiService>())
+    }, initialKey = BookmarkPaging.INITIAL_PAGE
+    ).flow.cachedIn(viewModelScope).map {
+        Log.i("AshwaniXYZX", "PagerViewModel")
+        it
     }
 
-    fun requestVideoData(params: Pair<String, String>) {
-        channelsDataUseCase.invoke(viewModelScope, params,
-            object : UseCaseResponse<VideoDataResponse> {
-                override fun onSuccess(type: VideoDataResponse) {
-                    _videoDataSuccessState.value = type
-                }
-
-                override fun onError(apiError: ApiError) {
-                    _errorState.value = apiError.getErrorMessage()
-                }
-
-                override fun onLoading(isLoading: Boolean) {
-                    _loadingState.value = isLoading
-                }
-            }
-        )
-    }
-    fun clearVideoData() {
-        _videoDataSuccessState.value = null
-    }
 }

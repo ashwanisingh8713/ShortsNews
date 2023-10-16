@@ -14,18 +14,17 @@ import kotlin.coroutines.cancellation.CancellationException
 class ChannelVideoPaging(private val channelId: String, private val userApiService: UserApiService): PagingSource<Int, VideoData>() {
 
     override fun getRefreshKey(state: PagingState<Int, VideoData>): Int? {
-        return state.anchorPosition?.let { anchorPosition ->
-            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
-        }
+//        return state.anchorPosition?.let { anchorPosition ->
+//            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+//                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+//        }
+    return BookmarkPaging.INITIAL_PAGE
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VideoData> {
         return try {
-            val perPage = 5
+            val perPage = params.loadSize
             val nextPageNumber = params.key ?: 1
-
-            Log.i("RequestTT","channel :: $channelId page :: $nextPageNumber")
 
             val response = userApiService.getChannelVideoDataP(channel = channelId, page = nextPageNumber, perPage = perPage)
             val videoData = response.data

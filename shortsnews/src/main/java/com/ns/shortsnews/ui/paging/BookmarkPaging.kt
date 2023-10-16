@@ -13,16 +13,22 @@ import kotlin.coroutines.cancellation.CancellationException
  */
 class BookmarkPaging(private val userApiService: UserApiService): PagingSource<Int, VideoData>() {
 
+    companion object {
+        internal const val INITIAL_PAGE = 1
+    }
+
     override fun getRefreshKey(state: PagingState<Int, VideoData>): Int? {
-        return state.anchorPosition?.let { anchorPosition ->
-            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
-        }
+        // This method is called when invalidate is invoked on the PagingSource.
+        // Here, you can return a key that represents the initial page to load when refreshing.
+        // In this example, we return the initial page number.
+        return INITIAL_PAGE
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VideoData> {
+
         return try {
-            val perPage = 5
+
+            val perPage = params.loadSize
             val nextPageNumber = params.key ?: 1
             val response = userApiService.getBookmarksDataP(page=nextPageNumber, perPage=perPage)
 
@@ -49,6 +55,7 @@ class BookmarkPaging(private val userApiService: UserApiService): PagingSource<I
                 }.filter {
                     it.mediaUri.isNotBlank()
                 }
+//            Log.i("AshwaniXYZX", "BookmarkPaging :: Success :: ${videoData.size} :: PageNumber :: $nextPageNumber")
 
             LoadResult.Page(
                 data = videoData,
@@ -56,9 +63,12 @@ class BookmarkPaging(private val userApiService: UserApiService): PagingSource<I
                 nextKey = if (response.data.size == perPage) nextPageNumber + 1 else null
             )
         } catch (ce: CancellationException) {
+            Log.i("AshwaniXYZX", "BookmarkPaging :: CancellationException ::  $ce")
             // You can ignore or log this exception
             LoadResult.Invalid()
+
         } catch (e: Exception) {
+            Log.i("AshwaniXYZX", "BookmarkPaging :: Exception :: $e")
             LoadResult.Error(e)
         }
     }

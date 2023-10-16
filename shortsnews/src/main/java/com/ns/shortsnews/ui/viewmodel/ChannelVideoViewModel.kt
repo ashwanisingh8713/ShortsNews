@@ -1,5 +1,6 @@
 package com.ns.shortsnews.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -10,6 +11,7 @@ import com.ns.shortsnews.domain.exception.ApiError
 import com.ns.shortsnews.domain.models.VideoDataResponse
 import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
 import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
+import com.ns.shortsnews.ui.paging.BookmarkPaging
 import com.ns.shortsnews.ui.paging.ChannelVideoPaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,13 +26,18 @@ class ChannelVideoViewModel(private val channelId: String): ViewModel() {
         get() = field
         set(value) { field = value }
 
-    val channelVideoData = Pager(PagingConfig(pageSize = 10)) {
-        ChannelVideoPaging(channelId = updatedChannelId, userApiService = KoinJavaComponent.getKoin().get<UserApiService>())
-    }.flow.cachedIn(viewModelScope)
-
-
-
-
+    val channelVideoData = Pager(config = PagingConfig(
+        pageSize = 5,
+        enablePlaceholders = false,
+        initialLoadSize = 2
+    ),
+        pagingSourceFactory = {
+            ChannelVideoPaging(channelId = updatedChannelId, userApiService = KoinJavaComponent.getKoin().get<UserApiService>())
+        }, initialKey = BookmarkPaging.INITIAL_PAGE
+    ).flow.cachedIn(viewModelScope).map {
+        Log.i("AshwaniXYZX", "PagerViewModel")
+        it
+    }
 
 
 }
