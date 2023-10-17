@@ -87,13 +87,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             userViewModel.errorState.filterNotNull().collectLatest {
                   binding.progressBarLogin.visibility = View.GONE
                   binding.sendImage.visibility = View.VISIBLE
-                      Alert().showErrorDialog(AppConstants.API_ERROR_TITLE, it, requireActivity())
+                      Alert().showErrorDialog("Demo App", it, requireActivity())
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.registrationSuccessState.filterNotNull().collectLatest {
-                Log.i("OTPSuccess", "registrationSuccessState :: $it")
+                Log.i("OTPSuccess", "LoginFragment :: registrationSuccessState = $it")
                 it.let {
                     val bundle = Bundle()
                     bundle.putString("email", it.email)

@@ -157,11 +157,11 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.otpSuccessState.filterNotNull().collectLatest {
                 it.let {
-                        Log.i("OTPSuccess", "OTP Success")
+
                     if (it.status) {
                         // Saving User Data in Preference
                         saveUserPreference(it)
-                        delay(500)
+                        Log.i("OTPSuccess", "OtpFragment :: otpSuccessState = ${it}")
                         if (it.first_time_user) {
                             userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
                         } else {
@@ -175,16 +175,16 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.userSelectionSuccessState.filterNotNull().collectLatest {
                 it.let {
-                    val ml = it.languages.map {langid->
+                    val languageSet = it.languages.map { langid->
                         langid.trim()
                     }
-                    if (ml.isEmpty()){
-                        Alert().showGravityToast(requireActivity(), AppConstants.TECH_ERROR)
+                    if (languageSet.isEmpty()) {
                         binding.submitButton.visibility = View.VISIBLE
                         binding.progressBarOtp.visibility = View.GONE
-
+                        // When Language is empty, It should open Language Fragment
+                        userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
                     } else{
-                        AppPreference.saveSelectedLanguagesToPreference(ml)
+                        AppPreference.saveSelectedLanguagesToPreference(languageSet)
                         videoCategoryViewModel.loadVideoCategory()
                     }
                 }
