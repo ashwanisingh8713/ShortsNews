@@ -2,8 +2,6 @@ package com.videopager.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.exoplayer2.MediaItem
-import com.player.models.VideoData
 import com.videopager.data.VideoInfoData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -57,12 +55,12 @@ class VideoSharedEventViewModel:ViewModel() {
         }
     }
 
-    private var _followRequest= MutableSharedFlow<String?>()
-    val followRequest = _followRequest.asSharedFlow()
+    private var _paletteColor= MutableSharedFlow<Int?>()
+    val paletteColor = _paletteColor.asSharedFlow()
 
-    fun followRequest(channelId: String?) {
+    fun sendPaletteColor(palletColor: Int?) {
         viewModelScope.launch {
-            _followRequest.emit(channelId)
+            _paletteColor.emit(palletColor)
         }
     }
 

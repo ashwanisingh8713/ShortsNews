@@ -1,5 +1,10 @@
 package com.ns.shortsnews.utils
 
+import android.graphics.Bitmap
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.palette.graphics.Palette
+import com.videopager.vm.VideoSharedEventViewModel
+
 
 class AppConstants {
 
@@ -34,6 +39,57 @@ class AppConstants {
         const val VIDEO_PREVIEW_URL = "videoPreviewUrl"
         const val VIDEO_URL = "video_url"
 
+
+    }
+}
+
+/*Bottom sheet pallet color using bitmap icon from response URL*/
+internal fun setBottomSheetHeaderBg(bitmap: Bitmap, layout: ConstraintLayout, sharedEventViewModel: VideoSharedEventViewModel? = null) {
+    layout.alpha = 1.0f
+
+    val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+    Palette.from(mutableBitmap).generate { palette ->
+
+        val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
+        lightVibrantSwatch?.let {
+            layout.setBackgroundColor(
+                lightVibrantSwatch
+            )
+            sharedEventViewModel?.sendPaletteColor(lightVibrantSwatch)
+        }
+
+        val vibrantSwatch = palette?.vibrantSwatch?.rgb
+        vibrantSwatch?.let {
+            layout.setBackgroundColor(vibrantSwatch)
+            sharedEventViewModel?.sendPaletteColor(vibrantSwatch)
+        }
+
+        val lightMutedSwatch = palette?.lightMutedSwatch?.rgb
+        lightMutedSwatch?.let {
+            layout.setBackgroundColor(lightMutedSwatch)
+            sharedEventViewModel?.sendPaletteColor(lightMutedSwatch)
+        }
+
+        val mutedSwatch = palette?.mutedSwatch?.rgb
+        mutedSwatch?.let {
+            layout.setBackgroundColor(mutedSwatch)
+            sharedEventViewModel?.sendPaletteColor(mutedSwatch)
+        }
+
+        val darkMutedSwatch = palette?.darkMutedSwatch?.rgb
+        darkMutedSwatch?.let {
+            layout.setBackgroundColor(darkMutedSwatch)
+            sharedEventViewModel?.sendPaletteColor(darkMutedSwatch)
+        }
+
+        val darkVibrantSwatch = palette?.darkVibrantSwatch?.rgb
+        darkVibrantSwatch?.let {
+            layout.setBackgroundColor(
+                darkVibrantSwatch
+            )
+            sharedEventViewModel?.sendPaletteColor(darkVibrantSwatch)
+        }
 
     }
 }

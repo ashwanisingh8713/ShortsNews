@@ -24,7 +24,6 @@ import com.exo.ui.ExoAppPlayerViewFactory
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.snackbar.Snackbar
 import com.ns.shortsnews.MainActivity
 import com.ns.shortsnews.MainApplication
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnected
@@ -518,7 +517,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
             // It listens Follow/Unfollow update,
             // When User is not logged in then it will launch login screen
             // User is logged in
-            sharedEventViewModel.followRequest.collectLatest {
+            sharedEventViewModel.paletteColor.collectLatest {
                 if (!isUserLoggedIn) {
                     sharedEventViewModel.launchLoginEvent(true)
                 }

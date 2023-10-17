@@ -1,9 +1,7 @@
 package com.ns.shortsnews
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -35,13 +33,11 @@ import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
 import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
 import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
-import com.ns.shortsnews.domain.usecase.videodata.VideoDataUseCase
 import com.ns.shortsnews.ui.fragment.ChannelVideosFragment
-import com.ns.shortsnews.ui.paging.ChannelVideoAdapter
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
-import com.player.models.VideoData
+import com.ns.shortsnews.utils.setBottomSheetHeaderBg
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.data.VideoInfoData
 import com.videopager.ui.VideoPagerFragment_2
@@ -80,10 +76,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
     lateinit var standardBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
-//    private var bottomSheetRecyclerAdapter: ChannelVideoAdapter? = null
-    private var channelDescription = ""
 
-    private lateinit var  channelsVideosViewModel2: ChannelVideoViewModel
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -181,7 +174,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     override fun onPause() {
         super.onPause()
-        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onResume() {
@@ -469,13 +462,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     channelInfoViewModel.clearChannelInfo()
 
                     val videoInfoData = binding.persistentBottomsheet.imgDownArrow.tag
-                    val videoInfo = videoInfoData as VideoInfoData
-                    videoInfo.let {
-                        if (videoInfo.channel_id != "") {
+                    videoInfoData?.let {
+                        val videoInfo = videoInfoData as VideoInfoData
+                        val channelId = videoInfo.channel_id
+                        if (channelId != "") {
                             binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
                             binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
-                            bottomSheetChannelInfo(channelId = it.channel_id)
-                            bottomSheetGetChannelVideoData(videoInfoData = it)
+                            Log.i("HeaderBg", "MainActivity :: Make Request to get all videos of ChannelId = $channelId")
+                            channelInfoViewModel.requestChannelInfoApi(channelId)
+                            openBottomSheetChannelVideoData(videoInfoData = videoInfo)
                         }
                     }
                 } else {
@@ -500,6 +495,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         // On App launch, BottomSheet Header should be in gone state
         bottomSheetHeaderViewsShowHide(false)
 
+        // Get Video Info from VideoPagerFragment
         lifecycleScope.launch {
             sharedEventViewModel.videoInfo.filterNotNull().collectLatest {
 
@@ -556,44 +552,20 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                         channelVisibleBitmap = bitmap
                         binding.persistentBottomsheet.clientImage.setImageBitmap(bitmap)
                         Log.i("HeaderBg", "MainActivity: Channel Icon Bitmap loaded :: ${videoInfoData.channel_id}")
-                        bottomSheetHeaderBg(bitmap)
+                        setBottomSheetHeaderBg(bitmap, binding.persistentBottomsheet.bottomSheetHeader, sharedEventViewModel)
                     }
 
-//                    binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
                     return false
                 }
             }).submit()
     }
 
-    //Get Channel info by channelId
-    private fun bottomSheetChannelInfo(channelId: String) {
-        Log.i("channelInfo", "Channel id :: $channelId")
-        channelInfoViewModel.requestChannelInfoApi(channelId)
-        lifecycleScope.launch {
-            channelInfoViewModel.ChannelInfoSuccessState.filterNotNull().collectLatest {
-                channelDescription = it.data.description
-            }
-        }
-
-        lifecycleScope.launch {
-            channelInfoViewModel.errorState.filterNotNull().collectLatest {
-                Log.i("channelInfo", it)
-            }
-        }
-
-        lifecycleScope.launch {
-            channelInfoViewModel.loadingState.filterNotNull().collectLatest {
-                Log.i("channelInfo", "$it")
-            }
-        }
-
-    }
 
 
     /**
      * Bottom Sheet Channel Video Data
      */
-    private fun bottomSheetGetChannelVideoData(videoInfoData: VideoInfoData) {
+    private fun openBottomSheetChannelVideoData(videoInfoData: VideoInfoData) {
         val channelVideosFragment = ChannelVideosFragment().apply {
             val bundle = Bundle()
             bundle.putString("channelId", videoInfoData.channel_id)
@@ -661,50 +633,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
-    /*Bottom sheet pallet color using bitmap icon from response URL*/
-    private fun bottomSheetHeaderBg(bitmap: Bitmap) {
-        binding.persistentBottomsheet.bottomSheetHeader.alpha = 1.0f
 
-        val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-
-        Palette.from(mutableBitmap).generate { palette ->
-
-            val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
-            lightVibrantSwatch?.let {
-                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(
-                    lightVibrantSwatch
-                )
-            }
-
-            val vibrantSwatch = palette?.vibrantSwatch?.rgb
-            vibrantSwatch?.let {
-                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(vibrantSwatch)
-            }
-
-            val lightMutedSwatch = palette?.lightMutedSwatch?.rgb
-            lightMutedSwatch?.let {
-                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(lightMutedSwatch)
-            }
-
-            val mutedSwatch = palette?.mutedSwatch?.rgb
-            mutedSwatch?.let {
-                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(mutedSwatch)
-            }
-
-            val darkMutedSwatch = palette?.darkMutedSwatch?.rgb
-            darkMutedSwatch?.let {
-                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(darkMutedSwatch)
-            }
-
-            val darkVibrantSwatch = palette?.darkVibrantSwatch?.rgb
-            darkVibrantSwatch?.let {
-                binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(
-                    darkVibrantSwatch
-                )
-            }
-
-        }
-    }
 
     /*Handling Back pressed for main activity and channel bottom sheet state*/
     @Deprecated("Deprecated in Java")
@@ -718,8 +647,5 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
-
-
-
-
 }
+

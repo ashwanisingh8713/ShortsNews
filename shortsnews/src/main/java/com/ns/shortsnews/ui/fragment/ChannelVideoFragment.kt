@@ -37,7 +37,10 @@ import com.ns.shortsnews.ui.paging.ChannelVideoAdapter
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.utils.IntentLaunch
+import com.ns.shortsnews.utils.setBottomSheetHeaderBg
 import com.videopager.utils.CategoryConstants
+import com.videopager.vm.SharedEventViewModelFactory
+import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -67,6 +70,8 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
     private lateinit var  channelsVideosViewModel2: ChannelVideoViewModel
 
+    private val sharedEventViewModel: VideoSharedEventViewModel by activityViewModels { SharedEventViewModelFactory }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,10 +95,14 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         if(from == "MainActivity") {
             // Here, we are getting channel info and channel icon bitmap from MainActivity which is already loaded
             if(MainActivity.channelVisibleBitmap != null) {
+                Log.i("HeaderBg", "ChannelVideoFragment: Channel Icon Bitmap loaded from MainActivity")
                 lifecycleScope.launch {
                     binding.channelLogo.setImageBitmap(MainActivity.channelVisibleBitmap)
-                    bottomSheetHeaderBg(MainActivity.channelVisibleBitmap!!)
+                    setBottomSheetHeaderBg(MainActivity.channelVisibleBitmap!!, binding.channelTopView)
                 }
+            } else {
+                Log.i("HeaderBg", "ChannelVideoFragment: Channel Icon Bitmap is Null in MainActivity")
+                channelLogoBitmap()
             }
 
             binding.channelDes.text = channelDes
@@ -193,6 +202,14 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            sharedEventViewModel.paletteColor.collectLatest {
+                if (it != null) {
+                    binding.channelTopView.setBackgroundColor(it)
+                }
+            }
+        }
+
 
 
     }
@@ -222,7 +239,7 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
                     ): Boolean {
                         lifecycleScope.launch {
                             binding.channelLogo.setImageBitmap(bitmap)
-                            bottomSheetHeaderBg(bitmap)
+                            setBottomSheetHeaderBg(bitmap, binding.channelTopView)
                         }
 
                         return false
@@ -269,45 +286,6 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
 
 
 
-    private fun bottomSheetHeaderBg(bitmap: Bitmap) {
-        val headerTag = "HeaderBg"
-        Log.i(headerTag, "============= OUT :: $channelId")
-        val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-
-        Palette.from(mutableBitmap).generate { palette ->
-            Log.i(headerTag, "============= IN :: $channelId")
-            val lightVibrantSwatch = palette?.lightVibrantSwatch?.rgb
-            lightVibrantSwatch?.let {
-               binding.channelTopView.setBackgroundColor(lightVibrantSwatch)
-            }
-
-            val vibrantSwatch = palette?.vibrantSwatch?.rgb
-            vibrantSwatch?.let {
-                binding.channelTopView.setBackgroundColor(vibrantSwatch)
-            }
-
-            val lightMutedSwatch = palette?.lightMutedSwatch?.rgb
-            lightMutedSwatch?.let {
-                binding.channelTopView.setBackgroundColor(lightMutedSwatch)
-            }
-
-            val mutedSwatch = palette?.mutedSwatch?.rgb
-            mutedSwatch?.let {
-                binding.channelTopView.setBackgroundColor(mutedSwatch)
-            }
-
-            val darkMutedSwatch = palette?.darkMutedSwatch?.rgb
-            darkMutedSwatch?.let {
-                binding.channelTopView.setBackgroundColor(darkMutedSwatch)
-            }
-
-            val darkVibrantSwatch = palette?.darkVibrantSwatch?.rgb
-            darkVibrantSwatch?.let {
-                binding.channelTopView.setBackgroundColor(darkVibrantSwatch)
-            }
-
-        }
-    }
 
     private fun descriptionDialog(title: String) {
         val dialog = Dialog(requireContext())
