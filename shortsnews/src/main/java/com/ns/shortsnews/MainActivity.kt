@@ -29,6 +29,7 @@ import com.ns.shortsnews.data.model.VideoClikedItem
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
 import com.ns.shortsnews.databinding.ActivityMainBinding
+import com.ns.shortsnews.domain.connectivity.isOnline
 import com.ns.shortsnews.domain.usecase.channel.ChannelInfoUseCase
 import com.ns.shortsnews.domain.usecase.followunfollow.FollowUnfollowUseCase
 import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
@@ -99,10 +100,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             }
         })
 
-        // Bottom Sheet Adapter Initialisation
-//        bottomSheetRecyclerAdapter =
-//            ChannelVideoAdapter(videoFrom = CategoryConstants.CHANNEL_VIDEO_DATA, channelId = "")
-
         binding.profileIcon.setOnClickListener {
             launchProfileActivity()
         }
@@ -117,10 +114,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
         AppPreference.init(this@MainActivity)
 
-        val isInternetConnected = NetworkXProvider.isInternetConnected
+        val isInternetConnected = isOnline(this@MainActivity)
+
+        hideTryAgainText()
 
         if (AppPreference.categoryListStr!!.isEmpty() || !isInternetConnected) {
-            showTryAgainText()
+            showTryAgainText("onCreate - CategoryListStr is ${AppPreference.categoryListStr!!} and isInternetConnected = $isInternetConnected")
         } else  {
             categoryAdapter = CategoryAdapter(
                 itemList = videoCategories,
@@ -241,16 +240,18 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
-    fun getSeekbar(): SeekBar {
-        binding.videoSeekbar.visibility = View.VISIBLE
-        return binding.videoSeekbar
+    fun getSeekbar(): SeekBar? {
+        // When app is in background and memory is cleared then seekbar is null when we come back
+        val seekBar = findViewById<SeekBar>(R.id.video_seekbar)
+        seekBar?.visibility = View.VISIBLE
+        return seekBar
     }
 
     /**
      * Loads Home Fragment
      */
     private fun loadHomeFragment(categoryId: String) {
-        if (NetworkXProvider.isInternetConnected) {
+        if (isOnline(this@MainActivity)) {
             val videoItems = VideoClikedItem(requiredId = categoryId, videoFrom = CategoryConstants.DEFAULT_VIDEO_DATA, selectedPosition = 0, loadedVideoData = emptyList())
             videoPagerFragment = VideoPagerFragment_2()
             val bundle = Bundle()
@@ -260,7 +261,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             val ft = supportFragmentManager.beginTransaction()
             ft.replace(R.id.fragment_container, videoPagerFragment!!)
             ft.commit()
-
         } else {
             // No Internet Snackbar: Fire
             NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
@@ -304,7 +304,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         lifecycleScope.launch {
             videoCategoryViewModel!!.errorState.filterNotNull().collectLatest {
-                showTryAgainText()
+                showTryAgainText("videoCategoryViewModel!!.errorState = $it")
             }
         }
 
@@ -315,11 +315,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.noNetworkImg.visibility = View.GONE
     }
 
-    private fun showTryAgainText() {
+    private fun showTryAgainText(fromSource: String) {
+        Log.e("showTryAgainText", "fromSource = $fromSource")
         binding.noNetworkParent.visibility = View.VISIBLE
         binding.tryAgain.visibility = View.VISIBLE
         binding.tryAgain.setOnClickListener {
-            if (NetworkXProvider.isInternetConnected) {
+            if (isOnline(this@MainActivity)) {
                 if (AppPreference.categoryList.isEmpty()) {
                     videoCategoryViewModel!!.loadVideoCategory()
                     showCategory()
@@ -346,14 +347,14 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             }
 
         }
-        if (!NetworkXProvider.isInternetConnected) {
+        if (!isOnline(this@MainActivity)) {
             binding.tryAgain.visibility = View.VISIBLE
             binding.noNetworkImg.visibility = View.VISIBLE
             binding.tryAgain.text = getString(R.string.no_internet_category)
             NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
         } else {
-            binding.tryAgain.visibility = View.VISIBLE
             binding.noNetworkImg.visibility = View.GONE
+            binding.tryAgain.visibility = View.VISIBLE
             binding.tryAgain.text = getString(R.string.some_thing_went_wrong)
         }
     }

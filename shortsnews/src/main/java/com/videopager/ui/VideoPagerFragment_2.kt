@@ -68,12 +68,25 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
     private lateinit var viewModel: VideoPagerViewModel
     private var seekbar: SeekBar? = null
 
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if(context is MainActivity) {
+        if (context is MainActivity) {
             seekbar = context.getSeekbar()
         }
     }
+
+
+    /*fun setSeekbar(seekbar: SeekBar?) {
+        this.seekbar = seekbar
+        Log.e("showTryAgainText", "getSeekbar = $seekbar")
+        // Update Progress in Bottom
+        view?.let{
+            this.seekbar?.let {
+                setupSeekbarProgress(it)
+            }
+        }
+    }*/
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,7 +112,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
             languages = AppPreference.getSelectedLanguagesAsString(),
             selectedPlay = videoItems.selectedPosition,
             loadedVideoData = videoItems.loadedVideoData
-//            loadedVideoData = emptyList()
         ).create(this)
 
         //  Initialising ViewModel

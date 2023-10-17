@@ -104,12 +104,14 @@ class VideoDataRepositoryImpl(private val userApiService: UserApiService) : Vide
 
                 ll.add(videoData as MutableList)
                 ll
-            } catch (ec: Exception) {
-                val httpCode = (ec as HttpException).code()
-                if(httpCode == 401) {
-                    Log.i("Logout", "401")
-                    // Logout
-                    IntentLaunch.logoutInfoDialog()
+            } catch (e: Exception) {
+                if(e is HttpException) {
+                    val httpCode = e.code()
+                    if(httpCode == 401) {
+                        Log.i("Logout", "401")
+                        // Logout
+                        IntentLaunch.logoutInfoDialog()
+                    }
                 }
                 ll
             }
