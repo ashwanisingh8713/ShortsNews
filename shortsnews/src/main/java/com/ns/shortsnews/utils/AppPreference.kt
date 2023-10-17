@@ -64,7 +64,7 @@ object AppPreference {
         get() = preference.getBoolean(IS_USER_LOGGED_IN, false)
         set(value) = preference.edit {
             this.putBoolean(IS_USER_LOGGED_IN, value)
-            this.apply()
+            this.commit()
         }
 
     //User Update profile status
@@ -80,7 +80,7 @@ object AppPreference {
         get() = preference.getString(USER_PROFILE_IMAGE, EMPTY_STRING)
         set(value) = preference.edit {
             this.putString(USER_PROFILE_IMAGE, value)
-            this.apply()
+            this.commit()
         }
 
     //Function for getting and setting user token
@@ -104,7 +104,7 @@ object AppPreference {
         get() = preference.getString(USER_NAME, EMPTY_STRING)
         set(value) = preference.edit {
             this.putString(USER_NAME, value)
-            this.apply()
+            this.commit()
         }
 
     //Function for getting and setting user age
@@ -112,7 +112,7 @@ object AppPreference {
         get() = preference.getString(USER_AGE, EMPTY_STRING)
         set(value) = preference.edit {
             this.putString(USER_AGE, value)
-            this.apply()
+            this.commit()
         }
 
     //Function for getting and setting user location
@@ -120,7 +120,7 @@ object AppPreference {
         get() = preference.getString(USER_LOCATION, EMPTY_STRING)
         set(value) = preference.edit {
             this.putString(USER_LOCATION, value)
-            this.apply()
+            this.commit()
         }
 
     //Function for getting and setting user language selected by user

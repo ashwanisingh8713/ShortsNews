@@ -47,6 +47,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     @SuppressLint("SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Clearing Preference, because in OTP we are saving Login = True, so when we do OTP submit
+        // and immedietly comes back to Login Page, and again go to OTP page it directly goes to Main VideoPage
+        // So to avoid this we are clearing the Preference
+        AppPreference.clear()
+
         binding = FragmentLoginBinding.bind(view)
         binding.sendImage.setOnClickListener{
                 val email = binding.emailEditText.text.toString()
@@ -56,6 +62,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         val bundle: MutableMap<String, String> = mutableMapOf()
                         bundle["email"] = email
                          if (isOnline(requireActivity())) {
+                             // Email Registration Api
                             userViewModel.requestRegistrationApi(bundle)
                         } else {
                              // No Internet Snackbar: Fire
@@ -86,12 +93,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         viewLifecycleOwner.lifecycleScope.launch(){
             userViewModel.registrationSuccessState.filterNotNull().collectLatest {
+                Log.i("OTPSuccess", "registrationSuccessState :: $it")
                 it.let {
                     val bundle = Bundle()
                     bundle.putString("email", it.email)
                     bundle.putString("otp_id", it.OTP_id.toString())
                     bundle.putBoolean("isUserRegistered",it.is_registered)
                     userViewModel.updateFragment(UserViewModel.OTP,bundle )
+                    // When we come back from OTP Fragment to Login Fragment,
+                    // we need to clear the Registration State
+                    userViewModel.clearRegistrationState()
                 }
             }
         }
@@ -107,5 +118,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 }

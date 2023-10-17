@@ -18,6 +18,7 @@ import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
 import com.ns.shortsnews.utils.AppPreference
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -49,8 +50,8 @@ class UserViewModel constructor(
     val fragmentStateFlow: SharedFlow<Bundle?> get() = _fragmentStateFlow
 
     // Registration
-    private val _registrationSuccessState = MutableStateFlow<UserRegistration?>(null)
-    val registrationSuccessState: StateFlow<UserRegistration?> get() = _registrationSuccessState
+    private val _registrationSuccessState = MutableSharedFlow<UserRegistration?>(replay = 1, onBufferOverflow = BufferOverflow.DROP_LATEST)
+    val registrationSuccessState: SharedFlow<UserRegistration?> get() = _registrationSuccessState
 
     // Otp
     private val _otpSuccessState = MutableStateFlow<UserOtp?>(null)
@@ -85,6 +86,9 @@ class UserViewModel constructor(
         }
     }
 
+    fun clearRegistrationState() {
+        _registrationSuccessState.tryEmit(null)
+    }
 
     fun requestRegistrationApi(requestBody: Map<String, String>) {
         userRegistrationUseCases.invoke(viewModelScope, requestBody,
@@ -109,7 +113,7 @@ class UserViewModel constructor(
                             email = result.data.email,
                             isUserRegistered = result.data.is_registered
                         )
-                        _registrationSuccessState.value = userRegistration
+                        _registrationSuccessState.tryEmit(userRegistration)
                     }
                 }
 
@@ -128,6 +132,10 @@ class UserViewModel constructor(
                 }
             }
         )
+    }
+
+    fun clearingOtpSuccessState() {
+        _otpSuccessState.value = null
     }
 
     fun requestOtpValidationApi(requestBody: Map<String, String>) {

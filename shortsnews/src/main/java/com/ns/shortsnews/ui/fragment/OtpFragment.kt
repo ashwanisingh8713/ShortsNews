@@ -1,12 +1,9 @@
 package com.ns.shortsnews.ui.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -34,8 +31,6 @@ import com.ns.shortsnews.utils.*
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
 import com.videopager.utils.UtilsFunctions
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
@@ -84,6 +79,11 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             }
         }
         binding.emailTxt.text = emailId
+
+        // Clearing OTP Success State = null
+        userViewModel.clearingOtpSuccessState()
+
+        // Submit Button Click Listener
         binding.submitButton.setOnClickListener {
             UtilsFunctions.hideKeyBord(requireActivity(), view)
             val otpValue = binding.otpEditText.text.toString().trim()
@@ -123,6 +123,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     data["OTP"] = otpValue
                     data["OTP_id"] = otpId.toString()
                     if (UtilsFunctions.isOnline(requireActivity())) {
+                        // Making OTP Verification API Call
                         userViewModel.requestOtpValidationApi(data)
                     } else {
                         // No Internet Snack bar: Fire
@@ -144,18 +145,21 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             }
         }
 
-
+        // OTP Error State Listener
         viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.otpErrorState.filterNotNull().collectLatest {
                 Alert().showGravityToast(requireActivity(), it)
             }
         }
 
+
+        // OTP Success State Listener
         viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.otpSuccessState.filterNotNull().collectLatest {
                 it.let {
-//                    sendFcmTokenToServer()
+                        Log.i("OTPSuccess", "OTP Success")
                     if (it.status) {
+                        // Saving User Data in Preference
                         saveUserPreference(it)
                         delay(500)
                         if (it.first_time_user) {

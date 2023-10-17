@@ -1,7 +1,6 @@
 package com.ns.shortsnews
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +8,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
-import com.google.firebase.crashlytics.internal.model.CrashlyticsReport.Session.User
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.databinding.ActivityProfileBinding
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
@@ -20,6 +18,7 @@ import com.ns.shortsnews.ui.fragment.*
 import com.ns.shortsnews.ui.viewmodel.*
 import com.ns.shortsnews.utils.AppConstants
 import com.ns.shortsnews.utils.AppPreference
+import com.ns.shortsnews.utils.IntentLaunch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -54,7 +53,7 @@ class ProfileActivity : AppCompatActivity() {
                 profileFragment()
             } else {
                 if (AppPreference.isLanguageSelected) {
-                    launchMainActivityIntent()
+                    IntentLaunch.launchMainActivityFinishCurrent(this@ProfileActivity)
                 } else {
                     languagesFragment()
                 }
@@ -76,7 +75,7 @@ class ProfileActivity : AppCompatActivity() {
                     UserViewModel.OTP -> otpFragment(bundle)
                     UserViewModel.LOGIN -> loginFragment()
                     UserViewModel.OTP_POP -> popOtpFragment()
-                    UserViewModel.MAIN_ACTIVITY -> launchMainActivityIntent()
+                    UserViewModel.MAIN_ACTIVITY -> IntentLaunch.launchMainActivityFinishCurrent(this@ProfileActivity)
                     UserViewModel.LANGUAGES -> languagesFragment()
                 }
             }
@@ -100,7 +99,7 @@ class ProfileActivity : AppCompatActivity() {
         Log.i("lifecycle", "Profile activity on OTP fragment launch called")
         val fragment = OtpFragment()
         fragment.arguments = bundle
-        supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fragment)
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
             .addToBackStack("opt").commit()
     }
 
@@ -124,12 +123,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
 
-    private fun launchMainActivityIntent() {
-        Log.i("lifecycle", "Profile activity on main activity called")
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        this.finish()
-    }
+
 
 
     @Deprecated("Deprecated in Java")
