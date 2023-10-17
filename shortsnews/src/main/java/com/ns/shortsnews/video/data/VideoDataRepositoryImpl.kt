@@ -27,8 +27,7 @@ class VideoDataRepositoryImpl(private val userApiService: UserApiService) : Vide
     ): Flow<MutableList<VideoData>> {
         var ll = mutableListOf<MutableList<VideoData>>()
 
-        Log.i("RequestTT","Languguage :: $languages.toString()")
-        Log.i("RequestTT","CategoryId :: $id")
+        Log.i("RequestTT","CategoryId = $id and Language = $languages.toString()")
 
         val llVid = withContext(Dispatchers.IO) {
             try {
@@ -82,6 +81,7 @@ class VideoDataRepositoryImpl(private val userApiService: UserApiService) : Vide
                             videoUrls[index] = post.videoUrl
                             videoIds[index] = post.id.toString()
                         }
+                        Log.i("RequestTT","MediaUri = ${post.videoUrl}")
                         VideoData(
                             id = post.id,
                             mediaUri = post.videoUrl,

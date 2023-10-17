@@ -183,7 +183,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                         AppPreference.saveSelectedLanguagesToPreference(ml)
                         videoCategoryViewModel.loadVideoCategory()
                     }
-
                 }
             }
         }
