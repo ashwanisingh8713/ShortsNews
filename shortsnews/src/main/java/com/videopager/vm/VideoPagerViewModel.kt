@@ -8,6 +8,7 @@ import com.player.models.VideoData
 import com.player.players.AppPlayer
 import com.ns.shortsnews.R
 import com.videopager.data.VideoDataRepository
+import com.videopager.data.VideoInfoData
 import com.videopager.models.*
 import com.videopager.models.AnimationEffect
 import com.videopager.models.AttachPlayerToViewResult
@@ -423,9 +424,12 @@ internal class VideoPagerViewModel(
         return flatMapLatest { event ->
             Log.i("kamlesh","VideoInfo event :: " + event.videoId)
             repository.getVideoInfo(event.videoId, event.position)
-        }.mapLatest {
-            Log.i("kamlesh","VideoInfo event :: " + it.first+ "   ::" + it.second)
-            Pair(it.first, it.second)
+        }.flowOn(Dispatchers.IO).mapLatest {
+            val videoInfo = it.first
+            if(videoInfo.id == "43694") {
+                videoInfo.hasAd = true
+            }
+            Pair(videoInfo, it.second)
         }.map {
             Log.i("kamlesh","VideoInfo result :: " + it.second + "   ::  " + it.first)
             GetVideoInfoResult(it.second, it.first)
@@ -548,6 +552,7 @@ internal class VideoPagerViewModel(
                 this.channel_image = result.response.channel_image
                 this.channel_id = result.response.channel_id
                 this.title = result.response.title
+                this.hasAd = result.response.hasAd
             }
             GetVideoInfoEffect(result.response, result.position)
         }

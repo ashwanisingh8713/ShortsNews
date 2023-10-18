@@ -81,7 +81,7 @@ class VideoDataRepositoryImpl(private val userApiService: UserApiService) : Vide
                             videoUrls[index] = post.videoUrl
                             videoIds[index] = post.id.toString()
                         }
-                        Log.i("RequestTT","MediaUri = ${post.videoUrl}")
+                        Log.i("RequestTT","Id = ${post.id}, MediaUri = ${post.videoUrl}")
                         VideoData(
                             id = post.id,
                             mediaUri = post.videoUrl,

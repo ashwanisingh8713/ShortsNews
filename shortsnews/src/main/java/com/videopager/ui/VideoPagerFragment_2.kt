@@ -33,6 +33,7 @@ import com.ns.shortsnews.data.source.UserApiService
 import com.ns.shortsnews.databinding.VideoPagerFragmentBinding
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
+import com.videopager.data.VideoInfoData
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
@@ -237,16 +238,15 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                     }
 
                     is GetVideoInfoEffect -> {
-                        Log.i("kamlesh", "Video info data ${effect.videoInfo}")
                         if (effect.videoInfo.id.isNotEmpty()) {
                             pagerAdapter.getInfoRefreshUI(effect.position)
                         }
                         sharedEventViewModel.shareVideoInfo(effect.videoInfo)
+
                     }
 
                     is PostCommentEffect -> {
                         pagerAdapter.getInfoRefreshUI(effect.position)
-//                        commentFragment.updateCommentAdapter(effect.data)
                         val currentItem = binding.viewPager.currentItem
                         val videoData = pagerAdapter.getVideoData(currentItem)
                         viewModel.processEvent(CommentClickEvent(videoData.id, currentItem))
@@ -329,10 +329,8 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                 PauseVideoEvent
             },
             getPageInfo().map {
-//                sharedEventViewModel.shareVideoInfo(VideoInfoData())
                 val data = pagerAdapter.getVideoData(currentItem)
                 VideoInfoEvent(data.id, currentItem)
-//                NoFurtherEvent
             },
             videoCache().map {
                 var nextVideoCacheIndex = 0
@@ -670,6 +668,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         intent.putExtra("likeCount", likeCount)
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
     }
+
 
 
 

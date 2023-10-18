@@ -11,6 +11,7 @@ import com.player.models.VideoData
 import com.player.ui.AppPlayerView
 import com.ns.shortsnews.R
 import com.ns.shortsnews.databinding.PageItemBinding
+import com.videopager.data.VideoInfoData
 import com.videopager.models.PageEffect
 import com.videopager.ui.extensions.ClickEvent
 import com.videopager.ui.extensions.TrackInfoClick
@@ -122,11 +123,16 @@ internal class PagerAdapter(
         }
         if (data.saved){
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.red))
-//            holder.binding.saveTitle.text = data.saveCount
         } else {
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.white))
-//            holder.binding.saveTitle.text = data.saveCount
         }
+
+        // Has Ads
+        /*if (data.hasAd) {
+            holder.binding.adsContainer.visibility = View.VISIBLE
+        } else {
+            holder.binding.adsContainer.visibility = View.GONE
+        }*/
 
 
         holder.binding.title.setOnClickListener {
@@ -139,7 +145,7 @@ internal class PagerAdapter(
             }
         }
 
-        holder.binding.leftPart.visibility = View.VISIBLE
+        holder.binding.title.visibility = View.VISIBLE
         holder.binding.rightPart.visibility = View.VISIBLE
 
     }
@@ -169,7 +175,6 @@ internal class PagerAdapter(
             return oldItem == newItem
         }
     }
-
 
 
 

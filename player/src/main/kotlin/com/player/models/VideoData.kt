@@ -23,7 +23,8 @@ data class VideoData(
     var video_url_mp4:String = "",
     var follow_count:String = "",
     var page: Int = 1,
-    var perPage: Int = 1
+    var perPage: Int = 1,
+    var hasAd: Boolean = false
 ): Parcelable {
     override fun equals(other: Any?): Boolean {
         return if (other is VideoData) {

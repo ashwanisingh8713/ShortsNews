@@ -62,26 +62,27 @@
         tools:srcCompat="@drawable/play" />
     <!-- End - It holds Play/Pause Icon of Player -->
 
-    <!-- Start Left Part - Chanel, Title, Following -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/leftPart"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_1H"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/rightPart"
-        android:visibility="invisible"
-        >
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.875" />
 
-        <!-- Start - Title -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_1V"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.87" />
+
+    <!-- Start Left Part - Title -->
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="85dp"
             android:paddingTop="10dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
@@ -91,68 +92,38 @@
             android:textColor="@color/white"
             android:textSize="@dimen/video_page_text_size_large"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:paddingEnd="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline_1H"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_1V"
             app:layout_constraintStart_toStartOf="parent" />
-        <!-- End - Title -->
+    <!-- End Left Part  - Title-->
 
+    <!-- Start Left Part - Video Source -->
+    <TextView
+        android:id="@+id/videoSource"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/video_page_text_size_large"
+        android:visibility="visible"
+        android:text="Video Source"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintStart_toStartOf="parent" />
+    <!-- End Left Part  - Video Source-->
 
-        <!-- Start - Channel Image -->
-       <!-- <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_view_client_image"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
-            android:layout_margin="2dp"
-            android:layout_marginStart="-5dp"
-            android:layout_marginBottom="20dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="50dp"
-            app:layout_constraintBottom_toTopOf="@id/title"
-            app:layout_constraintStart_toStartOf="@id/title">
-
-            <ImageView
-                android:id="@+id/client_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
-
-        </com.google.android.material.card.MaterialCardView>-->
-        <!-- End - Channel Image -->
-
-        <!-- Start - Following -->
-        <!--<TextView
-            android:id="@+id/following"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/follow_background"
-            android:fontFamily="sans-serif"
-            android:paddingStart="16dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="6dp"
-            tools:text="@string/follow"
-            android:textColor="@color/white"
-            android:textSize="@dimen/video_page_text_size_medium"
-            app:layout_constraintBottom_toBottomOf="@id/card_view_client_image"
-            app:layout_constraintStart_toEndOf="@id/card_view_client_image"
-            app:layout_constraintTop_toTopOf="@id/card_view_client_image" />-->
-        <!-- End - Following -->
-
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <!-- End Left Part  - Chanel, Title, Following -->
-
-    <!-- Start - It holds Like, Comment, Share, Save -->
+    <!-- Start - Right Part - It holds Like, Comment, Share, Save -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/rightPart"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_1H"
         app:layout_constraintEnd_toEndOf="parent"
         android:visibility="invisible">
 
@@ -315,9 +286,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <!-- End - It holds Like, Comment, Share, Save -->
+    <!-- End - Right Part - It holds Like, Comment, Share, Save -->
 
 
+    <!-- Start - It is used to show video's track info -->
     <Button
         android:id="@+id/trackInfo_btn"
         android:layout_width="wrap_content"
@@ -328,6 +300,32 @@
         android:text="@string/track_info"
         android:visibility="gone"
         />
+    <!-- Start - It is used to show video's track info -->
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <LinearLayout
+        android:id="@+id/adsContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical"
+        android:background="@android:color/holo_green_dark"
+        android:visibility="gone">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Click to see the ads"/>
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
