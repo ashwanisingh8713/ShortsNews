@@ -27,12 +27,11 @@ import org.koin.android.ext.android.get
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
 
-    private val sharedViewModel: ProfileSharedViewModel by viewModels { ProfileSharedViewModelFactory }
+//    private val sharedViewModel: ProfileSharedViewModel by viewModels { ProfileSharedViewModelFactory }
 
     private val sharedUserViewModel: UserViewModel by viewModels {
         UserViewModelFactory().apply {
             inject(
-                UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
                 UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
                 UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
@@ -86,7 +85,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun loginFragment() {
         Log.i("lifecycle", "Profile activity on login fragment called")
         val fra = LoginFragment()
-        supportFragmentManager.beginTransaction().add(R.id.fragment_containerProfile, fra)
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fra)
             .addToBackStack("login").commit()
     }
 

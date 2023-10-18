@@ -1,8 +1,12 @@
 package com.ns.shortsnews.data.mapper
 
+import kotlinx.android.parcel.Parcelize
+
 /**
  * Created by Ashwani Kumar Singh on 24,April,2023.
  */
+
+@Parcelize
 data class UserOtp(
     val status: Boolean = false,
     val msg: String = "",
@@ -14,7 +18,7 @@ data class UserOtp(
     val user_id:String = "",
     val age:String = "",
     val location:String = "",
-) {
+): android.os.Parcelable {
     fun mapper(
         status: Boolean,
         msg: String,
@@ -40,4 +44,5 @@ data class UserOtp(
             location = location
         )
     }
+
 }

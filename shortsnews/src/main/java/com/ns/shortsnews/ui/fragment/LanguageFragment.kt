@@ -1,6 +1,7 @@
 package com.ns.shortsnews.ui.fragment
 
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,8 @@ import com.ns.shortsnews.MainApplication
 import com.ns.shortsnews.R
 import com.ns.shortsnews.R.*
 import com.ns.shortsnews.adapters.CategoryAdapter
+import com.ns.shortsnews.data.mapper.UserOtp
+import com.ns.shortsnews.data.model.VideoClikedItem
 import com.ns.shortsnews.databinding.FragmentLanguageBinding
 import com.ns.shortsnews.data.repository.UserDataRepositoryImpl
 import com.ns.shortsnews.data.repository.VideoCategoryRepositoryImp
@@ -59,7 +62,6 @@ class LanguageFragment : Fragment(layout.fragment_language) {
     private val userViewModel: UserViewModel by activityViewModels {
         UserViewModelFactory().apply {
             inject(
-                UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
                 UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
                 UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
@@ -69,6 +71,7 @@ class LanguageFragment : Fragment(layout.fragment_language) {
 
     private var selectedNumbers = 0
     private var selectedItemList = mutableListOf<LanguageData>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLanguageBinding.bind(view)

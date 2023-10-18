@@ -45,7 +45,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
     private val userViewModel: UserViewModel by activityViewModels {
         UserViewModelFactory().apply {
             inject(
-                UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
                 UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
                 UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
@@ -66,6 +65,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             )
         }
     }
+
+    private var userOtp: UserOtp? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -157,9 +158,9 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.otpSuccessState.filterNotNull().collectLatest {
                 it.let {
-
                     if (it.status) {
                         // Saving User Data in Preference
+                        userOtp = it
                         saveUserPreference(it)
                         Log.i("OTPSuccess", "OtpFragment :: otpSuccessState = ${it}")
                         if (it.first_time_user) {

@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,12 +16,12 @@ import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
+import com.ns.shortsnews.ui.viewmodel.LoginViewModel
+import com.ns.shortsnews.ui.viewmodel.LoginViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.utils.*
-import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
-import com.videopager.utils.UtilsFunctions
 import com.videopager.utils.UtilsFunctions.hideKeyBord
 import com.videopager.utils.UtilsFunctions.isOnline
 import com.videopager.utils.UtilsFunctions.validateEmail
@@ -35,12 +33,9 @@ import org.koin.android.ext.android.get
 class LoginFragment : Fragment(R.layout.fragment_login) {
     private lateinit var binding: FragmentLoginBinding
 
-    private val userViewModel: UserViewModel by activityViewModels { UserViewModelFactory().apply {
+    private val userViewModel: LoginViewModel by activityViewModels { LoginViewModelFactory().apply {
         inject(
             UserRegistrationDataUseCase(UserDataRepositoryImpl(get())),
-            UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
-            LanguageDataUseCase(UserDataRepositoryImpl(get())),
-            UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
         )
     }}
 
@@ -99,7 +94,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     bundle.putString("email", it.email)
                     bundle.putString("otp_id", it.OTP_id.toString())
                     bundle.putBoolean("isUserRegistered",it.is_registered)
-                    userViewModel.updateFragment(UserViewModel.OTP,bundle )
+                    // Launching OTP Fragment
+                    val fragment = OtpFragment()
+                    fragment.arguments = bundle
+                    requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
+                        .addToBackStack("opt").commit()
+
                     // When we come back from OTP Fragment to Login Fragment,
                     // we need to clear the Registration State
                     userViewModel.clearRegistrationState()

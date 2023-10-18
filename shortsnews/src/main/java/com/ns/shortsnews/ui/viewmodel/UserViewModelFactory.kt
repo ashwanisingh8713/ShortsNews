@@ -8,17 +8,15 @@ import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
 
 class UserViewModelFactory : ViewModelProvider.Factory {
-    private lateinit var userRegisterDataUseCases: UserRegistrationDataUseCase
     private lateinit var userOtpValidationDataUseCases: UserOtpValidationDataUseCase
     private lateinit var languageDataUseCase: LanguageDataUseCase
     private lateinit var userSelectionsDataUseCase: UserSelectionsDataUseCase
 
-    fun inject(userUseCases: UserRegistrationDataUseCase,
+    fun inject(
                userOtpValidationDataUseCases: UserOtpValidationDataUseCase,
                languageDataUseCase: LanguageDataUseCase,
                userSelectionsDataUseCase: UserSelectionsDataUseCase
                ) {
-        this.userRegisterDataUseCases = userUseCases
         this.userOtpValidationDataUseCases = userOtpValidationDataUseCases
         this.languageDataUseCase = languageDataUseCase
         this.userSelectionsDataUseCase = userSelectionsDataUseCase
@@ -26,7 +24,7 @@ class UserViewModelFactory : ViewModelProvider.Factory {
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return UserViewModel(userRegisterDataUseCases, userOtpValidationDataUseCases, languageDataUseCase, userSelectionsDataUseCase) as T
+        return UserViewModel(userOtpValidationDataUseCases, languageDataUseCase, userSelectionsDataUseCase) as T
     }
 
 }
