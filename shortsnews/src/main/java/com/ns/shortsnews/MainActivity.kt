@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         hideTryAgainText()
 
         if (AppPreference.categoryListStr!!.isEmpty() || !isInternetConnected) {
-            showTryAgainText("onCreate - CategoryListStr is ${AppPreference.categoryListStr!!} and isInternetConnected = $isInternetConnected")
+            showTryAgainText()
         } else  {
             categoryAdapter = CategoryAdapter(
                 itemList = videoCategories,
@@ -242,9 +242,13 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     fun getSeekbar(): SeekBar? {
         // When app is in background and memory is cleared then seekbar is null when we come back
-        val seekBar = findViewById<SeekBar>(R.id.video_seekbar)
-        seekBar?.visibility = View.VISIBLE
-        return seekBar
+        return if(::binding.isInitialized) {
+            val seekBar = binding.videoSeekbar
+            seekBar.visibility = View.VISIBLE
+            seekBar
+        } else {
+            null
+        }
     }
 
     /**
@@ -261,6 +265,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             val ft = supportFragmentManager.beginTransaction()
             ft.replace(R.id.fragment_container, videoPagerFragment!!)
             ft.commit()
+            runOnUiThread{
+                getSeekbar()?.visibility = View.VISIBLE
+            }
         } else {
             // No Internet Snackbar: Fire
             NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)
@@ -304,7 +311,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         lifecycleScope.launch {
             videoCategoryViewModel!!.errorState.filterNotNull().collectLatest {
-                showTryAgainText("videoCategoryViewModel!!.errorState = $it")
+                showTryAgainText()
             }
         }
 
@@ -315,8 +322,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.noNetworkImg.visibility = View.GONE
     }
 
-    private fun showTryAgainText(fromSource: String) {
-        Log.e("showTryAgainText", "fromSource = $fromSource")
+    private fun showTryAgainText() {
         binding.noNetworkParent.visibility = View.VISIBLE
         binding.tryAgain.visibility = View.VISIBLE
         binding.tryAgain.setOnClickListener {
@@ -586,6 +592,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         binding.persistentBottomsheet.progressBar.visibility = View.GONE
         binding.persistentBottomsheet.imgDownArrow.visibility = View.VISIBLE
 
+        // To hide seekbar when bottom sheet is started to open
         hideSeekbar()
     }
 
