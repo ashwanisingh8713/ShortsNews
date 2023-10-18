@@ -74,43 +74,49 @@ internal class PagerAdapter(
      * the UI until [showPlayerFor] is also called.
      */
     suspend fun attachPlayerView(appPlayerView: AppPlayerView, position: Int) {
-        awaitViewHolder(position).attach(appPlayerView)
+        awaitViewHolder(position)?.attach(appPlayerView)
     }
 
     // Hides the video preview image when the player is ready to be shown.
     suspend fun showPlayerFor(position: Int) {
-        awaitViewHolder(position).hidePreviewImage()
+        awaitViewHolder(position)?.hidePreviewImage()
     }
 
     suspend fun renderEffect(position: Int, effect: PageEffect) {
-        awaitViewHolder(position).renderEffect(effect)
+        awaitViewHolder(position)?.renderEffect(effect)
     }
 
     suspend fun refreshLikeUI(position: Int) {
         val holder = awaitViewHolder(position)
-        val data  = getItem(position)
-        if (data.liking){
-            holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.red))
-            holder.binding.likeTitle.text = data.like_count
-        } else {
-            holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.white))
-            holder.binding.likeTitle.text = data.like_count
+        holder?.let {
+            val data  = getItem(position)
+            if (data.liking){
+                holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.red))
+                holder.binding.likeTitle.text = data.like_count
+            } else {
+                holder.binding.like.setColorFilter(ContextCompat.getColor(holder.binding.like.context, R.color.white))
+                holder.binding.likeTitle.text = data.like_count
+            }
         }
+
     }
 
     suspend fun refreshBookmarkUI(position: Int) {
         val holder = awaitViewHolder(position)
-        var data  = getItem(position)
-        if (data.saved){
+
+        holder?.let {
+            var data  = getItem(position)
+            if (data.saved){
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.red))
         } else {
             holder.binding.save.setColorFilter(ContextCompat.getColor(holder.binding.save.context, R.color.white))
-        }
+        } }
+
     }
 
 
     suspend fun getInfoRefreshUI(position: Int) {
-        val holder = awaitViewHolder(position)
+        val holder = awaitViewHolder(position)!!
         var isTextViewClicked = false
         var data  = getItem(position)
         holder.binding.msgCount.text = data.comment_count
@@ -154,7 +160,7 @@ internal class PagerAdapter(
      * The ViewHolder at [position] isn't always immediately available. In those cases, wait for
      * the RecyclerView to be laid out and re-query that ViewHolder.
      */
-    private suspend fun awaitViewHolder(position: Int): PageViewHolder {
+    private suspend fun awaitViewHolder(position: Int): PageViewHolder? {
         if (currentList.isEmpty()) error("Tried to get ViewHolder at position $position, but the list was empty")
 
         var viewHolder: PageViewHolder?
@@ -163,7 +169,8 @@ internal class PagerAdapter(
             viewHolder = recyclerView?.findViewHolderForAdapterPosition(position) as? PageViewHolder
         } while (currentCoroutineContext().isActive && viewHolder == null && recyclerView?.awaitNextLayout() == Unit)
 
-        return requireNotNull(viewHolder)
+//        return requireNotNull(viewHolder)
+        return viewHolder
     }
 
     private object VideoDataDiffCallback : DiffUtil.ItemCallback<VideoData>() {

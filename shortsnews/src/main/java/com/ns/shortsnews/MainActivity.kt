@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -47,10 +49,12 @@ import com.videopager.vm.SharedEventViewModelFactory
 import com.videopager.vm.VideoSharedEventViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
@@ -63,11 +67,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
     private var videoCategoryViewModel: VideoCategoryViewModel? = null
 
-    private val channelInfoViewModel: ChannelInfoViewModel by viewModels {
+    /*private val channelInfoViewModel: ChannelInfoViewModel by viewModels {
         ChannelInfoViewModelFactory().apply {
             inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
         }
-    }
+    }*/
 
     private val followUnfollowViewModel: FollowUnfollowViewModel by viewModels {
         FollowUnfollowViewModelFactory().apply {
@@ -459,6 +463,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     }
 
+    private fun bottomSheetHeaderViewsShowHide(show: Boolean) {
+        val showHide = if (show) View.VISIBLE else View.GONE
+        binding.persistentBottomsheet.following.visibility = showHide
+        binding.persistentBottomsheet.clientImage.visibility = showHide
+        binding.persistentBottomsheet.cardViewClientImage.visibility = showHide
+        binding.persistentBottomsheet.progressBar.visibility = showHide
+        binding.persistentBottomsheet.imgDownArrow.visibility = showHide
+    }
+
     // Bottom Sheet Image Arrow CLick Listener to OPEN or CLOSE Drawer
     fun bottomSheetArrowBtnClick() {
         binding.persistentBottomsheet.imgDownArrow.setOnClickListener {
@@ -467,7 +480,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             } else {
                 if (NetworkXProvider.isInternetConnected) {
 
-                    channelInfoViewModel.clearChannelInfo()
+//                    channelInfoViewModel.clearChannelInfo()
 
                     val videoInfoData = binding.persistentBottomsheet.imgDownArrow.tag
                     videoInfoData?.let {
@@ -477,7 +490,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                             binding.persistentBottomsheet.progressBar.visibility = View.VISIBLE
                             binding.persistentBottomsheet.imgDownArrow.visibility = View.GONE
                             Log.i("HeaderBg", "MainActivity :: Make Request to get all videos of ChannelId = $channelId")
-                            channelInfoViewModel.requestChannelInfoApi(channelId)
+//                            channelInfoViewModel.requestChannelInfoApi(channelId)
                             openBottomSheetChannelVideoData(videoInfoData = videoInfo)
                         }
                     }
@@ -488,13 +501,15 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
     }
 
-    private fun bottomSheetHeaderViewsShowHide(show: Boolean) {
-        val showHide = if (show) View.VISIBLE else View.GONE
-        binding.persistentBottomsheet.following.visibility = showHide
-        binding.persistentBottomsheet.clientImage.visibility = showHide
-        binding.persistentBottomsheet.cardViewClientImage.visibility = showHide
-        binding.persistentBottomsheet.progressBar.visibility = showHide
-        binding.persistentBottomsheet.imgDownArrow.visibility = showHide
+
+    private var progressBarJob: Job? = null
+    private fun enableImgDownArrowClick() {
+        binding.persistentBottomsheet.imgDownArrow.isEnabled = false
+        progressBarJob?.cancel()
+        progressBarJob = lifecycleScope.launch {
+            delay(1000)
+            binding.persistentBottomsheet.imgDownArrow.isEnabled = true
+        }
     }
 
     // Bottom Sheet Video Get Info Listen & Update
@@ -502,24 +517,30 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         // Get Video Info from VideoPagerFragment
         lifecycleScope.launch {
             sharedEventViewModel.sharedVideoInfo.filterNotNull().collectLatest {
+                enableImgDownArrowClick()
                 bottomSheetHeaderViewsShowHide(true)
-                if (it.following) {
-                    binding.persistentBottomsheet.following.text = getString(R.string.following)
-                } else {
-                    binding.persistentBottomsheet.following.text = getString(R.string.follow)
-                }
 
-                binding.persistentBottomsheet.imgDownArrow.tag = it
+                    if (it.following) {
+                        binding.persistentBottomsheet.following.text = getString(R.string.following)
+                    } else {
+                        binding.persistentBottomsheet.following.text = getString(R.string.follow)
+                    }
 
-                Log.i("VideoInfoOnSwipe", "bottomSheetGetInfoListener(), ChannelId =  ${it.channel_id}")
+                    binding.persistentBottomsheet.imgDownArrow.tag = it
 
-                if (it.channel_image.isNotEmpty()) {
-                    // Loading Channel Icon and Background Color from bitmap
-                    loadBottomChannelLogoPallet(it)
-                    binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
-                } else {
-                    binding.persistentBottomsheet.cardViewClientImage.visibility = View.INVISIBLE
-                }
+                    Log.i(
+                        "VideoInfoOnSwipe",
+                        "bottomSheetGetInfoListener(), ChannelId =  ${it.channel_id}"
+                    )
+
+                    if (it.channel_image.isNotEmpty()) {
+                        // Loading Channel Icon and Background Color from bitmap
+                        loadBottomChannelLogoPallet(it)
+                        binding.persistentBottomsheet.cardViewClientImage.visibility = View.VISIBLE
+                    } else {
+                        binding.persistentBottomsheet.cardViewClientImage.visibility =
+                            View.INVISIBLE
+                    }
             }
         }
 
@@ -587,7 +608,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         }
         AppPreference.isUpdateNeeded = true
         supportFragmentManager.beginTransaction()
-            .replace(R.id.channel_container, channelVideosFragment)
+            .replace(R.id.channel_container, channelVideosFragment, "ChannelVideosFragment")
             .commit()
         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         binding.persistentBottomsheet.progressBar.visibility = View.GONE

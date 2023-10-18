@@ -47,15 +47,15 @@ class VideoSharedEventViewModel:ViewModel() {
 
 
 
-    private var _videoInfo= MutableSharedFlow<VideoInfoData?>()
-    val sharedVideoInfo = _videoInfo.asSharedFlow()
+    private var _sharedVideoInfo= MutableSharedFlow<VideoInfoData?>()
+    val sharedVideoInfo = _sharedVideoInfo.asSharedFlow()
 
     private var _videoInfoChanged= MutableSharedFlow<Boolean>()
     val videoInfoChanged = _videoInfoChanged.asSharedFlow()
 
     fun shareVideoInfo(videoInfoData: VideoInfoData?) {
         viewModelScope.launch {
-            _videoInfo.emit(videoInfoData)
+            _sharedVideoInfo.emit(videoInfoData)
             Log.i("VideoInfoOnSwipe", "shareVideoInfo(), ChannelId =  ${videoInfoData?.channel_id}")
         }
     }
