@@ -33,7 +33,6 @@ import com.ns.shortsnews.data.source.UserApiService
 import com.ns.shortsnews.databinding.VideoPagerFragmentBinding
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
-import com.videopager.data.VideoInfoData
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
@@ -47,6 +46,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.getKoin
 import org.koin.java.KoinJavaComponent
 
 
@@ -104,6 +104,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
 
         // Initialising ViewModel Factory
         val viewModelfactory = VideoPagerViewModelFactory_2(
+            userApiService = getKoin().get<UserApiService>(),
             repository = VideoDataRepositoryImpl(userApiService = KoinJavaComponent.getKoin().get<UserApiService>()),
             appPlayerFactory = ExoAppPlayerFactory(
                 context = requireContext(), cache = MainApplication.cache, currentMediaItemIndex = videoItems.selectedPosition
@@ -141,12 +142,14 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         binding.viewPager.offscreenPageLimit = 5 // Preload neighbouring page image previews
         commentFragment = CommentsFragment()
 
-//        lifecycleScope.launch {
-//            viewModel.videoProgressBar.collectLatest {
-//                pagerAdapter.showPlayerFor(0)
-//                binding.progressBarVideoShorts.visibility = View.GONE
-//            }
-//        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.videoInfoChanged.collectLatest {
+                if (it.videoInfo.id.isNotEmpty()) {
+                    pagerAdapter.getInfoRefreshUI(it.position)
+                }
+                sharedEventViewModel.shareVideoInfo(it.videoInfo)
+            }
+        }
 
 
         val states = viewModel.states
@@ -286,6 +289,9 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
             setupSeekbarProgress(it)
         }
 
+
+
+
     }
 
 
@@ -332,8 +338,9 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                 sharedEventViewModel.videoInfoChanged(true)
                 val data = pagerAdapter.getVideoData(currentItem)
                 Log.i("VideoInfoOnSwipe", "=====================================================")
-                Log.i("VideoInfoOnSwipe", "getPageInfo(), VideoId =  ${data.id}")
-                VideoInfoEvent(data.id, currentItem)
+                Log.i("VideoInfoOnSwipe", "Swiped, VideoId =  ${data.id}")
+                viewModel.invokeVideoInfo(data.id, currentItem)
+                NoFurtherEvent
             },
             videoCache().map {
                 var nextVideoCacheIndex = 0

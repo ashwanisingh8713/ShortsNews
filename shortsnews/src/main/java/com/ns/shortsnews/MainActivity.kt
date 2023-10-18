@@ -501,10 +501,8 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     private fun bottomSheetGetInfoListener() {
         // Get Video Info from VideoPagerFragment
         lifecycleScope.launch {
-            sharedEventViewModel.videoInfo.filterNotNull().collectLatest {
-
+            sharedEventViewModel.sharedVideoInfo.filterNotNull().collectLatest {
                 bottomSheetHeaderViewsShowHide(true)
-
                 if (it.following) {
                     binding.persistentBottomsheet.following.text = getString(R.string.following)
                 } else {
@@ -622,7 +620,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     } else {
                         IntentLaunch.loginActivityIntent(this@MainActivity)
                     }
-
                 }
             } else {
                 NoConnection.noConnectionSnackBarInfinite(binding.root, this@MainActivity)

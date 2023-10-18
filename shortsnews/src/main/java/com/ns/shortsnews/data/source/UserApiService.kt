@@ -7,6 +7,7 @@ import com.videopager.data.Comments
 import com.videopager.data.Following
 import com.videopager.data.PostComment
 import com.videopager.data.VideoInfo
+import kotlinx.coroutines.flow.Flow
 import okhttp3.RequestBody
 import retrofit2.http.*
 
@@ -91,6 +92,9 @@ interface UserApiService {
 
     @GET("video-info/{video_id}")
     suspend fun getVideoInfo(@Path("video_id") videoId: String): VideoInfo
+
+    @GET("video-info/{video_id}")
+    suspend fun getVideoInfoFlow(@Path("video_id") videoId: String): Flow<VideoInfo>
 
     @POST("comment-video/{video_id}")
     suspend fun getPostComment(

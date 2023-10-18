@@ -92,9 +92,13 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentChannelVideosBinding.bind(view)
 
+
+        // Making Channel Info API call
+        channelInfoViewModel.requestChannelInfoApi(channelId)
+
         if(from == "MainActivity") {
             // Here, we are getting channel info and channel icon bitmap from MainActivity which is already loaded
-            if(MainActivity.channelVisibleBitmap != null) {
+            /*if(MainActivity.channelVisibleBitmap != null) {
                 Log.i("HeaderBg", "ChannelVideoFragment: Channel Icon Bitmap loaded from MainActivity")
                 lifecycleScope.launch {
                     binding.channelLogo.setImageBitmap(MainActivity.channelVisibleBitmap)
@@ -103,28 +107,19 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             } else {
                 Log.i("HeaderBg", "ChannelVideoFragment: Channel Icon Bitmap is Null in MainActivity")
                 channelLogoBitmap()
-            }
-
-            binding.channelDes.text = channelDes
-            binding.profileCount.text = follow_count
-            binding.following.visibility = View.VISIBLE
-            if (following!!){
-                binding.following.text = "Following"
-            } else {
-                binding.following.text = "Follow"
-            }
+            }*/
 
         } else { // This Else condition is being called from Profile-> Following Channel List Screen
-            // Making Channel Info API call
-            channelInfoViewModel.requestChannelInfoApi(channelId)
-            // Loading Channel Icon and Background Color from bitmap
-            channelLogoBitmap()
+
 
             // Initializing Broadcast Receiver to listen Like / UN Like
             val broadcastReceiver = ChannelVideoBroadcast()
             // Registering broadcast receiver to LocalBroadcastManager
             LocalBroadcastManager.getInstance(requireContext()).registerReceiver(broadcastReceiver, IntentFilter("BookmarkFragmentUpdated"))
         }
+
+        // Loading Channel Icon and Background Color from bitmap
+        channelLogoBitmap()
 
         // Listens Channel Info
         listenChannelInfo()
@@ -202,13 +197,13 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        /*viewLifecycleOwner.lifecycleScope.launch {
             sharedEventViewModel.paletteColor.collectLatest {
                 if (it != null) {
                     binding.channelTopView.setBackgroundColor(it)
                 }
             }
-        }
+        }*/
 
 
 
@@ -275,6 +270,9 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
                 binding.profileCount.text = it.data.follow_count
                 binding.following.visibility = View.VISIBLE
                 channelDes = it.data.description
+
+                Log.i("VideoInfoOnSwipe", "ChannelVideosFragment: listenChannelInfo() Des: $channelDes")
+
                 if (it.data.following){
                     binding.following.text = "Following"
                 } else {

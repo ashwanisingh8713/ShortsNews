@@ -7,7 +7,10 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.player.models.VideoData
 import com.player.players.AppPlayer
 import com.ns.shortsnews.R
+import com.ns.shortsnews.data.source.UserApiService
+import com.ns.shortsnews.domain.cache.CachingLinkedHashMap
 import com.videopager.data.VideoDataRepository
+import com.videopager.data.VideoInfo
 import com.videopager.data.VideoInfoData
 import com.videopager.models.*
 import com.videopager.models.AnimationEffect
@@ -40,6 +43,7 @@ import kotlinx.coroutines.*
  * with Activity lifecycle state changes.
  */
 internal class VideoPagerViewModel(
+    private val userApiService: UserApiService,
     private val repository: VideoDataRepository,
     private val appPlayerFactory: AppPlayer.Factory,
     private val handle: PlayerSavedStateHandle,
@@ -48,9 +52,7 @@ internal class VideoPagerViewModel(
     private val loadedVideoData: List<VideoData>
 ) : MviViewModel<ViewEvent, ViewResult, ViewState, ViewEffect>(initialState) {
 
-    companion object {
-        const val perPage = 5
-    }
+
 
 //    var page = 1
 //    private set
@@ -566,6 +568,55 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<MediaItemTransitionResult>.toMediaItemTransitionEffects(): Flow<ViewEffect> {
         return mapLatest { result -> MediaItemTransitionEffect(result) }
+    }
+
+    companion object {
+        const val perPage = 40
+        val cacheHashSet: CachingLinkedHashMap<String, VideoInfoData> = CachingLinkedHashMap(50)
+    }
+
+
+    private var _videoInfoChanged= MutableSharedFlow<GetVideoInfoEffect>()
+    val videoInfoChanged = _videoInfoChanged.asSharedFlow()
+
+    fun videoInfoChanged(videoChanged: GetVideoInfoEffect) {
+        viewModelScope.launch {
+            _videoInfoChanged.emit(videoChanged)
+        }
+    }
+
+    suspend fun invokeVideoInfo(videoId: String, position: Int) {
+
+        cacheHashSet[videoId]?.let {
+            videoInfoChanged(GetVideoInfoEffect(it, position))
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val videoInfo = userApiService.getVideoInfo(videoId)
+                val data = videoInfo.data
+                states.value.videoData?.get(position)?.apply {
+                    this.comment_count = data.comment_count
+                    this.like_count = data.like_count
+                    this.saveCount = data.saved_count
+                    this.following = data.following
+                    this.saved = data.saved
+                    this.liking = data.liked
+                    this.channel_image = data.channel_image
+                    this.channel_id = data.channel_id
+                    this.title = data.title
+                    this.hasAd = data.hasAd
+                }
+                Log.i("VideoInfoOnSwipe", "invokeVideoInfo() Success =  Send for Effect")
+                Log.i("VideoInfoOnSwipe", "invokeVideoInfo() Success =  Send for Effect")
+                videoInfoChanged(GetVideoInfoEffect(data, position))
+                cacheHashSet[videoId] = data
+
+
+            } catch (e: Exception) {
+                Log.i("VideoInfoOnSwipe", "invokeVideoInfo() Error =  ${e.localizedMessage}")
+            }
+        }
     }
 
 }

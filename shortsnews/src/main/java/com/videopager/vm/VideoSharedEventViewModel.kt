@@ -48,7 +48,7 @@ class VideoSharedEventViewModel:ViewModel() {
 
 
     private var _videoInfo= MutableSharedFlow<VideoInfoData?>()
-    val videoInfo = _videoInfo.asSharedFlow()
+    val sharedVideoInfo = _videoInfo.asSharedFlow()
 
     private var _videoInfoChanged= MutableSharedFlow<Boolean>()
     val videoInfoChanged = _videoInfoChanged.asSharedFlow()
