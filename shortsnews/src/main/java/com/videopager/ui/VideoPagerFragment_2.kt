@@ -329,7 +329,10 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                 PauseVideoEvent
             },
             getPageInfo().map {
+                sharedEventViewModel.videoInfoChanged(true)
                 val data = pagerAdapter.getVideoData(currentItem)
+                Log.i("VideoInfoOnSwipe", "=====================================================")
+                Log.i("VideoInfoOnSwipe", "getPageInfo(), VideoId =  ${data.id}")
                 VideoInfoEvent(data.id, currentItem)
             },
             videoCache().map {

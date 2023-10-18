@@ -16,7 +16,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -131,18 +130,23 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             hideTryAgainText()
         }
 
-        // Bottom Sheet
-        bottomSheetDialog()
-        // Register GetInfo Listener
+        // On App launch, BottomSheet Header should be in gone state
+        bottomSheetHeaderViewsShowHide(false)
+        // Bottom Sheet Image Arrow CLick Listener to OPEN or CLOSE Drawer
+        bottomSheetArrowBtnClick()
+        // Video Info Listener
         bottomSheetGetInfoListener()
         bottomSheetFollowingClick()
         listenFollowUnfollow()
         registerVideoCache()
-        bottomSheetDescClick()
-//        askNotificationPermission()
         launchLoginStateFlow()
         loadProfileImage()
         AppPreference.isMainActivityLaunched = true
+
+        // Bottom Sheet Callback
+        bottomSheetDialogCallback()
+
+
     }
 
     private fun loadProfileImage() {
@@ -153,12 +157,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                 Glide.with(MainApplication.instance!!).load(AppPreference.userProfilePic).into(binding.profileIcon)
             }
         }
-    }
-
-    private fun bottomSheetDescClick() {
-//        binding.persistentBottomsheet.channelDes.setOnClickListener {
-//            showDialog(channelDescription)
-//        }
     }
 
 
@@ -401,7 +399,7 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
     }
 
     // It is having Bottom Sheet Implementation
-    private fun bottomSheetDialog() {
+    private fun bottomSheetDialogCallback() {
         standardBottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -459,7 +457,10 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             }
         })
 
-        // Bottom Sheet Image Arrow CLick Listener to OPEN or CLOSE Drawer
+    }
+
+    // Bottom Sheet Image Arrow CLick Listener to OPEN or CLOSE Drawer
+    fun bottomSheetArrowBtnClick() {
         binding.persistentBottomsheet.imgDownArrow.setOnClickListener {
             if (standardBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                 standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -498,10 +499,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     // Bottom Sheet Video Get Info Listen & Update
     private fun bottomSheetGetInfoListener() {
-
-        // On App launch, BottomSheet Header should be in gone state
-        bottomSheetHeaderViewsShowHide(false)
-
         // Get Video Info from VideoPagerFragment
         lifecycleScope.launch {
             sharedEventViewModel.videoInfo.filterNotNull().collectLatest {
@@ -514,8 +511,9 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
                     binding.persistentBottomsheet.following.text = getString(R.string.follow)
                 }
 
-                binding.persistentBottomsheet.following.tag = it.channel_id
                 binding.persistentBottomsheet.imgDownArrow.tag = it
+
+                Log.i("VideoInfoOnSwipe", "bottomSheetGetInfoListener(), ChannelId =  ${it.channel_id}")
 
                 if (it.channel_image.isNotEmpty()) {
                     // Loading Channel Icon and Background Color from bitmap
@@ -527,6 +525,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
             }
         }
 
+        lifecycleScope.launch {
+            sharedEventViewModel.videoInfoChanged.collectLatest {
+                binding.persistentBottomsheet.imgDownArrow.tag = null
+            }
+        }
     }
 
     companion object {
@@ -598,7 +601,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     @SuppressLint("ResourceAsColor")
     private fun bottomSheetClearChannelId() {
-        binding.persistentBottomsheet.following.tag = null
         binding.persistentBottomsheet.imgDownArrow.tag = null
         binding.persistentBottomsheet.clientImage.setImageBitmap(null)
         binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(R.color.black)
@@ -612,10 +614,11 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         // BottomSheet, Collapsed Follow/UnFollow
         binding.persistentBottomsheet.following.setOnClickListener {
             if (NetworkXProvider.isInternetConnected) {
-                val channelId = binding.persistentBottomsheet.following.tag
-                channelId?.let {
+                val videoInfoData = binding.persistentBottomsheet.imgDownArrow.tag
+                videoInfoData?.let {
+                    val videoInfo = videoInfoData as VideoInfoData
                     if(AppPreference.isUserLoggedIn) {
-                        followUnfollowViewModel.requestFollowUnfollowApi(channelId.toString())
+                        followUnfollowViewModel.requestFollowUnfollowApi(videoInfo.channel_id)
                     } else {
                         IntentLaunch.loginActivityIntent(this@MainActivity)
                     }

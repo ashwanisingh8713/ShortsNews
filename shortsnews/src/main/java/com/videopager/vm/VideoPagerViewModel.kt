@@ -421,17 +421,17 @@ internal class VideoPagerViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<VideoInfoEvent>.toVideoInfoResults(): Flow<GetVideoInfoResult> {
+        Log.i("VideoInfoOnSwipe", "<VideoInfoEvent>, Started")
         return flatMapLatest { event ->
-            Log.i("kamlesh","VideoInfo event :: " + event.videoId)
             repository.getVideoInfo(event.videoId, event.position)
-        }.flowOn(Dispatchers.IO).mapLatest {
+        }.mapLatest {
             val videoInfo = it.first
             if(videoInfo.id == "43694") {
                 videoInfo.hasAd = true
             }
+            Log.i("VideoInfoOnSwipe", "<VideoInfoEvent>, VideoId =  ${videoInfo.id}, ChannelId =  ${videoInfo.channel_id}")
             Pair(videoInfo, it.second)
         }.map {
-            Log.i("kamlesh","VideoInfo result :: " + it.second + "   ::  " + it.first)
             GetVideoInfoResult(it.second, it.first)
         }
     }
@@ -541,7 +541,7 @@ internal class VideoPagerViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<GetVideoInfoResult>.toGetVideoInfoEffect(): Flow<ViewEffect> {
         return mapLatest { result ->
-            Log.i("kamlesh", "Video info data $result")
+            Log.i("VideoInfoOnSwipe", "<GetVideoInfoResult>, ChannelId =  ${result.response.id}")
             states.value.videoData?.get(result.position)?.apply {
                 this.comment_count = result.response.comment_count
                 this.like_count = result.response.like_count

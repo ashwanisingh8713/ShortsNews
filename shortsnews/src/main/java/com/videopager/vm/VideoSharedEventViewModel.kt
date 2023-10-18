@@ -1,5 +1,6 @@
 package com.videopager.vm
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.videopager.data.VideoInfoData
@@ -49,9 +50,19 @@ class VideoSharedEventViewModel:ViewModel() {
     private var _videoInfo= MutableSharedFlow<VideoInfoData?>()
     val videoInfo = _videoInfo.asSharedFlow()
 
+    private var _videoInfoChanged= MutableSharedFlow<Boolean>()
+    val videoInfoChanged = _videoInfoChanged.asSharedFlow()
+
     fun shareVideoInfo(videoInfoData: VideoInfoData?) {
         viewModelScope.launch {
             _videoInfo.emit(videoInfoData)
+            Log.i("VideoInfoOnSwipe", "shareVideoInfo(), ChannelId =  ${videoInfoData?.channel_id}")
+        }
+    }
+
+    fun videoInfoChanged(videoChanged: Boolean) {
+        viewModelScope.launch {
+            _videoInfoChanged.emit(videoChanged)
         }
     }
 
