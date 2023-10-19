@@ -160,7 +160,7 @@ internal class PagerAdapter(
      * The ViewHolder at [position] isn't always immediately available. In those cases, wait for
      * the RecyclerView to be laid out and re-query that ViewHolder.
      */
-    private suspend fun awaitViewHolder(position: Int): PageViewHolder? {
+    private suspend fun awaitViewHolder(position: Int): PageViewHolder {
         if (currentList.isEmpty()) error("Tried to get ViewHolder at position $position, but the list was empty")
 
         var viewHolder: PageViewHolder?
@@ -169,8 +169,8 @@ internal class PagerAdapter(
             viewHolder = recyclerView?.findViewHolderForAdapterPosition(position) as? PageViewHolder
         } while (currentCoroutineContext().isActive && viewHolder == null && recyclerView?.awaitNextLayout() == Unit)
 
-//        return requireNotNull(viewHolder)
-        return viewHolder
+        return requireNotNull(viewHolder)
+//        return viewHolder
     }
 
     private object VideoDataDiffCallback : DiffUtil.ItemCallback<VideoData>() {

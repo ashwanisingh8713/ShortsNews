@@ -1,0 +1,120 @@
+package com.ns.shortsnews.ui.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ns.shortsnews.data.mapper.UserOtp
+import com.ns.shortsnews.domain.exception.ApiError
+import com.ns.shortsnews.domain.models.OTPResult
+import com.ns.shortsnews.domain.models.UserSelectionResult
+import com.ns.shortsnews.domain.models.UserSelectionsData
+import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
+import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
+import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
+import com.ns.shortsnews.utils.AppPreference
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+
+/**
+ * Created by Ashwani Kumar Singh on 19,October,2023.
+ */
+class OTPViewModel(private val otpValidationDataUseCases: UserOtpValidationDataUseCase, private val userSelectionsDataUseCase: UserSelectionsDataUseCase): ViewModel() {
+
+    // Otp
+    private val _otpSuccessState = MutableStateFlow<UserOtp?>(null)
+    val otpSuccessState: StateFlow<UserOtp?> get() = _otpSuccessState
+
+    private val _errorState = MutableStateFlow<String?>(null)
+    val errorState: StateFlow<String?> get() = _errorState
+
+    private val _loadingState = MutableStateFlow(false)
+    val loadingState: StateFlow<Boolean> get() = _loadingState
+
+    fun clearingOtpSuccessState() {
+        _otpSuccessState.value = null
+        _userSelectionSuccessState.value = null
+    }
+
+    fun requestOtpValidationApi(requestBody: Map<String, String>) {
+        otpValidationDataUseCases.invoke(viewModelScope, requestBody,
+            object : UseCaseResponse<OTPResult> {
+                override fun onSuccess(result: OTPResult) {
+                    if(result.status == false) {
+                        var msg = result.msg
+                        if(_errorState.value == result.msg) {
+                            msg ="${result.msg} "
+                        }
+                        _errorState.value = msg
+                        return
+                    }
+                    val data = result.data
+                    val otpValidation = UserOtp().mapper(
+                        status = result.status, msg = result.msg,
+                        email = data!!.my_profile.email, access_token = data.access_token,
+                        name = data.my_profile.name, first_time_user = data.first_time_user,
+                        userProfileImage = data.my_profile.image, user_id = data.my_profile.user_id,
+                        age = data.my_profile.age, location = data.my_profile.location
+                    )
+                    _otpSuccessState.value = otpValidation
+                }
+
+                override fun onError(apiError: ApiError) {
+                    var errorMsg = _errorState.value
+                    if(errorMsg == null || errorMsg == apiError.getErrorMessage()) {
+                        errorMsg = "${apiError.getErrorMessage()} "
+                    } else {
+                        errorMsg = "${apiError.getErrorMessage()}"
+                    }
+                    _errorState.value = errorMsg
+                }
+
+                override fun onLoading(isLoading: Boolean) {
+                    _loadingState.update { isLoading}
+                }
+            }
+        )
+    }
+
+
+    //User selections
+    private val _userSelectionSuccessState = MutableStateFlow<UserSelectionsData?>(null)
+    val userSelectionSuccessState: StateFlow<UserSelectionsData?> get() = _userSelectionSuccessState
+
+    private val _userSelectionsErrorState = MutableStateFlow<String?>(null)
+    val userSelectionsErrorState: StateFlow<String?> get() = _userSelectionsErrorState
+
+    fun requestUserSelectionApi() {
+        userSelectionsDataUseCase.invoke(
+            viewModelScope,
+            null,
+            object : UseCaseResponse<UserSelectionResult> {
+                override fun onSuccess(result: UserSelectionResult) {
+                    if (result.status) {
+                        if(result.data.languages.isNotEmpty()) {
+                            AppPreference.isLanguageSelected = true
+                        }
+                        _userSelectionSuccessState.value = result.data
+                    }
+                    else {
+                        _userSelectionsErrorState.value = "Empty from api server"
+                    }
+
+                }
+
+                override fun onError(apiError: ApiError) {
+                    var errorMsg = _errorState.value
+                    if(errorMsg == null || errorMsg == apiError.getErrorMessage()) {
+                        errorMsg = "${apiError.getErrorMessage()} "
+                    } else {
+                        errorMsg = "${apiError.getErrorMessage()}"
+                    }
+                    _userSelectionsErrorState.value = errorMsg
+                }
+
+                override fun onLoading(isLoading: Boolean) {
+                    _loadingState.value = isLoading
+                }
+
+            })
+    }
+}

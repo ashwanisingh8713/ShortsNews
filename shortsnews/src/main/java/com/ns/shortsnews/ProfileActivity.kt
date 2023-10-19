@@ -32,7 +32,6 @@ class ProfileActivity : AppCompatActivity() {
     private val sharedUserViewModel: UserViewModel by viewModels {
         UserViewModelFactory().apply {
             inject(
-                UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
                 UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
             )

@@ -37,7 +37,6 @@ class LauncherActivity : AppCompatActivity() {
     private val userViewModel: UserViewModel by viewModels {
         UserViewModelFactory().apply {
             inject(
-                UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
                 UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
             )

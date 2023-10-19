@@ -62,7 +62,6 @@ class LanguageFragment : Fragment(layout.fragment_language) {
     private val userViewModel: UserViewModel by activityViewModels {
         UserViewModelFactory().apply {
             inject(
-                UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
                 UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
             )

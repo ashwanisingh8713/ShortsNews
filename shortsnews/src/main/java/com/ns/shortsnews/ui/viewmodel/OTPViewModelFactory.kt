@@ -7,21 +7,21 @@ import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
 
-class UserViewModelFactory : ViewModelProvider.Factory {
-    private lateinit var languageDataUseCase: LanguageDataUseCase
+class OTPViewModelFactory : ViewModelProvider.Factory {
+    private lateinit var otpValidationDataUseCases: UserOtpValidationDataUseCase
     private lateinit var userSelectionsDataUseCase: UserSelectionsDataUseCase
 
-    fun inject(
-               languageDataUseCase: LanguageDataUseCase,
-               userSelectionsDataUseCase: UserSelectionsDataUseCase
+    fun inject(userUseCases: UserOtpValidationDataUseCase, userSelectionsDataUseCase: UserSelectionsDataUseCase
+
                ) {
-        this.languageDataUseCase = languageDataUseCase
+        this.otpValidationDataUseCases = userUseCases
         this.userSelectionsDataUseCase = userSelectionsDataUseCase
+
 
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return UserViewModel(languageDataUseCase) as T
+        return OTPViewModel(otpValidationDataUseCases, userSelectionsDataUseCase) as T
     }
 
 }

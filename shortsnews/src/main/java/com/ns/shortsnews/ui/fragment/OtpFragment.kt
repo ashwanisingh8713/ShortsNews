@@ -17,12 +17,13 @@ import com.ns.shortsnews.domain.models.VideoCategory
 import com.ns.shortsnews.domain.usecase.language.LanguageDataUseCase
 import com.ns.shortsnews.domain.usecase.notification.FCMTokenDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
-import com.ns.shortsnews.domain.usecase.user.UserRegistrationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
 import com.ns.shortsnews.domain.usecase.video_category.UpdateVideoCategoriesUseCase
 import com.ns.shortsnews.domain.usecase.video_category.VideoCategoryUseCase
 import com.ns.shortsnews.ui.viewmodel.NotificationViewModel
 import com.ns.shortsnews.ui.viewmodel.NotificationViewModelFactory
+import com.ns.shortsnews.ui.viewmodel.OTPViewModel
+import com.ns.shortsnews.ui.viewmodel.OTPViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.UserViewModel
 import com.ns.shortsnews.ui.viewmodel.UserViewModelFactory
 import com.ns.shortsnews.ui.viewmodel.VideoCategoryViewModel
@@ -31,7 +32,6 @@ import com.ns.shortsnews.utils.*
 import com.rommansabbir.networkx.NetworkXProvider
 import com.videopager.utils.NoConnection
 import com.videopager.utils.UtilsFunctions
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -45,17 +45,17 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
     private val userViewModel: UserViewModel by activityViewModels {
         UserViewModelFactory().apply {
             inject(
-                UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())),
                 LanguageDataUseCase(UserDataRepositoryImpl(get())),
                 UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
             )
         }
     }
-    private val notificationViewModel: NotificationViewModel by viewModels {
-        NotificationViewModelFactory().apply {
-            inject(FCMTokenDataUseCase(UserDataRepositoryImpl(get())))
-        }
-    }
+
+    private val otpViewModel: OTPViewModel by activityViewModels { OTPViewModelFactory().apply {
+        inject(
+            UserOtpValidationDataUseCase(UserDataRepositoryImpl(get())), UserSelectionsDataUseCase(UserDataRepositoryImpl(get()))
+        )
+    }}
 
     private val videoCategoryViewModel: VideoCategoryViewModel by activityViewModels {
         VideoCategoryViewModelFactory().apply {
@@ -67,6 +67,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
     }
 
     private var userOtp: UserOtp? = null
+
+    private var isOTPVerified = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -82,7 +84,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         binding.emailTxt.text = emailId
 
         // Clearing OTP Success State = null
-        userViewModel.clearingOtpSuccessState()
+        otpViewModel.clearingOtpSuccessState()
 
         // Submit Button Click Listener
         binding.submitButton.setOnClickListener {
@@ -97,7 +99,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                         data["name"] = name
 
                     if (NetworkXProvider.isInternetConnected) {
-                        userViewModel.requestOtpValidationApi(data)
+                        otpViewModel.requestOtpValidationApi(data)
                     } else {
                         // No Internet Snack bar: Fire
                         NoConnection.noConnectionSnackBarInfinite(
@@ -125,7 +127,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     data["OTP_id"] = otpId.toString()
                     if (UtilsFunctions.isOnline(requireActivity())) {
                         // Making OTP Verification API Call
-                        userViewModel.requestOtpValidationApi(data)
+                        otpViewModel.requestOtpValidationApi(data)
                     } else {
                         // No Internet Snack bar: Fire
                         NoConnection.noConnectionSnackBarInfinite(
@@ -146,27 +148,42 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             }
         }
 
+
+        // Selections Error State Listener
+        viewLifecycleOwner.lifecycleScope.launch {
+            otpViewModel.userSelectionsErrorState.filterNotNull().collectLatest {
+                Alert().showGravityToast(requireActivity(), it)
+                binding.submitButton.visibility = View.VISIBLE
+                binding.progressBarOtp.visibility = View.GONE
+            }
+        }
+
         // OTP Error State Listener
         viewLifecycleOwner.lifecycleScope.launch {
-            userViewModel.otpErrorState.filterNotNull().collectLatest {
+            otpViewModel.errorState.filterNotNull().collectLatest {
                 Alert().showGravityToast(requireActivity(), it)
+                binding.submitButton.visibility = View.VISIBLE
+                binding.progressBarOtp.visibility = View.GONE
             }
         }
 
 
         // OTP Success State Listener
         viewLifecycleOwner.lifecycleScope.launch {
-            userViewModel.otpSuccessState.filterNotNull().collectLatest {
+            otpViewModel.otpSuccessState.filterNotNull().collectLatest {
                 it.let {
                     if (it.status) {
+                        isOTPVerified = true
                         // Saving User Data in Preference
                         userOtp = it
                         saveUserPreference(it)
                         Log.i("OTPSuccess", "OtpFragment :: otpSuccessState = ${it}")
                         if (it.first_time_user) {
+                            binding.submitButton.visibility = View.VISIBLE
+                            binding.progressBarOtp.visibility = View.GONE
                             userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
                         } else {
-                            userViewModel.requestUserSelectionApi()
+                            otpViewModel.requestUserSelectionApi()
                         }
                     }
                 }
@@ -174,19 +191,23 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            userViewModel.userSelectionSuccessState.filterNotNull().collectLatest {
-                it.let {
-                    val languageSet = it.languages.map { langid->
-                        langid.trim()
-                    }
-                    if (languageSet.isEmpty()) {
-                        binding.submitButton.visibility = View.VISIBLE
-                        binding.progressBarOtp.visibility = View.GONE
-                        // When Language is empty, It should open Language Fragment
-                        userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
-                    } else{
-                        AppPreference.saveSelectedLanguagesToPreference(languageSet)
-                        videoCategoryViewModel.loadVideoCategory()
+            otpViewModel.userSelectionSuccessState.filterNotNull().collectLatest {
+                if(isOTPVerified) {
+                    it.let {
+                        val languageSet = it.languages.map { langid ->
+                            langid.trim()
+                        }
+                        if (languageSet.isEmpty()) {
+                            binding.submitButton.visibility = View.VISIBLE
+                            binding.progressBarOtp.visibility = View.GONE
+                            // When Language is empty, It should open Language Fragment
+                            userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
+                            Log.i("OTPSuccess", "OtpFragment :: userSelectionSuccessState IF")
+                        } else {
+                            AppPreference.saveSelectedLanguagesToPreference(languageSet)
+                            videoCategoryViewModel.loadVideoCategory()
+                            Log.i("OTPSuccess", "OtpFragment :: userSelectionSuccessState ELSE")
+                        }
                     }
                 }
             }
@@ -202,17 +223,18 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch() {
-            userViewModel.otpLoadingState.collectLatest {
+        viewLifecycleOwner.lifecycleScope.launch {
+            otpViewModel.loadingState.collectLatest {
                 if (it) {
                     binding.submitButton.visibility = View.GONE
                     binding.progressBarOtp.visibility = View.VISIBLE
                 } else {
-                    binding.submitButton.visibility = View.VISIBLE
-                    binding.progressBarOtp.visibility = View.GONE
+//                    binding.submitButton.visibility = View.VISIBLE
+//                    binding.progressBarOtp.visibility = View.GONE
                 }
             }
         }
+
     }
 
     private fun getSelectedVideoInterstCategory(categoryList:MutableList<VideoCategory>){
@@ -233,27 +255,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         userViewModel.updateFragment(UserViewModel.MAIN_ACTIVITY, Bundle())
     }
 
-
-    private fun sendFcmTokenToServer() {
-        val bundle: MutableMap<String, String> = mutableMapOf()
-        bundle["platform"] = "Android"
-        bundle["device_token"] = AppPreference.fcmToken.toString()
-        notificationViewModel.requestSendFcmToken(bundle)
-
-        lifecycleScope.launch {
-            notificationViewModel.SendNotificationSuccessState.filterNotNull().collectLatest {
-                if (it.status) {
-                    Log.i("Token", "Token Send ")
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            notificationViewModel.errorState.filterNotNull().collectLatest {
-                Log.i("Token", "Error in sending token $it")
-            }
-        }
-    }
 
     private fun saveUserPreference(it: UserOtp) {
         AppPreference.userName = it.name
