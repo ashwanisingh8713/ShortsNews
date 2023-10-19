@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -620,10 +618,12 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
     @SuppressLint("ResourceAsColor")
     private fun bottomSheetClearChannelId() {
+        hideSeekbar()
         binding.persistentBottomsheet.imgDownArrow.tag = null
         binding.persistentBottomsheet.clientImage.setImageBitmap(null)
         binding.persistentBottomsheet.bottomSheetHeader.setBackgroundColor(R.color.black)
-        binding.persistentBottomsheet.bottomSheetHeader.alpha = 0.3f
+        binding.persistentBottomsheet.bottomSheetHeader.alpha = 0.0f
+
     }
 
 
