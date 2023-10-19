@@ -84,6 +84,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             loginViewModel.registrationSuccessState.filterNotNull().collectLatest {
                 Log.i("OTPSuccess", "LoginFragment :: registrationSuccessState = $it")
                 it.let {
+
                     val bundle = Bundle()
                     bundle.putString("email", it.email)
                     bundle.putString("otp_id", it.OTP_id.toString())

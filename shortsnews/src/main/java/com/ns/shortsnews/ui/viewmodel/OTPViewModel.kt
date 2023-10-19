@@ -1,5 +1,6 @@
 package com.ns.shortsnews.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ns.shortsnews.data.mapper.UserOtp
@@ -11,7 +12,10 @@ import com.ns.shortsnews.domain.usecase.base.UseCaseResponse
 import com.ns.shortsnews.domain.usecase.user.UserOtpValidationDataUseCase
 import com.ns.shortsnews.domain.usecase.user.UserSelectionsDataUseCase
 import com.ns.shortsnews.utils.AppPreference
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
@@ -21,19 +25,14 @@ import kotlinx.coroutines.flow.update
 class OTPViewModel(private val otpValidationDataUseCases: UserOtpValidationDataUseCase, private val userSelectionsDataUseCase: UserSelectionsDataUseCase): ViewModel() {
 
     // Otp
-    private val _otpSuccessState = MutableStateFlow<UserOtp?>(null)
-    val otpSuccessState: StateFlow<UserOtp?> get() = _otpSuccessState
+    private val _otpSuccessState = MutableSharedFlow<UserOtp?>(replay = 0, extraBufferCapacity=1)
+    val otpSuccessState: SharedFlow<UserOtp?> get() = _otpSuccessState
 
     private val _errorState = MutableStateFlow<String?>(null)
     val errorState: StateFlow<String?> get() = _errorState
 
     private val _loadingState = MutableStateFlow(false)
     val loadingState: StateFlow<Boolean> get() = _loadingState
-
-    fun clearingOtpSuccessState() {
-        _otpSuccessState.value = null
-        _userSelectionSuccessState.value = null
-    }
 
     fun requestOtpValidationApi(requestBody: Map<String, String>) {
         otpValidationDataUseCases.invoke(viewModelScope, requestBody,
@@ -55,7 +54,8 @@ class OTPViewModel(private val otpValidationDataUseCases: UserOtpValidationDataU
                         userProfileImage = data.my_profile.image, user_id = data.my_profile.user_id,
                         age = data.my_profile.age, location = data.my_profile.location
                     )
-                    _otpSuccessState.value = otpValidation
+                    Log.i("OTPSuccess", "OtpViewModel :: requestOtpValidationApi")
+                    _otpSuccessState.tryEmit(otpValidation)
                 }
 
                 override fun onError(apiError: ApiError) {
@@ -77,8 +77,8 @@ class OTPViewModel(private val otpValidationDataUseCases: UserOtpValidationDataU
 
 
     //User selections
-    private val _userSelectionSuccessState = MutableStateFlow<UserSelectionsData?>(null)
-    val userSelectionSuccessState: StateFlow<UserSelectionsData?> get() = _userSelectionSuccessState
+    private val _userSelectionSuccessState = MutableSharedFlow<UserSelectionsData?>(replay = 0, extraBufferCapacity=1)
+    val userSelectionSuccessState: SharedFlow<UserSelectionsData?> get() = _userSelectionSuccessState
 
     private val _userSelectionsErrorState = MutableStateFlow<String?>(null)
     val userSelectionsErrorState: StateFlow<String?> get() = _userSelectionsErrorState
@@ -93,7 +93,8 @@ class OTPViewModel(private val otpValidationDataUseCases: UserOtpValidationDataU
                         if(result.data.languages.isNotEmpty()) {
                             AppPreference.isLanguageSelected = true
                         }
-                        _userSelectionSuccessState.value = result.data
+                        Log.i("OTPSuccess", "OtpViewModel :: requestUserSelectionApi")
+                        _userSelectionSuccessState.tryEmit(result.data)
                     }
                     else {
                         _userSelectionsErrorState.value = "Empty from api server"

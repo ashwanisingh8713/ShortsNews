@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -66,8 +67,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
     }
 
-    private var userOtp: UserOtp? = null
-
     private var isOTPVerified = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,15 +75,26 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         val otpId: String? = arguments?.getString("otp_id")
         val emailId = arguments?.getString("email")
         val isUserRegistered = arguments?.getBoolean("isUserRegistered")
+
+
+        // Device BackButton Click Listener
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (isOTPVerified){
+                // DO Nothing
+            } else {
+                activity?.finish()
+            }
+        }
+
+
         isUserRegistered.let {
             if (!isUserRegistered!!) {
                 binding.nameConLayout.visibility = View.VISIBLE
             }
         }
-        binding.emailTxt.text = emailId
 
-        // Clearing OTP Success State = null
-        otpViewModel.clearingOtpSuccessState()
+
+        binding.emailTxt.text = emailId
 
         // Submit Button Click Listener
         binding.submitButton.setOnClickListener {
@@ -155,6 +165,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 Alert().showGravityToast(requireActivity(), it)
                 binding.submitButton.visibility = View.VISIBLE
                 binding.progressBarOtp.visibility = View.GONE
+                isOTPVerified = false
             }
         }
 
@@ -164,6 +175,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 Alert().showGravityToast(requireActivity(), it)
                 binding.submitButton.visibility = View.VISIBLE
                 binding.progressBarOtp.visibility = View.GONE
+                isOTPVerified = false
             }
         }
 
@@ -173,9 +185,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             otpViewModel.otpSuccessState.filterNotNull().collectLatest {
                 it.let {
                     if (it.status) {
-                        isOTPVerified = true
                         // Saving User Data in Preference
-                        userOtp = it
+                        isOTPVerified = true
                         saveUserPreference(it)
                         Log.i("OTPSuccess", "OtpFragment :: otpSuccessState = ${it}")
                         if (it.first_time_user) {
@@ -192,7 +203,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             otpViewModel.userSelectionSuccessState.filterNotNull().collectLatest {
-                if(isOTPVerified) {
                     it.let {
                         val languageSet = it.languages.map { langid ->
                             langid.trim()
@@ -208,7 +218,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                             videoCategoryViewModel.loadVideoCategory()
                             Log.i("OTPSuccess", "OtpFragment :: userSelectionSuccessState ELSE")
                         }
-                    }
+
                 }
             }
         }
@@ -217,7 +227,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             videoCategoryViewModel.videoCategorySuccessState.filterNotNull().filter {
                 it.videoCategories.isNotEmpty()
             }.collectLatest {
-                //TODO update selected categories to list
                 getSelectedVideoInterstCategory(it.videoCategories as MutableList<VideoCategory>)
 
             }
@@ -228,9 +237,6 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 if (it) {
                     binding.submitButton.visibility = View.GONE
                     binding.progressBarOtp.visibility = View.VISIBLE
-                } else {
-//                    binding.submitButton.visibility = View.VISIBLE
-//                    binding.progressBarOtp.visibility = View.GONE
                 }
             }
         }

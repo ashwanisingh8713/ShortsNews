@@ -129,6 +129,7 @@ class LauncherActivity : AppCompatActivity() {
     }
 
     private fun launchMainActivity() {
+        Log.i("OTPSuccess", "LauncherActivity :: launchMainActivity()")
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)

@@ -24,7 +24,6 @@ class UserViewModel constructor(
 
     companion object {
         val LOGIN = "login"
-        val OTP = "otp"
         val PROFILE = "profile"
         val OTP_POP = "otp_pop"
         val MAIN_ACTIVITY = "main_activity"

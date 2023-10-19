@@ -51,6 +51,7 @@ class ProfileActivity : AppCompatActivity() {
                 profileFragment()
             } else {
                 if (AppPreference.isLanguageSelected) {
+                    Log.i("OTPSuccess", "ProfileActivity :: AppPreference.isUserLoggedIn = true")
                     IntentLaunch.launchMainActivityFinishCurrent(this@ProfileActivity)
                 } else {
                     languagesFragment()
@@ -70,10 +71,12 @@ class ProfileActivity : AppCompatActivity() {
                 Log.i("fragment", "${bundle.getString("fragmentType")}")
                 when (bundle.getString("fragmentType")) {
                     UserViewModel.PROFILE -> profileFragment()
-                    UserViewModel.OTP -> otpFragment(bundle)
                     UserViewModel.LOGIN -> loginFragment()
                     UserViewModel.OTP_POP -> popOtpFragment()
-                    UserViewModel.MAIN_ACTIVITY -> IntentLaunch.launchMainActivityFinishCurrent(this@ProfileActivity)
+                    UserViewModel.MAIN_ACTIVITY -> {
+                        Log.i("OTPSuccess", "ProfileActivity :: listenFragmentUpdate")
+                        IntentLaunch.launchMainActivityFinishCurrent(this@ProfileActivity)
+                    }
                     UserViewModel.LANGUAGES -> languagesFragment()
                 }
             }
@@ -91,14 +94,6 @@ class ProfileActivity : AppCompatActivity() {
     private fun popOtpFragment() {
         Log.i("lifecycle", "Profile activity on pop otp fragment called")
         supportFragmentManager.popBackStack()
-    }
-
-    private fun otpFragment(bundle: Bundle) {
-        Log.i("lifecycle", "Profile activity on OTP fragment launch called")
-        val fragment = OtpFragment()
-        fragment.arguments = bundle
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
-            .addToBackStack("opt").commit()
     }
 
 

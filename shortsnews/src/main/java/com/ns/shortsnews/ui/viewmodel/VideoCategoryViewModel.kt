@@ -2,7 +2,6 @@ package com.ns.shortsnews.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.JsonObject
 import com.ns.shortsnews.data.mapper.UserVideoCategory
 import com.ns.shortsnews.domain.exception.ApiError
 import com.ns.shortsnews.domain.models.UpdateCategories
@@ -26,8 +25,8 @@ class VideoCategoryViewModel(
     private val updateVideoCategoriesUseCase: UpdateVideoCategoriesUseCase
 ) : ViewModel() {
 
-    private val _videoCategorySuccessState = MutableStateFlow<UserVideoCategory?>(null)
-    val videoCategorySuccessState: StateFlow<UserVideoCategory?> get() = _videoCategorySuccessState
+    private val _videoCategorySuccessState = MutableSharedFlow<UserVideoCategory?>(replay = 0, extraBufferCapacity = 1)
+    val videoCategorySuccessState: SharedFlow<UserVideoCategory?> get() = _videoCategorySuccessState
 
     private val _updateCategoriesSuccessState = MutableStateFlow<UpdateCategories?>(null)
     val updateCategoriesSuccessState: StateFlow<UpdateCategories?> get() = _updateCategoriesSuccessState
@@ -53,7 +52,7 @@ class VideoCategoryViewModel(
                             status = result.status,
                             videoCategories = result.data
                         )
-                        _videoCategorySuccessState.value = userVideoCategory
+                        _videoCategorySuccessState.tryEmit(userVideoCategory)
                     } else {
                         _errorState.tryEmit("Something went wrong")
                     }

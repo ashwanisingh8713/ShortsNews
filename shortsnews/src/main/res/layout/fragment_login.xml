@@ -85,6 +85,7 @@
             android:inputType="textEmailAddress"
             android:maxLines="1"
             android:textColor="@color/white"
+            android:textCursorDrawable="@null"
             android:textColorHint="@color/white"
             android:textSize="@dimen/video_page_text_size_medium"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -22,7 +22,6 @@ class IntentLaunch {
     companion object {
 
         fun launchMainActivityFinishCurrent(context: Activity) {
-            Log.i("lifecycle", "Profile activity on main activity called")
             val intent = Intent(context, MainActivity::class.java)
             context.startActivity(intent)
             context.finish()
