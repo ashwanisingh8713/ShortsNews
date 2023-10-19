@@ -184,13 +184,13 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                         pagerAdapter.showPlayerFor(state.page)
                         binding.progressBarVideoShorts.visibility = View.GONE
                     }
-                    binding.viewPager.isUserInputEnabled = true
 
                     if (!isFirstVideoInfoLoaded) {
                         binding.viewPager.setCurrentItem(videoItems.selectedPosition, true)
                         val data = pagerAdapter.getVideoData(videoItems.selectedPosition)
                         viewModel.processEvent(VideoInfoEvent(data.id, videoItems.selectedPosition))
                         isFirstVideoInfoLoaded = true
+                        disableEnableSwipe()
                     }
                 }
             }
@@ -284,9 +284,14 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         // Update Progress in Bottom
         seekbar?.let {
             setupSeekbarProgress(it)
+            progressBarJobUpdater(it)
         }
 
+
+
     }
+
+
 
 
     override fun onResume() {
@@ -334,6 +339,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                 Log.i("VideoInfoOnSwipe", "=====================================================")
                 Log.i("VideoInfoOnSwipe", "Swiped, VideoId =  ${data.id}")
                 viewModel.invokeVideoInfo(data.id, currentItem)
+                disableEnableSwipe()
                 NoFurtherEvent
             },
             videoCache().map {
@@ -565,14 +571,12 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
 
 
     private var progressBarJob: Job? = null
+    private var swipeJob: Job? = null
 
     /**
      * Setup Seekbar progress
      */
     private fun setupSeekbarProgress(seekbar: SeekBar) {
-
-        progressBarJobUpdater(seekbar)
-
         seekbar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 //                if(fromUser) {
@@ -620,6 +624,15 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                 }
                 delay(100)
             }
+        }
+    }
+
+    private fun disableEnableSwipe() {
+        binding.viewPager.isUserInputEnabled = false
+        swipeJob?.cancel()
+        swipeJob = viewLifecycleOwner.lifecycleScope.launch {
+            delay(300)
+            binding.viewPager.isUserInputEnabled = true
         }
     }
 

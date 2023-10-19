@@ -543,7 +543,7 @@ internal class VideoPagerViewModel(
     }
 
     companion object {
-        const val perPage = 40
+        const val perPage = 5
         val cacheHashSet: CachingLinkedHashMap<String, VideoInfoData> = CachingLinkedHashMap(50)
     }
 
