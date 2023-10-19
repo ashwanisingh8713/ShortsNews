@@ -52,32 +52,6 @@ internal class VideoPagerViewModel(
     private val loadedVideoData: List<VideoData>
 ) : MviViewModel<ViewEvent, ViewResult, ViewState, ViewEffect>(initialState) {
 
-
-
-//    var page = 1
-//    private set
-
-//    private var pager: ViewPager2? = null
-//    private fun setPager(pager: ViewPager2) {
-//        this.pager = pager
-//    }
-
-    private var _videoProgressBarEvent= MutableSharedFlow<Int>()
-    val videoProgressBar = _videoProgressBarEvent.asSharedFlow()
-
-    fun videoProgressBarEvent(playBackState: Int) {
-        viewModelScope.launch {
-            Log.d("AshwaniPerformance", "VideoPagerViewModel playBackState :: $playBackState")
-            _videoProgressBarEvent.emit(playBackState)
-        }
-    }
-
-
-    var context: Context? = null
-    fun setVMContext(context: Context) {
-        this.context = context
-    }
-
     var playerView: StyledPlayerView? = null
     fun setPlayerVieww(playerView: StyledPlayerView?) {
         this.playerView = playerView
@@ -126,7 +100,6 @@ internal class VideoPagerViewModel(
         return flatMapLatest { event ->
             repository.videoData(
                 requiredId = event.categoryId,
-                context = context!!,
                 videoFrom = event.videoFrom,
                 page = event.page,
                 perPage = perPage,
@@ -300,7 +273,6 @@ internal class VideoPagerViewModel(
             },
             appPlayer.onPlaybackStateChanged().mapLatest {
                 Log.i("videoProgress", "resumePlayer() onPlaybackStateChanged :: $it")
-                videoProgressBarEvent(it)
                 NoOpResult
             }
         )

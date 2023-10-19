@@ -130,7 +130,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
 
         val appPlayerView =  ExoAppPlayerViewFactory().create(requireContext())
 
-        viewModel.setVMContext(requireContext())
         viewModel.setPlayerVieww(appPlayerView.getPlayerView())
 
         binding = VideoPagerFragmentBinding.bind(view)
@@ -195,8 +194,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                     }
                 }
             }
-
-
 
         val effects = viewModel.effects
             .onEach { effect ->
@@ -288,9 +285,6 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         seekbar?.let {
             setupSeekbarProgress(it)
         }
-
-
-
 
     }
 
