@@ -28,8 +28,8 @@ class OTPViewModel(private val otpValidationDataUseCases: UserOtpValidationDataU
     private val _otpSuccessState = MutableSharedFlow<UserOtp?>(replay = 0, extraBufferCapacity=1)
     val otpSuccessState: SharedFlow<UserOtp?> get() = _otpSuccessState
 
-    private val _errorState = MutableStateFlow<String?>(null)
-    val errorState: StateFlow<String?> get() = _errorState
+    private val _errorState = MutableSharedFlow<String?>(replay = 0, extraBufferCapacity=1)
+    val errorState: SharedFlow<String?> get() = _errorState
 
     private val _loadingState = MutableStateFlow(false)
     val loadingState: StateFlow<Boolean> get() = _loadingState
@@ -38,34 +38,29 @@ class OTPViewModel(private val otpValidationDataUseCases: UserOtpValidationDataU
         otpValidationDataUseCases.invoke(viewModelScope, requestBody,
             object : UseCaseResponse<OTPResult> {
                 override fun onSuccess(result: OTPResult) {
-                    if(result.status == false) {
-                        var msg = result.msg
-                        if(_errorState.value == result.msg) {
-                            msg ="${result.msg} "
-                        }
-                        _errorState.value = msg
-                        return
+                    if(result.status.not()) {
+                        _errorState.tryEmit(result.msg)
+                    } else {
+                        val data = result.data
+                        val otpValidation = UserOtp().mapper(
+                            status = result.status,
+                            msg = result.msg,
+                            email = data!!.my_profile.email,
+                            access_token = data.access_token,
+                            name = data.my_profile.name,
+                            first_time_user = data.first_time_user,
+                            userProfileImage = data.my_profile.image,
+                            user_id = data.my_profile.user_id,
+                            age = data.my_profile.age,
+                            location = data.my_profile.location
+                        )
+                        Log.i("OTPSuccess", "OtpViewModel :: requestOtpValidationApi")
+                        _otpSuccessState.tryEmit(otpValidation)
                     }
-                    val data = result.data
-                    val otpValidation = UserOtp().mapper(
-                        status = result.status, msg = result.msg,
-                        email = data!!.my_profile.email, access_token = data.access_token,
-                        name = data.my_profile.name, first_time_user = data.first_time_user,
-                        userProfileImage = data.my_profile.image, user_id = data.my_profile.user_id,
-                        age = data.my_profile.age, location = data.my_profile.location
-                    )
-                    Log.i("OTPSuccess", "OtpViewModel :: requestOtpValidationApi")
-                    _otpSuccessState.tryEmit(otpValidation)
                 }
 
                 override fun onError(apiError: ApiError) {
-                    var errorMsg = _errorState.value
-                    if(errorMsg == null || errorMsg == apiError.getErrorMessage()) {
-                        errorMsg = "${apiError.getErrorMessage()} "
-                    } else {
-                        errorMsg = "${apiError.getErrorMessage()}"
-                    }
-                    _errorState.value = errorMsg
+                    _errorState.tryEmit(apiError.getErrorMessage())
                 }
 
                 override fun onLoading(isLoading: Boolean) {
@@ -80,8 +75,8 @@ class OTPViewModel(private val otpValidationDataUseCases: UserOtpValidationDataU
     private val _userSelectionSuccessState = MutableSharedFlow<UserSelectionsData?>(replay = 0, extraBufferCapacity=1)
     val userSelectionSuccessState: SharedFlow<UserSelectionsData?> get() = _userSelectionSuccessState
 
-    private val _userSelectionsErrorState = MutableStateFlow<String?>(null)
-    val userSelectionsErrorState: StateFlow<String?> get() = _userSelectionsErrorState
+    private val _userSelectionsErrorState = MutableSharedFlow<String?>(replay = 0, extraBufferCapacity=1)
+    val userSelectionsErrorState: SharedFlow<String?> get() = _userSelectionsErrorState
 
     fun requestUserSelectionApi() {
         userSelectionsDataUseCase.invoke(
@@ -97,19 +92,13 @@ class OTPViewModel(private val otpValidationDataUseCases: UserOtpValidationDataU
                         _userSelectionSuccessState.tryEmit(result.data)
                     }
                     else {
-                        _userSelectionsErrorState.value = "Empty from api server"
+                        _userSelectionsErrorState.tryEmit("Empty from api server")
                     }
 
                 }
 
                 override fun onError(apiError: ApiError) {
-                    var errorMsg = _errorState.value
-                    if(errorMsg == null || errorMsg == apiError.getErrorMessage()) {
-                        errorMsg = "${apiError.getErrorMessage()} "
-                    } else {
-                        errorMsg = "${apiError.getErrorMessage()}"
-                    }
-                    _userSelectionsErrorState.value = errorMsg
+                    _userSelectionsErrorState.tryEmit(apiError.getErrorMessage())
                 }
 
                 override fun onLoading(isLoading: Boolean) {

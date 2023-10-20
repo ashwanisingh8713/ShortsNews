@@ -102,18 +102,22 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 if (!isProfileImageSelected) {
                     applyConditionOnUpdateProfile(title = dialog_title_default, msg = dialog_msg_default)
                 } else {
-                    showUpdateProfileDialog(
-                        title = dialog_title_default,
-                        msg = dialog_msg_default,
-                        profileData = getRequestBody(
-                            bitmapToFile(mPhotoBitmap, "user") as File,
-                            binding.nameEditText.text.toString(),
-                            binding.ageEditText.text.toString(),
-                            binding.locationEditText.text.toString()
-                        ),
-                        positiveBtnText = positiveBtnText,
-                        negativeBtnText = negativeBtnText
-                    )
+                    if (isAlreadyFieldAge && binding.ageEditText.text.isEmpty() || isAlreadyFieldAddress&& binding.locationEditText.text.isEmpty() || isAlreadyFieldName && binding.nameEditText.text.isEmpty()){
+                        Toast.makeText(requireActivity(),"Please fill required field", Toast.LENGTH_SHORT).show()
+                    } else {
+                        showUpdateProfileDialog(
+                            title = dialog_title_default,
+                            msg = dialog_msg_default,
+                            profileData = getRequestBody(
+                                bitmapToFile(mPhotoBitmap, "user") as File,
+                                binding.nameEditText.text.toString(),
+                                binding.ageEditText.text.toString(),
+                                binding.locationEditText.text.toString()
+                            ),
+                            positiveBtnText = positiveBtnText,
+                            negativeBtnText = negativeBtnText
+                        )
+                    }
                 }
             }
         }
@@ -199,17 +203,25 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 if (!isProfileImageSelected) {
                    applyConditionOnUpdateProfile(title = dialog_title_default, msg = dialog_msg_default)
                 } else {
-                    showUpdateProfileDialog(
-                        title = dialog_title_default, msg = dialog_msg_default,
-                        profileData = getRequestBody(
-                            bitmapToFile(mPhotoBitmap, "user") as File,
-                            binding.nameEditText.text.toString(),
-                            binding.ageEditText.text.toString(),
-                            binding.locationEditText.text.toString()
-                        ),
-                        positiveBtnText = positiveBtnText,
-                        negativeBtnText = negativeBtnText
-                    )
+                    if (isAlreadyFieldAge && binding.ageEditText.text.isEmpty() || isAlreadyFieldAddress && binding.locationEditText.text.isEmpty() || isAlreadyFieldName && binding.nameEditText.text.isEmpty()) {
+                        Toast.makeText(
+                            requireActivity(),
+                            "Please fill required field",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        showUpdateProfileDialog(
+                            title = dialog_title_default, msg = dialog_msg_default,
+                            profileData = getRequestBody(
+                                bitmapToFile(mPhotoBitmap, "user") as File,
+                                binding.nameEditText.text.toString(),
+                                binding.ageEditText.text.toString(),
+                                binding.locationEditText.text.toString()
+                            ),
+                            positiveBtnText = positiveBtnText,
+                            negativeBtnText = negativeBtnText
+                        )
+                    }
                 }
             }
         }

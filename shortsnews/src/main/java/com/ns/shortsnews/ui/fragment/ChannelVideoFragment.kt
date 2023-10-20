@@ -243,11 +243,6 @@ class ChannelVideosFragment : Fragment(R.layout.fragment_channel_videos) {
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        channelInfoViewModel.clearChannelInfo()
-    }
-
     private fun listenFollowUnfollow() {
         viewLifecycleOwner.lifecycleScope.launch {
             followUnfollowViewModel.FollowUnfollowSuccessState.filterNotNull().collectLatest {

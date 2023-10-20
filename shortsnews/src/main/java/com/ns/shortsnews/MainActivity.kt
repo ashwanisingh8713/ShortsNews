@@ -60,16 +60,9 @@ import org.koin.android.ext.android.get
 class MainActivity : AppCompatActivity(), onProfileItemClick {
     private lateinit var binding: ActivityMainBinding
     private lateinit var categoryAdapter: CategoryAdapter
-//    private var videoPagerFragment: VideoPagerFragment? = null
     private var videoPagerFragment: VideoPagerFragment_2? = null
     private val sharedEventViewModel: VideoSharedEventViewModel by viewModels { SharedEventViewModelFactory }
     private var videoCategoryViewModel: VideoCategoryViewModel? = null
-
-    /*private val channelInfoViewModel: ChannelInfoViewModel by viewModels {
-        ChannelInfoViewModelFactory().apply {
-            inject(ChannelInfoUseCase(UserDataRepositoryImpl(get())))
-        }
-    }*/
 
     private val followUnfollowViewModel: FollowUnfollowViewModel by viewModels {
         FollowUnfollowViewModelFactory().apply {
@@ -92,7 +85,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-
 
         // Disable Touch or Click event of BottomSheet for non clickable places
         binding.persistentBottomsheet.bottomSheet.setOnTouchListener(object : OnTouchListener {
@@ -147,7 +139,6 @@ class MainActivity : AppCompatActivity(), onProfileItemClick {
 
         // Bottom Sheet Callback
         bottomSheetDialogCallback()
-
 
     }
 
