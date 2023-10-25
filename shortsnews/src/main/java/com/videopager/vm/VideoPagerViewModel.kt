@@ -227,7 +227,7 @@ internal class VideoPagerViewModel(
             appPlayer.errors().map(::PlayerErrorResult),
 
             appPlayer.onMediaItemTransition().mapLatest {
-                Log.i("videoProgress", "createPlayer() onMediaItemTransition :: $it")
+                Log.i("videoProgress", "createPlayer() onMediaItemTransition :: ${it.mediaId}")
                 MediaItemTransitionResult(it)
             },
             appPlayer.onPlaybackStateChanged().mapLatest {

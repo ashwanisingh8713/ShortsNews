@@ -33,6 +33,7 @@ import com.ns.shortsnews.data.source.UserApiService
 import com.ns.shortsnews.databinding.VideoPagerFragmentBinding
 import com.ns.shortsnews.utils.AppPreference
 import com.ns.shortsnews.video.data.VideoDataRepositoryImpl
+import com.player.ui.AppPlayerView
 import com.videopager.models.*
 import com.videopager.ui.extensions.*
 import com.videopager.ui.fragment.CommentsFragment
@@ -121,6 +122,8 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
 
     }
 
+    lateinit var appPlayerView : AppPlayerView
+
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -128,7 +131,7 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
         // Listening user status via shared view Module from main activity preference utils
         registerSharedViewModel()
 
-        val appPlayerView =  ExoAppPlayerViewFactory().create(requireContext())
+        appPlayerView =  ExoAppPlayerViewFactory().create(requireContext())
 
         viewModel.setPlayerVieww(appPlayerView.getPlayerView())
 
@@ -258,7 +261,10 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                         if(currentItem < pagerAdapter.itemCount-1 ) {
                             binding.viewPager.setCurrentItem(currentItem + 1)
                         } else {
+                            // When last video was played completely then this block of code is executed
+                            // to start from beginning
                             binding.viewPager.setCurrentItem(0, false)
+                            viewModel.processEvent(OnPageSettledEvent(0))
                         }
                     }
 
