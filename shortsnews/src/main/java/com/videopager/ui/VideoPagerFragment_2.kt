@@ -265,6 +265,8 @@ class VideoPagerFragment_2 : Fragment(R.layout.video_pager_fragment) {
                             // to start from beginning
                             binding.viewPager.setCurrentItem(0, false)
                             viewModel.processEvent(OnPageSettledEvent(0))
+                            val data = pagerAdapter.getVideoData(0)
+                            viewModel.processEvent(VideoInfoEvent(data.id, 0))
                         }
                     }
 
