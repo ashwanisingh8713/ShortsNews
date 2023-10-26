@@ -234,18 +234,26 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     applyConditionOnUpdateProfile(title = profile_dialog_title, msg = profile_dialog_msg, positiveBtnText = profile_positiveBtnText,
                         negativeBtnText = profile_negativeBtnText)
                 } else {
-                    showUpdateProfileDialog(
-                        title = profile_dialog_title,
-                        msg = profile_dialog_msg,
-                        positiveBtnText = profile_positiveBtnText,
-                        negativeBtnText = profile_negativeBtnText,
-                        profileData = getRequestBody(
-                            bitmapToFile(mPhotoBitmap, "user") as File,
-                            binding.nameEditText.text.toString(),
-                            binding.ageEditText.text.toString(),
-                            binding.locationEditText.text.toString()
+                    if (isAlreadyFieldAge && binding.ageEditText.text.isEmpty() || isAlreadyFieldAddress && binding.locationEditText.text.isEmpty() || isAlreadyFieldName && binding.nameEditText.text.isEmpty()) {
+                        Toast.makeText(
+                            requireActivity(),
+                            "Please fill required field",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        showUpdateProfileDialog(
+                            title = profile_dialog_title,
+                            msg = profile_dialog_msg,
+                            positiveBtnText = profile_positiveBtnText,
+                            negativeBtnText = profile_negativeBtnText,
+                            profileData = getRequestBody(
+                                bitmapToFile(mPhotoBitmap, "user") as File,
+                                binding.nameEditText.text.toString(),
+                                binding.ageEditText.text.toString(),
+                                binding.locationEditText.text.toString()
+                            )
                         )
-                    )
+                    }
                 }
             }
 
