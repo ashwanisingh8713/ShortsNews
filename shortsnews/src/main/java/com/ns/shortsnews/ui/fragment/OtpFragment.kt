@@ -74,7 +74,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         binding = FragmentOtpBinding.bind(view)
         val otpId: String? = arguments?.getString("otp_id")
         val emailId = arguments?.getString("email")
-        val isUserRegistered = arguments?.getBoolean("isUserRegistered")
+        val isUserRegistered = arguments?.getBoolean("isUserRegistered")?: false
 
 
         // Device BackButton Click Listener
@@ -88,13 +88,15 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
 
         isUserRegistered.let {
-            if (!isUserRegistered!!) {
+            if (!isUserRegistered) {
                 binding.nameConLayout.visibility = View.VISIBLE
             }
         }
 
 
         binding.emailTxt.text = emailId
+
+        userViewModel.updateFragment(UserViewModel.LANGUAGES, Bundle())
 
         // Submit Button Click Listener
         binding.submitButton.setOnClickListener {

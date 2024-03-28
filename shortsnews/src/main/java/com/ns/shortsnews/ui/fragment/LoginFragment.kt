@@ -72,11 +72,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch(){
+        viewLifecycleOwner.lifecycleScope.launch() {
             loginViewModel.errorState.filterNotNull().collectLatest {
-                  binding.progressBarLogin.visibility = View.GONE
-                  binding.sendImage.visibility = View.VISIBLE
-                      Alert().showErrorDialog("Demo App", it, requireActivity())
+                binding.progressBarLogin.visibility = View.GONE
+                binding.sendImage.visibility = View.VISIBLE
+                Alert().showErrorDialog("Demo App", it, requireActivity())
+
+                val fragment = OtpFragment()
+                requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_containerProfile, fragment)
+                    .addToBackStack("opt").commit()
             }
         }
 
